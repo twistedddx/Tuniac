@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+	<meta name="keywords" content="Tuniac, media, player, guide, to, do, list, changelog"/>
+	<meta name="description" content="Tuniac media player guide - To do list and changelog"/>
+	<title>Tuniac Guide - To Do List And Changelog</title>
+	<link href="main.css" rel="stylesheet" type="text/css" media="all"/>
+</head>
+
+<body>
+		<div id="container">
+			<div id="header">
+				<h1>Tuniac Guide - To Do List And Changelog</h1>
+			</div>
+			<div id="menuheader">
+				<ul>
+					<li><a href="index.html">Tuniac info</a></li>
+					<li><a href="mainscreen.html">Main screen</a></li>
+					<li><a href="menu.html">Menu options</a></li>
+					<li><a href="shortcuts.html">Shortcuts</a></li>
+					<li><a href="commandline.html">Commandline options</a></li>
+					<li><a href="windowtitle.html">Window title codes</a></li>					
+					<li><a href="faq.html">Frequently asked questions</a></li>
+					<li><a href="glossary.html">Glossary</a></li>
+					<li><a href="changelog.html">To do list and changelog</a></li>
+				</ul>
+			</div>
+			<div id="main">
+				<h2>To do list</h2>
+				<h3>Playlist/Media library</h3>
+				<ul>
+					<li>Right click menu for track - shift+remove won't act the same as shift-delete? forgot to add code for that.</li>
+					<li>Import and export .pls / .mp3u / .xpl (XML based) playlists.</li>
+					<li>Wtf is a smart playlist? ID_FILE_NEWPLAYLIST_SMARTPLAYLIST in TuniacApp.cpp. iTunes concept?</li>
+					<li>Should be able to select files right click and do &quot;update&quot; - to refresh via info manager.</li>
+					<li>User can filter by item image field (1st field).</li>
+					<li>Reverse filtering (results in the songs that don't match search).</li>
+				</ul>
+				<h3>Misc</h3>
+				<ul>
+					<li>Fix play buttons - should load bitmaps.</li>
+					<li>Edit track info dialog - change dialog title, file data from track (doesn't show anything atm), disable on empty playlist. see EditTrackInfo() in PlaylistSourceView.cpp.</li>
+					<li>Extra dilaogs (playlist options, track info, etc) - exit on ESC?</li>
+					<li>Volume control should have preference for what volume it changes (system/wave out/tuniac).</li>
+					<li>Soft pause - stop playing after specific track (works for after current song).</li>
+					<li>Play next while on shuffe - switch next shuffle song with play next song in shuffle list.</li>
+					<li>Preference for ignoring &quot;the&quot; while sorting by artist/album/title.</li>
+					<li>New icons for filetypes:<br/>Not bundled with dlls.<br/>In own directory, so user can replace them.<br/>Format: /icons/tuniac.ogg.ico etc.<br/>
+						Can't be done easily? iconhander dlls are a bitch.</li>
+					<li>Preferences for what clickong on trayicon should do (eg, single click: play/pause, or show window).</li>
+					<li>Playlist view options' still won't close using the (x).</li>
+					<li>Get album art.</li>
+					<li>Submenu for trayicon menu - list playlists. click to start playing from that playlist.</li>
+				</ul>
+				<h3>Audio Chain / Plugins</h3>
+				<ul>
+					<li>Add general plugin interface.</li>
+					<li>Fix APE decoder.</li>
+					<li>Wav input.</li>
+					<li>AAC decoder.</li>
+					<li>Document plugin interface for a basic SDK.</li>
+					<li>Add option for volume control to modify system/wave out/tuniac levels.</li>
+					<li>Code in stream-specific volume settings.<br/>Will allow for tuniac-level volume control, and replay-gain later on.</li>
+				</ul>
+				<div id="main">
+					<h3>Visuals</h3>
+					<ul>
+						<li>Document visual plugin interface.</li>
+						<li>Code sample visual. skeleton there, make it do something.</li>
+					</ul>
+					<h3>CD Audio</h3>
+					<ul>
+						<li>Uncomment/fix code in AudioCDPlaylist.cpp for loading CD tracks (rest should work?).</li>
+						<li>When selected, doesn't redraw? or just doesn't create a sub window.</li>
+					</ul>
+					<h3>Localization</h3>
+				</div>
+				<ul>
+					<div id="main">
+						<li>Design basic structure for XML based language files.</li>
+						<li>Seperate language class - should work like s2.</li>
+					</div>
+				</ul>
+				<h2>Changelog: most likely one release behind</h2>
+				<h3>02 May 2005</h3>
+				<ul>
+					<li>This now comes with an installer.</li>
+					<li>Added these help files (don't complain, for now will not be totally up to date).</li>
+					<li>General plugin interface added (nowplaying/msnsonginfo, delete them if you dont want them).</li>
+					<li>Queue files with the right click popup menu when standing on a song.</li>
+					<li><a href="glossary.html#Anchor-glpl">Play selected</a> function added.</li>
+					<li>Own playlists work now.</li>
+					<li>Some bug fixes.</li>
+				</ul>
+				<h3>13 April 2005</h3>
+				<ul>
+					<li>Added randomnext function. Also see the <a href="shortcuts.html">shortcuts</a> and <a href="commandline.html">commandline </a>page. Using it will make the previous song function not usable for one song, unless in shuffle mode, where it will just behave as the next function would.</li>
+				</ul>
+				<h3>12 April 2005</h3>
+				<ul>
+					<li>Fixed dodgy volume.</li>
+					<li>Added msn info (will be removed later to be made a plugin).</li>
+				</ul>
+				<h3>06 April 2005</h3>
+				<ul>
+					<li>All kind of stuff.</li>
+				</ul>
+				<p></p>
+			</div>
+			<div id="footer">
+				<p>
+					<a href="http://validator.w3.org/">
+					<img src="http://www.w3.org/Icons/valid-xhtml11"
+	          		alt="Valid XHTML 1.1!" height="31" width="88" />
+	          		</a>
+          			Copyright Tuniac Productions 2005&nbsp
+          			<a href="http://jigsaw.w3.org/css-validator/">
+          			<img src="http://jigsaw.w3.org/css-validator/images/vcss"
+          			alt="Valid CSS!" height="31" width="88" />
+          			</a>
+          		</p>
+			</div>
+		</div>
+	</body>
+</html>

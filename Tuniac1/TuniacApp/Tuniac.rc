@@ -1,0 +1,949 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SOURCESELECTOR DIALOGEX 0, 0, 396, 286
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SOURCESELECTOR,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,92,255
+    PUSHBUTTON      "Add",IDC_SOURCE_ADDPLAYLIST,7,265,43,14
+    PUSHBUTTON      "Delete",IDC_SOURCE_DELPLAYLIST,51,265,50,14
+END
+
+IDD_PLAYLISTSOURCE DIALOGEX 0, 0, 283, 175
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_PLAYLIST_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_TABSTOP,7,44,269,124
+    EDITTEXT        IDC_PLAYLIST_FILTER,128,7,127,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "X",IDC_PLAYLIST_SOURCE_CLEARFILTER,108,7,18,14
+    PUSHBUTTON      "<",IDC_PLAYLIST_SOURCE_MAKEPLAYLIST,88,7,17,14
+    PUSHBUTTON      "?",IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD,260,7,16,14
+    COMBOBOX        IDC_PLAYLISTSOURCE_FILTERCOMBO,7,7,76,70,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PREFERENCES_AUDIO DIALOGEX 0, 0, 236, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "      Crossfade Playback",IDC_STATIC,7,7,222,48
+    CONTROL         "",IDC_CROSSFADE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,7,10,10
+    CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,18,209,20
+    CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,40,209,8
+    COMBOBOX        IDC_DEVICESELECTOR_COMBO,21,73,201,16,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Output Device",IDC_STATIC,7,57,222,36
+    GROUPBOX        "Output System",IDC_STATIC,7,98,222,40,WS_DISABLED
+    CONTROL         "Windows WaveOut",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_DISABLED,13,111,209,8
+    CONTROL         "Experimental DirectSound",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | WS_DISABLED,13,122,209,8
+END
+
+IDD_PREFERENCES_MEDIALIBRARY DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Advanced",IDC_STATIC,7,54,221,66
+    PUSHBUTTON      "Rebuild Media Library",IDC_BUTTON1,14,66,90,14,WS_DISABLED
+    LTEXT           "Move all files into the Media Library base folder. ",IDC_STATIC,131,85,90,27
+    LTEXT           "Reread the information from each file in the library and update the database.",IDC_STATIC,14,85,90,27
+    GROUPBOX        "Media Library Base Folder",IDC_STATIC,7,7,221,45
+    EDITTEXT        IDC_EDIT1,14,19,188,12,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "...",IDC_BUTTON3,205,19,16,12,WS_DISABLED
+    PUSHBUTTON      "Consolidate Media Library",IDC_BUTTON2,131,66,90,14,WS_DISABLED
+    LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,38,207,8
+END
+
+IDD_ALBUMARTISTVIEW DIALOGEX 0, 0, 313, 305
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LISTBOX         IDC_ALBUMARTIST_ALBUMLIST,158,33,148,77,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_ALBUMARTIST_ARTISTLIST,7,33,146,77,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_ALBUMARTIST_PLAYLISTLIST,7,117,299,181,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PREFERENCES_COREAUDIO DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Audio Decoder Plugins",IDC_STATIC,7,7,221,162
+    LISTBOX         IDC_AUDIOPLUGINS_LIST,14,19,207,109,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Configure...",IDC_AUDIOPLUGIN_CONFIGURE,171,130,50,14,WS_DISABLED
+    PUSHBUTTON      "&About...",IDC_AUDIOPLUGIN_ABOUT,119,130,50,14,WS_DISABLED
+END
+
+IDD_CDAUDIOSOURCE DIALOGEX 0, 0, 391, 262
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_CDSOURCE_TRACKLIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,32,377,204
+    PUSHBUTTON      "Import CD",IDC_CDSOURCE_IMPORT,326,241,58,14
+END
+
+IDD_PREFERENCES_IMPORTING DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+END
+
+IDD_PREFERENCES_VISUALS DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Visual Update Speed",IDC_STATIC,7,7,221,48
+    CONTROL         "",IDC_VISUALPREFS_FPS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,14,19,207,15
+    LTEXT           "Slower, Less CPU",IDC_STATIC,14,38,61,8
+    RTEXT           "Faster, More CPU",IDC_STATIC,158,38,63,8
+    LTEXT           "100 FPS",IDC_VISUALPREFS_FPSDISPLAY,104,38,27,8
+    GROUPBOX        "FullScreen Options",IDC_STATIC,7,63,221,44
+    COMBOBOX        IDC_COMBO1,14,85,207,30,CBS_DROPDOWN | CBS_SORT | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Change resolution",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,74,207,8
+END
+
+IDD_PREFERENCES_GENERAL DIALOGEX 0, 0, 236, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Follow current song",IDC_GENERAL_FOLLOWCURRENTSONG,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,17,92,9
+    CONTROL         "",IDC_GENERAL_HISTORYCOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,146,41,11,14
+    EDITTEXT        IDC_GENERAL_HISTORYCOUNT,130,41,18,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Items in history list",IDC_STATIC,160,44,62,8
+    CONTROL         "Enable smart sorting",IDC_GENERAL_SMARTSORTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,28,92,10
+    CONTROL         "",IDC_GENERAL_FUTURECOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,146,57,11,14
+    EDITTEXT        IDC_GENERAL_FUTURECOUNT,130,57,18,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Items in future list",IDC_STATIC,160,60,62,8
+    GROUPBOX        "Taskbar and tray icon",IDC_STATIC,7,7,105,71
+    CONTROL         "Normal",IDC_GENERAL_TASKBAR_NORMAL,"Button",BS_AUTORADIOBUTTON,12,17,97,10
+    CONTROL         "Minimize to tray",IDC_GENERAL_TASKBAR_MINIMIZE,"Button",BS_AUTORADIOBUTTON,12,27,97,10
+    GROUPBOX        "Pause when...",IDC_STATIC,7,84,105,35
+    CONTROL         "Windows is locked",IDC_GENERAL_PAUSEONLOCK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,11,95,96,10
+    CONTROL         "Screensaver is active",IDC_GENERAL_PAUSEONSCREENSAVE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,106,95,10
+    GROUPBOX        "Miscellaneous",IDC_STATIC,124,7,105,71
+    CONTROL         "Minimize on close",IDC_GENERAL_MINIMIZEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,41,95,10
+END
+
+IDD_PREFERENCES_FILEASSOC DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "File Associations",IDC_STATIC,7,7,221,162
+    LISTBOX         IDC_FILEASSOC_LIST,14,19,151,139,LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Deselect All",IDC_FILEASSOC_DESELECTALL,171,35,50,14
+    PUSHBUTTON      "Select &All",IDC_FILEASSOC_SELECTALL,171,19,50,14
+    PUSHBUTTON      "Associate &Now",IDC_FILEASSOC_ASSOCNOW,171,133,50,14
+    PUSHBUTTON      "&Reset",1106,171,117,50,14
+    CONTROL         "Open",IDC_FILEASSOC_TYPE_OPEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,59,50,8
+    CONTROL         "Play",IDC_FILEASSOC_TYPE_PLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,69,50,8
+    CONTROL         "Queue",IDC_FILEASSOC_TYPE_QUEUE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,78,50,8
+    LTEXT           "Menu Items:",IDC_STATIC,171,50,50,8
+    LTEXT           "Default:",IDC_STATIC,171,89,50,8
+    COMBOBOX        IDC_FILEASSOC_TYPEDEFAULT,171,99,50,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PREFERENCES_PLUGINS DIALOGEX 0, 0, 235, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "General Plugins",IDC_STATIC,7,7,221,162
+    PUSHBUTTON      "&Configure...",IDC_PLUGINS_CONFIGURE,171,149,50,14,WS_DISABLED
+    PUSHBUTTON      "&About...",IDC_PLUGINS_ABOUT,119,149,50,14,WS_DISABLED
+    CONTROL         "",IDC_PLUGINS_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,14,19,207,127
+    PUSHBUTTON      "&Enable All",IDC_PLUGINS_ENABLEALL,14,149,50,14
+    PUSHBUTTON      "&Disable All",IDC_PLUGINS_DISABLEALL,67,149,50,14
+END
+
+IDD_PREFERENCES_FORMATTING DIALOGEX 0, 0, 236, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Formatting",-1,7,7,222,162
+    LTEXT           "Window title format:",-1,12,22,100,8
+    COMBOBOX        IDC_FORMATTING_WINDOWTITLEFORMAT,12,30,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Help on tokens",IDC_FORMATTING_FORMATSTRING_HELP,122,149,100,11
+    LTEXT           "Default plugin output format:",-1,12,51,100,8
+    COMBOBOX        IDC_FORMATTING_PLUGINFORMAT,12,59,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "History and Future list format:",-1,12,81,100,8
+    COMBOBOX        IDC_FORMATTING_LISTFORMAT,12,90,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_LOGVIEW DIALOGEX 0, 0, 292, 272
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_LOGVIEW_EDIT,7,7,278,231,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+    PUSHBUTTON      "Clear",IDC_LOGVIEW_CLEAR,235,249,50,14
+    CONTROL         "Enable Logging",IDC_LOGVIEW_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,251,64,10
+END
+/*
+IDD_RADIOSOURCEVIEW DIALOGEX 0, 0, 376, 264
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LISTBOX         IDC_RADIOSOURCE_LIST,7,7,362,230,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Tune In",IDC_RADIOSOURCE_TUNEIN,319,243,50,14
+    PUSHBUTTON      "Refresh",IDC_RADIOSOURCE_REFRESH,7,243,50,14
+END
+*/
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_SOURCESELECTOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 389
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 279
+    END
+
+    IDD_PLAYLISTSOURCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 276
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 168
+    END
+
+    IDD_PREFERENCES_AUDIO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        VERTGUIDE, 13
+        VERTGUIDE, 222
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
+
+    IDD_PREFERENCES_MEDIALIBRARY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 14
+        VERTGUIDE, 59
+        VERTGUIDE, 104
+        VERTGUIDE, 131
+        VERTGUIDE, 176
+        VERTGUIDE, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 26
+        HORZGUIDE, 102
+        HORZGUIDE, 127
+    END
+
+    IDD_ALBUMARTISTVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 306
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 298
+        HORZGUIDE, 33
+        HORZGUIDE, 110
+    END
+
+    IDD_PREFERENCES_COREAUDIO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 14
+        VERTGUIDE, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 19
+        HORZGUIDE, 137
+    END
+
+    IDD_CDAUDIOSOURCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        VERTGUIDE, 20
+        VERTGUIDE, 371
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 255
+    END
+
+    IDD_PREFERENCES_IMPORTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
+
+    IDD_PREFERENCES_VISUALS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 14
+        VERTGUIDE, 117
+        VERTGUIDE, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 42
+    END
+
+    IDD_PREFERENCES_GENERAL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        VERTGUIDE, 12
+        VERTGUIDE, 107
+        VERTGUIDE, 112
+        VERTGUIDE, 124
+        VERTGUIDE, 130
+        VERTGUIDE, 222
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 78
+        HORZGUIDE, 84
+    END
+
+    IDD_PREFERENCES_FILEASSOC, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 14
+        VERTGUIDE, 165
+        VERTGUIDE, 171
+        VERTGUIDE, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 19
+        HORZGUIDE, 147
+    END
+
+    IDD_PREFERENCES_PLUGINS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 14
+        VERTGUIDE, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+        HORZGUIDE, 19
+        HORZGUIDE, 156
+    END
+
+    IDD_PREFERENCES_FORMATTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        VERTGUIDE, 12
+        VERTGUIDE, 112
+        VERTGUIDE, 122
+        VERTGUIDE, 222
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
+
+    IDD_LOGVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 285
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 265
+        HORZGUIDE, 256
+    END
+/*
+    IDD_RADIOSOURCEVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 369
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 257
+    END
+	*/
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ADDOTHER DIALOGEX 0, 0, 275, 45
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Other"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Add",IDC_ADDOTHER_ADD,218,24,50,14
+    EDITTEXT        IDC_ADDOTHER_EDIT,7,7,261,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Cancel",IDC_ADDOTHER_CANCEL,165,24,50,14
+END
+
+IDD_ADDINGFILES DIALOGEX 0, 0, 247, 52
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION
+CAPTION "Adding Files..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CTEXT           "Adding files, please wait...",IDC_STATIC,7,6,233,12
+    CONTROL         "",IDC_ADDINGFILES_PROGRESS,"msctls_progress32",WS_BORDER | 0x1,7,17,233,12
+    RTEXT           "",IDC_ADDINGFILES_COUNT,7,38,233,8
+END
+
+IDD_ALBUMFILTER DIALOGEX 0, 0, 340, 156
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU | WS_THICKFRAME
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LISTBOX         IDD_FILTERSELECTOR,2,17,336,137,LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | LBS_NODATA | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILTER_ARTIST,2,2,336,152,CBS_DROPDOWNLIST | CBS_SORT | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITOR_SONG DIALOGEX 0, 0, 272, 153
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "of",IDC_STATIC,117,70,8,8
+    EDITTEXT        IDC_TITLE_EDIT,84,7,181,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_ARTIST_COMBO,84,27,181,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_TRACKNO_EDIT,84,67,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TRACKMAX_EDIT,132,67,25,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_ALBUM_COMBO,84,47,181,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_YEAR_EDIT,84,88,25,14,ES_AUTOHSCROLL
+    CONTROL         "Track Title",IDC_TRKTITLECHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,23,9,49,10
+    CONTROL         "Artist",IDC_ARTISTCHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,39,28,33,10
+    CONTROL         "Album Name",IDC_ALBUMNAMECHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,17,49,55,10
+    CONTROL         "Track Number",IDC_TRACKNUMCHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,13,68,60,10
+    CONTROL         "Track Year",IDC_TRACKYEARCHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,23,90,50,10
+END
+
+IDD_EDITOR_FILE DIALOGEX 0, 0, 213, 153
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "<time goes here>",IDC_PLAYTIME_TEXT,62,8,59,8
+    RTEXT           "Time",IDC_STATIC,36,8,16,8
+    LTEXT           "Sample Rate",IDC_STATIC,11,23,41,8
+    LTEXT           "Channels",IDC_STATIC,22,38,30,8
+    LTEXT           "Bit Rate",IDC_STATIC,26,54,26,8
+    LTEXT           "<sample rate goes here>",IDC_SAMPLERATE_TEXT,62,23,83,8
+    LTEXT           "<channels goes here>",IDC_CHANNELS_TEXT,62,38,74,8
+    LTEXT           "<bit rate goes here>",IDC_BITRATE_TEXT,62,54,69,8
+END
+
+IDD_EDITOR_MISC DIALOGEX 0, 0, 241, 153
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_GENRE_COMBO,63,7,171,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Genre",IDC_GENRECHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,16,8,35,10
+    CONTROL         "Rating",IDC_RATINGCHK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,14,26,37,10
+END
+
+IDD_PLAYLISTVIEW_VIEWOPTIONS DIALOGEX 0, 0, 175, 222
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Playlist View Options"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,118,201,50,14
+    CONTROL         "",IDC_PLAYLISTVIEWOPTIONS_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,161,190
+END
+
+IDD_BUFFERING DIALOGEX 0, 0, 263, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Connection Status"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_BUFFERING_INFO,7,7,249,112,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "",IDC_BUFFERING_PROGRESS,"msctls_progress32",WS_BORDER,7,122,249,14
+    PUSHBUTTON      "Cancel",IDC_BUFFERING_CANCEL,206,140,50,14
+END
+
+IDD_SAVINGLIBRARY DIALOGEX 0, 0, 233, 38
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CTEXT           "Saving Media Library, Please be patient...",IDC_STATIC,7,7,219,8
+    CONTROL         "",IDC_SAVINGLIBRARY_PROGRESS,"msctls_progress32",WS_BORDER,7,18,219,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ADDOTHER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 268
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 38
+    END
+
+    IDD_ADDINGFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 240
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 38
+    END
+
+    IDD_ALBUMFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 338
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_EDITOR_SONG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 265
+        VERTGUIDE, 72
+        VERTGUIDE, 84
+        VERTGUIDE, 117
+        VERTGUIDE, 132
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 146
+    END
+
+    IDD_EDITOR_FILE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 206
+        VERTGUIDE, 52
+        VERTGUIDE, 62
+        VERTGUIDE, 94
+        VERTGUIDE, 110
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 146
+    END
+
+    IDD_EDITOR_MISC, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        VERTGUIDE, 51
+        VERTGUIDE, 63
+        VERTGUIDE, 94
+        VERTGUIDE, 110
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 146
+    END
+
+    IDD_PLAYLISTVIEW_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 168
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 215
+    END
+
+    IDD_BUFFERING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 256
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_SAVINGLIBRARY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 226
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 31
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_TUNIAC_MENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Import &Files...\tCtrl+I",    40004
+        MENUITEM "Import &Directory...",        40005
+        MENUITEM "Import &Stream...",           ID_FILE_ADDOTHER
+        MENUITEM "&ForceSave MediaLibrary",     ID_FILE_FORCESAVEMEDIALIBRARY
+        MENUITEM SEPARATOR
+        POPUP "&New Playlist"
+        BEGIN
+            MENUITEM "Normal Playlist",             40002
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Export &Playlist...",         ID_FILE_EXPORTPLAYLIST
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       40001
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "Edit Track &Info\tAlt+I",     ID_EDIT_EDITFILEINFORMATION
+        MENUITEM "Show &Currently Playing\tCtrl+L", ID_EDIT_SHOWCURRENTLYPLAYINGTRACK
+        MENUITEM "View &Options",               ID_EDIT_SHOWVIEWOPTIONS
+        MENUITEM SEPARATOR
+        MENUITEM "Always On &Top",              ID_EDIT_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "&Show Preferences\tCtrl+P",   ID_EDIT_PREFERENCES
+    END
+    POPUP "&Playback"
+    BEGIN
+        MENUITEM "&Play / Pause\tCtrl+Spacebar", 40017
+        MENUITEM "S&oft Pause\tCtrl+Shift+Spacebar", ID_PLAYBACK_SOFTPAUSE
+        MENUITEM "&Next\tCtrl+Right Arrow",     ID_PLAYBACK_NEXT
+        MENUITEM "Random N&ext\tCtrl+Shift+Right Arrow", ID_PLAYBACK_RANDOMNEXT
+        MENUITEM "Pr&evious\tCtrl+Left Arrow",  ID_PLAYBACK_REPEATMODE
+        MENUITEM SEPARATOR
+        MENUITEM "&Shuffle Play\tCtrl+S",       ID_PLAYBACK_SHUFFLEPLAY
+        POPUP "&Repeat"
+        BEGIN
+            MENUITEM "&Off",                        ID_REPEAT_OFF
+            MENUITEM "One &Track",                  ID_REPEAT_ONETRACK
+            MENUITEM "&All Tracks",                 ID_REPEAT_ALLTRACKS
+            MENUITEM "All &Queued",                 ID_REPEAT_ALLQUEUED
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Clear Queue",                ID_PLAYBACK_CLEARQUEUE
+        MENUITEM "Clear Scheduled Pause",       ID_PLAYBACK_CLEARPAUSEAT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Home",                        40008
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Tuniac &Help...",             ID_HELP_TUNIACHELP
+        MENUITEM "Check For &Updates...",       ID_HELP_CHECKFORUPDATES
+        MENUITEM SEPARATOR
+        MENUITEM "&About Tuniac...",            40009
+    END
+END
+
+IDR_VISMENU MENU 
+BEGIN
+    POPUP "_HOLDER_"
+    BEGIN
+        POPUP "Plugin"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM "FullScreen",                  ID_VIS_FULLSCREEN
+        MENUITEM SEPARATOR
+        MENUITEM "Configure...",                ID_VIS_CONFIGURE
+        MENUITEM "About...",                    ID_VIS_ABOUT
+    END
+END
+
+IDR_TRAYMENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "&Show",                       ID_APP_SHOW
+        MENUITEM SEPARATOR
+        MENUITEM "S&huffle Play",               40026
+        POPUP "&Repeat"
+        BEGIN
+            MENUITEM "&Off",                        40028
+            MENUITEM "One &Track",                  40030
+            MENUITEM "&All Tracks",                 40031
+            MENUITEM "All &Queued",                 ID_REPEAT_ALLQUEUED
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Pr&evious",                   ID_PLAYBACK_PREVIOUS
+        MENUITEM "&Next",                       ID_PLAYBACK_NEXT
+        MENUITEM "S&oft Pause",                 ID_PLAYBACK_SOFTPAUSE
+        MENUITEM "&Play / Pause",               ID_PLAYBACK_PLAYPAUSE
+        MENUITEM SEPARATOR
+        POPUP "Playlists"
+        BEGIN
+            MENUITEM "Media Library",               ID_PLAYLISTS_MEDIALIBRARY
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+END
+
+IDR_PLAYLISTITEM_MENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "&Play",                       ID_PLAY
+        MENUITEM "Play &next",                  ID_PLAYNEXT
+        MENUITEM "&Queue",                      ID_QUEUE
+        MENUITEM "Pause &here",                 ID_PAUSEHERE
+        MENUITEM SEPARATOR
+        MENUITEM "To &new playlist",            ID_TONEWPLAYLIST
+        MENUITEM "&Filter by field",            ID_FILTERBYFEILD
+        MENUITEM "Q&ueue by field",             ID_QUEUEBYFIELD
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     ID_REMOVE
+        MENUITEM SEPARATOR
+        MENUITEM "Show File...",                40148
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TUNIAC              ICON                      ".\\icons\\tuniac.ico"
+IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON          ".\\default-theme\\playlist-medialibrary.ico"
+IDI_THEMEICON_PLAYLIST_STANDARD ICON              ".\\default-theme\\playlist-standard.ico"
+IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
+IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
+IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_ADDARROW            CURSOR                  ".\\cursors\\addarrow.cur"
+IDC_NEWPLAYLISTARROW    CURSOR                  ".\\cursors\\newplaylistcursor.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINWINDOWACCEL ACCELERATORS 
+BEGIN
+    "I",            ID_EDIT_EDITFILEINFORMATION, VIRTKEY, ALT, NOINVERT
+    "P",            ID_EDIT_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
+    "L",            ID_EDIT_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_EDIT_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_FILE_ADDFILES,       VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_PLAYBACK_NEXT,       VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_PLAYBACK_PLAYPAUSE,  VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_PLAYBACK_PREVIOUS,   VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_PLAYBACK_SOFTPAUSE,  VIRTKEY, SHIFT, CONTROL, NOINVERT
+    "S",            ID_PLAYBACK_SHUFFLEPLAY, VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_EDITINFO            BITMAP                  "images\\editinfo.bmp"
+IDB_NEXT                BITMAP                  "images\\next.bmp"
+IDB_PAUSE               BITMAP                  "images\\pause.bmp"
+IDB_PLAY                BITMAP                  "images\\play.bmp"
+IDB_PREVIOUS            BITMAP                  "images\\previous.bmp"
+IDB_REPEATALL           BITMAP                  "images\\repeatall.bmp"
+IDB_REPEATNONE          BITMAP                  "images\\repeatnone.bmp"
+IDB_REPEATONE           BITMAP                  "images\\repeatone.bmp"
+IDB_SHUFFLEOFF          BITMAP                  "images\\shuffleoff.bmp"
+IDB_SHUFFLEON           BITMAP                  "images\\shuffleon.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "Tuniac.manifest"
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (New Zealand) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENZ)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_NZ
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PREFERENCES DIALOGEX 0, 0, 328, 194
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Tuniac Preferences"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PREFERENCES_TREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | TVS_TRACKSELECT | TVS_NOSCROLL | WS_BORDER | WS_TABSTOP,7,7,85,180
+    DEFPUSHBUTTON   "OK",IDC_OK,270,173,51,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PREFERENCES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 321
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 187
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_SOURCESELECT_MENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "&Play",                       ID_PLAYPLAYLIST
+        MENUITEM SEPARATOR
+        MENUITEM "&Rename",                     ID_RENAME
+        MENUITEM "R&emove",                     ID_REMOVE
+        MENUITEM SEPARATOR
+        MENUITEM "Remove &Duplicates",          ID_REMOVEDUPLICATES
+        MENUITEM "E&xport...",                  ID_EXPORT
+    END
+END
+
+IDR_FILTERBYFIELD_MENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "Artist, Album && Title",      ID_FILTERBY_NORMAL
+        MENUITEM SEPARATOR
+        MENUITEM "Artist",                      ID_FILTERBY_ARTIST
+        MENUITEM "Title",                       ID_FILTERBY_TITLE
+        MENUITEM "Album",                       ID_FILTERBY_ALBUM
+        MENUITEM "Genre",                       ID_FILTERBY_GENRE
+        MENUITEM "Year",                        ID_FILTERBY_YEAR
+        MENUITEM "Comment",                     ID_FILTERBY_COMMENT
+        MENUITEM SEPARATOR
+        MENUITEM "URL",                         ID_FILTERBY_URL
+        MENUITEM "Filename",                    ID_FILTERBY_FILENAME
+        MENUITEM "Extension",                   ID_FILTERBY_EXTENSION
+    END
+END
+
+IDR_SOURCESELECT_DRAGMENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "&Copy To",                    ID_COPYTO
+        MENUITEM "&Merge Into",                 ID_MERGEINTO
+        MENUITEM "&Remove From",                ID_REMOVEFROM
+    END
+END
+
+IDR_PLAYLISTHEADER_MENU MENU 
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "&Filter by...",               40141
+        MENUITEM "&Options...",                 ID_EDIT_SHOWVIEWOPTIONS
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+//IDI_THEMEICON_PLAYLIST_RADIO ICON                    "default-theme\\playlist-radio.ico"
+#endif    // English (New Zealand) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

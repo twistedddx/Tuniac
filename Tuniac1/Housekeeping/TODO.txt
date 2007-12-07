@@ -1,0 +1,92 @@
+Playlist/Media library
+======================
+
+- document import/export interfaces
+	and do plugin for xpl (xml) playlists
+
+- implement ID_FILE_NEWPLAYLIST_SMARTPLAYLIST
+	basically a filter preset for the entire media library
+
+- should be able to select files right click and do "update" - to refresh via info manager
+
+- skip streams in normal play order - since they never end
+	make so they can only be played by having the user manually select them
+
+
+Misc
+====
+
+- edit track info dialog - change dialog title, file data from track (doesn't show anything atm), disable on empty playlist. see EditTrackInfo() in PlaylistSourceView.cpp
+
+- volume control should have preference for what volume it changes (system/wave out/tuniac)
+
+- new icons for filetypes:
+
+	not bundled with dlls
+	in own directory, so user can replace them
+	format: /icons/tuniac.ogg.ico etc
+	- can't be done easily? iconhander dlls are a bitch
+
+- preferences for what clicking on trayicon should do (eg, single click: play/pause, or show window)
+
+- sorting by play count isn't implemented. needs to be fixed so that other on-the-fly generated fields not related to the LibraryEntry itself can be sorted by
+
+Audio Chain / Plugins
+=====================
+
+- add dsp plugin interface?
+
+- WAV input/output?
+
+- document plugin interface for a basic SDK
+
+- add option for volume control to modify system/wave out/tuniac levels
+
+- code in stream-specific volume settings
+
+	will allow for tuniac-level volume control, and replay-gain later on
+
+- streaming - its fucked?
+
+	can't quit while openning a stream (gets stuck in creating the source, which makes its onn thread, before Tuniac knows - so can't exit thread)
+	pausing and resuming - get timeshifting? nice "feature"/undocumented creature
+	needs to do something with the metadata
+	reset current playtime when metadata changes to a new song?
+
+
+General Plugins
+===============
+
+- Generic interface to save plugin configs - save as stream?
+
+	All plugins need this
+	Needs to pass through Tuniac rather than let the plugin handle it (incase -dontsaveprefs is set)
+
+- Per-plugin config stuff (eg, to toggle extended mode for export plugins)
+
+	Only import/export plugins need this added?
+
+
+
+Visuals
+=======
+
+- document visual plugin interface
+
+- code sample visual. skeleton there, make it do something
+
+<vaguely> can you make it double click to exit fullscreen
+
+
+CD Audio
+========
+
+-crossfade flag
+
+
+Localization
+============
+
+- design basic structure for XML based anguage files
+
+- seperate language class - should work like s2

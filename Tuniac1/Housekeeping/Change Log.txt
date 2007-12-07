@@ -1,0 +1,140 @@
+July 8, 2005
+------------
+added: tuniac will now send plugins a notice of info change when a stream updates its title
+fixed: return of import/export managers
+fixed: crossfade
+fixed: crash in sorting
+
+July 7, 2005
+------------
+fixed: future list issues
+fixed: shuffle now has a better algorithm
+changed: new layout
+
+June 21, 2005
+-------------
+added: multichannel support in audiooutput
+added: multichannel decoding in ogg plugin
+added: minimize on close
+fixed: window title on timer rather then messages
+fixed: tuniac silently skips a track if it cant be played
+
+June 14, 2005
+-------------
+added: right click menu for playlist column headers, instead of going directly to options
+added: filter by drop down list
+
+June 13, 2005
+-------------
+#fixed: saving ML progress dialog not displaying anything
+
+June 12, 2005
+-------------
+#changed: reorganising preferences more
+#fixed: moving active playlist lost track of current entry
+#fixed: losing track or removing active track when removing duplicates of active playlist
+#fixed: buggy detection of doubleclick on source selector splitter, vs moving mouse
+
+June 11, 2005
+-------------
+#added: accelerator key to open preferences dialog (Ctrl+P)
+#fixed: title for .pls stream playlists not getting fetched right
+#changed: redesigned layout of preferences dialog to be easier to use and less cluttered
+#changed: "Tuniac Help..." will launch the online vrsion of the guide if the local version isn't found
+
+June 10, 2005
+-------------
+#added: -wiprefileassoc command line arg to clean file associations (-wipeprefs doesn't do that now)
+#added: new function in helper api for audio decoders - to allow updating of entry title during playing
+#fixed: streaming shoutcast streams now update the track title while playing (assuming the server supports metadata streaming)
+#fixed: adding songs and playing them via command line wouldn't find the right entries if the ML was filtered
+#fixed: "&" not displaying correctly in future/history lists
+#fixed: sped up saving of ML
+#changed: media library save format - now saves history (new version required)
+#changed: playlist library save format - now saves text filters (new version required)
+#changed: force save medialibrary shows the number of standard playlists saved
+
+June 9, 2005
+------------
+#added: remembering of which general plugins are enabled/disabled (defaults to disabled)
+#added: general interface for general plugins to set/get their own reg settings
+#added: preference for format of future/history lists
+#fixed: prediction of future tracks. again.
+#fixed: adding then playing via command line - wouldn't get the right entry if the medialibrary was filtered
+#changed: plugins are now completely unloaded when disabled - freeing up memory (plugins can also be recompiled without closing Tuniac)
+
+June 8, 2005
+------------
+#added: theme support, using icons (with selector in prefs)
+#added: page in preferences for plugin configuring
+#added: softpause to tray menu
+#fixed: plugins should *never* crash on incompatable versions now. really.
+#fixed: future list not having any items on startup
+#changed: play control button sizes are consistant now
+#changed: plugin interface - better version checking (and updated all plugins)
+#changed: import/export plugin interfaces - better version checking (and updated all plugins)
+#changed: infomanager/audiosource plugin interfaces - better version checking (and updated all plugins)
+
+[June 5, 2005]
+--------------
+#added: function in api for plugins to natigate forward/backward in the play order
+#added: clickable items in popup notify plugin (and middleclick to go back)
+#added: hover effects in popup notify plugin
+#added: exporting entire playlist, via right click in source selector
+#added: removing duplicates in playlists, via right click in source selector
+#added: command line switch -nofocus
+#fixed: misc bugs in mouse-over detection in popup notify plugin
+#fixed: "&" character not displaying correctly in playlists tray menu
+#fixed: playlist logic bug introduced yesterday, when playlist is filtered
+#changed: random next now toggles to normal play order to get the next track, if shuffle is already enabled
+
+[June 4, 2005]
+--------------
+#added: user defined icons for play buttons (see /skins/ folder)
+#added: proper implementation of export plugin interface
+#added: playlist exporting plugins - m3u and pls (see main menu -> file -> export playlist)
+#added: future list (right click next button) and preference to change list size
+#added: popup notification plugin (delete /plugins/PopupNotify_plugin.dll to disable)
+#added: hotkey WIN NumPad+ to NowPlayingTxt plugin to copy current song info to clipboard
+#added: command line switch -wipeprefs to delete all preferences/file associations from the registry and use default settings
+#fixed: bug with saving the active playlist - could be 1 off sometimes
+#fixed: several crashes to do with the algorithm used for the window title formatting
+#fixed: messy next track checking
+#fixed: algorithm used to get the next track, used by plugins
+#fixed: visable playlist title no longer displays the "&" character as an underscore
+#fixed: random bugs to do with playlist logic and queues
+#fixed: displaying the right track when playing a queued/history/future item
+#fixed: several other miscellaneous bugs
+
+[Before June 4, 2005]
+---------------------
+#added: smart sorting, so "the" and "a" will be ignored on sorting if they are the first word
+#added: clearing queues and scheduled pause added to playback menu options
+#added: repeat all queued added to repeat options in the playback menu options
+#added: reverse filtering
+#added: playlist ordering
+#added: you can copy a playlist into another, merge into another, and remove all files from one playlist that are already in another playlist
+#added: m3u files can be imported
+#added: remember which playlist and which song was active when you closed tuniac
+#added: right click option for Media Library
+#added: middle clicking on the tray icon will toggle play/pause
+#added: when loading a stream, a screen will popup with the buffering status
+#added: shoutcast pls file recognition
+#added: help files
+#added: general plugin interface added (nowplaying/msnsonginfo, delete them if you dont want them)
+#added: queue files with the right click popup menu when standing on a song
+#added: play selected function added
+#added: own playlists work now
+#added: random next function, also see the shortcuts and commandline page, using it will make the previous song function not usable for one song, unless in shuffle mode, where it will just behave as the next function would
+#fixed: fixed dodgy volume
+#fixed: ape decoder (16 and 24 bit)
+#fixed: if you sort by year, the secondary sort is now by album
+#fixed: user can no longer filter by item image field (1st field)
+#fixed: playlist view popup screen now closes when using the "x" button
+#fixed: tuniac help can be accessed via the menubar
+#fixed: the shortcuts for editing song information and importing songs work
+#fixed: esc closes popup screens, like the preferences screen
+
+[Before April 12, 2005]
+-----------------------
+#Changes before this date were unrecorded.
