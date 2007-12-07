@@ -1,0 +1,23 @@
+@U = URL
+@F = Filename
+@A = Artist
+@L = Album
+@T = Title
+@# = Track
+@G = Genre
+@Y = Year
+@I = Time
+@K = Kind
+@S = Size
+@D = Date Added
+@E = File Creation Date
+@P = Last Played Date
+@Z = Play Count
+@R = Rating
+@B = Bitrate
+@C = Comment
+@S = Sample Rate
+@N = Channels
+@X = Extension
+
+@! = Current play state

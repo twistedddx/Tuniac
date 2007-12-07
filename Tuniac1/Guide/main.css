@@ -1,0 +1,219 @@
+body {
+	background-color: rgb(220, 240, 255);
+	background-image: url(Images/Background.jpg);
+}
+
+h1  { 
+	color: rgb(0,0,0);
+	text-align: center;
+	margin: 0;
+	height: 100px;
+	line-height: 100px;
+}
+
+h2 {
+	display: block;
+	margin: 0px;
+	padding: 5px;
+	color: rgb(10,125,220);
+	background-color: rgb(220, 240, 255);
+}
+
+h3 {
+	margin: 0px;
+	padding: 5px;
+	color: rgb(0,0,0);
+}
+
+h4 {
+	margin: 0px;
+	padding: 5px;
+	color: rgb(0,0,0);
+}
+
+h5 {
+	margin: 0px;
+	padding: 5px;
+	color: rgb(0,0,0);
+}
+
+#main ul {
+	list-style-position: outside;
+	list-style-type: circle;
+	margin-left: 25px;
+}
+
+img {
+	border: none;
+}
+
+a {
+	color: rgb(10,125,220);
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:link { 
+	
+}
+
+a:visited { 
+	
+}
+
+a:hover { 
+	color: rgb(255,255,255);
+	background-color: rgb(10,125,220);
+}
+
+/*always keep link things in this order, otherwise some will not work*/
+a:active { 
+	
+}
+
+#menuheader a  {
+	color: rgb(255, 255, 255);
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#menuheader a:link { 
+	
+}
+
+#menuheader a:visited { 
+	
+}
+
+#menuheader a:hover { 
+	color: rgb(10,125,220);
+	background-color: rgb(255, 255, 255);
+}
+
+/*always keep link things in this order, otherwise some will not work*/
+#menuheader a:active { 
+	
+}
+
+#submenuheader a  {
+	color: rgb(255, 255, 255);
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#submenuheader a:link { 
+	
+}
+
+#submenuheader a:visited { 
+	
+}
+
+#submenuheader a:hover {
+	color: #39f;
+	background-color: rgb(255, 255, 255);
+}
+
+/*always keep link things in this order, otherwise some will not work*/
+#submenuheader a:active { 
+	
+}
+
+
+p {
+	margin: 0px;
+	padding: 5px;
+}
+
+#container {
+	margin-left: auto;
+	margin-right: auto;
+	width: 800px;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	padding: 0px;
+	background-color: rgb(255, 255, 255);
+	border: solid 2px rgb(10,125,220);
+}
+
+#header {
+	background-image: url(Images/Header.jpg);
+	background-color: rgb(255, 255, 255);
+	height: 100px;
+}
+
+#menuheader   {
+	background-color: rgb(10,125,220); 
+	text-align: center;
+}
+
+#menuheader ul {
+	list-style: none;
+	margin: 0px;
+	padding: 2px; 
+}
+
+#menuheader ul li {
+	display: inline;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#submenuheader  {
+	background-color: #39f;
+	text-align: center;
+}
+
+#submenuheader ul {
+	list-style: none;
+	margin: 0px;
+	padding: 2px; 
+}
+
+#submenuheader ul li {
+	display: inline;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#main  {
+	background-color: rgb(255,255,255);
+	background-image: url(Images/MainBackground.jpg);
+	background-repeat: repeat-y;
+}
+
+#footer {
+	clear: both;
+	background-color: rgb(10,125,220);
+}
+
+#footer p {
+	text-align: center;
+	color: rgb(255, 255, 255);
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#footer img {
+	vertical-align: middle;
+}
+
+ul {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 5px;
+}
+
+/*table stuff*/
+table {
+	display: table;
+	padding-left: 5px;
+}
+
+table h2 {
+	padding-left: 0px;
+}
+
+table h3 {
+	padding-left: 0px;
+}

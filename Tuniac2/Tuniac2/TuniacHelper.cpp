@@ -1,0 +1,121 @@
+#include "stdafx.h"
+#include ".\tuniachelper.h"
+
+CTuniacHelper::CTuniacHelper(void)
+{
+}
+
+CTuniacHelper::~CTuniacHelper(void)
+{
+}
+
+bool CTuniacHelper::GetTuniacRunFolder(String & toHere)
+{
+	TCHAR				szURL[MAX_PATH];
+
+	if(GetModuleFileName(NULL, szURL, 512))
+	{
+		PathRemoveFileSpec(szURL);
+		PathAddBackslash(szURL);
+
+		toHere.clear();
+		toHere = szURL;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool CTuniacHelper::GetTuniacLibraryFilename(String & toHere)
+{
+// TODO: eventually in debug mode keep the media library in the same folder as tuniac, in release keep it in the users home dir!
+
+	if(GetTuniacRunFolder(toHere))
+	{
+		toHere += TEXT("TuniacMediaLibrary.db");
+		return true;
+	}
+
+	return false;
+}
+
+bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool recurse)
+{
+	WIN32_FIND_DATA		w32fd;
+	HANDLE				hFind;
+
+	String searchPath = folder;
+	if(!searchPath.Right(1).Equals(String("\\")))
+		searchPath += "\\";
+
+	searchPath += "*.*";
+
+	hFind = FindFirstFile( searchPath, &w32fd); 
+	if(hFind != INVALID_HANDLE_VALUE) 
+	{
+		do
+		{
+			String filename = w32fd.cFileName;
+
+			if( (filename.Equals(String("."))) || (filename.Equals(String(".."))) )
+				continue;
+
+			String filePath = folder;
+
+			if(!filePath.Right(1).Equals(String("\\")))
+				filePath += "\\";
+
+			filePath += w32fd.cFileName;
+
+			if(GetFileAttributes(filePath) & FILE_ATTRIBUTE_DIRECTORY)
+			{
+				if(recurse)
+					GetFolderContents(	filePath, tohere, recurse );
+			}
+			else
+			{
+				tohere.push_back(filePath);
+			}
+		} while(FindNextFile(hFind, &w32fd));
+
+		FindClose(hFind); 
+	}
+
+
+	return true;
+}
+
+bool CTuniacHelper::GetAllFilesInFolderWithExtension(String folder, String Extension, StringArray & toHere)
+{
+	StringArray tempArray;
+
+	if(GetFolderContents(folder, tempArray, false))
+	{
+		toHere.clear();
+
+		for(unsigned int i=0; i<tempArray.size(); i++)
+		{
+			if(tempArray.at(i).Right((int)Extension.length()).ToUpper() == Extension.ToUpper())
+			{
+				toHere.push_back(tempArray.at(i));
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CTuniacHelper::FormatSystemTime(String & toHere, SYSTEMTIME & st)
+{
+//    sprintf(zBuf, "%04d-%02d-%02d %02d:%02d:%02d",x.Y, x.M, x.D, x.h, x.m, (int)(x.s));
+
+
+	toHere.erase();
+	toHere.Format(TEXT("%04d-%02d-%02d %02d:%02d:%02d"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+	return true;
+}

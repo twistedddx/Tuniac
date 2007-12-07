@@ -1,0 +1,15 @@
+-play
+-pause
+-togglepause
+-stop
+-softpause
+-next
+-randomnext
+-prev
+-exit
+-restore
+-minimize
+-nofocus
+-dontsaveprefs
+-wipeprefs
+-dontsaveml

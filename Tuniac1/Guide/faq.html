@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1"/>
+	<meta name="keywords" content="Tuniac, media, player, guide, frequently, asked, questions, faq"/>
+	<meta name="description" content="Tuniac media player guide - Frequently asked questions"/>
+	<title>Tuniac Guide - Frequently Asked Questions</title>
+	<link href="main.css" rel="stylesheet" type="text/css" media="all"/>
+</head>
+
+<body>
+		<div id="container">
+			<div id="header">
+				<h1>Tuniac Guide - Frequently Asked Questions</h1>
+			</div>
+			<div id="menuheader">
+				<ul>
+					<li><a href="index.html">Tuniac info</a></li>
+					<li><a href="mainscreen.html">Main screen</a></li>
+					<li><a href="menu.html">Menu options</a></li>
+					<li><a href="shortcuts.html">Shortcuts</a></li>
+					<li><a href="commandline.html">Commandline options</a></li>				
+					<li><a href="faq.html">Faq</a></li>
+					<li><a href="glossary.html">Glossary</a></li>
+				</ul>
+			</div>
+			<div id="main">
+				<h2>Help</h2>
+				<h3>Where did the changelog and todo list go?</h3>
+				<p>These are now included in the installer and will be available in the Tuniac install directory.</p>
+				<h2>Menu bar</h2>
+				<h3>Why can't I edit song information like the option in the menu states?</h3>
+				<p>This function is not finished yet.</p>
+				<h3>Why can't I update the program via the menu?</h3>
+				<p>This function is not finished yet.</p>
+				<h2>Plugins</h2>
+				<h3>How do I disable a plugin?</h3>
+				<p>At this moment there is only one way to disable a plugin and frankly it is maybe not the best solution. You have to delete the plugin. In the install direactory of Tuniac you can find a plugins directory. In this directory all plugins are listed. Just delete the ones you don't wanna use.</p>
+				<h3>What does the now playing text plugin do?</h3>
+				<p>The now playing text plugin puts the song you're currently playing into a file which resides in the Tuniac installation folder. With this text file you can for example make an irc plugin to show your currently playing song.</p>
+				<h3>I would like to make a mirc now playing plugin, how do I achieve this?</h3>
+				<p>Use this code and replace the folder into the alias scripts of  mirc, replace the folder used here with your own install folder.<br/>
+					/tuniac {<br/>
+					  /set %this $read(C:\Documents and Settings\Athlon\Bureaublad\TuniacUnreleased\NowPlaying.txt)<br/>
+					  /me is listening to : %this<br/>
+					}</p>
+				<h2>Skinning</h2>
+				<h3>How do I make my own icons and what are the limitations?</h3>
+				<p>Icons should be in the standard ico format. All icon sizes and colour depths are supported, assuming its supported by the OS. Tuniac will pick the best fitting size, and scale that to an exact fit. Icons normally should be the following size.<br/>
+					<br/>
+					Play/Pause: 48x48<br/>
+					Previous/Next: 38x38<br/>
+					<br/>
+					Remember when designing these that you can't expect the background of the user to always be grey!</p>
+				<h3>How do I&nbsp;change the icons used for playback with my own ones?</h3>
+				<p>Icons go in the /skin/ folder and are named as follows:<br/>
+					play.ico<br/>
+					pause.ico<br/>
+					previous.ico<br/>
+					next.ico </p>
+			</div>
+			<div id="footer">
+				<p>
+					<a href="http://validator.w3.org/">
+					<img src="http://www.w3.org/Icons/valid-xhtml11"
+	          		alt="Valid XHTML 1.1!" height="31" width="88" />
+	          		</a>
+          			Copyright Tuniac Productions 2005&nbsp
+          			<a href="http://jigsaw.w3.org/css-validator/">
+          			<img src="http://jigsaw.w3.org/css-validator/images/vcss"
+          			alt="Valid CSS!" height="31" width="88" />
+          			</a>
+          		</p>
+			</div>
+		</div>
+	</body>
+</html>

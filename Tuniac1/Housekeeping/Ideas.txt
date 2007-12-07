@@ -1,0 +1,101 @@
+BASIC NEW IDEAS:
+================
+
+- preferences on what to do for single/double/right/middle click of tray icon
+	like the way QCD handles it
+	eg, play/pause, next, prev, bring to front, hide/show
+
+- automatically generating playlists based on a set of rules. 
+	ie, create a playlist for each artist, each genre, or each album of a certain artist
+	option to keep to remove existing playlists 
+	naming of playlists can use current window title code, but have presets generated on above options
+
+- preference to save current song and play state on exit
+	ie, let user decide if they want to keep playing again when they start tuniac again
+
+- different right-click menus for playlist types
+	generated on the fly, or just a resource?
+
+- new playlist type - favourites
+	automatically generated from top 5% of most played/rated songs in entire media library
+
+- hotkeys need an interface in preference
+
+
+
+#####################
+# SONG RATING FIELD #
+#####################
+
+concept
+=======
+
+- each song in the media library will have a new (intelligent) rating field (not at the playlist level)
+
+- each time a song is played, its rating is increased. this is weighted, depending on current rating value
+	eg, for high rated songs, increase y small amount; for low rated songs, increase by comparitively larger amount
+	could increase by 1/rating ?
+
+- user can manually rate a song, which will increase/decrease its ratio by 2/rating (or something more than the increase of merely playing it)
+	
+- 2 buttons: like/dislike
+	between next button and song details pane?
+	on popup new song notification, if enabled
+	option for global hotkey
+
+
+implementation
+==============
+
+- refresh after a change of rating reaches the lower-bound rating of the existing favourites list
+
+- on change of a rating:
+	
+	if song is in favs and is now lowest rated, find highest rated below new lower-bound if song were removed - replace if nessisary
+	if song is not in favs, and rating is above the lower bound rating of existing favs, replace lowest rated in favs with current song
+
+	decrease rating of all other songs by change/sqrt(n)
+
+
+
+##############################
+# PLAY PREFERED SHUFFLE TYPE #
+##############################
+
+NOTE: depends on rating system
+
+
+concept
+=======
+
+- similar to normal shuffle mode, except favourite songs are more likely to play
+
+- favourite songs are ones played most often. the list is limited in size to a certain percentage of the playtlist, as defined by the user
+
+
+
+
+options
+=======
+
+- percentage of songs to concider "prefered"
+	default 5% of playlist size
+
+- percent chance to select from prefered list over entire list
+	default 40% more-likely chance
+	ie, prefered songs will have a (100/n + p%/pn)% chance to play (also has chance to play in normal list), as opposed to 100/n% chance of normal songs
+
+menu
+====
+
+shuffle ->	disabled (default)
+			normal shuffle
+			play prefered
+
+
+
+implementation
+==============
+
+- generation of favourites list (on both media library and playlist level?) will need to be done as quickly as possible, as it may need to be refreshed regularly
+
