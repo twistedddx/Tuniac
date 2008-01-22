@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "OGGDecoderPlugin.h"
-#include "OGGInfoManager.h"
+//#include "OGGInfoManager.h"
 
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacAudioSourceVersion(void
 }
 
 
-extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
+/*extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
 {
 	IInfoManager * pInfo = new COGGInfoManager;
 
@@ -34,4 +34,4 @@ extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
 extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void)
 {
 	return ITUNIACINFOMANAGER_VERSION;
-}
+}*/
