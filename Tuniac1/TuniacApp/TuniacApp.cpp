@@ -203,6 +203,14 @@ bool CTuniacApp::Shutdown()
 
 	m_CoreAudio.Shutdown();
 
+	TCHAR				szURL[MAX_PATH];
+	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	{
+		PathAppend( szURL, TEXT("\\Tuniac") );
+
+		CreateDirectory( szURL, 0);
+	}
+
 	m_PlaylistManager.Shutdown(m_bSaveML);
 	m_MediaLibrary.Shutdown(m_bSaveML);
 
