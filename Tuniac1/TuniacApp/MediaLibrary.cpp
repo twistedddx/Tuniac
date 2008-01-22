@@ -227,6 +227,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
 			StrCpy(libraryEntry.szURL, szURL);
+
 			GetLocalTime(&libraryEntry.stDateAdded);
 
 			// extract generic info from the file (creation time/size)
@@ -250,11 +251,16 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			{
 				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
 				{
-					if(!m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
-					{
-						return false;
-					}
+					m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry);
 				}
+			}
+
+			//set filename as title if tag readers didn't find one
+			if(wcslen(libraryEntry.szTitle) == 0)
+			{
+				TCHAR	szFileTitle[128];
+				GetFileTitle(szURL, szFileTitle, 128);
+				StrCpy(libraryEntry.szTitle, szFileTitle);
 			}
 
 
