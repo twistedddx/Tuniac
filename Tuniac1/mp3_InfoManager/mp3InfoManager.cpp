@@ -68,7 +68,7 @@ bool			CID3InfoManager::CanHandle(LPTSTR szSource)
 	return false;
 }
 
-int GetField(ID3_Tag & myTag, ID3_FrameID frameID, LPTSTR szToHere, LPTSTR szDefault, unsigned long ulLength)
+int GetField(ID3_Tag & myTag, ID3_FrameID frameID, LPTSTR szToHere, unsigned long ulLength)
 {
 	ID3_Frame	*	frame = myTag.Find(frameID);
 	if(frame)
@@ -80,8 +80,6 @@ int GetField(ID3_Tag & myTag, ID3_FrameID frameID, LPTSTR szToHere, LPTSTR szDef
 
 			if(frame->GetField(ID3FN_TEXT)->Get(myBuffer, 1024))
 				MultiByteToWideChar(CP_ACP, 0, myBuffer, -1, szToHere, ulLength);
-			else
-				StrCpyN(szToHere, szDefault, ulLength);
 		}
 		/*else if(ID3TE_IS_DOUBLE_BYTE_ENC(frame->GetField(ID3FN_TEXT)->GetEncoding()))
 		{
@@ -92,22 +90,7 @@ int GetField(ID3_Tag & myTag, ID3_FrameID frameID, LPTSTR szToHere, LPTSTR szDef
 			{
 				StrCpyN(szToHere, myBuffer, ulLength);
 			}
-			else
-			{
-				StrCpy(szToHere, szDefault);
-			}
-
 		}*/
-		else
-		{
-			StrCpy(szToHere, szDefault);
-		}
-		
-	}
-	else
-	{
-		StrCpy(szToHere, szDefault);
-
 	}
 
 	return true;
@@ -121,16 +104,12 @@ bool			CID3InfoManager::GetInfo(LibraryEntry * libEnt)
     ID3_Tag myTag;
 	myTag.Link(ConvertBuffer);
 
-	// stuff from ID3Lib here
-	TCHAR	szFileTitle[256];
-	GetFileTitle(libEnt->szURL, szFileTitle, 256);
+	GetField(myTag, ID3FID_TITLE,		libEnt->szTitle,	128);
+	GetField(myTag, ID3FID_LEADARTIST,	libEnt->szArtist,	128);
+	GetField(myTag, ID3FID_ALBUM,		libEnt->szAlbum,	128);
+	GetField(myTag, ID3FID_COMMENT,		libEnt->szComment,	128);
 
-	GetField(myTag, ID3FID_TITLE,		libEnt->szTitle,	szFileTitle, 128);
-	GetField(myTag, ID3FID_LEADARTIST,	libEnt->szArtist,	TEXT(""), 128);
-	GetField(myTag, ID3FID_ALBUM,		libEnt->szAlbum,	TEXT(""), 128);
-	GetField(myTag, ID3FID_COMMENT,		libEnt->szComment,	TEXT(""), 128);
-
-	if(GetField(myTag, ID3FID_CONTENTTYPE,		libEnt->szGenre,	TEXT("(0)"), 128))
+	if(GetField(myTag, ID3FID_CONTENTTYPE,		libEnt->szGenre,	128))
 	{
 		if(libEnt->szGenre[0] == TEXT('('))
 		{
@@ -140,12 +119,12 @@ bool			CID3InfoManager::GetInfo(LibraryEntry * libEnt)
 
 	TCHAR tstr[256];
 
-	if(GetField(myTag, ID3FID_YEAR,		tstr,	TEXT("0"), 128))
+	if(GetField(myTag, ID3FID_YEAR,		tstr,	128))
 	{
 		libEnt->iYear				= _wtoi(tstr);
 	}
 
-	if(GetField(myTag, ID3FID_TRACKNUM,		tstr,	TEXT("0"), 128))
+	if(GetField(myTag, ID3FID_TRACKNUM,		tstr,	128))
 	{
 	//	LPTSTR	p;
 
