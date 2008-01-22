@@ -1,5 +1,7 @@
 Jan 22, 2008
 ------------
+-hide "filter by" dropdown box correctly on startup
+-remove blank entry in dropdown box
 -made fancy batch file for easy source archiving
 
 Jan 21, 2008
