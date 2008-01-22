@@ -55,43 +55,35 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 	GetFileTitle(libEnt->szURL, szFileTitle, 128);
 	if (bHasID3Tag || bHasAPETag)
 	{
-			TCHAR tstr[256];
-			CAPETagField* tempField = MACTag->GetTagField (APE_TAG_FIELD_TITLE);
-			if ( tempField )
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, libEnt->szTitle, 128);
+			wchar_t buffer[256];
+			int chars = 256;
+
+			if (MACTag->GetFieldString(APE_TAG_FIELD_TITLE, buffer, &chars) == 0)
+			{
+				swprintf(libEnt->szTitle, 256, L"%s", buffer);
+			}
 			else
 			{
 				StrCpy(libEnt->szTitle, szFileTitle);
 			}
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_ALBUM);
-			if(tempField)
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, libEnt->szAlbum, 128);
 
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_ARTIST);
-			if(tempField)
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, libEnt->szArtist, 128);
+			if (MACTag->GetFieldString(APE_TAG_FIELD_ALBUM, buffer, &chars) == 0)
+				swprintf(libEnt->szAlbum, 256, L"%s", buffer);
 
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_COMMENT);
-			if(tempField)
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, libEnt->szComment, 128);
+			if (MACTag->GetFieldString(APE_TAG_FIELD_ARTIST, buffer, &chars) == 0)
+				swprintf(libEnt->szArtist, 256, L"%s", buffer);
 
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_GENRE);
-			if(tempField)
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, libEnt->szGenre, 128);
+			if (MACTag->GetFieldString(APE_TAG_FIELD_COMMENT, buffer, &chars) == 0)
+				swprintf(libEnt->szComment, 256, L"%s", buffer);
 
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_YEAR);
-			if(tempField)
-			{
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, tstr, 128);
-				libEnt->iYear = _wtoi(tstr);
-			}
+			if (MACTag->GetFieldString(APE_TAG_FIELD_GENRE, buffer, &chars) == 0)
+				swprintf(libEnt->szGenre, 256, L"%s", buffer);
 
-			tempField = MACTag->GetTagField (APE_TAG_FIELD_TRACK);
-			if(tempField)
-			{
-				MultiByteToWideChar(CP_ACP, 0, tempField->GetFieldValue(), 128, tstr, 128);
-				libEnt->dwTrack[0] = _wtoi(tstr);
-			}
+			if (MACTag->GetFieldString(APE_TAG_FIELD_YEAR, buffer, &chars) == 0)
+				libEnt->iYear = _wtoi(buffer);
+
+			if (MACTag->GetFieldString(APE_TAG_FIELD_TRACK, buffer, &chars) == 0)
+				libEnt->dwTrack[0] = _wtoi(buffer);
 	}
 	else 
 	{
