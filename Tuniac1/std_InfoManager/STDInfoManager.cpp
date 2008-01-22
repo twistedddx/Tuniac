@@ -114,32 +114,13 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->iBitRate = (unsigned long)(bitrate * 1024.0);
 		libEnt->iPlaybackTime = (unsigned long)(time * 1000.0);
 
-		if(!m_File->tag()->artist().isEmpty())
-		{
-			swprintf(libEnt->szArtist, L"%S", m_File->tag()->artist().toCString(true));
-		}
-		if(!m_File->tag()->title().isEmpty())
-		{
-			swprintf(libEnt->szTitle, L"%S", m_File->tag()->title().toCString(true));
-		}
-		if(!m_File->tag()->album().isEmpty())
-		{
-			swprintf(libEnt->szAlbum, L"%S", m_File->tag()->album().toCString(true));
-		}
-		if(m_File->tag()->year())
-			libEnt->iYear = m_File->tag()->year();
-
-		if(m_File->tag()->track())
-			libEnt->dwTrack[0] = m_File->tag()->track();
-
-		if(!m_File->tag()->genre().isEmpty())
-		{
-			swprintf(libEnt->szGenre, L"%S", m_File->tag()->genre().toCString(true));
-		}
-		if(!m_File->tag()->comment().isEmpty())
-		{
-			swprintf(libEnt->szComment, L"%S", m_File->tag()->comment().toCString(true));
-		}
+		swprintf(libEnt->szTitle, L"%S", m_File->tag()->title().toCString(true));
+		swprintf(libEnt->szArtist, L"%S", m_File->tag()->artist().toCString(true));
+		swprintf(libEnt->szAlbum, L"%S", m_File->tag()->album().toCString(true));
+		libEnt->iYear = m_File->tag()->year();
+		libEnt->dwTrack[0] = m_File->tag()->track();
+		swprintf(libEnt->szGenre, L"%S", m_File->tag()->genre().toCString(true));
+		swprintf(libEnt->szComment, L"%S", m_File->tag()->comment().toCString(true));
 
 	}
 	delete m_File;
