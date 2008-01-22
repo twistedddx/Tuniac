@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "m4aAudioSourceSupplier.h"
-#include "m4aInfoManager.h"
+//#include "m4aInfoManager.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
 {
@@ -21,7 +21,7 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacAudioSourceVersion(void
 }
 
 
-extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
+/*extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
 {
 	IInfoManager * pInfo = new Cm4aInfoManager;
 
@@ -32,3 +32,4 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void
 {
 	return ITUNIACINFOMANAGER_VERSION;
 }
+*/
