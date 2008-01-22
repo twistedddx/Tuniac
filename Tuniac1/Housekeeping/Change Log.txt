@@ -1,3 +1,23 @@
+Jan 22, 2008
+------------
+-made fancy batch file for easy source archiving
+
+Jan 21, 2008
+------------
+-taglib latest svn update(adds tta)
+
+Jan 20, 2008
+------------
+-Change project over to VS2008
+-clean up project files slightly
+-add config's for nonsse, sse1, sse2(some users have older cpu's)
+-make installer scripts for changes + slight cleanup
+-add taglib based reader for flac, mp3, ogg, mp4, m4a, m4p, spx, wv, mpc(std_Infomanager); unicode, faster, better format support
+-remove original mp3, ogg and m4a tag readers
+-move library and playlist to %appdata%\Tuniac\
+-allow tuniac to add files it has decoders for(previously it allowed what it had infomanagers for)
+-tidy up ape tag reader
+
 July 8, 2005
 ------------
 added: tuniac will now send plugins a notice of info change when a stream updates its title
