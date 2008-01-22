@@ -56,17 +56,9 @@ bool			COGGInfoManager::GetInfo(LibraryEntry * libEnt)
 	TCHAR tstr[256];
 	char	*t;
 
-	TCHAR	szFileTitle[128];
-	GetFileTitle(libEnt->szURL, szFileTitle, 128);
-
 	if ((tInfo = ov_comment(&oggFile, -1))) {
 		if ((t = vorbis_comment_query(tInfo, "title", 0)))
-		{
 			swprintf(libEnt->szTitle, L"%S", t);
-		}
-		else{
-			StrCpy(libEnt->szTitle, szFileTitle);
-		}
 
 		if ((t = vorbis_comment_query(tInfo, "artist", 0)))
 			swprintf(libEnt->szArtist, L"%S", t);
@@ -85,9 +77,6 @@ bool			COGGInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		if ((t = vorbis_comment_query(tInfo, "tracknumber", 0)))
 			libEnt->dwTrack[0] = atoi(t);
-	}
-	else{
-		StrCpy(libEnt->szTitle, szFileTitle);
 	}
 
 	pInfo = ov_info(&oggFile, -1);
