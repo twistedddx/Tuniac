@@ -1,6 +1,6 @@
 Jan 22, 2008
 ------------
--TuniacApp will now set filetitle if needed(remove from tag readers), this allows a nice add of filetypes with no tagreader
+-TuniacApp will now set filetitle if needed(now removed from tag readers), this allows a nice add of filetypes with no tagreader
 -hide "filter by" dropdown box correctly on startup
 -remove blank entry in dropdown box
 -made fancy batch file for easy source archiving
