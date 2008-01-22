@@ -208,9 +208,11 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 	if(GetItemByURL(szURL))
 		return true;
 
-	for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
+	//decoders are more vital than infomanagers
+	for(unsigned long i=0; i < tuniacApp.m_CoreAudio.GetNumPlugins(); i++)
 	{
-		if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
+		IAudioSourceSupplier * pPlugin = tuniacApp.m_CoreAudio.GetPluginAtIndex(i);
+		if(pPlugin->CanHandle(szURL))
 		{
 			LibraryEntry  libraryEntry;
 
@@ -244,10 +246,17 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			libraryEntry.dwKind = ENTRY_KIND_FILE;
 
 			// let the info manager get the format specific stuff here!
-			if(!m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+			for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
 			{
-				return false;
+				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
+				{
+					if(!m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+					{
+						return false;
+					}
+				}
 			}
+
 
 			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
 			pEntry->SetEntryID(dwEntryID);
@@ -426,12 +435,13 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 	unsigned long		BytesRead;
 	bool				bOK = true;
 
-	GetModuleFileName(NULL, szURL, 512);
-	PathRemoveFileSpec(szURL);
-	PathAddBackslash(szURL);
-	StrCat(szURL, TEXT("TuniacMediaLibrary.dat"));
 
-	hLibraryFile = CreateFile(	szURL,
+
+	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	{
+		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
+
+		hLibraryFile = CreateFile(	szURL,
 								GENERIC_READ,
 								0,
 								NULL,
@@ -439,10 +449,14 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 								FILE_FLAG_SEQUENTIAL_SCAN,
 								NULL);
 
-	if(hLibraryFile == INVALID_HANDLE_VALUE)
-	{
-		// there is no media library!
-		return false;
+		if(hLibraryFile == INVALID_HANDLE_VALUE)
+		{
+			// there is no media library!
+			return false;
+		}
+	}
+	else{
+		//cant get appdata path
 	}
 
 	ReadFile(hLibraryFile, &MLDH, sizeof(MLDH), &BytesRead, NULL);
@@ -600,12 +614,12 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 	SendDlgItemMessage(hSaveWnd, IDC_SAVINGLIBRARY_PROGRESS, PBM_SETRANGE32, 0, (int)(m_MediaLibrary.GetCount() / 100) + 1);
 	SendDlgItemMessage(hSaveWnd, IDC_SAVINGLIBRARY_PROGRESS, PBM_SETSTEP, 1, 0);
 
-	GetModuleFileName(NULL, szURL, 512);
-	PathRemoveFileSpec(szURL);
-	PathAddBackslash(szURL);
-	StrCat(szURL, TEXT("TuniacMediaLibrary.dat"));
+	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	{
 
-	hLibraryFile = CreateFile(	szURL,
+		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
+
+		hLibraryFile = CreateFile(	szURL,
 								GENERIC_WRITE, 
 								0,
 								NULL,
@@ -613,10 +627,14 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 								FILE_FLAG_SEQUENTIAL_SCAN,
 								NULL);
 
-	if(hLibraryFile == INVALID_HANDLE_VALUE)
-	{
-		// there is no media library!
-		return false;
+		if(hLibraryFile == INVALID_HANDLE_VALUE)
+		{
+			// there is no media library!
+			return false;
+		}
+	}
+	else{
+		//cant get appdata path
 	}
 
 	MLDH.Version			= TUNIAC_MEDIALIBRARY_VERSION;

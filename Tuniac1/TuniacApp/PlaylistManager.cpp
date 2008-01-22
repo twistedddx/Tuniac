@@ -118,12 +118,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 	unsigned long		ulBytesRead;
 	bool				bOK = true;
 
-	GetModuleFileName(NULL, szFilename, 512);
-	PathRemoveFileSpec(szFilename);
-	PathAddBackslash(szFilename);
-	StrCat(szFilename, TEXT("Playlists.dat"));
+	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szFilename ) ) )
+	{
+		PathAppend( szFilename, TEXT("\\Tuniac\\Playlists.dat") );
 
-	hFile = CreateFile(	szFilename,
+
+		hFile = CreateFile(	szFilename,
 						GENERIC_READ, 
 						0,
 						NULL,
@@ -131,8 +131,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 						FILE_FLAG_SEQUENTIAL_SCAN,
 						NULL);
 
-	if(hFile == INVALID_HANDLE_VALUE)
-		return false;
+		if(hFile == INVALID_HANDLE_VALUE)
+			//no saved playlists
+			return false;
+	}
+	else{
+		//cant get appdata path
+	}
 
 	ReadFile(hFile, &PLDH, sizeof(PLDH), &ulBytesRead, NULL);
 
@@ -237,12 +242,11 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 	unsigned long		ulBytesWritten;
 	bool				bOK = true;
 
-	GetModuleFileName(NULL, szFilename, 512);
-	PathRemoveFileSpec(szFilename);
-	PathAddBackslash(szFilename);
-	StrCat(szFilename, TEXT("Playlists.dat"));
+	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szFilename ) ) )
+	{
+		PathAppend( szFilename, TEXT("\\Tuniac\\Playlists.dat") );
 
-	hFile = CreateFile(	szFilename,
+		hFile = CreateFile(	szFilename,
 						GENERIC_WRITE, 
 						0,
 						NULL,
@@ -250,10 +254,15 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 						FILE_FLAG_SEQUENTIAL_SCAN,
 						NULL);
 
-	if(hFile == INVALID_HANDLE_VALUE)
+		if(hFile == INVALID_HANDLE_VALUE)
+		{
+			// there is no playlist library!
+			return false;
+		}
+	}
+	else
 	{
-		// there is no playlist library!
-		return false;
+		//cant get appdata path
 	}
 
 	PLDH.Version		= TUNIAC_PLAYLISTLIBRARY_VERSION;
