@@ -51,21 +51,13 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 	BOOL bHasID3Tag = MACTag->GetHasID3Tag();
 	BOOL bHasAPETag = MACTag->GetHasAPETag();
 
-	TCHAR	szFileTitle[128];
-	GetFileTitle(libEnt->szURL, szFileTitle, 128);
 	if (bHasID3Tag || bHasAPETag)
 	{
 			wchar_t buffer[256];
 			int chars = 256;
 
 			if (MACTag->GetFieldString(APE_TAG_FIELD_TITLE, buffer, &chars) == 0)
-			{
 				swprintf(libEnt->szTitle, 256, L"%s", buffer);
-			}
-			else
-			{
-				StrCpy(libEnt->szTitle, szFileTitle);
-			}
 
 			if (MACTag->GetFieldString(APE_TAG_FIELD_ALBUM, buffer, &chars) == 0)
 				swprintf(libEnt->szAlbum, 256, L"%s", buffer);
@@ -85,10 +77,7 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 			if (MACTag->GetFieldString(APE_TAG_FIELD_TRACK, buffer, &chars) == 0)
 				libEnt->dwTrack[0] = _wtoi(buffer);
 	}
-	else 
-	{
-		StrCpy(libEnt->szTitle, szFileTitle);
-	}
+
 	double bitrate = MACDecompressor->GetInfo(APE_INFO_AVERAGE_BITRATE);
 	libEnt->iBitRate			= (unsigned long)(bitrate * 1024.0);
 	libEnt->iChannels			= MACDecompressor->GetInfo(APE_INFO_CHANNELS);
