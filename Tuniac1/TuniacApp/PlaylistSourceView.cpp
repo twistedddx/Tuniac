@@ -183,6 +183,7 @@ CPlaylistSourceView::CPlaylistSourceView(void) :
 	m_PlaylistSourceWnd(NULL),
 	m_pPlaylist(NULL),
 	m_Drag(false),
+	m_ShowingHeaderFilter(false),
 	m_iLastClickedItem(-1),
 	m_iLastClickedSubitem(-1),
 	m_origEditWndProc(NULL)
@@ -998,7 +999,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							}
 							
 							SendMessage(hFilter, CB_DELETESTRING, 0, 0);
-							SendMessage(hFilter, CB_ADDSTRING, 0, (LPARAM)TEXT(""));
 							SendMessage(hFilter, CB_INITSTORAGE, setArray.GetCount(), 64 * sizeof(TCHAR));
 
 							EnableWindow(hFilter, TRUE);
