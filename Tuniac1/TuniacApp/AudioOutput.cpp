@@ -5,6 +5,10 @@
 
 #define BUFFERSIZEMS			(300)
 
+#ifdef VISTAAUDIOHACK
+	float * pVistaTempBuffer;
+#endif
+
 CAudioOutput::CAudioOutput(void) :
 	m_waveHandle(NULL),
 	m_pCallback(NULL),
@@ -69,6 +73,10 @@ bool CAudioOutput::Open(void)
 		m_pfAudioBuffer = (float *)VirtualAlloc(NULL, m_dwBufferSize * m_NumBuffers, MEM_COMMIT, PAGE_READWRITE);		// allocate audio memory
 		VirtualLock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);													// lock the audio memory into physical memory
 
+#ifdef VISTAAUDIOHACK
+		pVistaTempBuffer = malloc(m_BlockSize * m_NumBuffers);
+#endif
+
 		for(unsigned long x=0; x<m_NumBuffers; x++)
 		{
 			m_Buffers[x].dwBufferLength		= m_BlockSize * m_NumBuffers;
@@ -115,6 +123,10 @@ again:
 
 		m_waveHandle = NULL;
 
+#ifdef VISTAAUDIOHACK
+		free(pVistaTempBuffer);
+#endif
+
 		VirtualUnlock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);
 		VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
 		m_pfAudioBuffer = NULL;
@@ -157,8 +169,26 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 			if(m_Playing)
 			{
-				if(m_pCallback->GetBuffer((float*)m_Buffers[m_ActiveBuffer].lpData, m_BlockSize))
+				#ifdef VISTAAUDIOHACK
+					if(m_pCallback->GetBuffer((float*)pVistaTempBuffer, m_BlockSize))
+				#else
+					if(m_pCallback->GetBuffer((float*)m_Buffers[m_ActiveBuffer].lpData, m_BlockSize))
+				#endif
 				{
+
+#ifdef VISTAAUDIOHACK
+					short * pShortBuffer = m_Buffers[m_ActiveBuffer].lpData;
+					float * pFloatBuffer = pVistaTempBuffer;
+
+					for(unsigned long x=0; x<m_BlockSize; x++)	
+					{
+						pShortBuffer = (short)(pFloatBuffer * 32767.0f);
+						pShortBuffer++;
+						pFloatBuffer++;
+					}
+#endif
+
+
 					m_Buffers[m_ActiveBuffer].dwUser = m_ActiveBuffer;
 					waveOutWrite(m_waveHandle, &m_Buffers[m_ActiveBuffer], sizeof(WAVEHDR));
 					m_ActiveBuffer++;
@@ -285,6 +315,16 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 			speakerconfig = 0;
 		}
 
+#ifdef VISTAAUDIOHACK
+		m_waveFormatPCMEx.Format.cbSize					= sizeof(WAVEFORMATEX);
+		m_waveFormatPCMEx.Format.wFormatTag				= WAVE_FORMAT_PCM;
+		m_waveFormatPCMEx.Format.nChannels				= (WORD)Channels;
+		m_waveFormatPCMEx.Format.nSamplesPerSec			= SampleRate;
+		m_waveFormatPCMEx.Format.wBitsPerSample			= 16;
+		m_waveFormatPCMEx.Format.nBlockAlign			= (m_waveFormatPCMEx.Format.wBitsPerSample/8) * m_waveFormatPCMEx.Format.nChannels;
+		m_waveFormatPCMEx.Format.nAvgBytesPerSec		= ((m_waveFormatPCMEx.Format.wBitsPerSample/8) * m_waveFormatPCMEx.Format.nChannels) * m_waveFormatPCMEx.Format.nSamplesPerSec; //Compute using nBlkAlign * nSamp/Sec 
+
+#else
 		m_waveFormatPCMEx.Format.cbSize					= 22;
 		m_waveFormatPCMEx.Format.wFormatTag				= WAVE_FORMAT_EXTENSIBLE;
 		m_waveFormatPCMEx.Format.nChannels				= (WORD)Channels;
@@ -300,6 +340,8 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 		m_waveFormatPCMEx.dwChannelMask					= speakerconfig; 
 		m_waveFormatPCMEx.SubFormat						= KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
 
+#endif	
+		
 		unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
 		m_Interval			= (BUFFERSIZEMS / m_NumBuffers) / 2;
