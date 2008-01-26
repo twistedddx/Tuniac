@@ -1,3 +1,9 @@
+Jan 26, 2008
+------------
+-Vista audio support(minus crossfade?)
+-fix multiple file add from file open dialog
+-handle if we cant get appdata folder
+
 Jan 22, 2008
 ------------
 -TuniacApp will now set filetitle if needed(now removed from tag readers), this allows a nice add of filetypes with no tagreader
