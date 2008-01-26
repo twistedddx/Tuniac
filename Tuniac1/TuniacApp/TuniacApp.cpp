@@ -1166,7 +1166,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										{
 											StringCbCopy( szURL, 256, szFilePath );
 											StringCbCat( szURL, 256, TEXT("\\") );
-											StringCbCopy( szURL, 256, szOFNName );
+											StringCbCat( szURL, 256, szOFNName );
 
 											m_MediaLibrary.AddItem(szURL);
 
