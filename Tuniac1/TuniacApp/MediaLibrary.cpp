@@ -446,23 +446,24 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
 	{
 		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
-
-		hLibraryFile = CreateFile(	szURL,
-								GENERIC_READ,
-								0,
-								NULL,
-								OPEN_EXISTING,
-								FILE_FLAG_SEQUENTIAL_SCAN,
-								NULL);
-
-		if(hLibraryFile == INVALID_HANDLE_VALUE)
-		{
-			// there is no media library!
-			return false;
-		}
 	}
 	else{
 		//cant get appdata path
+		return false;
+	}
+
+	hLibraryFile = CreateFile(	szURL,
+							GENERIC_READ,
+							0,
+							NULL,
+							OPEN_EXISTING,
+							FILE_FLAG_SEQUENTIAL_SCAN,
+							NULL);
+
+	if(hLibraryFile == INVALID_HANDLE_VALUE)
+	{
+		// there is no media library!
+		return false;
 	}
 
 	ReadFile(hLibraryFile, &MLDH, sizeof(MLDH), &BytesRead, NULL);
@@ -622,27 +623,26 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
 	{
-
 		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
-
-		hLibraryFile = CreateFile(	szURL,
-								GENERIC_WRITE, 
-								0,
-								NULL,
-								CREATE_ALWAYS,
-								FILE_FLAG_SEQUENTIAL_SCAN,
-								NULL);
-
-		if(hLibraryFile == INVALID_HANDLE_VALUE)
-		{
-			// there is no media library!
-			return false;
-		}
 	}
 	else{
 		//cant get appdata path
+		return false;
 	}
 
+	hLibraryFile = CreateFile(	szURL,
+							GENERIC_WRITE, 
+							0,
+							NULL,
+							CREATE_ALWAYS,
+							FILE_FLAG_SEQUENTIAL_SCAN,
+							NULL);
+
+	if(hLibraryFile == INVALID_HANDLE_VALUE)
+	{
+		// there is no media library!
+		return false;
+	}
 	MLDH.Version			= TUNIAC_MEDIALIBRARY_VERSION;
 	MLDH.NumEntries			= m_MediaLibrary.GetCount();
 	MLDH.PauseAt			= tuniacApp.m_SoftPause.ulAt;
