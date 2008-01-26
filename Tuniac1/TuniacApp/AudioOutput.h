@@ -3,6 +3,7 @@
 #include "CriticalSection.h"
 
 #include "IAudioCallback.h"
+#define VISTAAUDIOHACK
 
 class CAudioOutput
 {
@@ -10,6 +11,10 @@ protected:
 	WAVEFORMATPCMEX						m_waveFormatPCMEx;
 	HWAVEOUT							m_waveHandle;
 	WAVEHDR					*			m_Buffers;
+
+#ifdef VISTAAUDIOHACK
+	float					*			pVistaTempBuffer;
+#endif
 
 	float					*			m_pfAudioBuffer;
 	unsigned long						m_dwBufferSize;

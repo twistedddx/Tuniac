@@ -4,10 +4,7 @@
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
 #define BUFFERSIZEMS			(300)
-
-#ifdef VISTAAUDIOHACK
-	float * pVistaTempBuffer;
-#endif
+#define VISTAAUDIOHACK
 
 CAudioOutput::CAudioOutput(void) :
 	m_waveHandle(NULL),
@@ -22,6 +19,7 @@ CAudioOutput::CAudioOutput(void) :
 
 	QueryPerformanceFrequency(&m_liCountsPerSecond);
 
+	pVistaTempBuffer = NULL;
 	m_pfAudioBuffer = NULL;
 }
 
@@ -67,19 +65,26 @@ bool CAudioOutput::Open(void)
 			return(false);
 		}
 
+#ifdef VISTAAUDIOHACK
+		if (pVistaTempBuffer == NULL)
+		{
+			pVistaTempBuffer = (float *)malloc(m_BlockSize * m_NumBuffers);
+		}
+#endif
+
 		m_Buffers = (WAVEHDR *)VirtualAlloc(NULL, m_NumBuffers * sizeof(WAVEHDR), MEM_COMMIT, PAGE_READWRITE);
 		m_dwBufferSize = m_BlockSize * m_NumBuffers;
 
 		m_pfAudioBuffer = (float *)VirtualAlloc(NULL, m_dwBufferSize * m_NumBuffers, MEM_COMMIT, PAGE_READWRITE);		// allocate audio memory
 		VirtualLock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);													// lock the audio memory into physical memory
 
-#ifdef VISTAAUDIOHACK
-		pVistaTempBuffer = malloc(m_BlockSize * m_NumBuffers);
-#endif
-
 		for(unsigned long x=0; x<m_NumBuffers; x++)
 		{
+			#ifdef VISTAAUDIOHACK
+			m_Buffers[x].dwBufferLength		= m_BlockSize * (m_waveFormatPCMEx.Format.wBitsPerSample/8);
+			#else
 			m_Buffers[x].dwBufferLength		= m_BlockSize * m_NumBuffers;
+			#endif
 			m_Buffers[x].lpData				= (LPSTR)&m_pfAudioBuffer[x * m_BlockSize];
  			m_Buffers[x].dwUser				= x;
 			m_Buffers[x].dwBytesRecorded	= 0;
@@ -100,10 +105,9 @@ bool CAudioOutput::Close(void)
 {
 	int r;
 
-	CAutoLock lock(&m_AudioLock);
-
 	if(m_waveHandle)
 	{
+		CAutoLock lock(&m_AudioLock);
 		m_Playing = false;
 
 again:
@@ -124,7 +128,11 @@ again:
 		m_waveHandle = NULL;
 
 #ifdef VISTAAUDIOHACK
-		free(pVistaTempBuffer);
+		if (pVistaTempBuffer != NULL)
+		{
+			free(pVistaTempBuffer);
+			pVistaTempBuffer = NULL;
+		}
 #endif
 
 		VirtualUnlock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);
@@ -177,12 +185,12 @@ unsigned long CAudioOutput::ThreadProc(void)
 				{
 
 #ifdef VISTAAUDIOHACK
-					short * pShortBuffer = m_Buffers[m_ActiveBuffer].lpData;
+					short * pShortBuffer = (short *)m_Buffers[m_ActiveBuffer].lpData;
 					float * pFloatBuffer = pVistaTempBuffer;
 
 					for(unsigned long x=0; x<m_BlockSize; x++)	
 					{
-						pShortBuffer = (short)(pFloatBuffer * 32767.0f);
+						*pShortBuffer = (short)((*pFloatBuffer) * 32767.0f);
 						pShortBuffer++;
 						pFloatBuffer++;
 					}
