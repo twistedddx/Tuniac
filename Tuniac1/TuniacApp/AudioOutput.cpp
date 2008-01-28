@@ -4,7 +4,6 @@
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
 #define BUFFERSIZEMS			(300)
-#define VISTAAUDIOHACK
 
 CAudioOutput::CAudioOutput(void) :
 	m_waveHandle(NULL),
@@ -19,7 +18,9 @@ CAudioOutput::CAudioOutput(void) :
 
 	QueryPerformanceFrequency(&m_liCountsPerSecond);
 
+#ifdef VISTAAUDIOHACK
 	pVistaTempBuffer = NULL;
+#endif
 	m_pfAudioBuffer = NULL;
 }
 
@@ -103,8 +104,6 @@ bool CAudioOutput::Open(void)
 
 bool CAudioOutput::Close(void)
 {
-	int r;
-
 	if(m_waveHandle)
 	{
 		CAutoLock lock(&m_AudioLock);
@@ -119,6 +118,8 @@ again:
 					waveOutUnprepareHeader(m_waveHandle, &m_Buffers[x], sizeof(WAVEHDR));
 			}
 		}
+
+		int r;
 
 		while((r = waveOutClose(m_waveHandle)) != MMSYSERR_NOERROR)
 		{
