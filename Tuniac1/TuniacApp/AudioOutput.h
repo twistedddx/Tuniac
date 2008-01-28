@@ -3,7 +3,6 @@
 #include "CriticalSection.h"
 
 #include "IAudioCallback.h"
-#define VISTAAUDIOHACK
 
 class CAudioOutput
 {
