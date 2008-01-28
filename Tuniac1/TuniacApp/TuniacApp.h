@@ -38,7 +38,6 @@
 
 #define WM_TRAYICON 				WM_USER + 1
 
-
 class CTuniacApp
 {
 protected:
@@ -137,6 +136,7 @@ public:
 	bool				SetStatusText(LPTSTR szStatusText);
 
 	bool				GetShuffleState(void);
+	RepeatMode			GetRepeatMode(void);
 
 	HFONT				GetTuniacFont(int size);
 
