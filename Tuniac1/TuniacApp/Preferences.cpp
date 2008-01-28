@@ -1101,7 +1101,7 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_VolumeScale				= 1.0;
 
-	m_RandomState				= FALSE;
+	m_ShuffleState				= FALSE;
 
 	m_PlaylistViewNumColumns		= 4;
 	m_PlaylistViewColumnIDs[0]		= FIELD_TITLE;
@@ -1328,7 +1328,7 @@ bool CPreferences::LoadPreferences(void)
 							SHUFFLEPLAY,
 							NULL,
 							&Type,
-							(LPBYTE)&m_RandomState,
+							(LPBYTE)&m_ShuffleState,
 							&Size);
 
 
@@ -1592,7 +1592,7 @@ bool CPreferences::SavePreferences(void)
 						SHUFFLEPLAY, 
 						0,
 						Type,
-						(LPBYTE)&m_RandomState, 
+						(LPBYTE)&m_ShuffleState, 
 						Size);
 
 		Size = sizeof(int);
@@ -2052,14 +2052,14 @@ LPTSTR	CPreferences::GetTheme(void)
 	return m_Theme;
 }
 
-bool CPreferences::GetRandomState(void)
+bool CPreferences::GetShuffleState(void)
 {
-	return m_RandomState == TRUE ? true : false;
+	return m_ShuffleState == TRUE ? true : false;
 }
 
-void CPreferences::SetRandomState(bool bEnabled)
+void CPreferences::SetShuffleState(bool bEnabled)
 {
-	m_RandomState = bEnabled;
+	m_ShuffleState = bEnabled;
 }
 
 RepeatMode	CPreferences::GetRepeatMode(void)

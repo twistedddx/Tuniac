@@ -200,7 +200,6 @@
 #define ID_FILE_OPENSTREAM              40018
 #define ID_PLAYBACK_REPEATMODE          40019
 #define ID_EDIT_SHOWVIEWOPTIONS         40021
-#define ID_PLAYBACK_SHUFFLEPLAY         40026
 #define ID_REPEAT_OFF                   40028
 #define ID_REPEAT_ONETRACK              40030
 #define ID_REPEAT_ALLTRACKS             40031
