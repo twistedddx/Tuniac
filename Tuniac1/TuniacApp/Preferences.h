@@ -64,7 +64,7 @@ protected:
 	BOOL		m_PauseOnScreensave;
 	BOOL		m_FollowCurrentSong;
 	BOOL		m_SmartSorting;
-	BOOL		m_RandomState;
+	BOOL		m_ShuffleState;
 
 	int			m_PlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[15];
@@ -152,8 +152,8 @@ public:
 
 	LPTSTR	GetTheme(void);
 
-	bool	GetRandomState(void);
-	void	SetRandomState(bool bEnabled);
+	bool	GetShuffleState(void);
+	void	SetShuffleState(bool bEnabled);
 
 	RepeatMode	GetRepeatMode(void);
 	void		SetRepeatMode(RepeatMode eMode);
