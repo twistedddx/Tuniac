@@ -34,12 +34,17 @@ CTuniacApp::~CTuniacApp()
 
 bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 {
+	//load tuniac
+
+
 	m_hInstance = hInstance;
 
 #ifndef DEBUG
+	//one instance for release
 	m_hOneInstanceOnlyMutex = CreateMutex(NULL, FALSE, szClassName);
 	if(GetLastError() == ERROR_ALREADY_EXISTS) 
 	{ 
+		//get the other instance of tuniac so we can send command lines to it
 		unsigned long counttry = 0;
 		HWND hOtherWnd = FindWindow(szClassName, NULL);
 		while(!hOtherWnd)
@@ -53,6 +58,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 				return(0);
 		}
 
+		//relay command line to existing tuniacapp.exe window
 		if(lstrlen(szCommandLine))
 		{
 			COPYDATASTRUCT cds;
@@ -74,15 +80,20 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	m_hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_MAINWINDOWACCEL));
 
+	//these are used for the portable switch to force not saving to disk
 	m_bSavePrefs = true;
 	m_bSaveML = true;
 
+	//load everything saved including windows size/postion/ontop
 	m_Preferences.LoadPreferences();
+
+	//start the skin engine
 	m_Skin.Initialize();
 
 	m_SoftPause.bNow = false;
 	m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 	
+	//fail if we cant start something
 	if(!m_CoreAudio.Startup())
 		return false;
 
@@ -101,21 +112,26 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if (!m_SysEvents.Initialize())
 		return false;
 
+	//get decoder support extensions
 	m_Preferences.m_FileAssoc.UpdateExtensionList();
 
 	IWindow * t;
-		
+
+	//create the main medialibrary window	
 	m_SourceSelectorWindow = new CSourceSelectorWindow;
 	t = m_SourceSelectorWindow;
 	m_WindowArray.AddTail(t);
 
+	//create visual window
 	t = new CVisualWindow;
 	m_WindowArray.AddTail(t);
 
+	//create log window
 	m_LogWindow = new CLogWindow();
 	t = m_LogWindow;
 	m_WindowArray.AddTail(t);
 
+	//theme the tray icon?
 	m_wc.cbSize			= sizeof(WNDCLASSEX); 
 	m_wc.style			= 0;
 	m_wc.lpfnWndProc	= (WNDPROC)WndProcStub;
@@ -131,6 +147,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(!RegisterClassEx(&m_wc))
 		return(false);
 
+	//move tuniac back on screen if moved off
 	RECT r;
 	CopyRect(&r, m_Preferences.GetMainWindowRect());
 
@@ -143,6 +160,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(r.bottom < 400)
 		r.bottom = 400;
 
+	//create our main window
 	m_hWnd = CreateWindowEx(WS_EX_ACCEPTFILES | WS_EX_APPWINDOW,
 							szClassName, 
 							TEXT("Tuniac"), 
@@ -156,7 +174,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 							hInstance,
 							this);
 
-
+	//window did not create!
 	if(!m_hWnd)
 	{
 		return(false);
@@ -165,10 +183,12 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	//if(m_Preferences.GetMainWindowMaximized())
 		//SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 
+	//set always ontop state
 	CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | (m_Preferences.GetAlwaysOnTop() ? MF_CHECKED : MF_UNCHECKED));
 	if(m_Preferences.GetAlwaysOnTop())
 		SetWindowPos(getMainWindow(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
+	//create prefs window
 	TCHAR szPrefPageTitle[64];
 	for(unsigned int iPrefPage = 0; iPrefPage < m_Preferences.GetPreferencesPageCount(); iPrefPage++)
 	{
@@ -177,21 +197,28 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
         AppendMenu(GetSubMenu(GetSubMenu(m_hPopupMenu, 1), 6), MF_ENABLED, PREFERENCESMENU_BASE + iPrefPage, szPrefPageTitle);
 	}
 
+	//notify that before we created the playlist window
 	PostMessage(getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
+
+	//register our own hotkeys
 	RegisterHotkeys();
 
+	//use any command lines given(initial open only all others in one instance code)
 	COPYDATASTRUCT cds;
-
 	cds.dwData = 0;
 	cds.cbData = (lstrlen(szCommandLine) + 1) * sizeof(TCHAR);
 	cds.lpData = szCommandLine;
-
 	SendMessage(m_hWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
+
+
 	return true;
 }
 
 bool CTuniacApp::Shutdown()
 {
+	//close tuniac
+
+
 	m_SysEvents.Shutdown();
 	m_PluginManager.Shutdown();
 
@@ -203,19 +230,24 @@ bool CTuniacApp::Shutdown()
 
 	m_CoreAudio.Shutdown();
 
-	TCHAR				szURL[MAX_PATH];
-	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	//if allowed to save pl+ml, check if %appdata%/Tuniac needs to be created
+	if(m_bSaveML)
 	{
-		PathAppend( szURL, TEXT("\\Tuniac") );
-
-		CreateDirectory( szURL, 0);
+		TCHAR				szURL[MAX_PATH];
+		if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+		{
+			PathAppend( szURL, TEXT("\\Tuniac") );
+			CreateDirectory( szURL, 0);
+		}
 	}
 
+	//save if allowed
 	m_PlaylistManager.Shutdown(m_bSaveML);
 	m_MediaLibrary.Shutdown(m_bSaveML);
 
 	m_Taskbar.Shutdown();
 
+	//save prefs if allowed
 	if(m_bSavePrefs)
 		m_Preferences.SavePreferences();
 
@@ -273,8 +305,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(wParam == SYSEVENTS_TIMERID)
 					m_SysEvents.CheckSystemState();
 
-				if(wParam == WINDOWUPDATETIMER)
+				if(wParam == WINDOWUPDATETIMER) //500
 				{
+					//set title of window/tray
 					TCHAR szWinTitle[512];
 					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 					IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
@@ -425,10 +458,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					AppendMenu(tMenu, MF_ENABLED, MENU_BASE+item, m_WindowArray[item]->GetName());
 				}
+
+				//show where we are upto in the playlist
 				m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistManager.GetActivePlaylistIndex());
 
+				//create the future menu(right click "next" button)
 				m_hFutureMenu = CreatePopupMenu();
 
+				//set how often to update window and tray title
 				SetTimer(hWnd, WINDOWUPDATETIMER, 500, NULL);
 
 				ShowWindow(hWnd, SW_SHOW);
@@ -470,17 +507,18 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//the cross at top right of window clicked
 		case WM_CLOSE:
 			{
+				//check if minimize to tray on close, still close if holding control key
 				if(m_Preferences.GetMinimizeOnClose() && !(GetKeyState(VK_CONTROL) & 0x8000))
-				{
 					ShowWindow(hWnd, SW_MINIMIZE);
-				}
 				else
 					DestroyWindow(hWnd);
 			}
 			break;
 
+			//resize limits
 		case WM_GETMINMAXINFO:
 			{
 				LPMINMAXINFO lpMinMaxInfo = (LPMINMAXINFO)lParam;
@@ -565,6 +603,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//file dropped on tuniacapp.exe
 		case WM_DROPFILES:
 			{
 				HDROP hDrop = (HDROP)wParam;
@@ -589,9 +628,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//set menu
 		case WM_MENUSELECT:
 			{
-				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_SHUFFLEPLAY, m_Preferences.GetRandomState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 
 				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 
@@ -603,6 +643,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//multimedia keyboard keys
 		case WM_APPCOMMAND:
 			{
 				DWORD cmd  = GET_APPCOMMAND_LPARAM(lParam);
@@ -672,9 +713,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				switch (wParam)
 				{
+					//coreaudio has reached a point it belives it will need a new song
 					case NOTIFY_MIXPOINTREACHED:
 						{
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							//found valid song?
+							bool bOK = false;
+							//are we crossfading?
+							bool bFADE = tuniacApp.m_Preferences.GetCrossfadeTime();
 
 							/*// handle infinite streams differently
 							CMediaLibraryPlaylistEntry * pCurrent = m_MediaLibrary.GetItemByID(pPlaylist->GetActiveItem()->GetEntryID());
@@ -696,110 +742,80 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								break;
 							}*/
 
-							bool bOK = true;
-							bool bFADE = true;
-
-							if(tuniacApp.m_Preferences.GetCrossfadeTime() == 0)
+							//check if modifier(alt) + select in playlist has caused a play selected
+							if(m_PlaySelected.GetCount() > 0)
 							{
-								if(m_Preferences.GetRepeatMode() == RepeatOne)
+								if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 								{
-									m_CoreAudio.Reset();
-								}
-
-								if(m_Preferences.GetRepeatMode() == RepeatNone)
-								{
-									if(!pPlaylist->CheckNext())
-									{
-										m_CoreAudio.Reset();
-									}
-								}
-
-								bFADE = false;
-							}
-
-					      	if(m_Preferences.GetRepeatMode() != RepeatOne)
-							{
-								if(m_PlaySelected.GetCount() > 0)
-								{
-									if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-									{
-										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-										
-										pPlaylistEX->SetActiveIndex(m_PlaySelected[0]);
-										m_PlaySelected.RemoveAt(0);
-										m_SourceSelectorWindow->m_PlaylistSourceView->DeselectFirstItem();
-									}
-									else
-									{
-										bOK = pPlaylist->Next();
-									}
-								}
-								else if (m_MediaLibrary.m_Queue.GetCount() > 0)
-								{
-									IPlaylistEntry * pIPE = m_MediaLibrary.m_Queue.RemoveHead();
-									if(m_PlaylistManager.SetActiveByEntry(pIPE))
-									{
-										bOK = true;
-										pPlaylist = m_PlaylistManager.GetActivePlaylist();
-									}
-									else
-									{
-                                        bOK = pPlaylist->Next();
-									}
-								}
-								else
-								{
-									bOK = pPlaylist->Next();
+									IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+									
+									pPlaylistEX->SetActiveIndex(m_PlaySelected[0]);
+									m_PlaySelected.RemoveAt(0);
+									m_SourceSelectorWindow->m_PlaylistSourceView->DeselectFirstItem();
+									bOK = true;
 								}
 							}
 
-							if(!bOK)
+							//check if songs have been queued by right click menu in playlist
+							else if (m_MediaLibrary.m_Queue.GetCount() > 0)
 							{
-								if(m_Preferences.GetRepeatMode() == RepeatAll)
+								IPlaylistEntry * pIPE = m_MediaLibrary.m_Queue.RemoveHead();
+								if(m_PlaylistManager.SetActiveByEntry(pIPE))
 								{
-									if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-									{
-										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-										pPlaylistEX->SetActiveIndex(INVALID_PLAYLIST_INDEX);
-										pPlaylistEX->SetActiveIndex(0);
-										bOK = true;
-									}
+									pPlaylist = m_PlaylistManager.GetActivePlaylist();
+									bOK = true;
 								}
 							}
+							//if no queues just goto next
+							else
+								bOK = pPlaylist->Next();
 
+							//do we have a valid next song, if not we have run out of songs(end of playlist?)
 							if(bOK)
 							{
+								//activeitem should now be the NEXT song
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+								//if crossfading
 								if(bFADE)
 								{
+									//crossfade to next song
 									if(m_CoreAudio.TransitionTo(pIPE))
 									{
-										m_CoreAudio.Play();
-									}
-
-									if(m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
-									{
-										m_SoftPause.bNow = false;
-										m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-										SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
-										m_CoreAudio.Reset();
-									}
-									else
-									{
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+										//we were set to stop at this next song, simply rewind it and remove stop marker
+										if(m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
+										{
+											m_SoftPause.bNow = false;
+											m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+											SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
+											m_CoreAudio.Reset();
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+										}
+										//play song and notify plugins
+										else
+										{
+											m_CoreAudio.Play();
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+										}
 									}
 
 								}
+								//no crossfade
 								else
 								{
+									//move straight to next song
 									if(m_CoreAudio.SetSource(pIPE))
 									{
+										//we were set to stop at this next song, simply rewind it and remove stop marker
 										if (m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
 										{
 											m_SoftPause.bNow = false;
 											m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 											SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
+											m_CoreAudio.Reset();
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
 										}
+										
+										//play song and notify plugins
 										else
 										{
 											m_CoreAudio.Play();
@@ -808,25 +824,34 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									}
 								}
 
+								//update the new current song on the playlist
 								m_SourceSelectorWindow->UpdateView();
-
+	
+								//focus current song if we are following playback
 								if(m_SourceSelectorWindow->GetVisiblePlaylistIndex() == m_PlaylistManager.GetActivePlaylistIndex())
 									if(m_Preferences.GetFollowCurrentSongMode())
 										m_SourceSelectorWindow->ShowCurrentlyPlaying();
-
 							}
 						}
 						break;
 
+						//audiostream has finished a song without crossfade being triggered
 					case NOTIFY_PLAYBACKFINISHED:
 						{
-							if(m_Preferences.GetRepeatMode() == RepeatNone)
-							{
-								m_CoreAudio.Reset();
-							}
+							//check if it was the last song
+							bool m_bIsNext = m_PlaylistManager.GetActivePlaylist()->CheckNext();
+
+							//this is not our last song
+							if(m_bIsNext)
+								SendMessage(getMainWindow(), WM_APP, MAKELONG(NOTIFY_MIXPOINTREACHED, 0), 0);
+							//we have no more songs
+							else
+								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+
 						}
 						break;
 
+						//audiostream has started a song
 					case NOTIFY_PLAYBACKSTARTED:
 						{
 							m_SourceSelectorWindow->UpdateView();
@@ -836,6 +861,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//playlistmanager changed it's view
 					case NOTIFY_PLAYLISTSCHANGED:
 						{
 //							m_Taskbar.UpdatePlaylistMenu();
@@ -845,6 +871,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//our defined hotkeys
 		case WM_HOTKEY:
 			{
 				if(wParam == m_aPlay)
@@ -901,6 +928,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//command line from previous (or current) version
 		case WM_COPYDATA:
 			{
 				PCOPYDATASTRUCT pCDS = (PCOPYDATASTRUCT)lParam;
@@ -909,7 +937,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					case 0:
 						{ 
-							// command line from previous (or current) version
+
 							bool		bAddingFiles = false, bPlayAddedFiles = false, bQueueAddedFiles = false;
 							bool		bExitAtEnd = false, bWantFocus = false, bForceNoFocus = false;
 							unsigned long ulMLOldCount = m_MediaLibrary.GetCount();
@@ -922,7 +950,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								for(i = 1; i < nArgs; i++)
 								{
-
+									//tuniac first assumes command line is a filepath
+									//it checks if it would be a valid path it can use
 									if(PathFileExists(szArglist[i]) || PathIsURL(szArglist[i]))
 									{
 										if(!bAddingFiles)
@@ -1054,10 +1083,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			//messages sent to tuniac window(some are via mouse clicks others are messages)
+			//menu equal given where possible
 		case WM_COMMAND:
 			{
 				WORD wCmdID = LOWORD(wParam);
 
+				//clicked a different view in menu
 				if(wCmdID >= MENU_BASE && wCmdID <= (MENU_BASE + m_WindowArray.GetCount()))
 				{
 					unsigned long m_ActiveScreen = wCmdID - MENU_BASE;
@@ -1073,6 +1105,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					return 0;
 				}
 
+				//clicked to create new playlist
 				if(wCmdID >= PLAYLISTMENU_BASE && wCmdID <= (PLAYLISTMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
 				{
 					tuniacApp.m_CoreAudio.Reset();
@@ -1091,12 +1124,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					return 0;
 				}
 
+				//clicked item inside history menu("previous" button)
 				if(wCmdID >= HISTORYMENU_BASE && wCmdID <= (HISTORYMENU_BASE + m_Preferences.GetHistoryListSize()))
 				{
 					m_History.PlayHistoryItem(wCmdID - HISTORYMENU_BASE);
 					return 0;
 				}
 
+				//clicked item inside future menu("next" button)
 				if(wCmdID >= FUTUREMENU_BASE && wCmdID <= (FUTUREMENU_BASE + m_Preferences.GetFutureListSize()))
 				{
 					int iFromCurrent = wCmdID - FUTUREMENU_BASE + 1;
@@ -1113,7 +1148,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				switch(wCmdID)
 				{
-
+						//show tuniac
 					case ID_APP_SHOW:
 						{
 							ShowWindow(hWnd, SW_SHOWNORMAL);
@@ -1121,8 +1156,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> import files
 					case ID_FILE_ADDFILES:
 						{
+							//setup open file dialog
 #define OFNBUFFERSIZE		(32*1024)
 							OPENFILENAME		ofn;
 							TCHAR				szURLBuffer[OFNBUFFERSIZE];
@@ -1145,15 +1182,18 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							ofn.lpstrTitle			= NULL;
 							ofn.Flags				= OFN_ALLOWMULTISELECT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
+							//something valid was selected to be opened
 							if(GetOpenFileName(&ofn))
 							{
 
 								if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 								{
+									//single file was selected(straight url to file)
 									if(ofn.nFileOffset < lstrlen(szURLBuffer))
 									{
 										m_MediaLibrary.AddItem(szURLBuffer);
 									}
+									//multiple files were selected(path + multiple filenames, need to join)
 									else
 									{
 										TCHAR szFilePath[256];
@@ -1180,12 +1220,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> import directory
 					case ID_FILE_ADDDIRECTORY:
 						{
 							LPMALLOC lpMalloc;  // pointer to IMalloc
 
 							if(::SHGetMalloc(&lpMalloc) == NOERROR)
 							{
+								//setup open directory dialog
 								TCHAR szBuffer[1024];
 
 								BROWSEINFO browseInfo;
@@ -1201,10 +1243,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 								if((lpItemIDList = ::SHBrowseForFolder(&browseInfo)) != NULL)
 								{
+									//something valid was selected for open
 									if(::SHGetPathFromIDList(lpItemIDList, szBuffer))
 									{
 										if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 										{
+											//straight url to directory
 											m_MediaLibrary.AddItem(szBuffer);
 											m_MediaLibrary.EndAdd();
 										}
@@ -1219,6 +1263,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> import stream
 					case ID_FILE_ADDOTHER:
 						{
 							TCHAR szAddBuffer[2048] = TEXT("");
@@ -1236,6 +1281,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> forcesave medialibrary
 					case ID_FILE_FORCESAVEMEDIALIBRARY:
 						{
 							bool bOK;
@@ -1254,6 +1300,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> new playlist -> normal playlist
 					case ID_FILE_NEWPLAYLIST_NORMALPLAYLIST:
 						{
 							m_PlaylistManager.CreateNewStandardPlaylist(TEXT("Untitled Playlist"));
@@ -1261,11 +1308,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> new playlist -> smart playlist (not implemented)
 					case ID_FILE_NEWPLAYLIST_SMARTPLAYLIST:
 						{
 						}
 						break;
 
+						//file -> export playlist (import/export plugin save)
 					case ID_FILE_EXPORTPLAYLIST:
 						{
 							if(m_SourceSelectorWindow->GetVisiblePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -1291,31 +1340,35 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//file -> exit
 					case ID_FILE_EXIT:
 						{
 							DestroyWindow(hWnd);
 						}
 						break;
 
-					//Added Mark - 7th October
+						//edit -> edit track info (not implemented)
 					case ID_EDIT_EDITFILEINFORMATION:
 						{
 							m_SourceSelectorWindow->GetVisibleView()->EditTrackInfo();
 						}
 						break;
 
+						//edit -> show currently paylist track (jump focus to current track)
 					case ID_EDIT_SHOWCURRENTLYPLAYINGTRACK:
 						{
 							m_SourceSelectorWindow->ShowCurrentlyPlaying();
 						}
 						break;
 
+						//edit -> show view options (playlist column select)
 					case ID_EDIT_SHOWVIEWOPTIONS:
 						{
 							m_SourceSelectorWindow->ShowActiveViewViewOptions(hWnd);
 						}
 						break;
-					
+
+						//edit -> always on top	
 					case ID_EDIT_ALWAYSONTOP:
 						{
 							bool bOnTop = !m_Preferences.GetAlwaysOnTop();
@@ -1325,12 +1378,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//edit -> preferences
 					case ID_EDIT_PREFERENCES:
 						{
 							m_Preferences.ShowPreferences(hWnd, 0);
 						}
 						break;
 
+						//help -> about tuniac
 					case ID_HELP_ABOUT:
 						{
 							TCHAR szAbout[512];
@@ -1339,8 +1394,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//help -> tuniac help
 					case ID_HELP_TUNIACHELP:
 						{
+							//if local help exists, load it, otherwise goto url
 							TCHAR szHelp[512];
 							GetModuleFileName(NULL, szHelp, 512);
 							PathRemoveFileSpec(szHelp);
@@ -1352,54 +1409,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//playback -> play / pause
 					case ID_PLAYBACK_PLAYPAUSE:
 						{
+							//if currently playing, PAUSE
 							if(m_CoreAudio.GetState() == STATE_PLAYING)
 							{
-								m_CoreAudio.Stop();
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 							}
+							//if not playing, PLAY
 							else
 							{
-								if(!m_CoreAudio.Play())
-								{
-									if(tuniacApp.m_PlaylistManager.SetActivePlaylist(m_SourceSelectorWindow->GetVisiblePlaylistIndex()))
-									{
-										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-
-										if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-										{
-											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-
-											if(m_Preferences.GetRandomState())
-											{
-												pPlaylistEX->SetActiveIndex(g_Rand.IRandom(0, pPlaylistEX->GetNumItems()));
-											}
-											else
-											{
-												pPlaylistEX->SetActiveIndex(0);
-											}
-										}
-
-
-										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-										if(pIPE)
-										{
-											if(m_CoreAudio.SetSource(pIPE))
-											{
-												m_CoreAudio.Play();
-												m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-											}
-										}
-										m_SourceSelectorWindow->UpdateView();
-									}
-								}
+								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 							}
-							if(m_CoreAudio.GetState() == STATE_PLAYING)
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 						}
 						break;
 
+						//playback -> stop (coreaudio stop is a "pause", a stop is a "pause" and "rewind")
 					case ID_PLAYBACK_STOP:
 						{
 							m_CoreAudio.Stop();
@@ -1408,6 +1434,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//playback -> pause (coreaudio stop is a "pause")
 					case ID_PLAYBACK_PAUSE:
 						{
 							if(m_CoreAudio.GetState() == STATE_PLAYING)
@@ -1418,10 +1445,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//playback -> play
 					case ID_PLAYBACK_PLAY:
 						{
+							//if only paused we can simply play again
 							if(!m_CoreAudio.Play())
 							{
+								//not paused and need a song from active playlist
 								if(tuniacApp.m_PlaylistManager.SetActivePlaylist(m_SourceSelectorWindow->GetVisiblePlaylistIndex()))
 								{
 									IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
@@ -1430,16 +1460,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									{
 										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
 
-										if(m_Preferences.GetRandomState())
+										if(m_Preferences.GetShuffleState())
 										{
+											//get random song
 											pPlaylistEX->SetActiveIndex(g_Rand.IRandom(0, pPlaylistEX->GetNumItems()));
 										}
 										else
 										{
+											//get first song
 											pPlaylistEX->SetActiveIndex(0);
 										}
 									}
 
+									//play the song we got
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
@@ -1448,24 +1481,29 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											m_CoreAudio.Play();
 										}
 									}
+									//update playlsit view to reflect new current song
 									m_SourceSelectorWindow->UpdateView();
 								}
 							}
+							//notify plugins of change of state
 							if(m_CoreAudio.GetState() == STATE_PLAYING)
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 						}
 						break;
 
+						//playback -> softpause (on/off)
 					case ID_PLAYBACK_SOFTPAUSE:
 						{
 							m_SoftPause.bNow = !m_SoftPause.bNow;
 						}
 						break;
 
+						//playback -> next
 					case ID_PLAYBACK_NEXT:
 						{
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							//check if play selected has something to play
 							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED && m_PlaySelected.GetCount() > 0)
 							{
 								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
@@ -1490,6 +1528,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								}
 
 							}
+							//check if the play queue has something to play
 							else if (m_MediaLibrary.m_Queue.GetCount() > 0)
 							{
 								IPlaylistEntry * pIPE = m_MediaLibrary.m_Queue.RemoveHead();
@@ -1533,6 +1572,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										m_CoreAudio.Play();
 								}
 							}
+							//can we get a next song?
 							else if(pPlaylist->Next())
 							{
 
@@ -1549,6 +1589,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										m_CoreAudio.Play();
 								}
 							}
+							//there is no next track, maybe end of playlist?, are we repeating all?
 							else
 							{
 								if(m_Preferences.GetRepeatMode() == RepeatAll)
@@ -1564,28 +1605,34 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									}
 								}
 							}
+							//update playlist to reflect new song
 							m_SourceSelectorWindow->UpdateView();
+							//notify plugins of change
 							if(m_CoreAudio.GetState() == STATE_PLAYING)
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 						}
 						break;
 
+						//playback -> random next (toggle random for a moment to get a new random song, or if already random, next logical song)
 					case ID_PLAYBACK_RANDOMNEXT:
 						{
-							bool bWasRandom = m_Preferences.GetRandomState();
-							m_Preferences.SetRandomState(!bWasRandom);
+							bool bWasShuffle = m_Preferences.GetShuffleState();
+							m_Preferences.SetShuffleState(!bWasShuffle);
 							SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
-							m_Preferences.SetRandomState(bWasRandom);
+							m_Preferences.SetShuffleState(bWasShuffle);
 						}
 						break;
 
+						//playback -> previous
 					case ID_PLAYBACK_PREVIOUS:
 						{
+							//if past start of song
 							if(m_CoreAudio.GetPosition() < 3500)
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
+								//do we have a valid previous song?
 								if(pPlaylist->Previous())
 								{
 									// get active item and pass it to the playback manager class
@@ -1602,30 +1649,35 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											m_CoreAudio.Play();
 									}
 								}
+								//no valid previous song(start of playlist?), simply rewind
 								else
 								{
 									m_CoreAudio.Stop();
 									m_CoreAudio.SetPosition(0);
 								}
+								//update playlist, notify plugins
 								m_SourceSelectorWindow->UpdateView();
 								if(m_CoreAudio.GetState() == STATE_PLAYING)
 									m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 							}
+							//still at start, simply rewind
 							else
 							{
 								m_CoreAudio.SetPosition(0);
-							}						
-							if(m_CoreAudio.GetState() == STATE_PLAYING)
-								SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
+							}
 						}
 						break;
+
+						//playback -> previous by history
 					case ID_PLAYBACK_PREVIOUS_BYHISTORY:
 						{
 							if(m_History.GetCount() > 1)
 								m_History.PlayHistoryItem(1);
 						}
 						break;
+
+						//playback -> seek forward (50ms at a time)
 					case ID_PLAYBACK_SEEKFORWARD:
 						{
 							unsigned long pos = m_CoreAudio.GetPosition() + 50;
@@ -1633,6 +1685,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 						break;
+
+						//playback -> seekback (1300ms at a time)
 					case ID_PLAYBACK_SEEKBACK:
 						{
 							unsigned long pos = m_CoreAudio.GetPosition() - 1300;
@@ -1640,11 +1694,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 						break;
+
+						//toggle shuffle mode
 					case ID_PLAYBACK_TOGGLE_SHUFFLE:
 						{
-							m_Preferences.SetRandomState(!m_Preferences.GetRandomState());
+							m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
+
+						//toggle repeat mode
 					case ID_PLAYBACK_TOGGLE_REPEAT:
 						{
 							if(m_Preferences.GetRepeatMode() == RepeatNone)
@@ -1653,9 +1712,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatAll);
 							else if(m_Preferences.GetRepeatMode() == RepeatAll)
 								m_Preferences.SetRepeatMode(RepeatNone);
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
 
+						//clear play queue
 					case ID_PLAYBACK_CLEARQUEUE:
 						{
 							m_MediaLibrary.m_Queue.Clear();
@@ -1666,49 +1727,43 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							}
 						}
 						break;
+
+						//clear soft pause
 					case ID_PLAYBACK_CLEARPAUSEAT:
 						{
 							m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 						}
 						break;
-					case ID_PLAYBACK_SHUFFLEPLAY:
-						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
-							m_Preferences.SetRandomState(!m_Preferences.GetRandomState());
-
-							/* Somehow here we need to tell the playlist to update itself
-							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-							{
-								((IPlaylistEX *)pPlaylist)->ApplyFilter();
-							}
-							*/
-
-							m_SourceSelectorWindow->UpdateView();
-						}
-						break;
+						//turn off repeat
 					case ID_REPEAT_OFF:
 						{
 							m_Preferences.SetRepeatMode(RepeatNone);
-							m_SourceSelectorWindow->UpdateView();
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
+
+						//turn on repeat track
 					case ID_REPEAT_ONETRACK:
 						{
 							m_Preferences.SetRepeatMode(RepeatOne);
-							m_SourceSelectorWindow->UpdateView();
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
+
+						//turn on repeat all
 					case ID_REPEAT_ALLTRACKS:
 						{
 							m_Preferences.SetRepeatMode(RepeatAll);
-							m_SourceSelectorWindow->UpdateView();
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
+
+						//turn on repeat queued
 					case ID_REPEAT_ALLQUEUED:
 						{
 							m_Preferences.SetRepeatMode(RepeatAllQueued);
-							m_SourceSelectorWindow->UpdateView();
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
 				}
@@ -1731,6 +1786,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				switch (uMouseMsg)
 				{
+						//left double click tray icon (restore window)
 					case WM_LBUTTONDBLCLK:
 						{
 							ShowWindow(hWnd, SW_SHOWNORMAL);
@@ -1738,6 +1794,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+						//right click tray icon (menu)
 					case WM_CONTEXTMENU:
 						{
 							POINT pt;
@@ -1818,11 +1875,17 @@ bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 
 bool CTuniacApp::GetShuffleState(void)
 {
-	return m_Preferences.GetRandomState();
+	return m_Preferences.GetShuffleState();
+}
+
+RepeatMode CTuniacApp::GetRepeatMode(void)
+{
+	return m_Preferences.GetRepeatMode();
 }
 
 bool CTuniacApp::RegisterHotkeys(void)
 {
+	//our hotkeys
 	m_aPlay			 = GlobalAddAtom(TEXT("PLAY"));
 	m_aStop			 = GlobalAddAtom(TEXT("STOP"));
 	m_aNext			 = GlobalAddAtom(TEXT("NEXT"));
