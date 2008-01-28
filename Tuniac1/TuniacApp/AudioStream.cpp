@@ -16,7 +16,6 @@ CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry)
 	fVolume			= 1.0f;
 	m_bMixNotify	= false;
 	m_bIsFinished	= false;
-	m_bIsLast		= false;
 
 
 	m_SamplesOut	= 0;
@@ -45,33 +44,28 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
 	CAutoLock t(&m_Lock);
 
+	//song finished
 	if(m_Packetizer.IsFinished())
 	{
-		if(!m_bEntryPlayed)
-		{
-			SYSTEMTIME st;
-			GetLocalTime(&st);
-			m_pEntry->SetField(FIELD_DATELASTPLAYED, &st);
-			tuniacApp.m_SourceSelectorWindow->UpdateView();
-			m_bEntryPlayed = true;
-		}
-		if(!m_bMixNotify)
-		{
-			tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+		if(!m_bMixNotify){
+			tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
 			m_bMixNotify = true;
 		}
 		m_bIsFinished = true;
 	}
 
+	//if no buffer available
 	while(!m_Packetizer.IsBufferAvailable())
 	{
 		float *			pBuffer			= NULL;
 		unsigned long	ulNumSamples	= 0;
 
+		//get buffer
 		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
 		{
 			m_Packetizer.WriteData(pBuffer, ulNumSamples);
 		}
+		//can not buffer(end of song?)
 		else
 		{
 			m_Packetizer.Finished();
@@ -80,6 +74,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 	if(m_Packetizer.GetBuffer(pAudioBuffer))
 	{
+		
 		// if we're crossfading
 		if(m_FadeState != FADE_NONE)
 		{
@@ -108,14 +103,15 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				}
 			}
 		}
+		
 
 		m_Packetizer.Advance();
 		m_SamplesOut +=  NumSamples;
-
 		unsigned long pos = GetPosition();
 		unsigned long len = GetLength();
 		unsigned long cft = tuniacApp.m_Preferences.GetCrossfadeTime() * 1000;
 
+		//set time file was played after 1/4 is played
 		if(!m_bEntryPlayed)
 		{
 			if(pos > (len * 0.25))
@@ -130,37 +126,32 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			}
 		}
 
-		if(!m_bMixNotify)
+		//check if coreaudio has not been notified yet and if we are crossfading
+		if(!m_bMixNotify && cft)
 		{
+			//length longer then crossfade time
 			if(len > cft)
 			{
+				//position greaten or equal to length minus crossfade (standard point to crossfade)
 				if(pos >= (len - cft))
 				{
-					//crossfade all bar last song covered(it gets called but wont do reset at this point)
-					m_bIsLast = !tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
+					bool bOK = tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
+					if(bOK)
+					{
+						tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+						m_bMixNotify = true;
+					}
+				}
+			}
+			//length shorten than crossfade time
+			else
+			{
+				bool bOK = tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
+				if(bOK)
+				{
 					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
 					m_bMixNotify = true;
 				}
-			}
-			else
-			{
-				//len is shorter then crossfade, start crossfade already
-				m_bIsLast = !tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
-				tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
-				m_bMixNotify = true;
-			}
-		}
-		else
-		{
-			//CheckNext() will fail as its called when the last song has started already
-			//due to crossfade, if we simply call now without check of last song, last
-			//song will finish seconds in.
-
-			//if at end of last song in playlist but crossfade was the call n seconds ago
-			//used for repeatnone where this is the end of line. 
-			if(pos >= len && cft != 0 && m_bIsLast)
-			{
-				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
 			}
 		}
 		return true;
