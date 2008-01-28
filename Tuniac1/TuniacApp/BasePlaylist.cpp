@@ -249,14 +249,31 @@ bool				CBasePlaylist::Next(void)
 		else
 			SetActiveIndex(NormalRealIndexToFilteredIndex(m_RandomIndexArray[iFilteredIndex + 1]));
 	}
-	else
+	//if repeatone the next song is just the current song
+	if(tuniacApp.GetRepeatMode() == RepeatOne)
 	{
-		iFilteredIndex = NormalRealIndexToFilteredIndex(m_ActiveIndex);
-		if(iFilteredIndex == INVALID_PLAYLIST_INDEX)
-			SetActiveIndex(0);
-		else
-			SetActiveIndex(iFilteredIndex + 1);
+		return true;
 	}
+	//if repeatall and we are at the last song, the next song is the first song
+	else if(tuniacApp.GetRepeatMode() == RepeatAll)
+	{
+		if(tuniacApp.GetShuffleState() && RandomRealIndexToFilteredIndex(m_ActiveIndex) >= m_RandomIndexArray.GetCount() - 1)
+		{
+			SetActiveIndex(0);
+			return true;
+		}
+		else if(NormalRealIndexToFilteredIndex(m_ActiveIndex) >= m_NormalIndexArray.GetCount() - 1)
+		{
+			SetActiveIndex(0);
+			return true;
+		}
+	}
+	iFilteredIndex = NormalRealIndexToFilteredIndex(m_ActiveIndex);
+	if(iFilteredIndex == INVALID_PLAYLIST_INDEX)
+		SetActiveIndex(0);
+	else
+		SetActiveIndex(iFilteredIndex + 1);
+
 	return true;
 }
 
@@ -282,6 +299,11 @@ bool				CBasePlaylist::CheckNext(int iBaseIndex)
 	if(iBaseIndex == INVALID_PLAYLIST_INDEX)
 		return false;
 
+	if(tuniacApp.GetRepeatMode() == RepeatOne)
+		return true;
+	if(tuniacApp.GetRepeatMode() == RepeatAll)
+		return true;
+
 	if(iBaseIndex >= m_NormalIndexArray.GetCount() - 1)
 		return false;
 
@@ -300,6 +322,22 @@ int				CBasePlaylist::GetNextIndex(int iBaseIndex, bool * pbWrapped)
 		if(pbWrapped) *pbWrapped = true;
 		return 0;
 	}
+	if(tuniacApp.GetRepeatMode() == RepeatOne)
+	{
+		return iBaseIndex;
+	}
+	else if(tuniacApp.GetRepeatMode() == RepeatAll)
+	{
+		if(tuniacApp.GetShuffleState() && RandomRealIndexToFilteredIndex(m_ActiveIndex) >= m_RandomIndexArray.GetCount() - 1)
+		{
+			return RandomRealIndexToFilteredIndex(m_RandomIndexArray[0]);
+		}
+		if(NormalRealIndexToFilteredIndex(m_ActiveIndex) >= m_NormalIndexArray.GetCount() - 1)
+		{
+			return NormalRealIndexToFilteredIndex(m_NormalIndexArray[0]);
+		}
+	}
+
 
 	if(tuniacApp.GetShuffleState())
 	{
