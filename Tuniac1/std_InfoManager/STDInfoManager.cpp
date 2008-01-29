@@ -5,6 +5,7 @@
 //
 
 #include "stdafx.h"
+#include <atlbase.h>
 #include "STDinfomanager.h"
 #include "tag.h"
 #include "tfile.h"
@@ -100,6 +101,7 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 
 bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 {
+	USES_CONVERSION;
 	TagLib::File		*		m_File;
 	char ConvertBuffer[512];
 	WideCharToMultiByte(CP_ACP, 0, libEnt->szURL, 512, ConvertBuffer, 512, NULL, NULL);
@@ -114,13 +116,18 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->iBitRate = (unsigned long)(bitrate * 1024.0);
 		libEnt->iPlaybackTime = (unsigned long)(time * 1000.0);
 
-		swprintf(libEnt->szTitle, L"%S", m_File->tag()->title().toCString(true));
-		swprintf(libEnt->szArtist, L"%S", m_File->tag()->artist().toCString(true));
-		swprintf(libEnt->szAlbum, L"%S", m_File->tag()->album().toCString(true));
 		libEnt->iYear = m_File->tag()->year();
 		libEnt->dwTrack[0] = m_File->tag()->track();
-		swprintf(libEnt->szGenre, L"%S", m_File->tag()->genre().toCString(true));
-		swprintf(libEnt->szComment, L"%S", m_File->tag()->comment().toCString(true));
+
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), m_File->tag()->title().length(), libEnt->szTitle, 128);
+
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), m_File->tag()->artist().length(), libEnt->szArtist, 128);
+
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), m_File->tag()->album().length(), libEnt->szAlbum, 128);
+
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), m_File->tag()->genre().length(), libEnt->szGenre, 128);
+
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), m_File->tag()->comment().length(), libEnt->szComment, 128);
 
 	}
 	delete m_File;
