@@ -1,3 +1,14 @@
+Jan 28, 2008
+------------
+-fix unicode in std_Infomanager
+
+Jan 28, 2008
+------------
+-Shuffle over Random, standardize naming in source
+-tinker with play logic, will now hopefully correctly catch last song and stop. Also may be slightly simpler code
+-comment things randomly
+-add getrepeatmode
+
 Jan 26, 2008
 ------------
 -Vista audio support(minus crossfade?)
