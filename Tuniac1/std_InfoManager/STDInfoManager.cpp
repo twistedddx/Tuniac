@@ -119,15 +119,15 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->iYear = m_File->tag()->year();
 		libEnt->dwTrack[0] = m_File->tag()->track();
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), m_File->tag()->title().length(), libEnt->szTitle, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), 256, libEnt->szTitle, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), m_File->tag()->artist().length(), libEnt->szArtist, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), 256, libEnt->szArtist, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), m_File->tag()->album().length(), libEnt->szAlbum, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), 256, libEnt->szAlbum, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), m_File->tag()->genre().length(), libEnt->szGenre, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), 256, libEnt->szGenre, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), m_File->tag()->comment().length(), libEnt->szComment, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), 256, libEnt->szComment, 128);
 
 	}
 	delete m_File;
