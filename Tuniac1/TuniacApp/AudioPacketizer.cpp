@@ -105,8 +105,6 @@ bool CAudioPacketizer::Finished(void)
 
 	m_WriteBlock++;
 
-	m_Finished = true;
-
 	return true;
 }
 
