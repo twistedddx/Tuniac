@@ -22,11 +22,6 @@ public:
 	CAudioPacketizer(void);
 	~CAudioPacketizer(void);
 
-	bool IsFinished(void)
-	{
-		return(m_Finished);
-	}
-
 	bool SetPacketSize(unsigned long Size);
 
 	bool WriteData(float * Data, unsigned long Samples);
