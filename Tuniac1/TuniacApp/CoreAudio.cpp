@@ -110,10 +110,10 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				if(m_Streams.GetCount())
 				{
-					m_Streams[0]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
+					m_Streams[m_Streams.GetCount() - 1]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
 					pStream->FadeIn(tuniacApp.m_Preferences.GetCrossfadeTime());
 
-					if(m_Streams[0]->GetState() == STATE_PLAYING)
+					if(m_Streams[m_Streams.GetCount() - 1]->GetState() == STATE_PLAYING)
 						pStream->Start();
 				}
 
@@ -324,6 +324,7 @@ IAudioSourceSupplier * CCoreAudio::GetPluginAtIndex(unsigned long ulIndex)
 
 	return NULL;
 }
+
 
 void CCoreAudio::CheckOldStreams(void)
 {
