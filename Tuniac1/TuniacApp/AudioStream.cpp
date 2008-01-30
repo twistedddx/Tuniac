@@ -44,16 +44,6 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
 	CAutoLock t(&m_Lock);
 
-	//song finished
-	if(m_Packetizer.IsFinished())
-	{
-		if(!m_bMixNotify){
-			tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
-			m_bMixNotify = true;
-		}
-		m_bIsFinished = true;
-	}
-
 	//if no buffer available
 	while(!m_Packetizer.IsBufferAvailable())
 	{
@@ -68,14 +58,16 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		//can not buffer(end of song?)
 		else
 		{
+			m_bIsFinished = true;
 			m_Packetizer.Finished();
+			tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
 		}
 	}
 
 	if(m_Packetizer.GetBuffer(pAudioBuffer))
 	{
 		
-		// if we're crossfading
+		//crossfading code
 		if(m_FadeState != FADE_NONE)
 		{
 			for(unsigned long x=0; x<NumSamples; x+=m_Channels)
@@ -88,8 +80,19 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				fVolume = max(0.0f, min(fVolume, 1.0f));
 			}
 
-			if((fVolume == 0.0) || (fVolume == 1.0))
+			if( fVolume == 1.0 )
+			{
 				m_FadeState = FADE_NONE;
+			}
+
+			//crossfade completed, we want to stop this song!
+			if( fVolume == 0.0 )
+			{
+				m_FadeState = FADE_NONE;
+				m_bIsFinished = true;
+				m_Packetizer.Finished();
+				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+			}
 		}
 
 		// now apply the volume scale, only if we need to
@@ -107,14 +110,11 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 		m_Packetizer.Advance();
 		m_SamplesOut +=  NumSamples;
-		unsigned long pos = GetPosition();
-		unsigned long len = GetLength();
-		unsigned long cft = tuniacApp.m_Preferences.GetCrossfadeTime() * 1000;
 
 		//set time file was played after 1/4 is played
 		if(!m_bEntryPlayed)
 		{
-			if(pos > (len * 0.25))
+			if(GetPosition() > (GetLength() * 0.25))
 			{
 				SYSTEMTIME st;
 				GetLocalTime(&st);
@@ -126,32 +126,26 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			}
 		}
 
+		unsigned long cft = tuniacApp.m_Preferences.GetCrossfadeTime() * 1000;
+
 		//check if coreaudio has not been notified yet and if we are crossfading
 		if(!m_bMixNotify && cft)
 		{
 			//length longer then crossfade time
-			if(len > cft)
+			if(GetLength() > cft)
 			{
 				//position greaten or equal to length minus crossfade (standard point to crossfade)
-				if(pos >= (len - cft))
+				if(GetPosition() >= (GetLength() - cft))
 				{
-					bool bOK = tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
-					if(bOK)
-					{
 						tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
 						m_bMixNotify = true;
-					}
 				}
 			}
 			//length shorten than crossfade time
 			else
 			{
-				bool bOK = tuniacApp.m_PlaylistManager.GetActivePlaylist()->CheckNext();
-				if(bOK)
-				{
-					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
-					m_bMixNotify = true;
-				}
+				tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+				m_bMixNotify = true;
 			}
 		}
 		return true;
