@@ -35,14 +35,13 @@ bool				CPlayQueue::Append(IPlaylistEntry * pEntry)
 	return true;
 }
 
-IPlaylistEntry *	CPlayQueue::RemoveHead(void)
+bool				CPlayQueue::Remove(int iIndex)
 {
 	if(m_Queue.GetCount() == 0)
 		return NULL;
 
-	IPlaylistEntry * pIPE = m_Queue[0];
-	m_Queue.RemoveAt(0);
-	return pIPE;
+	m_Queue.RemoveAt(iIndex);
+	return true;
 }
 
 bool				CPlayQueue::RemoveItem(IPlaylistEntry * pEntry)

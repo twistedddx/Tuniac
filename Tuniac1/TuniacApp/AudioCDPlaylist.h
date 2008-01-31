@@ -40,7 +40,7 @@ public:
 	LPTSTR				GetPlaylistName(void);
 
 	bool				Previous(void);
-	bool				CheckNext(void);
+	int					GetNextIndex(void);
 	bool				Next(void);
 
 	IPlaylistEntry	*	GetActiveItem(void);

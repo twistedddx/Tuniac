@@ -36,6 +36,7 @@ public:
 
 	bool								m_bIsFinished;
 	bool								m_bMixNotify;
+	bool								m_bFinishNotify;
 
 	IPlaylistEntry				*		m_pEntry;
 	bool								m_bEntryPlayed;

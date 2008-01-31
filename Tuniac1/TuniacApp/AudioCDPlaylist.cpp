@@ -139,14 +139,14 @@ bool				CAudioCDPlaylist::Previous(void)
 	return false;
 }
 
-bool				CAudioCDPlaylist::CheckNext(void)
+int				CAudioCDPlaylist::GetNextIndex(void)
 {
 	if(m_ActiveItem < (GetNumCDTracks()-1))
 	{
-		return true;
+		return m_ActiveItem + 1;
 	}
 
-	return false;
+	return -1;
 }
 
 bool				CAudioCDPlaylist::Next(void)

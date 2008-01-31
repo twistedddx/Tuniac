@@ -15,6 +15,7 @@ CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry)
 
 	fVolume			= 1.0f;
 	m_bMixNotify	= false;
+	m_bFinishNotify	= false;
 	m_bIsFinished	= false;
 
 
@@ -57,10 +58,13 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		}
 		//can not buffer(end of song?)
 		else
-		{
-			m_bIsFinished = true;
-			m_Packetizer.Finished();
-			tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+		{	
+			if(!m_bFinishNotify)
+			{
+				m_bIsFinished = true;
+				m_Packetizer.Finished();
+				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+			}
 		}
 	}
 
@@ -89,9 +93,12 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			if( fVolume == 0.0 )
 			{
 				m_FadeState = FADE_NONE;
-				m_bIsFinished = true;
-				m_Packetizer.Finished();
-				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+					if(!m_bFinishNotify)
+					{
+						m_bIsFinished = true;
+						m_Packetizer.Finished();
+						tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+					}
 			}
 		}
 
