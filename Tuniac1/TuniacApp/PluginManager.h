@@ -37,7 +37,7 @@ public:
 	void			PostMessage(UINT Msg, WPARAM wParam, LPARAM lParam);
 
 	void *			GetVariable(Variable eVar);
-	void			GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent);
+	void			GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iIndex);
 	bool			Navigate(int iFromCurrent);
 
 	HINSTANCE		GetMainInstance(void);

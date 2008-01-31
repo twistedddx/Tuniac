@@ -1442,7 +1442,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
 								//do we have a valid previous song?
-								if(pPlaylist->Previous() != -1)
+								if(pPlaylist->Previous())
 								{
 									// get active item and pass it to the playback manager class
 
@@ -2044,7 +2044,7 @@ void	CTuniacApp::RebuildFutureMenu(void)
 			}
 		}
 		int iSize = m_Preferences.GetFutureListSize();
-		if(iSize > pPlaylistEX->GetNumItems() && !m_Preferences.GetRepeatMode() == RepeatAll)
+		if(iSize > pPlaylistEX->GetNumItems() && m_Preferences.GetRepeatMode() == RepeatNone)
 			iSize = pPlaylistEX->GetNumItems() - iIndex;
 
 		for(int i = 0; i < (iSize - 1); i++)

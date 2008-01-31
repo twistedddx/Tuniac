@@ -178,7 +178,7 @@ bool			CCoreAudio::Stop(void)
 
 	CheckOldStreams();
 
-	for(unsigned long x=0; x<m_Streams.GetCount() - 1; x++)
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
 		m_Streams[x]->Stop();
 	}
