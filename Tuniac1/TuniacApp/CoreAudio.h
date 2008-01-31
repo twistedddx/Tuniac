@@ -37,6 +37,7 @@ public:
 	bool				Reset(void);
 	bool				Play(void);
 	bool				Stop(void);
+	bool				StopLast(void);
 
 	unsigned long		GetState(void);
 

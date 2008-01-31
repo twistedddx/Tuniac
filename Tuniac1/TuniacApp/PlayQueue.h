@@ -20,7 +20,7 @@ public:
 	bool				Prepend(IPlaylistEntry * pEntry);
 	bool				Append(IPlaylistEntry * pEntry);
 
-	IPlaylistEntry *	RemoveHead(void);
+	bool				Remove(int iIndex);
 	bool				RemoveItem(IPlaylistEntry * pEntry);
 	void				Clear(void);
 };

@@ -142,14 +142,11 @@ public:
 
 	bool				CoreAudioMessage(unsigned long Message, void * Params);
 
-	IPlaylistEntry *	GetFuturePlaylistEntry(unsigned long iFromCurrent);
+	IPlaylistEntry *	GetFuturePlaylistEntry(unsigned long iIndex);
     
 	bool				FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState);
 	bool				EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned int iDestSize);
 	bool				DoSoftPause(void);
-	bool				DoPlaySelected(void);
-	bool				DoQueue(void);
-	bool				DoNext(void);
 
 	HMENU				GetFutureMenu(void);
 	void				RebuildFutureMenu(void);

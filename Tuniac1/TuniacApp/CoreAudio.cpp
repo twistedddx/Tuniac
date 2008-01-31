@@ -178,10 +178,22 @@ bool			CCoreAudio::Stop(void)
 
 	CheckOldStreams();
 
-	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	for(unsigned long x=0; x<m_Streams.GetCount() - 1; x++)
 	{
 		m_Streams[x]->Stop();
 	}
+
+	return true;
+}
+
+//only stop the last stream. Useful for softpause feature
+bool			CCoreAudio::StopLast(void)
+{
+	CAutoLock	t(&m_Lock);
+
+	CheckOldStreams();
+
+	m_Streams[m_Streams.GetCount() - 1]->Stop();
 
 	return true;
 }

@@ -37,8 +37,6 @@ protected:
 	unsigned long							m_ulTextFilterField;
 	bool									m_bTextFilterReversed;
 
-	bool									CheckNext(int iBaseIndex);
-
 public:
 	CBasePlaylist(void);
 	~CBasePlaylist(void);
@@ -61,19 +59,20 @@ public:
 
 	bool				Previous(void);
 	bool				Next(void);
-	bool				CheckNext(void);
-	int					GetNextIndex(int iBaseIndex, bool * pbWrapped = NULL);
+	bool				CheckFilteredIndex(int iCheck);
+	int					GetNextFilteredIndex(int iBaseIndex);
 
 	IPlaylistEntry	*	GetActiveItem(void);
-	unsigned long		GetItemPlayOrder(unsigned long ulIndex);
+	int					GetIndexPlayOrder(int ulIndex);
 
 public:
-	unsigned long		GetNumItems(void);
+	int					GetNumItems(void);
 
-	bool				SetActiveIndex(int iIndex);
-	int					GetActiveIndex(void);
+	bool				SetActiveFilteredIndex(int iIndex);
+	int					GetActiveFilteredIndex(void);
 
-	IPlaylistEntry *	GetItemAtIndex(int iIndex);
+	IPlaylistEntry *	GetItemAtFilteredIndex(int iIndex);
+	int					GetFilteredIndexforItem(IPlaylistEntry * pEntry);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);

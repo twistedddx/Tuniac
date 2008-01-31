@@ -208,8 +208,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			if(PLDH.ActivePlaylist - 1 == iPlaylist)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
-				pPlaylist->SetActiveIndex(PLDH.ActiveIndex);
-				if(pPlaylist->GetActiveIndex() != INVALID_PLAYLIST_INDEX)
+				pPlaylist->SetActiveFilteredIndex(PLDH.ActiveIndex);
+				if(pPlaylist->GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX)
 					tuniacApp.m_CoreAudio.SetSource(pPlaylist->GetActiveItem());
 			}
 		}
@@ -217,8 +217,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
-			m_LibraryPlaylist.SetActiveIndex(PLDH.ActiveIndex);
-			if(m_LibraryPlaylist.GetActiveIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
+			m_LibraryPlaylist.SetActiveFilteredIndex(PLDH.ActiveIndex);
+			if(m_LibraryPlaylist.GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 				tuniacApp.m_CoreAudio.SetSource(m_LibraryPlaylist.GetActiveItem());
 			
 		}
@@ -277,12 +277,12 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 		if(GetActivePlaylistIndex() == 0)
 		{
 			PLDH.ActivePlaylist = 0;
-			PLDH.ActiveIndex = m_LibraryPlaylist.GetActiveIndex();
+			PLDH.ActiveIndex = m_LibraryPlaylist.GetActiveFilteredIndex();
 		}
 		else
 		{
 			PLDH.ActivePlaylist	= GetActivePlaylistIndex() - (GetNumPlaylists() - m_StandardPlaylists.GetCount() - 1);
-			PLDH.ActiveIndex = ((IPlaylistEX *)m_ActivePlaylist)->GetActiveIndex();
+			PLDH.ActiveIndex = ((IPlaylistEX *)m_ActivePlaylist)->GetActiveFilteredIndex();
 		}
 	}
 	else
@@ -401,9 +401,9 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 		IPlaylistEX * pPlaylist = (IPlaylistEX *)m_ActivePlaylist;
 		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 		{
-			if(pPlaylist->GetItemAtIndex(i) == pEntry)
+			if(pPlaylist->GetItemAtFilteredIndex(i) == pEntry)
 			{
-				pPlaylist->SetActiveIndex(i);
+				pPlaylist->SetActiveFilteredIndex(i);
 				return true;
 			}
 		}
@@ -412,9 +412,9 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)GetPlaylistAtIndex(0);
 	for (unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
 	{
-		if(pPlaylistEX->GetItemAtIndex(i) == pEntry)
+		if(pPlaylistEX->GetItemAtFilteredIndex(i) == pEntry)
 		{
-			pPlaylistEX->SetActiveIndex(i);
+			pPlaylistEX->SetActiveFilteredIndex(i);
 			return true;
 		}
 	}
@@ -431,7 +431,7 @@ bool CPlaylistManager::SetActivePlaylist(int iPlaylistNumber)
 
 	if(m_ActivePlaylist != NULL && m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
-		((IPlaylistEX *)m_ActivePlaylist)->SetActiveIndex(INVALID_PLAYLIST_INDEX);
+		((IPlaylistEX *)m_ActivePlaylist)->SetActiveFilteredIndex(INVALID_PLAYLIST_INDEX);
 	}
 
 	if(iPlaylistNumber == 0)

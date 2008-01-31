@@ -74,7 +74,6 @@ public:
 
 	virtual bool				Previous(void)								= 0;
 	virtual bool				Next(void)									= 0;
-	virtual bool				CheckNext(void)								= 0;
 
 
 	virtual IPlaylistEntry	*	GetActiveItem(void)							= 0;
@@ -83,15 +82,16 @@ public:
 class IPlaylistEX : public IPlaylist
 {
 public:
-	virtual unsigned long		GetNumItems(void)								= 0;
+	virtual int					GetNumItems(void)								= 0;
 
-	virtual bool				SetActiveIndex(int iIndex)						= 0;
-	virtual int					GetActiveIndex(void)							= 0;
+	virtual bool				SetActiveFilteredIndex(int iIndex)				= 0;
+	virtual int					GetActiveFilteredIndex(void)					= 0;
 
-	virtual IPlaylistEntry *	GetItemAtIndex(int iIndex)						= 0;
-	virtual int					GetNextIndex(int iBaseIndex, bool * pbWrapped = NULL)	= 0;
+	virtual IPlaylistEntry *	GetItemAtFilteredIndex(int iIndex)				= 0;
+	virtual int					GetFilteredIndexforItem(IPlaylistEntry	* pEntry) = 0;
+	virtual int					GetNextFilteredIndex(int iBaseIndex)			= 0;
 
-	virtual unsigned long		GetItemPlayOrder(unsigned long ulIndex)			= 0;
+	virtual int					GetIndexPlayOrder(int ulIndex)					= 0;
 
 	virtual bool				SetTextFilter(LPTSTR	szFilterString)			= 0;
 	virtual LPTSTR				GetTextFilter(void)								= 0;

@@ -328,12 +328,12 @@ void *			CPluginManager::GetVariable(Variable eVar)
 	return NULL;
 }
 
-void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
+void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iIndex)
 { // szFormat=NULL to use full format from preferences
 
 	memset(szDest, L'\0', iDestSize);
 
-	IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent);
+	IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iIndex);
 	if(pEntry == NULL)
 		return;
 

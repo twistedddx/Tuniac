@@ -637,7 +637,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IPlaylistEX * pPlaylist = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetActivePlaylist();
-								pPlaylist->SetActiveIndex(0);
+								pPlaylist->SetActiveFilteredIndex(0);
 							}
 							SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 						}
@@ -663,10 +663,10 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								for(int i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry1 = pPlaylist->GetItemAtIndex(i);
+									pEntry1 = pPlaylist->GetItemAtFilteredIndex(i);
 									for(int j = 0; j < i; j++)
 									{
-										pEntry2 = pPlaylist->GetItemAtIndex(j);
+										pEntry2 = pPlaylist->GetItemAtFilteredIndex(j);
 										if(StrCmpI((LPTSTR)pEntry1->GetField(FIELD_URL), (LPTSTR)pEntry2->GetField(FIELD_URL)) == 0)
 										{
 											if(pEntry1 == pActiveEntry)
@@ -684,9 +684,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								{
 									for(int i = 0; i < pPlaylist->GetNumItems(); i++)
 									{
-										if(pPlaylist->GetItemAtIndex(i) == pActiveEntry)
+										if(pPlaylist->GetItemAtFilteredIndex(i) == pActiveEntry)
 										{
-											pPlaylist->SetActiveIndex(i);
+											pPlaylist->SetActiveFilteredIndex(i);
 											break;
 										}
 									}
@@ -709,7 +709,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								EntryArray exportArray;
 								for(int i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry = pPlaylist->GetItemAtIndex(i);
+									pEntry = pPlaylist->GetItemAtFilteredIndex(i);
 									exportArray.AddTail(pEntry);
 								}
 								tuniacApp.m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
@@ -727,7 +727,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								EntryArray			EA;
 								for(int i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
 								{
-									pPE = ((IPlaylistEX *)pSource)->GetItemAtIndex(i);
+									pPE = ((IPlaylistEX *)pSource)->GetItemAtFilteredIndex(i);
 									EA.AddTail(pPE);
 								}
 								((IPlaylistEX *)pDest)->AddEntryArray(EA);
@@ -753,7 +753,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								{
 									for(int j = 0; j < ((IPlaylistEX *)pDest)->GetNumItems(); j++)
 									{
-										if(((IPlaylistEX *)pDest)->GetItemAtIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtIndex(i)->GetEntryID())
+										if(((IPlaylistEX *)pDest)->GetItemAtFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtFilteredIndex(i)->GetEntryID())
 										{
 											IA.AddTail(j);
 											continue;
