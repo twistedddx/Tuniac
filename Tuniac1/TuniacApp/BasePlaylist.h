@@ -26,7 +26,7 @@ protected:
 	Array<unsigned long, 100>				m_RandomIndexArray;
 	Array<unsigned long, 100>				m_NormalIndexArray;
 
-	int										m_ActiveIndex;
+	int										m_ActiveRealIndex;
 
 	unsigned long							m_SortType;
 	unsigned long							m_LastSortBy;
@@ -43,12 +43,10 @@ public:
 
 	bool				ApplyFilter(void);
 
-	int					NormalRealIndexToFilteredIndex(int iIndex);	// returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
-	int					NormalFilteredIndexToRealIndex(int iIndex);	// returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
-
-	int					RandomRealIndexToFilteredIndex(int iIndex);	// returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
-	int					RandomFilteredIndexToRealIndex(int iIndex);	// returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
-
+	unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex);				// returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	unsigned long		NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex);	// returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
+	unsigned long		RealIndexToRandomFilteredIndex(unsigned long ulRealIndex);				// returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	unsigned long		RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex);	// returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
 
 public:
 	unsigned long		GetFlags(void);
@@ -59,20 +57,25 @@ public:
 
 	bool				Previous(void);
 	bool				Next(void);
-	bool				CheckFilteredIndex(int iCheck);
-	int					GetNextFilteredIndex(int iBaseIndex);
+	bool				CheckFilteredIndex(unsigned long ulFilteredIndex);
+
+	unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue);
+	unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex);
 
 	IPlaylistEntry	*	GetActiveItem(void);
-	int					GetIndexPlayOrder(int ulIndex);
 
 public:
-	int					GetNumItems(void);
+	unsigned long		GetNumItems(void);
 
-	bool				SetActiveFilteredIndex(int iIndex);
-	int					GetActiveFilteredIndex(void);
+	bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex);
+	unsigned long		GetActiveFilteredIndex(void);
 
-	IPlaylistEntry *	GetItemAtFilteredIndex(int iIndex);
-	int					GetFilteredIndexforItem(IPlaylistEntry * pEntry);
+	bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+	unsigned long		GetActiveNormalFilteredIndex(void);
+
+	IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex);
+	IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pEntry);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);
@@ -90,4 +93,6 @@ public:
 	bool				DeleteItemArray(IndexArray &	indexArray);
 	bool				MoveItemArray(unsigned long ToIndex, IndexArray &	indexArray);
 
+	bool				DeleteAllItemsWhereIDEquals(unsigned long ID);
+	bool				UpdateIndex(unsigned long ulRealIndex);
 };

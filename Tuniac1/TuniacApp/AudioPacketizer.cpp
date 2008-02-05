@@ -92,7 +92,7 @@ bool CAudioPacketizer::WriteData(float * Data, unsigned long Samples)
 bool CAudioPacketizer::Finished(void)
 {
 	float * pData = m_pBufferArray[m_WriteBlock & 0x0f];
-	for(int x=0; x<m_PacketSize; x++)
+	for(unsigned long x=0; x<m_PacketSize; x++)
 	{
 		pData[x] = 0.0f;
 	}

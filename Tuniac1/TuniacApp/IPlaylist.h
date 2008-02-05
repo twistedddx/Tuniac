@@ -82,16 +82,19 @@ public:
 class IPlaylistEX : public IPlaylist
 {
 public:
-	virtual int					GetNumItems(void)								= 0;
+	virtual unsigned long		GetNumItems(void)													= 0;
 
-	virtual bool				SetActiveFilteredIndex(int iIndex)				= 0;
-	virtual int					GetActiveFilteredIndex(void)					= 0;
+	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
+	virtual unsigned long		GetActiveFilteredIndex(void)										= 0;
+	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
+	virtual unsigned long		GetActiveNormalFilteredIndex(void)									= 0;
 
-	virtual IPlaylistEntry *	GetItemAtFilteredIndex(int iIndex)				= 0;
-	virtual int					GetFilteredIndexforItem(IPlaylistEntry	* pEntry) = 0;
-	virtual int					GetNextFilteredIndex(int iBaseIndex)			= 0;
+	virtual IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
+	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)			= 0;
+	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pEntry)					= 0;
 
-	virtual int					GetIndexPlayOrder(int ulIndex)					= 0;
+	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue)			= 0;
+	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;
 
 	virtual bool				SetTextFilter(LPTSTR	szFilterString)			= 0;
 	virtual LPTSTR				GetTextFilter(void)								= 0;
@@ -109,6 +112,8 @@ public:
 	virtual bool				DeleteItemArray(IndexArray &	indexArray)		= 0;
 	virtual bool				MoveItemArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
 
+	virtual bool				DeleteAllItemsWhereIDEquals(unsigned long ID)	= 0;
+	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;
 };
 
 

@@ -76,7 +76,7 @@ protected:
 
 	int			m_FileAssocType;
 
-	int			m_HistoryListSize;
+	unsigned long	m_HistoryListSize;
 	int			m_FutureListSize;
 
 	void		BuildTree(HWND hTree, int iPage);
@@ -138,7 +138,7 @@ public:
 
 	int		GetOutputDevice(void);
 
-	int		GetVolumePercent(void);
+	float	GetVolumePercent(void);
 	void	SetVolumeScale(float Scale);
 
 	int		GetPlaylistViewNumColumns(void);
@@ -179,6 +179,6 @@ public:
 	bool		GetAlwaysOnTop(void);
 	void		SetAlwaysOnTop(bool bEnabled);
 
-	int			GetHistoryListSize(void);
+	unsigned long	GetHistoryListSize(void);
 	int			GetFutureListSize(void);
 };

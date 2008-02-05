@@ -50,11 +50,11 @@ public:
 	bool					BeginAdd(unsigned long ulNumItems);
 	bool					EndAdd(void);
 	bool					AddItem(LPTSTR szItemToAdd);
-
-	CMediaLibraryPlaylistEntry *	GetItemByIndex(int				iIndex);
-	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);
-	CMediaLibraryPlaylistEntry *	GetItemByURL(LPTSTR		szURL);
-
 	bool					RemoveItem(IPlaylistEntry *			pEntry);
 
+	bool					UpdateMLIndex(unsigned long	ulMLIndex);
+
+	CMediaLibraryPlaylistEntry *	GetItemByIndex(unsigned long	ulIndex);
+	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);
+	CMediaLibraryPlaylistEntry *	GetItemByURL(LPTSTR		szURL);
 };

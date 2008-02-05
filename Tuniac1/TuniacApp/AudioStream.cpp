@@ -220,7 +220,7 @@ unsigned long	CAudioStream::GetLength(void)
 
 unsigned long	CAudioStream::GetPosition(void)
 {
-	unsigned long MSOutput = ((float)m_SamplesOut / (((float)m_Output.GetSampleRate()/1000.0f) * (float)m_Output.GetChannels()));
+	unsigned long MSOutput = (m_SamplesOut / ((m_Output.GetSampleRate()/1000) * m_Output.GetChannels()));
 	return(MSOutput);
 }
 
@@ -238,7 +238,7 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 	if(m_pSource->SetPosition(&Pos))
 	{
-		m_SamplesOut = Pos * (((float)m_Output.GetSampleRate()/1000.0f) * (float)m_Output.GetChannels());
+		m_SamplesOut = Pos * ((m_Output.GetSampleRate()/1000) * m_Output.GetChannels());
 
 		m_Packetizer.Reset();
 		m_Output.Reset();

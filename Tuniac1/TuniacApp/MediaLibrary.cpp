@@ -1,5 +1,5 @@
 // MediaLibrary.cpp: implementation of the CMediaLibrary class.
-//
+// This is not a viewable playlist LibraryPlaylist is simply based on this
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -50,14 +50,14 @@ unsigned long CMediaLibrary::GetCount(void)
 	return(m_MediaLibrary.GetCount());
 }
 
-CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByIndex(int iIndex)
+CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByIndex(unsigned long ulIndex)
 {
-	if(iIndex > (int)GetCount())
+	if(ulIndex > GetCount())
 	{
 		return NULL;
 	}
 
-	return m_MediaLibrary[iIndex];
+	return m_MediaLibrary[ulIndex];
 }
 
 CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByID(unsigned long ulID)
@@ -218,13 +218,6 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
-			// fill in media library specific stuff
-			unsigned long dwEntryID = m_MediaLibrary.GetCount();
-			while(GetItemByID(dwEntryID))
-			{
-				dwEntryID++;
-			}
-
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
 			StrCpy(libraryEntry.szURL, szURL);
 
@@ -265,6 +258,13 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 
 			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
+
+			// fill in media library specific stuff
+			unsigned long dwEntryID = m_MediaLibrary.GetCount();
+			while(GetItemByID(dwEntryID))
+			{
+				dwEntryID++;
+			}
 			pEntry->SetEntryID(dwEntryID);
 			m_MediaLibrary.AddTail(pEntry);
 
@@ -317,6 +317,25 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 	AddingFilesIncrement(true);
 
 	return true;
+}
+
+bool			CMediaLibrary::RemoveItem(IPlaylistEntry * pEntry)
+{
+	if(pEntry == NULL)
+		return false;
+
+	m_Queue.RemoveItem(pEntry);
+	tuniacApp.m_History.RemoveItem(pEntry);
+	for(unsigned long x=0; x<m_MediaLibrary.GetCount(); x++)
+	{
+		if(m_MediaLibrary[x] == pEntry)
+		{
+			delete m_MediaLibrary[x];
+			m_MediaLibrary.RemoveAt(x);
+			return true;
+		}
+	}
+	return false;
 }
 
 bool CMediaLibrary::Initialize()
@@ -406,23 +425,73 @@ bool CMediaLibrary::Shutdown(bool bSave)
 	return true;
 }
 
-bool			CMediaLibrary::RemoveItem(IPlaylistEntry * pEntry)
+bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 {
-	if(pEntry == NULL)
+	if(ulMLIndex > GetCount())
 		return false;
 
-	m_Queue.RemoveItem(pEntry);
-	tuniacApp.m_History.RemoveItem(pEntry);
-	for(unsigned long x=0; x<m_MediaLibrary.GetCount(); x++)
+	CMediaLibraryPlaylistEntry *	pEntry = GetItemByIndex(ulMLIndex);
+	LPTSTR szURL = (LPTSTR)pEntry->GetField(FIELD_URL);
+
+	//stream
+	if(PathIsURL(szURL))
+		return true;
+
+	//decoders are more vital than infomanagers
+	for(unsigned long i=0; i < tuniacApp.m_CoreAudio.GetNumPlugins(); i++)
 	{
-		if(m_MediaLibrary[x] == pEntry)
+		IAudioSourceSupplier * pPlugin = tuniacApp.m_CoreAudio.GetPluginAtIndex(i);
+		if(pPlugin->CanHandle(szURL))
 		{
-			delete m_MediaLibrary[x];
-			m_MediaLibrary.RemoveAt(x);
+			LibraryEntry  libraryEntry;
+
+			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
+
+			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
+			StrCpy(libraryEntry.szURL, szURL);
+
+			// extract generic info from the file (creation time/size)
+			HANDLE hFile = CreateFile(szURL, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+			if(hFile == INVALID_HANDLE_VALUE)
+				return false;
+
+			FILETIME ft;
+			GetFileTime(hFile, &ft, NULL, NULL);
+			FileTimeToSystemTime(&ft, &libraryEntry.stFileCreationDate);
+			libraryEntry.dwFilesize = GetFileSize(hFile, NULL);
+			CloseHandle(hFile);
+
+			// let the info manager get the format specific stuff here!
+			for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
+			{
+				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
+				{
+					m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry);
+				}
+			}
+
+			//set filename as title if tag readers didn't find one
+			if(wcslen(libraryEntry.szTitle) == 0)
+			{
+				TCHAR	szFileTitle[128];
+				GetFileTitle(szURL, szFileTitle, 128);
+				StrCpy(libraryEntry.szTitle, szFileTitle);
+			}
+
+			//we could do dwEntryID = GetCount() - ulMLIndex; while(GetItemByID(dwEntryID)){ dwEntryID++ } to "compact" the entryID's again
+			//if UpdateIndex was called backwards through the list, fastest i can think of but still what would the speed be with 30,000 files?
+			//I could see this growing out of control eventually I suppose with a well hacked up ML
+			unsigned long dwEntryID = pEntry->GetEntryID();
+
+			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
+
+			pEntry->SetEntryID(dwEntryID);
+			m_MediaLibrary.RemoveAt(ulMLIndex);
+			m_MediaLibrary.InsertBefore(ulMLIndex, pEntry);
+
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -552,7 +621,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			}
 			else
 			{
-				for(int x = 0; x < ulHistorySize; x++)
+				for(unsigned long x = 0; x < ulHistorySize; x++)
 				{
 					ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))

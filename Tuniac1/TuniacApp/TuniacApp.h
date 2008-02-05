@@ -118,6 +118,7 @@ public:
 		unsigned long ulAt;
 	}							m_SoftPause;
 	IndexArray					m_PlaySelected;
+	IndexArray					m_FutureMenu;
 
 
 public:
@@ -135,20 +136,18 @@ public:
 
 	bool				SetStatusText(LPTSTR szStatusText);
 
-	bool				GetShuffleState(void);
-	RepeatMode			GetRepeatMode(void);
-
 	HFONT				GetTuniacFont(int size);
 
 	bool				CoreAudioMessage(unsigned long Message, void * Params);
 
-	IPlaylistEntry *	GetFuturePlaylistEntry(unsigned long iIndex);
-    
 	bool				FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState);
 	bool				EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned int iDestSize);
 	bool				DoSoftPause(void);
 
 	HMENU				GetFutureMenu(void);
-	void				RebuildFutureMenu(void);
 
+	IPlaylistEntry *	GetFuturePlaylistEntry(int iFromCurrent);
+	void				BuildFuturePlaylistArray(void);
+	void				RebuildFutureMenu(void);
+	void				UpdateQueues(void);
 };

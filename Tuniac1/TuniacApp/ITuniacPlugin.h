@@ -10,7 +10,6 @@ public:
 	virtual void		GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent) = 0;
 
 	virtual bool		Navigate(int iFromCurrent)						= 0;
-
 	virtual HINSTANCE	GetMainInstance(void)							= 0;
 	virtual HWND		GetMainWindow(void)								= 0;
 

@@ -37,7 +37,7 @@ CFileAssoc::~CFileAssoc(void)
 bool			CFileAssoc::CleanAssociations()
 {
 	UpdateExtensionList();
-	for(int i = 0; i < m_ExtList.GetCount(); i++)
+	for(unsigned long i = 0; i < m_ExtList.GetCount(); i++)
 	{
 		m_ExtList[i].bAssociated = false;
 	}

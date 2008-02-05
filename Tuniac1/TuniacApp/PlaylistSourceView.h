@@ -74,7 +74,7 @@ public:
 	bool	EditTrackInfo(void);
 	bool	ShowCurrentItem(void);
 
-	void	DeselectFirstItem(void);
+	void	DeselectItem(unsigned long ulIndex);
 	bool	GetSelectedIndexes(IndexArray & indexArray);
 	bool	SelectedAll(IndexArray & indexArray);
 

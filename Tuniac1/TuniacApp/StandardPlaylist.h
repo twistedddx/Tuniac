@@ -9,9 +9,7 @@ public:
 	~CStandardPlaylist(void);
 
 	unsigned long		GetRealCount(void);
-	unsigned long		GetIDAtRealIndex(int iIndex);
-
-	bool				DeleteAllItemsWhereIDEquals(unsigned long ID);
+	unsigned long		GetIDAtRealIndex(unsigned long ulRealIndex);
 
 public:
 	unsigned long		GetPlaylistType(void);

@@ -410,7 +410,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				item.mask = LVIF_TEXT;
 				item.iSubItem = 0;
 
-				for(int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
+				for(unsigned int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
 				{
 					PluginEntry * pPE = tuniacApp.m_PluginManager.GetPluginAtIndex(i);
 					if(pPE == NULL) break;
@@ -431,7 +431,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 			{
 				HWND hList = GetDlgItem(hDlg, IDC_PLUGINS_LIST);
 
-				for(int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
+				for(unsigned int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
 				{
 					ListView_SetCheckState(hList, i, tuniacApp.m_PluginManager.IsPluginEnabled(i) ? TRUE : FALSE);
 				}
@@ -547,7 +547,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					case IDC_PLUGINS_ENABLEALL:
 					case IDC_PLUGINS_DISABLEALL:
 						{
-							for(int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
+							for(unsigned int i = 0; i < tuniacApp.m_PluginManager.GetNumPlugins(); i++)
 							{
 								tuniacApp.m_PluginManager.EnablePlugin(i, wCmdID == IDC_PLUGINS_ENABLEALL);
 							}
@@ -772,6 +772,55 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 			}
 			break;
 
+		case WM_COMMAND:
+			{
+				WORD wCmdID = LOWORD(wParam);
+
+				switch(wCmdID)
+				{
+
+					case IDC_REBUILD_ML:
+						{
+							//do update
+							tuniacApp.m_CoreAudio.SetSource(NULL);
+							for(unsigned long ulMLIndex = 0; ulMLIndex < tuniacApp.m_MediaLibrary.GetCount(); ulMLIndex++)
+							{
+								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(ulMLIndex))
+								{
+									IPlaylistEntry * pEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(ulMLIndex);
+									unsigned long ulEntryID = pEntry->GetEntryID();
+									for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+									{
+										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
+										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+										pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
+									}
+									tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
+								}
+							}
+
+							for(unsigned long ulRealIndex = 0; ulRealIndex < tuniacApp.m_PlaylistManager.m_LibraryPlaylist.GetRealCount(); ulRealIndex++)
+							{
+								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(ulRealIndex);
+							}
+							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+
+
+							for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
+							{
+								for(unsigned long ulRealIndex = 0; ulRealIndex < tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->GetRealCount(); ulRealIndex++)
+								{
+									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateIndex(ulRealIndex);
+								}
+							}
+							tuniacApp.m_SourceSelectorWindow->UpdateView();
+						}
+						break;
+
+				}
+			}
+			break;
+
 		default:
 			return FALSE;
 			break;
@@ -851,7 +900,7 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 					case IDC_FILEASSOC_ASSOCNOW:
 						{
 							bool bSel;
-							for (unsigned long i = 1; i <= pPrefs->m_FileAssoc.GetExtensionCount(); i++)
+							for (int i = 1; i <= pPrefs->m_FileAssoc.GetExtensionCount(); i++)
 							{
 								bSel = SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_GETSEL, i, 0) > 0;
 								PFileAssocDetail pFAD = pPrefs->m_FileAssoc.GetExtensionDetail(i - 1);
@@ -877,7 +926,7 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_SETSEL, pPrefs->m_FileAssoc.IsFoldersAssociated() ? TRUE : FALSE, 0);
 							
 							// file association
-							for(unsigned long x = 0; x < pPrefs->m_FileAssoc.GetExtensionCount(); x++)
+							for(int x = 0; x < pPrefs->m_FileAssoc.GetExtensionCount(); x++)
 							{
 								PFileAssocDetail pFAD = pPrefs->m_FileAssoc.GetExtensionDetail(x);
 								TCHAR szDetail[128];
@@ -2005,9 +2054,9 @@ int CPreferences::GetOutputDevice(void)
 
 
 
-int		CPreferences::GetVolumePercent(void)
+float	CPreferences::GetVolumePercent(void)
 {
-	return m_VolumeScale * 100;
+	return m_VolumeScale * 100.0f;
 }
 
 void	CPreferences::SetVolumeScale(float Scale)
@@ -2060,6 +2109,7 @@ bool CPreferences::GetShuffleState(void)
 void CPreferences::SetShuffleState(bool bEnabled)
 {
 	m_ShuffleState = bEnabled;
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
 }
 
 RepeatMode	CPreferences::GetRepeatMode(void)
@@ -2070,6 +2120,7 @@ RepeatMode	CPreferences::GetRepeatMode(void)
 void		CPreferences::SetRepeatMode(RepeatMode eMode)
 {
 	m_RepeatMode = eMode;
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
 }
 
 unsigned long	CPreferences::GetVisualFPS(void)
@@ -2143,7 +2194,7 @@ void		CPreferences::SetAlwaysOnTop(bool bEnabled)
 	m_AlwaysOnTop = bEnabled;
 }
 
-int			CPreferences::GetHistoryListSize(void)
+unsigned long	CPreferences::GetHistoryListSize(void)
 {
 	return m_HistoryListSize;
 }

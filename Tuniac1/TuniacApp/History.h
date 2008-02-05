@@ -24,9 +24,9 @@ public:
 	void		Clear(void);
 	
 	void		PopupMenu(int x, int y);
-	bool		PlayHistoryItem(int iIndex);
-	IPlaylistEntry * GetHistoryItem(int iIndex);
+	bool		PlayHistoryItem(unsigned long ulIndex);
+	IPlaylistEntry * GetHistoryItem(unsigned long ulIndex);
 
-	unsigned int	GetCount(void);
+	unsigned long	GetCount(void);
 
 };

@@ -44,11 +44,11 @@ public:
 
 	unsigned long	GetNumPlaylists(void);
 
-	IPlaylist *		GetPlaylistAtIndex(int iIndex);
+	IPlaylist *		GetPlaylistAtIndex(unsigned long ulIndex);
 	IPlaylist *		GetActivePlaylist(void);
 
 	bool			SetActiveByEntry(IPlaylistEntry * pEntry);
-	bool			SetActivePlaylist(int iPlaylistNumber);
+	bool			SetActivePlaylist(unsigned long ulPlaylistNumber);
 	int				GetActivePlaylistIndex(void);
 
 	bool			CreateNewStandardPlaylist(LPTSTR szName);
@@ -56,5 +56,4 @@ public:
 	bool			MoveStandardPlaylist(unsigned long ulIndex, unsigned long ulNewIndex);
 
 	bool			DeletePlaylistAtIndex(unsigned long Index);
-
 };

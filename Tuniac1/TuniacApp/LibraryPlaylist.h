@@ -16,8 +16,7 @@ public:
 	bool				DeleteItemArray(IndexArray &	indexArray);
 
 	unsigned long		GetRealCount(void);
-	unsigned long		GetIDAtRealIndex(int iIndex);
+	unsigned long		GetIDAtRealIndex(unsigned long ulIndex);
 
 	bool				RebuildPlaylist(void);
-
 };

@@ -170,7 +170,7 @@ bool	CTuniacVisual::Render(int w, int h)
 			{
 				glBegin(GL_QUAD_STRIP);
 				{
-					for(int samp=start; samp<NumSamples; samp+=TIMES)
+					for(unsigned int samp=start; samp<NumSamples; samp+=TIMES)
 					{
 						glVertex2f(samp,	halfheight + (AudioData[samp*2]		* halfheight));
 						glVertex2f(samp,	halfheight + (AudioData[(samp*2)+1]	* halfheight));

@@ -325,7 +325,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					m_Taskbar.SetTitle(szWinTitle);
 					
 					m_PlayControls.UpdateState();
-					//RebuildFutureMenu();
 				}
 			}
 			break;
@@ -767,9 +766,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(m_Preferences.GetFollowCurrentSongMode())
 									m_SourceSelectorWindow->ShowCurrentlyPlaying();
 
-							IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
-							if (pIPE)
-								m_History.AddItem(pIPE);
+							UpdateQueues();
 						}
 						break;
 
@@ -972,7 +969,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									if(m_MediaLibrary.GetCount() > ulMLOldCount)
 									{
 										m_PlaylistManager.SetActivePlaylist(0);
-										for(int i = ulMLOldCount; i < m_MediaLibrary.GetCount(); i++)
+										for(unsigned long i = ulMLOldCount; i < m_MediaLibrary.GetCount(); i++)
 										{
 											m_MediaLibrary.m_Queue.Append((IPlaylistEntry *)m_MediaLibrary.GetItemByIndex(i));
 										}
@@ -1046,15 +1043,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				//clicked item inside future menu("next" button)
 				if(wCmdID >= FUTUREMENU_BASE && wCmdID <= (FUTUREMENU_BASE + m_Preferences.GetFutureListSize()))
 				{
-					int iFromCurrent = wCmdID - FUTUREMENU_BASE + 1;
-					IPlaylistEntry * pEntry = GetFuturePlaylistEntry(iFromCurrent);
+					unsigned long ulIndex = m_FutureMenu[wCmdID - FUTUREMENU_BASE];
+					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+					IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+					IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
 					if(pEntry && m_CoreAudio.SetSource(pEntry))
 					{
 						m_CoreAudio.Play();
-						m_PlaylistManager.SetActiveByEntry(pEntry);
+						pPlaylistEX->SetActiveFilteredIndex(ulIndex);
 						m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-					}						
+					}
 				}
 
 
@@ -1236,7 +1235,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								EntryArray exportArray;
 								if(m_SourceSelectorWindow->m_PlaylistSourceView->GetSelectedIndexes(indexArray))
 								{
-									for(int i = 0; i < indexArray.GetCount(); i++)
+									for(unsigned long i = 0; i < indexArray.GetCount(); i++)
 									{
 										IPlaylistEntry * pIPE = pPlaylist->GetItemAtFilteredIndex(indexArray[i]);
 										if(pIPE)
@@ -1436,45 +1435,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> previous
 					case ID_PLAYBACK_PREVIOUS:
 						{
-							//if past start of song
-							if(m_CoreAudio.GetPosition() < 3500)
-							{
-								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
-								//do we have a valid previous song?
-								if(pPlaylist->Previous())
-								{
-									// get active item and pass it to the playback manager class
-
-									if(m_SourceSelectorWindow->GetVisiblePlaylistIndex() == m_PlaylistManager.GetActivePlaylistIndex())
-										if(m_Preferences.GetFollowCurrentSongMode())
-										m_SourceSelectorWindow->ShowCurrentlyPlaying();
-
-									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-									unsigned long State = m_CoreAudio.GetState();
-									if(m_CoreAudio.SetSource(pIPE))
-									{
-										if(State == STATE_PLAYING)
-											m_CoreAudio.Play();
-									}
-								}
-								//no valid previous song(start of playlist?), simply rewind
-								else
-								{
-									m_CoreAudio.Stop();
-									m_CoreAudio.SetPosition(0);
-								}
-								//update playlist, notify plugins
-								m_SourceSelectorWindow->UpdateView();
-								if(m_CoreAudio.GetState() == STATE_PLAYING)
-									m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-
-							}
-							//still at start, simply rewind
-							else
-							{
-								m_CoreAudio.SetPosition(0);
-							}
+							//do we have a valid previous song?
+							if(pPlaylist->Previous())
+								break;
+							//else
+								//break;
 						}
 						break;
 
@@ -1682,16 +1649,6 @@ bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 	return true;
 }
 
-bool CTuniacApp::GetShuffleState(void)
-{
-	return m_Preferences.GetShuffleState();
-}
-
-RepeatMode CTuniacApp::GetRepeatMode(void)
-{
-	return m_Preferences.GetRepeatMode();
-}
-
 bool CTuniacApp::RegisterHotkeys(void)
 {
 	//our hotkeys
@@ -1760,23 +1717,6 @@ HFONT	CTuniacApp::GetTuniacFont(int size)
 	}
 
 	return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-}
-
-IPlaylistEntry *	CTuniacApp::GetFuturePlaylistEntry(unsigned long iIndex)
-{
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-
-	if(m_Preferences.GetRepeatMode() == RepeatOne)
-		return pPlaylistEX->GetItemAtFilteredIndex(iIndex);
-
-	int iNewIndex = pPlaylistEX->GetNextFilteredIndex(iIndex);
-	if(iNewIndex == INVALID_PLAYLIST_INDEX)
-		return NULL;
-
-	IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(iNewIndex);
-
-	return pEntry;
 }
 
 bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState)
@@ -1936,7 +1876,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				{
 					case FIELD_PLAYBACKTIME:
 						{
-							int i = 0;
+							unsigned long i = 0;
 							while(szFieldData[i] == L'0' && szFieldData[i+1] == L'0')
 							{
 								i += 3;
@@ -2019,46 +1959,103 @@ bool	CTuniacApp::DoSoftPause(void)
 	return false;
 }
 
-void	CTuniacApp::RebuildFutureMenu(void)
+IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 {
-	while(GetMenuItemCount(m_hFutureMenu) > 0)
-		DeleteMenu(m_hFutureMenu, 0, MF_BYPOSITION);
+	BuildFuturePlaylistArray();
 
-	TCHAR szDetail[112];
-	TCHAR szItem[128];
-	TCHAR szTime[16];
+	if(iFromCurrent > 0 && iFromCurrent < tuniacApp.m_FutureMenu.GetCount())
+	{
+		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+		IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[iFromCurrent]);
+		return pEntry;
+	}
+	return NULL;
+}
+
+void			CTuniacApp::BuildFuturePlaylistArray(void)
+{
+	tuniacApp.m_FutureMenu.RemoveAll();
 
 	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
 	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
+
 		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		
+		bool bFollowSelected = 1;
+		bool bFollowQueue = 1;
+
+		int iSize = m_Preferences.GetFutureListSize();
+		int iSelectedSize = tuniacApp.m_PlaySelected.GetCount();
+		int iQueueSize = tuniacApp.m_MediaLibrary.m_Queue.GetCount();
+
 		//getactiveindex fails if filtered out due to INVALID_PLAYLIST_INDEX
-		int iIndex = pPlaylistEX->GetActiveFilteredIndex();
-		if(iIndex == INVALID_PLAYLIST_INDEX)
+		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
+		if(ulIndex == INVALID_PLAYLIST_INDEX)
 		{
 			if(pPlaylistEX->GetNumItems() > 0)
 			{
-				iIndex = 0;
+				ulIndex = 0;
 			}
 		}
-		int iSize = m_Preferences.GetFutureListSize();
-		if(iSize > pPlaylistEX->GetNumItems() && m_Preferences.GetRepeatMode() == RepeatNone)
-			iSize = pPlaylistEX->GetNumItems() - iIndex;
 
-		for(int i = 0; i < (iSize - 1); i++)
+		for(int i = 0; i < iSize; i++)
 		{
-			m_PluginManager.GetTrackInfo(szDetail, 112, m_Preferences.GetListFormatString(), iIndex);
-			if(wcslen(szDetail) == 0)
-				break;
-			EscapeMenuItemString(szDetail, szItem, 112);
-			m_PluginManager.GetTrackInfo(szTime, 16, TEXT("\t[@I]"), iIndex);
-			StringCbCatN(szItem, 128, szTime, 128);
-			AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);
-			iIndex = pPlaylistEX->GetNextFilteredIndex(iIndex);
-		}
+			//once we reach our selected size stop follow selected
+			if(i == iSelectedSize)
+			{
+				bFollowSelected = 0;
+			}
 
+			//once we reach our selected size and queue size stop follow queue aswell
+			if(i == iSelectedSize + iQueueSize)
+			{
+				bFollowQueue = 0;
+			}
+
+			ulIndex = pPlaylistEX->GetNextFilteredIndex(ulIndex, bFollowSelected, bFollowQueue);
+			if(ulIndex == INVALID_PLAYLIST_INDEX)
+				break;
+
+			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
+
+			if(pEntry == NULL)
+				break;
+			else
+				tuniacApp.m_FutureMenu.AddTail((int &)ulIndex);
+		}
+	}
+}
+
+void	CTuniacApp::RebuildFutureMenu(void)
+{
+	while(GetMenuItemCount(m_hFutureMenu) > 0)
+		DeleteMenu(m_hFutureMenu, 0, MF_BYPOSITION);
+
+	BuildFuturePlaylistArray();
+
+	for(int i = 0; i < tuniacApp.m_FutureMenu.GetCount(); i++)
+	{
+		TCHAR szDetail[112];
+		TCHAR szItem[128];
+		TCHAR szTime[16];
+
+		memset(szDetail, L'\0', 112);
+		memset(szTime, L'\0', 16);
+
+		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+		IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[i]);
+
+		//format info of file
+		FormatSongInfo(szDetail, 52, pEntry, m_Preferences.GetListFormatString(), true);
+		EscapeMenuItemString(szDetail, szItem, 52);
+		FormatSongInfo(szTime, 12, pEntry, TEXT("\t[@I]"), true);
+		StringCbCatN(szItem, 128, szTime, 24);
+
+		//add menu item
+		AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);
 	}
 }
 
@@ -2067,3 +2064,45 @@ HMENU	CTuniacApp::GetFutureMenu(void)
 	return m_hFutureMenu;
 }
 
+//removes items from queues when needed
+//if queued in both queues it will get removed from playselected
+void	CTuniacApp::UpdateQueues(void)
+{
+	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
+	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+	unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
+
+	//add history
+	if (pIPE)
+		m_History.AddItem(pIPE);
+
+	//remove playselected
+	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED && tuniacApp.m_PlaySelected.GetCount())
+	{
+		for(unsigned i = 0; i < tuniacApp.m_PlaySelected.GetCount(); i++)
+		{
+			if(ulIndex == tuniacApp.m_PlaySelected[i])
+			{
+				tuniacApp.m_PlaySelected.RemoveAt(i);
+				tuniacApp.m_SourceSelectorWindow->m_PlaylistSourceView->DeselectItem(ulIndex);
+				return;
+			}
+		}
+	}
+
+	//remove playqueue
+	if (tuniacApp.m_MediaLibrary.m_Queue.GetCount())
+	{
+		for(unsigned x=0; x < tuniacApp.m_MediaLibrary.m_Queue.GetCount(); x++)
+		{
+			if(pPlaylistEX->GetFilteredIndexforItem(pIPE) == ulIndex)
+			{
+				tuniacApp.m_MediaLibrary.m_Queue.Remove(x);
+
+				if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+					tuniacApp.m_MediaLibrary.m_Queue.Append(pIPE);
+			}
+		}
+	}
+}
