@@ -398,15 +398,15 @@ int	CPlaylistManager::GetActivePlaylistIndex(void)
 
 bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 {
+	bool bOk= false;
 	if(m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
 		IPlaylistEX * pPlaylist = (IPlaylistEX *)m_ActivePlaylist;
 		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 		{
-			if(pPlaylist->GetItemAtFilteredIndex(i) == pEntry)
+			if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pEntry)
 			{
-				pPlaylist->SetActiveFilteredIndex(i);
-				return true;
+				bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
 			}
 		}
 	}
@@ -414,13 +414,17 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)GetPlaylistAtIndex(0);
 	for (unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
 	{
-		if(pPlaylistEX->GetItemAtFilteredIndex(i) == pEntry)
+		if(pPlaylistEX->GetItemAtNormalFilteredIndex(i) == pEntry)
 		{
-			pPlaylistEX->SetActiveFilteredIndex(i);
-			return true;
+			bOk = pPlaylistEX->SetActiveNormalFilteredIndex(i);
 		}
 	}
 
+	if(bOk)
+	{
+		tuniacApp.m_CoreAudio.Play();
+		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+	}
 	//we failed to find our song (its filtered out?)
 	return false;
 }
