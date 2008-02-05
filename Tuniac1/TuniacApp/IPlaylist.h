@@ -84,6 +84,8 @@ class IPlaylistEX : public IPlaylist
 public:
 	virtual unsigned long		GetNumItems(void)													= 0;
 
+	virtual bool						ApplyFilter(void)											= 0;
+
 	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual unsigned long		GetActiveFilteredIndex(void)										= 0;
 	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
