@@ -117,6 +117,13 @@ bool CMediaLibrary::EndAdd(void)
 	}
 
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+
+	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+	if(pPlaylistEX->GetActiveFilteredIndex() == INVALID_PLAYLIST_INDEX)
+		pPlaylistEX->SetActiveNormalFilteredIndex(0);
+
+
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
@@ -218,6 +225,13 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
+			// fill in media library specific stuff
+			unsigned long dwEntryID = m_MediaLibrary.GetCount();
+			while(GetItemByID(dwEntryID))
+			{
+				dwEntryID++;
+			}
+
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
 			StrCpy(libraryEntry.szURL, szURL);
 
@@ -259,12 +273,6 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			// fill in media library specific stuff
-			unsigned long dwEntryID = m_MediaLibrary.GetCount();
-			while(GetItemByID(dwEntryID))
-			{
-				dwEntryID++;
-			}
 			pEntry->SetEntryID(dwEntryID);
 			m_MediaLibrary.AddTail(pEntry);
 
