@@ -1,3 +1,6 @@
+// Playlist 0 is our main Library playlist
+
+
 #include "stdafx.h"
 #include ".\libraryplaylist.h"
 
@@ -25,9 +28,9 @@ unsigned long		CLibraryPlaylist::GetRealCount(void)
 	return m_PlaylistArray.GetCount();
 }
 
-unsigned long		CLibraryPlaylist::GetIDAtRealIndex(int iIndex)
+unsigned long		CLibraryPlaylist::GetIDAtRealIndex(unsigned long ulIndex)
 {
-	return m_PlaylistArray[iIndex].pEntry->GetEntryID();
+	return m_PlaylistArray[ulIndex].pEntry->GetEntryID();
 }
 
 bool				CLibraryPlaylist::AddEntryToPlaylist(IPlaylistEntry * lpPLE)
@@ -70,23 +73,23 @@ bool				CLibraryPlaylist::DeleteItemArray(IndexArray &	indexArray)
 				indexArray[x]--;
 		}
 
-		int realIndex;
-		realIndex = indexArray[0];
-		IPlaylistEntry * pEntry = m_PlaylistArray[realIndex].pEntry;
+		unsigned long ulRealIndex;
+		ulRealIndex = indexArray[0];
+		IPlaylistEntry * pEntry = m_PlaylistArray[ulRealIndex].pEntry;
 
-		if(m_ActiveIndex != INVALID_PLAYLIST_INDEX)
+		if(m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
 		{
-			if(realIndex < m_ActiveIndex)
+			if(ulRealIndex < m_ActiveRealIndex)
 			{
-				m_ActiveIndex--;
+				m_ActiveRealIndex--;
 			}
-			else if(realIndex == m_ActiveIndex)
+			else if(ulRealIndex == m_ActiveRealIndex)
 			{
 				if((bRemoveFromDisk) && (tuniacApp.m_PlaylistManager.GetActivePlaylist() == this))
 				{
 					tuniacApp.m_CoreAudio.Reset();
 				}
-				m_ActiveIndex = INVALID_PLAYLIST_INDEX;
+				m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
 			}
 		}
 
@@ -106,7 +109,7 @@ bool				CLibraryPlaylist::DeleteItemArray(IndexArray &	indexArray)
 			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereIDEquals(pEntry->GetEntryID());
 		}
 
-		m_PlaylistArray.RemoveAt(realIndex);
+		m_PlaylistArray.RemoveAt(ulRealIndex);
 
 		tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
 		indexArray.RemoveAt(0);

@@ -56,7 +56,7 @@ public:
 
 	void				CheckOldStreams(void);
 
-	int					GetVolumePercent();
+	float				GetVolumePercent();
 	void				SetVolumeScale(float scale);
 
 public:

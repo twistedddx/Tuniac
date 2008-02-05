@@ -72,7 +72,7 @@ bool		CHistory::RemoveItem(IPlaylistEntry * pEntry)
 	if(pEntry == NULL)
 		return false;
 
-	for(int i = 0; i < m_History.GetCount(); i++)
+	for(unsigned long i = 0; i < m_History.GetCount(); i++)
 	{
 		if(m_History[i] == pEntry)
 		{
@@ -99,16 +99,16 @@ void		CHistory::PopupMenu(int x, int y)
 	TrackPopupMenu(m_hMenu, TPM_RIGHTBUTTON, x, y, 0, tuniacApp.getMainWindow(), NULL);
 }
 
-bool		CHistory::PlayHistoryItem(int iIndex)
+bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 {
-	if(iIndex > m_History.GetCount())
+	if(ulIndex > m_History.GetCount())
 		return false;
 
-	IPlaylistEntry * pIPE = m_History[iIndex];
+	IPlaylistEntry * pIPE = m_History[ulIndex];
 
-	if(iIndex > 0)
+	if(ulIndex > 0)
 	{
-		for(int i = 0; i < iIndex; i++)
+		for(unsigned long i = 0; i < ulIndex; i++)
 		{
 			RemoveItem(m_History[i]);
 		}
@@ -133,15 +133,15 @@ bool		CHistory::PlayHistoryItem(int iIndex)
 	return bOK;
 }
 
-IPlaylistEntry * CHistory::GetHistoryItem(int iIndex)
+IPlaylistEntry * CHistory::GetHistoryItem(unsigned long ulIndex)
 {
-	if(iIndex > m_History.GetCount())
+	if(ulIndex > m_History.GetCount())
 		return NULL;
 
-	return m_History[iIndex];
+	return m_History[ulIndex];
 }
 
-unsigned int	CHistory::GetCount(void)
+unsigned long	CHistory::GetCount(void)
 {
 	return m_History.GetCount();
 }

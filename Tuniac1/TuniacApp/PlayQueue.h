@@ -15,7 +15,7 @@ public:
 
 	unsigned long		GetCount(void);
 
-	IPlaylistEntry *	GetItemAtIndex(unsigned int iIndex);
+	IPlaylistEntry *	GetItemAtIndex(unsigned long ulIndex);
 
 	bool				Prepend(IPlaylistEntry * pEntry);
 	bool				Append(IPlaylistEntry * pEntry);

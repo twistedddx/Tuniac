@@ -257,7 +257,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 
 void			CPluginManager::PostMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].bEnabled == false || m_PluginArray[i].pPlugin == NULL)
 			continue;
@@ -374,7 +374,6 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 	}
 	return true;
 }
-
 HINSTANCE		CPluginManager::GetMainInstance(void)
 {
 	return tuniacApp.getMainInstance();
@@ -388,7 +387,7 @@ HWND			CPluginManager::GetMainWindow(void)
 LPTSTR			CPluginManager::GetCurrentPluginDll(void)
 {
 	DWORD dwCurrentThreadId = GetCurrentThreadId();
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].dwThreadId == dwCurrentThreadId)
 			return m_PluginArray[i].szDllFile;

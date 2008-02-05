@@ -67,7 +67,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Advanced",IDC_STATIC,7,54,221,66
-    PUSHBUTTON      "Rebuild Media Library",IDC_BUTTON1,14,66,90,14,WS_DISABLED
+    PUSHBUTTON      "Rebuild Media Library",IDC_REBUILD_ML,14,66,90,14
     LTEXT           "Move all files into the Media Library base folder. ",IDC_STATIC,131,85,90,27
     LTEXT           "Reread the information from each file in the library and update the database.",IDC_STATIC,14,85,90,27
     GROUPBOX        "Media Library Base Folder",IDC_STATIC,7,7,221,45
@@ -200,16 +200,7 @@ BEGIN
     PUSHBUTTON      "Clear",IDC_LOGVIEW_CLEAR,235,249,50,14
     CONTROL         "Enable Logging",IDC_LOGVIEW_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,251,64,10
 END
-/*
-IDD_RADIOSOURCEVIEW DIALOGEX 0, 0, 376, 264
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    LISTBOX         IDC_RADIOSOURCE_LIST,7,7,362,230,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Tune In",IDC_RADIOSOURCE_TUNEIN,319,243,50,14
-    PUSHBUTTON      "Refresh",IDC_RADIOSOURCE_REFRESH,7,243,50,14
-END
-*/
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -376,15 +367,6 @@ BEGIN
         BOTTOMMARGIN, 265
         HORZGUIDE, 256
     END
-/*
-    IDD_RADIOSOURCEVIEW, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 369
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 257
-    END
-	*/
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -422,7 +404,7 @@ CAPTION "Adding Files..."
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CTEXT           "Adding files, please wait...",IDC_STATIC,7,6,233,12
-    CONTROL         "",IDC_ADDINGFILES_PROGRESS,"msctls_progress32",WS_BORDER | 0x1,7,17,233,12
+    CONTROL         "",IDC_ADDINGFILES_PROGRESS,"msctls_progress32",PBS_SMOOTH | WS_BORDER,7,17,233,12
     RTEXT           "",IDC_ADDINGFILES_COUNT,7,38,233,8
 END
 
@@ -719,7 +701,7 @@ BEGIN
         MENUITEM "Pause &here",                 ID_PAUSEHERE
         MENUITEM SEPARATOR
         MENUITEM "To &new playlist",            ID_TONEWPLAYLIST
-        MENUITEM "&Filter by field",            ID_FILTERBYFEILD
+        MENUITEM "&Filter by field",            ID_FILTERBYFIELD
         MENUITEM "Q&ueue by field",             ID_QUEUEBYFIELD
         MENUITEM SEPARATOR
         MENUITEM "&Remove",                     ID_REMOVE
@@ -762,9 +744,9 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_TUNIAC              ICON                      ".\\icons\\tuniac.ico"
-IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON          ".\\default-theme\\playlist-medialibrary.ico"
-IDI_THEMEICON_PLAYLIST_STANDARD ICON              ".\\default-theme\\playlist-standard.ico"
+IDI_TUNIAC              ICON                    ".\\icons\\tuniac.ico"
+IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON                    ".\\default-theme\\playlist-medialibrary.ico"
+IDI_THEMEICON_PLAYLIST_STANDARD ICON                    ".\\default-theme\\playlist-standard.ico"
 IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
 IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
 IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
@@ -923,15 +905,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-//IDI_THEMEICON_PLAYLIST_RADIO ICON                    "default-theme\\playlist-radio.ico"
 #endif    // English (New Zealand) resources
 /////////////////////////////////////////////////////////////////////////////
 

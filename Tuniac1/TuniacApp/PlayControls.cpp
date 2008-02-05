@@ -91,7 +91,7 @@ bool CPlayControls::Move(int x, int y, int w, int h)
 
 bool CPlayControls::UpdateVolume(void)
 {
-	int volume = tuniacApp.m_CoreAudio.GetVolumePercent();
+	float volume = tuniacApp.m_CoreAudio.GetVolumePercent();
 	//int iVol = volume;
 	SendMessage(m_hVolumeWnd, TBM_SETPOS, TRUE, (LPARAM)volume);
 

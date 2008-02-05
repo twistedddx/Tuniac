@@ -117,7 +117,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 						pStream->Start();
 				}
 
-				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01;
+				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01f;
 
 				pStream->SetVolumeScale(scale);
 
@@ -354,7 +354,7 @@ void CCoreAudio::CheckOldStreams(void)
 }
 
 
-int CCoreAudio::GetVolumePercent()
+float CCoreAudio::GetVolumePercent()
 {
 	return tuniacApp.m_Preferences.GetVolumePercent();
 }
@@ -384,7 +384,7 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 	if(pSource == NULL)
 		return;
 	
-	for(int i = 0; i < m_Streams.GetCount(); i++)
+	for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
 	{
 		if(m_Streams[0]->m_pSource == pSource)
 		{

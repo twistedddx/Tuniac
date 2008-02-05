@@ -1,3 +1,5 @@
+//the playlist manager handles all tuniac's playlists, whther they be playlist 0 the LibraryPlaylist.cpp or low numbered AudioCDPlaylist.cpp(when valid) or the StandardPlaylist.cpp
+
 #include "stdafx.h"
 #include ".\playlistmanager.h"
 
@@ -11,7 +13,7 @@ bool DriveInMask(ULONG uMask, char Letter)
 	unsigned long x = 1;
 	unsigned long letterindex = toupper(Letter) - 'A';
 
-	for(int t=0; t<letterindex; t++)
+	for(unsigned long t=0; t<letterindex; t++)
 	{
 		x <<= 1;
 	}
@@ -346,9 +348,9 @@ unsigned long	CPlaylistManager::GetNumPlaylists(void)
 	return 1 + m_CDPlaylists.GetCount() + m_StandardPlaylists.GetCount();
 }
 
-IPlaylist *		CPlaylistManager::GetPlaylistAtIndex(int iIndex)
+IPlaylist *		CPlaylistManager::GetPlaylistAtIndex(unsigned long ulIndex)
 {
-	if(iIndex == 0)
+	if(ulIndex == 0)
 	{
 		return & m_LibraryPlaylist;
 /*
@@ -360,19 +362,19 @@ IPlaylist *		CPlaylistManager::GetPlaylistAtIndex(int iIndex)
 		return & m_RadioPlaylist;
 */
 	}
-	iIndex -=1;
+	ulIndex -=1;
 
-	if(iIndex < m_CDPlaylists.GetCount())
+	if(ulIndex < m_CDPlaylists.GetCount())
 	{
 		// standard playlist;
-		return m_CDPlaylists[iIndex];
+		return m_CDPlaylists[ulIndex];
 	}
-	iIndex -= m_CDPlaylists.GetCount();
+	ulIndex -= m_CDPlaylists.GetCount();
 
-	if(iIndex < m_StandardPlaylists.GetCount())
+	if(ulIndex < m_StandardPlaylists.GetCount())
 	{
 		// standard playlist;
-		return m_StandardPlaylists[iIndex];
+		return m_StandardPlaylists[ulIndex];
 	}
 
 	return NULL;
@@ -385,7 +387,7 @@ IPlaylist * CPlaylistManager::GetActivePlaylist(void)
 
 int	CPlaylistManager::GetActivePlaylistIndex(void)
 {
-	for(int x=0; x<GetNumPlaylists(); x++)
+	for(unsigned long x=0; x<GetNumPlaylists(); x++)
 	{
 		if(GetActivePlaylist() == GetPlaylistAtIndex(x))
 			return x;
@@ -423,10 +425,10 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 	return false;
 }
 
-bool CPlaylistManager::SetActivePlaylist(int iPlaylistNumber)
+bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 {
-	int iOldIndex = GetActivePlaylistIndex();
-	if(iPlaylistNumber == iOldIndex)
+	unsigned long ulOldIndex = GetActivePlaylistIndex();
+	if(ulPlaylistNumber == ulOldIndex)
 		return true;
 
 	if(m_ActivePlaylist != NULL && m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -434,7 +436,7 @@ bool CPlaylistManager::SetActivePlaylist(int iPlaylistNumber)
 		((IPlaylistEX *)m_ActivePlaylist)->SetActiveFilteredIndex(INVALID_PLAYLIST_INDEX);
 	}
 
-	if(iPlaylistNumber == 0)
+	if(ulPlaylistNumber == 0)
 	{
 		// medialibrary
 		m_ActivePlaylist = &m_LibraryPlaylist;
@@ -450,23 +452,23 @@ bool CPlaylistManager::SetActivePlaylist(int iPlaylistNumber)
 		return true;
 */
 	}
-	iPlaylistNumber -= 1;
+	ulPlaylistNumber -= 1;
 
-	if(iPlaylistNumber < m_CDPlaylists.GetCount())
+	if(ulPlaylistNumber < m_CDPlaylists.GetCount())
 	{
 		// cd playlist;
-		m_ActivePlaylist = m_CDPlaylists[iPlaylistNumber];
+		m_ActivePlaylist = m_CDPlaylists[ulPlaylistNumber];
 		//return true;
 	}
-	iPlaylistNumber -= m_CDPlaylists.GetCount();
+	ulPlaylistNumber -= m_CDPlaylists.GetCount();
 
-	if(iPlaylistNumber < m_StandardPlaylists.GetCount())
+	if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
 	{
 		// standard playlist;
-		m_ActivePlaylist = m_StandardPlaylists[iPlaylistNumber];
+		m_ActivePlaylist = m_StandardPlaylists[ulPlaylistNumber];
 		//return true;
 	}
-	iPlaylistNumber -= m_StandardPlaylists.GetCount();
+	ulPlaylistNumber -= m_StandardPlaylists.GetCount();
 
 
 	return true;

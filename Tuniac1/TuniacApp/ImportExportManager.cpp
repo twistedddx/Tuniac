@@ -95,7 +95,7 @@ bool			CImportExportManager::Initialize(void)
 						{
 							PE.pExporter = pExportPlugin;
 							bUsed = true;
-							for(int i = 0; i < PE.pExporter->GetNumExtensions(); i++)
+							for(unsigned long i = 0; i < PE.pExporter->GetNumExtensions(); i++)
 							{
 								ExportExtension EE;
 								EE.szExt = pExportPlugin->SupportedExtension(i);
@@ -146,7 +146,7 @@ bool			CImportExportManager::Shutdown(void)
 ITuniacImportPlugin *	CImportExportManager::GetImporterAtIndex(unsigned long iImporter)
 {
 	int iCount = 0;
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pImporter == NULL)
 			continue;
@@ -160,7 +160,7 @@ ITuniacImportPlugin *	CImportExportManager::GetImporterAtIndex(unsigned long iIm
 ITuniacExportPlugin *	CImportExportManager::GetExporterAtIndex(unsigned long iExporter)
 {
 	int iCount = 0;
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pExporter == NULL)
 			continue;
@@ -191,7 +191,7 @@ void			CImportExportManager::PopuplateExportMenu(HMENU hMenu, unsigned long ulBa
 	}
 
 	TCHAR szItem[128];
-	for(int i = 0; i < m_ExportExtensions.GetCount(); i++)
+	for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 	{
 		wnsprintf(szItem, 128, TEXT("%s - %s"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
 		AppendMenu(hMenu, MF_STRING, ulBase + i, szItem);
@@ -200,7 +200,7 @@ void			CImportExportManager::PopuplateExportMenu(HMENU hMenu, unsigned long ulBa
 
 bool			CImportExportManager::CanImport(LPTSTR szSource)
 {
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pImporter == NULL)
 			continue;
@@ -212,7 +212,7 @@ bool			CImportExportManager::CanImport(LPTSTR szSource)
 
 bool			CImportExportManager::CanExport(LPTSTR szSource)
 {
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pExporter == NULL)
 			continue;
@@ -224,7 +224,7 @@ bool			CImportExportManager::CanExport(LPTSTR szSource)
 
 bool			CImportExportManager::Import(LPTSTR szSource)
 {
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pImporter == NULL)
 			continue;
@@ -307,7 +307,7 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 		LPTSTR pDest = szFilters;
 		void * pTemp;
 
-		for(int i = 0; i < m_ExportExtensions.GetCount(); i++)
+		for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 		{
 			
 			wnsprintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
@@ -352,7 +352,7 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 		free((void *)szFilters);
 	}
 
-	for(int i = 0; i < m_PluginArray.GetCount(); i++)
+	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
 	{
 		if(m_PluginArray[i].pExporter == NULL)
 			continue;
@@ -370,7 +370,7 @@ bool			CImportExportManager::ExportTo(ITuniacExportPlugin * pExporter, LPTSTR sz
 		LibraryEntry LE;
 		CMediaLibraryPlaylistEntry * pEntry;
 
-		for(int i = 0; i < entryArray.GetCount(); i++)
+		for(unsigned long i = 0; i < entryArray.GetCount(); i++)
 		{
 			pEntry = tuniacApp.m_MediaLibrary.GetItemByID(entryArray[i]->GetEntryID());
 			if(pEntry != NULL)

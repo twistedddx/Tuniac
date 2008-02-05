@@ -14,11 +14,11 @@ unsigned long		CPlayQueue::GetCount(void)
 	return m_Queue.GetCount();
 }
 
-IPlaylistEntry *	CPlayQueue::GetItemAtIndex(unsigned int iIndex)
+IPlaylistEntry *	CPlayQueue::GetItemAtIndex(unsigned long ulIndex)
 {
-	if (iIndex > m_Queue.GetCount())
+	if (ulIndex > m_Queue.GetCount())
 		return NULL;
-	return m_Queue[iIndex];
+	return m_Queue[ulIndex];
 }
 
 bool				CPlayQueue::Prepend(IPlaylistEntry * pEntry)
@@ -49,7 +49,7 @@ bool				CPlayQueue::RemoveItem(IPlaylistEntry * pEntry)
 	if(pEntry == NULL)
 		return false;
 
-	for(int i = 0; i < m_Queue.GetCount(); i++)
+	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
 		if(m_Queue[i] == pEntry)
 		{

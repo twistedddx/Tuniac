@@ -271,7 +271,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							LVHITTESTINFO	HitTest;
 							HitTest.pt		= pt;
 							ScreenToClient(hListViewWnd, &HitTest.pt);
-							int				iItemHit = ListView_HitTest(hListViewWnd, &HitTest);
+							unsigned long				iItemHit = ListView_HitTest(hListViewWnd, &HitTest);
 							
 							if(iItemHit > 0 && GetVisiblePlaylistIndex() < iItemHit)
 								iItemHit--;
@@ -643,6 +643,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 						}
 						break;
 
+						//remove duplicate entries from a playlist
 					case ID_REMOVEDUPLICATES:
 						{
 							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
@@ -661,18 +662,18 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								IPlaylistEntry * pEntry2;
 								IndexArray deleteArray;
 
-								for(int i = 0; i < pPlaylist->GetNumItems(); i++)
+								for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry1 = pPlaylist->GetItemAtFilteredIndex(i);
-									for(int j = 0; j < i; j++)
+									pEntry1 = pPlaylist->GetItemAtNormalFilteredIndex(i);
+									for(unsigned long j = 0; j < i; j++)
 									{
-										pEntry2 = pPlaylist->GetItemAtFilteredIndex(j);
+										pEntry2 = pPlaylist->GetItemAtNormalFilteredIndex(j);
 										if(StrCmpI((LPTSTR)pEntry1->GetField(FIELD_URL), (LPTSTR)pEntry2->GetField(FIELD_URL)) == 0)
 										{
 											if(pEntry1 == pActiveEntry)
-												deleteArray.AddTail(j);
+												deleteArray.AddTail((int &)j);
 											else
-												deleteArray.AddTail(i);
+												deleteArray.AddTail((int &)i);
 											break;
 										}
 									}
@@ -682,9 +683,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								if(pActiveEntry != NULL)
 								{
-									for(int i = 0; i < pPlaylist->GetNumItems(); i++)
+									for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 									{
-										if(pPlaylist->GetItemAtFilteredIndex(i) == pActiveEntry)
+										if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pActiveEntry)
 										{
 											pPlaylist->SetActiveFilteredIndex(i);
 											break;
@@ -707,9 +708,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								IPlaylistEX * pPlaylist = (IPlaylistEX *)GetVisiblePlaylist();
 								IPlaylistEntry * pEntry;
 								EntryArray exportArray;
-								for(int i = 0; i < pPlaylist->GetNumItems(); i++)
+								for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry = pPlaylist->GetItemAtFilteredIndex(i);
+									pEntry = pPlaylist->GetItemAtNormalFilteredIndex(i);
 									exportArray.AddTail(pEntry);
 								}
 								tuniacApp.m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
@@ -725,9 +726,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								IPlaylistEntry *	pPE = NULL;
 								EntryArray			EA;
-								for(int i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
+								for(unsigned long i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
 								{
-									pPE = ((IPlaylistEX *)pSource)->GetItemAtFilteredIndex(i);
+									pPE = ((IPlaylistEX *)pSource)->GetItemAtNormalFilteredIndex(i);
 									EA.AddTail(pPE);
 								}
 								((IPlaylistEX *)pDest)->AddEntryArray(EA);
@@ -749,13 +750,13 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(pSource->GetFlags() & PLAYLIST_FLAGS_EXTENDED && pDest->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IndexArray IA;
-								for(int i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
+								for(unsigned long i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
 								{
-									for(int j = 0; j < ((IPlaylistEX *)pDest)->GetNumItems(); j++)
+									for(unsigned long j = 0; j < ((IPlaylistEX *)pDest)->GetNumItems(); j++)
 									{
-										if(((IPlaylistEX *)pDest)->GetItemAtFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtFilteredIndex(i)->GetEntryID())
+										if(((IPlaylistEX *)pDest)->GetItemAtNormalFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtNormalFilteredIndex(i)->GetEntryID())
 										{
-											IA.AddTail(j);
+											IA.AddTail((int &)j);
 											continue;
 										}
 									}
