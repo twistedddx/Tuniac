@@ -1,3 +1,14 @@
+Feb 05, 2008
+------------
+-make functions and variables clearer/more consistent
+-add rebuild ML function in pref
+-tidy up backend playlist logic
+-comment code
+
+Jan 29, 2008
+------------
+-in progress: tidy up code and loose ends(better/more reliable play logic, better/more consistent internal coding, correct bugs in numerous features)
+
 Jan 28, 2008
 ------------
 -fix unicode in std_Infomanager
