@@ -109,25 +109,23 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if(m_File)
 	{
-		double time = m_File->audioProperties()->length();
-		double bitrate = m_File->audioProperties()->bitrate();
 		libEnt->iSampleRate = m_File->audioProperties()->sampleRate();
 		libEnt->iChannels = m_File->audioProperties()->channels();
-		libEnt->iBitRate = (unsigned long)(bitrate * 1024.0);
-		libEnt->iPlaybackTime = (unsigned long)(time * 1000.0);
+		libEnt->iBitRate = m_File->audioProperties()->bitrate() * 1024;
+		libEnt->iPlaybackTime = m_File->audioProperties()->length() * 1000;
 
 		libEnt->iYear = m_File->tag()->year();
 		libEnt->dwTrack[0] = m_File->tag()->track();
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), 256, libEnt->szTitle, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), -1, libEnt->szTitle, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), 256, libEnt->szArtist, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), -1, libEnt->szArtist, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), 256, libEnt->szAlbum, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), -1, libEnt->szAlbum, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), 256, libEnt->szGenre, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), -1, libEnt->szGenre, 128);
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), 256, libEnt->szComment, 128);
+		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), -1, libEnt->szComment, 128);
 
 	}
 	delete m_File;
