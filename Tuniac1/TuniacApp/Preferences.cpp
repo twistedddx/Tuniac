@@ -2110,6 +2110,9 @@ void CPreferences::SetShuffleState(bool bEnabled)
 {
 	m_ShuffleState = bEnabled;
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
+	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+	pPlaylistEX->ApplyFilter();
 }
 
 RepeatMode	CPreferences::GetRepeatMode(void)
