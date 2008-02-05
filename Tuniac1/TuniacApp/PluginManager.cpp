@@ -328,12 +328,21 @@ void *			CPluginManager::GetVariable(Variable eVar)
 	return NULL;
 }
 
-void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iIndex)
+void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
 { // szFormat=NULL to use full format from preferences
 
-	memset(szDest, L'\0', iDestSize);
+	IPlaylistEntry * pEntry = NULL;
 
-	IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iIndex);
+	memset(szDest, L'\0', iDestSize);
+	if(iFromCurrent == 0)
+	{
+		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+		pEntry = pPlaylist->GetActiveItem();
+	}
+	else
+		pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
+
 	if(pEntry == NULL)
 		return;
 
@@ -350,7 +359,7 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 	}
 	else if(iFromCurrent > 0)
 	{
-		IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent);
+		IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
 		if(pEntry == NULL)
 			return false;
 

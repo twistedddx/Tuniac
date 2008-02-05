@@ -1963,7 +1963,7 @@ IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 {
 	BuildFuturePlaylistArray();
 
-	if(iFromCurrent > 0 && iFromCurrent < tuniacApp.m_FutureMenu.GetCount())
+	if(iFromCurrent >= 0 && iFromCurrent < tuniacApp.m_FutureMenu.GetCount())
 	{
 		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
