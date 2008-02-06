@@ -565,7 +565,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 
 bool	CVisualWindow::GetVisData(float * pWaveformData, unsigned long ulNumSamples)
 {
-	return tuniacApp.m_CoreAudio.GetVisData(pWaveformData, ulNumSamples);
+	return CCoreAudio::Instance()->GetVisData(pWaveformData, ulNumSamples);
 }
 
 void *	CVisualWindow::GetVariable(Variable eVar)

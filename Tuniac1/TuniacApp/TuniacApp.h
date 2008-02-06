@@ -102,7 +102,7 @@ public:
 
 	Array<IWindow *,3>			m_WindowArray;
 
-	CCoreAudio					m_CoreAudio;
+	//CCoreAudio					m_CoreAudio;
 
 	CPluginManager				m_PluginManager;
 	CSysEvents					m_SysEvents;

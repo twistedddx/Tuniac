@@ -7,7 +7,7 @@
 #ifndef __SINGLETON_H__
 #define __SINGLETON_H__
 
-#include <CriticalSection.h>
+#include "CriticalSection.h"
 
 
 //! The CSingleton class is a template class for creating singleton objects.

@@ -277,25 +277,25 @@ void *			CPluginManager::GetVariable(Variable eVar)
 	{
 		case Variable_NumChannels:
 			{
-				return (void *)tuniacApp.m_CoreAudio.GetChannels();
+				return (void *)CCoreAudio::Instance()->GetChannels();
 			}
 			break;
 
 		case Variable_SampleRate:
 			{
-				return (void *)tuniacApp.m_CoreAudio.GetSampleRate();
+				return (void *)CCoreAudio::Instance()->GetSampleRate();
 			}
 			break;
 
 		case Variable_PositionMS:
 			{
-				return (void *)tuniacApp.m_CoreAudio.GetPosition();
+				return (void *)CCoreAudio::Instance()->GetPosition();
 			}
 			break;
 
 		case Variable_LengthMS:
 			{
-				return (void *)tuniacApp.m_CoreAudio.GetLength();
+				return (void *)CCoreAudio::Instance()->GetLength();
 			}
 			break;
 
@@ -363,13 +363,13 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 		if(pEntry == NULL)
 			return false;
 
-		unsigned long ulState = tuniacApp.m_CoreAudio.GetState();
-		if(!tuniacApp.m_CoreAudio.SetSource(pEntry))
+		unsigned long ulState = CCoreAudio::Instance()->GetState();
+		if(!CCoreAudio::Instance()->SetSource(pEntry))
 			return false;
 		
 		if(ulState == STATE_PLAYING)
 		{
-			tuniacApp.m_CoreAudio.Play();
+			CCoreAudio::Instance()->Play();
 			PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 		}
 		
@@ -377,7 +377,7 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 	}
 	else
 	{
-		tuniacApp.m_CoreAudio.SetPosition(0);
+		CCoreAudio::Instance()->SetPosition(0);
 		PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 
 	}

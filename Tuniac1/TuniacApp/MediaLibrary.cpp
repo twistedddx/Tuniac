@@ -216,9 +216,9 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 		return true;
 
 	//decoders are more vital than infomanagers
-	for(unsigned long i=0; i < tuniacApp.m_CoreAudio.GetNumPlugins(); i++)
+	for(unsigned long i=0; i < CCoreAudio::Instance()->GetNumPlugins(); i++)
 	{
-		IAudioSourceSupplier * pPlugin = tuniacApp.m_CoreAudio.GetPluginAtIndex(i);
+		IAudioSourceSupplier * pPlugin = CCoreAudio::Instance()->GetPluginAtIndex(i);
 		if(pPlugin->CanHandle(szURL))
 		{
 			LibraryEntry  libraryEntry;
@@ -446,9 +446,9 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 		return true;
 
 	//decoders are more vital than infomanagers
-	for(unsigned long i=0; i < tuniacApp.m_CoreAudio.GetNumPlugins(); i++)
+	for(unsigned long i=0; i < CCoreAudio::Instance()->GetNumPlugins(); i++)
 	{
-		IAudioSourceSupplier * pPlugin = tuniacApp.m_CoreAudio.GetPluginAtIndex(i);
+		IAudioSourceSupplier * pPlugin = CCoreAudio::Instance()->GetPluginAtIndex(i);
 		if(pPlugin->CanHandle(szURL))
 		{
 			LibraryEntry  libraryEntry;

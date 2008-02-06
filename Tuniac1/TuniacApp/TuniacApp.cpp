@@ -94,7 +94,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 	
 	//fail if we cant start something
-	if(!m_CoreAudio.Startup())
+	if(!CCoreAudio::Instance()->Startup())
 		return false;
 
 	if (!m_History.Initialize())
@@ -228,7 +228,7 @@ bool CTuniacApp::Shutdown()
 		m_WindowArray.RemoveAt(0);
 	}
 
-	m_CoreAudio.Shutdown();
+	CCoreAudio::Instance()->Shutdown();
 
 	//if allowed to save pl+ml, check if %appdata%/Tuniac needs to be created
 	if(m_bSaveML)
@@ -312,7 +312,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 					IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 					
-					if(pIPE && m_CoreAudio.GetState() != STATE_UNKNOWN)
+					if(pIPE && (CCoreAudio::Instance()->GetState() != STATE_UNKNOWN))
 					{
 						FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
 					}
@@ -750,7 +750,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 
 							//clear out old streams from crossfades and last song
-							tuniacApp.m_CoreAudio.CheckOldStreams();
+							CCoreAudio::Instance()->CheckOldStreams();
 
 						}
 						break;
@@ -817,12 +817,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 				else if(wParam == m_aVolUp)
 				{
-					m_CoreAudio.SetVolumeScale((m_CoreAudio.GetVolumePercent() * 0.01f) + 0.1f);
+					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) + 0.1f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aVolDn)
 				{
-					m_CoreAudio.SetVolumeScale((m_CoreAudio.GetVolumePercent() * 0.01f) - 0.1f);
+					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) - 0.1f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aSeekForward)
@@ -950,7 +950,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								{
 									if(m_MediaLibrary.GetCount() > ulMLOldCount)
 									{
-										m_CoreAudio.Reset();
+										CCoreAudio::Instance()->Reset();
 										m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 										m_PlaylistManager.SetActivePlaylist(0);
 										if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -958,7 +958,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											IPlaylistEX * pPlaylist = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 											pPlaylist->SetActiveFilteredIndex(ulMLOldCount);
-											m_CoreAudio.SetSource(pPlaylist->GetActiveItem());
+											CCoreAudio::Instance()->SetSource(pPlaylist->GetActiveItem());
 										}
 
 									}
@@ -1017,7 +1017,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				//clicked to create new playlist
 				if(wCmdID >= PLAYLISTMENU_BASE && wCmdID <= (PLAYLISTMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
 				{
-					m_CoreAudio.Reset();
+					CCoreAudio::Instance()->Reset();
 					m_SourceSelectorWindow->ShowPlaylistAtIndex(wCmdID - PLAYLISTMENU_BASE);
 					m_PlaylistManager.SetActivePlaylist(wCmdID - PLAYLISTMENU_BASE);
 					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
@@ -1048,9 +1048,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
 					IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
-					if(pEntry && m_CoreAudio.SetSource(pEntry))
+					if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
 					{
-						m_CoreAudio.Play();
+						CCoreAudio::Instance()->Play();
 						pPlaylistEX->SetActiveFilteredIndex(ulIndex);
 						m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 					}
@@ -1324,7 +1324,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_PLAYPAUSE:
 						{
 							//if currently playing, PAUSE
-							if(m_CoreAudio.GetState() == STATE_PLAYING)
+							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 							{
 								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 							}
@@ -1339,8 +1339,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> stop (coreaudio stop is a "pause", a stop is a "pause" and "rewind")
 					case ID_PLAYBACK_STOP:
 						{
-							m_CoreAudio.Stop();
-							m_CoreAudio.SetPosition(0);
+							CCoreAudio::Instance()->Stop();
+							CCoreAudio::Instance()->SetPosition(0);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGSTOP, NULL, NULL);
 						}
 						break;
@@ -1348,9 +1348,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> pause (coreaudio stop is a "pause")
 					case ID_PLAYBACK_PAUSE:
 						{
-							if(m_CoreAudio.GetState() == STATE_PLAYING)
+							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 							{
-								m_CoreAudio.Stop();
+								CCoreAudio::Instance()->Stop();
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
 							}
 						}
@@ -1360,7 +1360,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_PLAY:
 						{
 							//if only paused we can simply play again
-							if(!m_CoreAudio.Play())
+							if(!CCoreAudio::Instance()->Play())
 							{
 								//not paused and need a song from active playlist
 								if(m_PlaylistManager.SetActivePlaylist(m_SourceSelectorWindow->GetVisiblePlaylistIndex()))
@@ -1387,9 +1387,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										if(m_CoreAudio.SetSource(pIPE))
+										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
-											m_CoreAudio.Play();
+											CCoreAudio::Instance()->Play();
 										}
 									}
 									//update playlsit view to reflect new current song
@@ -1397,7 +1397,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								}
 							}
 							//notify plugins of change of state
-							if(m_CoreAudio.GetState() == STATE_PLAYING)
+							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 						}
@@ -1456,8 +1456,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> seek forward (50ms at a time)
 					case ID_PLAYBACK_SEEKFORWARD:
 						{
-							unsigned long pos = m_CoreAudio.GetPosition() + 50;
-							m_CoreAudio.SetPosition(pos);
+							unsigned long pos = CCoreAudio::Instance()->GetPosition() + 50;
+							CCoreAudio::Instance()->SetPosition(pos);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 						break;
@@ -1465,8 +1465,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> seekback (1300ms at a time)
 					case ID_PLAYBACK_SEEKBACK:
 						{
-							unsigned long pos = m_CoreAudio.GetPosition() - 1300;
-							m_CoreAudio.SetPosition(pos);
+							unsigned long pos = CCoreAudio::Instance()->GetPosition() - 1300;
+							CCoreAudio::Instance()->SetPosition(pos);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 						break;
@@ -1842,7 +1842,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 		else if (lField == -1)
 		{
 			TCHAR szPlayState[16];
-			switch(m_CoreAudio.GetState())
+			switch(CCoreAudio::Instance()->GetState())
 			{
 				case STATE_STOPPED:
 					{
@@ -1950,7 +1950,7 @@ bool	CTuniacApp::DoSoftPause(void)
 		m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 		SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
 		//this will only stop the last stream, not all of them
-		m_CoreAudio.StopLast();
+		CCoreAudio::Instance()->StopLast();
 		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
 		return true;
 	}

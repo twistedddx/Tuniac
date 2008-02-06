@@ -47,7 +47,7 @@ void			CSysEvents::CheckSystemState()
 	if((tuniacApp.m_Preferences.GetPauseOnLock() && bLocked && !m_WorkstationLocked)
 		|| (tuniacApp.m_Preferences.GetPauseOnScreensave() && bSaver && !m_ScreensaverActive))
 	{
-		if(tuniacApp.m_CoreAudio.GetState() == STATE_PLAYING)
+		if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 		{
 			SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 			m_WasPlaying = true;
