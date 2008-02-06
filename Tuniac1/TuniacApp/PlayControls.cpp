@@ -91,7 +91,7 @@ bool CPlayControls::Move(int x, int y, int w, int h)
 
 bool CPlayControls::UpdateVolume(void)
 {
-	float volume = tuniacApp.m_CoreAudio.GetVolumePercent();
+	float volume = CCoreAudio::Instance()->GetVolumePercent();
 	//int iVol = volume;
 	SendMessage(m_hVolumeWnd, TBM_SETPOS, TRUE, (LPARAM)volume);
 
@@ -273,7 +273,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					if(lpDrawItem->hwndItem == m_hPlayWnd)
 					{
-						if(tuniacApp.m_CoreAudio.GetState() == STATE_PLAYING)
+						if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 							SelectObject(mDC, m_PauseBitmap);
 						else
 							SelectObject(mDC, m_PlayBitmap);
@@ -375,16 +375,16 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				{
 					if(wParam & MK_LBUTTON)
 					{
-						if(tuniacApp.m_CoreAudio.GetLength() != LENGTH_UNKNOWN)
+						if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN)
 						{
 							float Width = SeekRect.right - SeekRect.left;
 							float Offset = pt.x - SeekRect.left;
 
 							float Percent = Offset / Width;
 
-							float Seekpos = tuniacApp.m_CoreAudio.GetLength() * Percent;
+							float Seekpos = CCoreAudio::Instance()->GetLength() * Percent;
 
-							tuniacApp.m_CoreAudio.SetPosition(Seekpos);
+							CCoreAudio::Instance()->SetPosition(Seekpos);
 							tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 					}
@@ -408,16 +408,16 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				
 				if(PtInRect(&SeekRect, pt))
 				{
-					if(tuniacApp.m_CoreAudio.GetLength() != LENGTH_UNKNOWN)
+					if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN)
 					{
 						float Width = SeekRect.right - SeekRect.left;
 						float Offset = pt.x - SeekRect.left;
 
 						float Percent = Offset / Width;
 
-						float Seekpos = tuniacApp.m_CoreAudio.GetLength() * Percent;
+						float Seekpos = CCoreAudio::Instance()->GetLength() * Percent;
 
-						tuniacApp.m_CoreAudio.SetPosition(Seekpos);
+						CCoreAudio::Instance()->SetPosition(Seekpos);
 						tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 					}
 				}
@@ -427,7 +427,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 		case WM_HSCROLL:
 			{
 				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
-				tuniacApp.m_CoreAudio.SetVolumeScale(vol/100.0f);
+				CCoreAudio::Instance()->SetVolumeScale(vol/100.0f);
 			}
 			break;
 
@@ -472,7 +472,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				InflateRect(&SeekRect, -3, -3);
 
 				float Width = SeekRect.right - SeekRect.left;
-				float Progress = (float)tuniacApp.m_CoreAudio.GetPosition() / (float)tuniacApp.m_CoreAudio.GetLength();
+				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)CCoreAudio::Instance()->GetLength();
 
 				SeekRect.right = ((Width) * Progress) + SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetSysColorBrush(COLOR_3DSHADOW));
@@ -484,7 +484,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				TCHAR tstr[256];
 
-				unsigned long Time = tuniacApp.m_CoreAudio.GetPosition() / 1000;
+				unsigned long Time = CCoreAudio::Instance()->GetPosition() / 1000;
 				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
 
 				SetRect(&TimeRect, 
@@ -499,7 +499,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				Time = tuniacApp.m_CoreAudio.GetLength();
+				Time = CCoreAudio::Instance()->GetLength();
 				if(Time != LENGTH_UNKNOWN)
 				{
 					Time /= 1000;
@@ -620,7 +620,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				InflateRect(&SeekRect, -3, -3);
 
 				float Width = SeekRect.right - SeekRect.left;
-				float Progress = (float)tuniacApp.m_CoreAudio.GetPosition() / (float)tuniacApp.m_CoreAudio.GetLength();
+				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)CCoreAudio::Instance()->GetLength();
 
 				SeekRect.right = ((Width) * Progress) + SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
@@ -632,7 +632,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				TCHAR tstr[256];
 
-				unsigned long Time = tuniacApp.m_CoreAudio.GetPosition() / 1000;
+				unsigned long Time = CCoreAudio::Instance()->GetPosition() / 1000;
 				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
 
 				SetRect(&TimeRect, r.left +2, SeekRect.top, m_SeekRect.left, SeekRect.bottom);
@@ -642,7 +642,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				Time = tuniacApp.m_CoreAudio.GetLength();
+				Time = CCoreAudio::Instance()->GetLength();
 				if(Time != LENGTH_UNKNOWN)
 				{
 					Time /= 1000;
@@ -709,7 +709,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				else if(lpDrawItem->hwndItem == m_hNextWnd)
 					hIcon = tuniacApp.m_Skin.GetIcon(THEMEICON_CONTROL_NEXT);
 				else if(lpDrawItem->hwndItem == m_hPlayWnd)
-					hIcon = tuniacApp.m_Skin.GetIcon(tuniacApp.m_CoreAudio.GetState() == STATE_PLAYING ? THEMEICON_CONTROL_PAUSE : THEMEICON_CONTROL_PLAY);
+					hIcon = tuniacApp.m_Skin.GetIcon(CCoreAudio::Instance()->GetState() == STATE_PLAYING ? THEMEICON_CONTROL_PAUSE : THEMEICON_CONTROL_PLAY);
 				else
 					return FALSE;
 

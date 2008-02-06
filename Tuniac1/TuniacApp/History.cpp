@@ -117,14 +117,14 @@ bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 	bool bOK = false;
 	if(pIPE)
 	{
-		if(tuniacApp.m_CoreAudio.SetSource(pIPE))
+		if(CCoreAudio::Instance()->SetSource(pIPE))
 		{
 			bOK = true;
 			//SetActiveByEntry will fail if the played song is filtered out
 			//this in turn means the active song for infomational stuff never changed
 			//leaving plugins/windowtitle/playcontrol bar all on last song
 			tuniacApp.m_PlaylistManager.SetActiveByEntry(pIPE);
-			tuniacApp.m_CoreAudio.Play();
+			CCoreAudio::Instance()->Play();
 			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 		}
 		tuniacApp.m_SourceSelectorWindow->UpdateView();

@@ -262,7 +262,7 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 bool				CBasePlaylist::Previous(void)
 {
 
-	if(tuniacApp.m_CoreAudio.GetPosition() < 3500)
+	if(CCoreAudio::Instance()->GetPosition() < 3500)
 	{
 		unsigned long ulFilteredIndex;
 
@@ -283,26 +283,26 @@ bool				CBasePlaylist::Previous(void)
 			//are we crossfading?
 			if(tuniacApp.m_Preferences.GetCrossfadeTime())
 				//crossfade to next song
-				tuniacApp.m_CoreAudio.TransitionTo(pIPE);
+				CCoreAudio::Instance()->TransitionTo(pIPE);
 
 			else
 				//move straight to next song
-				tuniacApp.m_CoreAudio.SetSource(pIPE);
+				CCoreAudio::Instance()->SetSource(pIPE);
 			
-			tuniacApp.m_CoreAudio.Play();
+			CCoreAudio::Instance()->Play();
 			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 		}
 		//no valid previous song(start of playlist?), simply rewind
 		else
 		{
-			tuniacApp.m_CoreAudio.Stop();
-			tuniacApp.m_CoreAudio.SetPosition(0);
+			CCoreAudio::Instance()->Stop();
+			CCoreAudio::Instance()->SetPosition(0);
 		}
 	}
 	//still at start, simply rewind
 	else
 	{
-		tuniacApp.m_CoreAudio.SetPosition(0);
+		CCoreAudio::Instance()->SetPosition(0);
 	}
 
 	return true;
@@ -330,14 +330,14 @@ bool				CBasePlaylist::Next(void)
 		//are we crossfading?
 		if(tuniacApp.m_Preferences.GetCrossfadeTime())
 			//crossfade to next song
-			tuniacApp.m_CoreAudio.TransitionTo(pIPE);
+			CCoreAudio::Instance()->TransitionTo(pIPE);
 
 		else
 			//move straight to next song
-			tuniacApp.m_CoreAudio.SetSource(pIPE);
+			CCoreAudio::Instance()->SetSource(pIPE);
 
 
-		tuniacApp.m_CoreAudio.Play();
+		CCoreAudio::Instance()->Play();
 		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 

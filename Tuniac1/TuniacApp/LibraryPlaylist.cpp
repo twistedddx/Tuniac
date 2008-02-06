@@ -87,7 +87,7 @@ bool				CLibraryPlaylist::DeleteItemArray(IndexArray &	indexArray)
 			{
 				if((bRemoveFromDisk) && (tuniacApp.m_PlaylistManager.GetActivePlaylist() == this))
 				{
-					tuniacApp.m_CoreAudio.Reset();
+					CCoreAudio::Instance()->Reset();
 				}
 				m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
 			}

@@ -716,9 +716,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(m_pPlaylist->SetActiveNormalFilteredIndex(m_iLastClickedItem))
 							{
 								IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
-								if(tuniacApp.m_CoreAudio.SetSource(pIPE))
+								if(CCoreAudio::Instance()->SetSource(pIPE))
 								{
-									tuniacApp.m_CoreAudio.Play();
+									CCoreAudio::Instance()->Play();
 									tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 								}
 							}
@@ -797,7 +797,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 								if((m_pPlaylist->GetActiveItem() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
 								{
-									tuniacApp.m_CoreAudio.Reset();
+									CCoreAudio::Instance()->Reset();
 								}
 
 								Update();
@@ -1240,7 +1240,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 											if((m_pPlaylist->GetActiveItem() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
 											{
-												tuniacApp.m_CoreAudio.Reset();
+												CCoreAudio::Instance()->Reset();
 											}
 
 											Update();
@@ -1420,9 +1420,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								if(m_pPlaylist->SetActiveNormalFilteredIndex(lpnmitem->iItem))
 								{
 									IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
-									if(tuniacApp.m_CoreAudio.SetSource(pIPE))
+									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
-										tuniacApp.m_CoreAudio.Play();
+										CCoreAudio::Instance()->Play();
 										tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
 									}

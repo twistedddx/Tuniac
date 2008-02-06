@@ -212,7 +212,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				SetActivePlaylist(GetNumPlaylists() - 1);
 				pPlaylist->SetActiveFilteredIndex(PLDH.ActiveIndex);
 				if(pPlaylist->GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX)
-					tuniacApp.m_CoreAudio.SetSource(pPlaylist->GetActiveItem());
+					CCoreAudio::Instance()->SetSource(pPlaylist->GetActiveItem());
 			}
 		}
 
@@ -221,7 +221,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			SetActivePlaylist(0);
 			m_LibraryPlaylist.SetActiveFilteredIndex(PLDH.ActiveIndex);
 			if(m_LibraryPlaylist.GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
-				tuniacApp.m_CoreAudio.SetSource(m_LibraryPlaylist.GetActiveItem());
+				CCoreAudio::Instance()->SetSource(m_LibraryPlaylist.GetActiveItem());
 			
 		}
 	}
@@ -422,7 +422,7 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 
 	if(bOk)
 	{
-		tuniacApp.m_CoreAudio.Play();
+		CCoreAudio::Instance()->Play();
 		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 	}
 	//we failed to find our song (its filtered out?)

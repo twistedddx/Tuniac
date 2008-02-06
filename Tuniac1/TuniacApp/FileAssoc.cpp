@@ -49,9 +49,9 @@ bool			CFileAssoc::CleanAssociations()
 bool			CFileAssoc::UpdateExtensionList(void)
 {
 	m_ExtList.RemoveAll();
-	for(unsigned long i = 0; i < tuniacApp.m_CoreAudio.GetNumPlugins(); i++)
+	for(unsigned long i = 0; i < CCoreAudio::Instance()->GetNumPlugins(); i++)
 	{
-		IAudioSourceSupplier * pPlugin = tuniacApp.m_CoreAudio.GetPluginAtIndex(i);
+		IAudioSourceSupplier * pPlugin = CCoreAudio::Instance()->GetPluginAtIndex(i);
 		LPTSTR szName = pPlugin->GetName();
 		for (unsigned long j = 0; j < pPlugin->GetNumCommonExts(); j++)
 		{

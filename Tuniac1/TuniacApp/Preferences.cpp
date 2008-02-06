@@ -689,9 +689,9 @@ LRESULT CALLBACK CPreferences::CoreAudioProc(HWND hDlg, UINT uMsg, WPARAM wParam
 
 				SendDlgItemMessage(hDlg, IDC_AUDIOPLUGINS_LIST, LB_RESETCONTENT, 0, 0);
 
-				for(unsigned long x=0; x<tuniacApp.m_CoreAudio.GetNumPlugins(); x++)
+				for(unsigned long x=0; x<CCoreAudio::Instance()->GetNumPlugins(); x++)
 				{
-					SendDlgItemMessage(hDlg, IDC_AUDIOPLUGINS_LIST, LB_INSERTSTRING, -1, (LPARAM)tuniacApp.m_CoreAudio.GetPluginAtIndex(x)->GetName());
+					SendDlgItemMessage(hDlg, IDC_AUDIOPLUGINS_LIST, LB_INSERTSTRING, -1, (LPARAM)CCoreAudio::Instance()->GetPluginAtIndex(x)->GetName());
 				}
 			}
 			break;
@@ -705,14 +705,14 @@ LRESULT CALLBACK CPreferences::CoreAudioProc(HWND hDlg, UINT uMsg, WPARAM wParam
 					case IDC_AUDIOPLUGIN_ABOUT:
 						{
 							unsigned long sel = SendDlgItemMessage(hDlg, IDC_AUDIOPLUGINS_LIST, LB_GETCURSEL, 0, 0);
-							tuniacApp.m_CoreAudio.GetPluginAtIndex(sel)->About(hDlg);
+							CCoreAudio::Instance()->GetPluginAtIndex(sel)->About(hDlg);
 						}
 						break;
 
 					case IDC_AUDIOPLUGIN_CONFIGURE:
 						{
 							unsigned long sel = SendDlgItemMessage(hDlg, IDC_AUDIOPLUGINS_LIST, LB_GETCURSEL, 0, 0);
-							tuniacApp.m_CoreAudio.GetPluginAtIndex(sel)->Configure(hDlg);
+							CCoreAudio::Instance()->GetPluginAtIndex(sel)->Configure(hDlg);
 						}
 						break;
 
@@ -727,7 +727,7 @@ LRESULT CALLBACK CPreferences::CoreAudioProc(HWND hDlg, UINT uMsg, WPARAM wParam
 							}
 							else
 							{
-								if(tuniacApp.m_CoreAudio.GetPluginAtIndex(sel)->GetFlags() & FLAGS_ABOUT)
+								if(CCoreAudio::Instance()->GetPluginAtIndex(sel)->GetFlags() & FLAGS_ABOUT)
 								{
 									EnableWindow(GetDlgItem(hDlg, IDC_AUDIOPLUGIN_ABOUT), TRUE);
 								}
@@ -736,7 +736,7 @@ LRESULT CALLBACK CPreferences::CoreAudioProc(HWND hDlg, UINT uMsg, WPARAM wParam
 									EnableWindow(GetDlgItem(hDlg, IDC_AUDIOPLUGIN_ABOUT), FALSE);
 								}
 
-								if(tuniacApp.m_CoreAudio.GetPluginAtIndex(sel)->GetFlags() & FLAGS_CONFIGURE)
+								if(CCoreAudio::Instance()->GetPluginAtIndex(sel)->GetFlags() & FLAGS_CONFIGURE)
 								{
 									EnableWindow(GetDlgItem(hDlg, IDC_AUDIOPLUGIN_CONFIGURE), TRUE);
 								}
@@ -782,7 +782,7 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					case IDC_REBUILD_ML:
 						{
 							//do update
-							tuniacApp.m_CoreAudio.SetSource(NULL);
+							CCoreAudio::Instance()->SetSource(NULL);
 							for(unsigned long ulMLIndex = 0; ulMLIndex < tuniacApp.m_MediaLibrary.GetCount(); ulMLIndex++)
 							{
 								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(ulMLIndex))
