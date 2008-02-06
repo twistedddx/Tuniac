@@ -5,11 +5,14 @@
 
 #include "IPlaylist.h"
 
+#include "Singleton.h"
+
 #define NOTIFY_MIXPOINTREACHED			0
 #define NOTIFY_PLAYBACKFINISHED			1
 #define NOTIFY_PLAYBACKSTARTED			2
 
 class CCoreAudio : 
+	public CSingleton<CCoreAudio>,
 	public IAudioSourceHelper
 {
 protected:
