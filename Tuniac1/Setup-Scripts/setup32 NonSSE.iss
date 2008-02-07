@@ -89,12 +89,12 @@ begin
 		begin
 			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then
 			begin
-                if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-nosaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+                if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 				    MsgBox('Error removing settings & file associations.', mbError, MB_OK);
 			end
 			else
 			begin
-			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-nosaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					MsgBox('Error removing file associations.', mbError, MB_OK);
 			end;
 		end;
