@@ -103,9 +103,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 {
 	USES_CONVERSION;
 	TagLib::File		*		m_File;
-	char ConvertBuffer[512];
-	WideCharToMultiByte(CP_ACP, 0, libEnt->szURL, 512, ConvertBuffer, 512, NULL, NULL);
-	m_File = TagLib::FileRef::create(ConvertBuffer, 1, TagLib::AudioProperties::Accurate);
+	m_File = TagLib::FileRef::create(libEnt->szURL, 1, TagLib::AudioProperties::Fast);
 
 	if(m_File)
 	{
@@ -117,16 +115,15 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->iYear = m_File->tag()->year();
 		libEnt->dwTrack[0] = m_File->tag()->track();
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->title().toCString(true), -1, libEnt->szTitle, 128);
+		swprintf(libEnt->szTitle, 128, L"%s", m_File->tag()->title().to32Bit().c_str());
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->artist().toCString(true), -1, libEnt->szArtist, 128);
+		swprintf(libEnt->szArtist, 128, L"%s", m_File->tag()->artist().to32Bit().c_str());
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->album().toCString(true), -1, libEnt->szAlbum, 128);
+		swprintf(libEnt->szAlbum, 128, L"%s", m_File->tag()->album().to32Bit().c_str());
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->genre().toCString(true), -1, libEnt->szGenre, 128);
+		swprintf(libEnt->szGenre, 128, L"%s", m_File->tag()->genre().to32Bit().c_str());
 
-		MultiByteToWideChar(CP_UTF8, 0, m_File->tag()->comment().toCString(true), -1, libEnt->szComment, 128);
-
+		swprintf(libEnt->szComment, 128, L"%s", m_File->tag()->comment().to32Bit().c_str());
 	}
 	delete m_File;
 	return true;
