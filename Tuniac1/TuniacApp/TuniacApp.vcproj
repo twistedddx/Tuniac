@@ -360,7 +360,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x501; DEBUG; VISTAAUDIOHACK"
+				PreprocessorDefinitions="_WIN32_WINNT=0x501;  VISTAAUDIOHACK"
 				StringPooling="true"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
@@ -388,7 +388,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
