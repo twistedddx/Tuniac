@@ -7,7 +7,7 @@
 #include "resource.h"
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 3)
+#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 4)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -350,9 +350,9 @@ bool CMediaLibrary::Initialize()
 {
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
-	TCHAR				szURL[512];
+	TCHAR				szURL[MAX_PATH];
 
-	GetModuleFileName(NULL, szURL, 512);
+	GetModuleFileName(NULL, szURL, MAX_PATH);
 	PathRemoveFileSpec(szURL);
 	PathAddBackslash(szURL);
 	StrCat(szURL, TEXT("*.dll"));
