@@ -2,7 +2,7 @@
 #include "tuniacvisual.h"
 
 #define DISPLAYSAMPLES	4096
-#define VISUALSIZE		DISPLAYSAMPLES*6
+#define VISUALSIZE		DISPLAYSAMPLES*8
 
 CTuniacVisual::CTuniacVisual(void)
 {
