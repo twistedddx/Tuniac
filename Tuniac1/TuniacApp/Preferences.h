@@ -106,13 +106,11 @@ public:
 
 	CFileAssoc	m_FileAssoc;
 
-	bool	RecursiveDeleteReg(HKEY hKeyRoot, LPTSTR lpSubKey);
-
 	bool	DefaultPreferences(void);
 
 	bool	LoadPreferences(void);
 	bool	SavePreferences(void);
-	bool	CleanPreferences(void);
+	void	CleanPreferences(void);
 
 	bool	ShowPreferences(HWND hParentWnd, unsigned int iStartPage);
 
