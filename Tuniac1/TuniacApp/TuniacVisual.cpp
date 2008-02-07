@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "tuniacvisual.h"
 
-#define DISPLAYSAMPLES	2048
+#define DISPLAYSAMPLES	4096
 #define VISUALSIZE		DISPLAYSAMPLES*6
 
 CTuniacVisual::CTuniacVisual(void)
@@ -172,8 +172,12 @@ bool	CTuniacVisual::Render(int w, int h)
 				{
 					for(unsigned int samp=start; samp<NumSamples; samp+=TIMES)
 					{
+						glVertex2f(samp,	halfheight);
 						glVertex2f(samp,	halfheight + (AudioData[samp*2]		* halfheight));
-						glVertex2f(samp,	halfheight + (AudioData[(samp*2)+1]	* halfheight));
+
+
+						glVertex2f(samp,	halfheight);
+						glVertex2f(samp,	halfheight - (AudioData[(samp*2)+1]	* halfheight));
 					}
 				}
 				glEnd();

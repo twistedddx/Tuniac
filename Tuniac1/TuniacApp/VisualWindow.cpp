@@ -369,11 +369,11 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 						{
 							if(m_bFullScreen)
 							{
-								unsigned long StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+								LONG_PTR StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
 								StyleEx |= WS_EX_CLIENTEDGE;
 								SetWindowLongPtr(hWnd, GWL_EXSTYLE, StyleEx);
 
-								unsigned long Style = GetWindowLongPtr(hWnd, GWL_STYLE);
+								LONG_PTR Style = GetWindowLongPtr(hWnd, GWL_STYLE);
 								Style |= WS_CHILD;
 								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
@@ -386,11 +386,11 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							}
 							else
 							{
-								unsigned long StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+								LONG_PTR StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
 								StyleEx &= ~WS_EX_CLIENTEDGE;
 								SetWindowLongPtr(hWnd, GWL_EXSTYLE, StyleEx);
 
-								unsigned long Style = GetWindowLongPtr(hWnd, GWL_STYLE);
+								LONG_PTR Style = GetWindowLongPtr(hWnd, GWL_STYLE);
 								Style &= ~WS_CHILD;
 								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
@@ -500,7 +500,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 			{
 				case WM_APP:
 					{
-						int iPlugin = msg.lParam;
+						LPARAM iPlugin = msg.lParam;
 
 						if(m_WindowDC)
 						{
