@@ -52,7 +52,7 @@ Source: ..\Win32\Release SSE2\plugins\PopupNotify_plugin.dll; DestDir: {app}\plu
 Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: recursesubdirs createallsubdirs; Components: Guide
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ''; ValueData: '{app}\TuniacApp.exe'
 
 [Icons]
 Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe
@@ -89,12 +89,12 @@ begin
 		begin
 			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then
 			begin
-                if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-nosaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+                if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 				    MsgBox('Error removing settings & file associations.', mbError, MB_OK);
 			end
 			else
 			begin
-			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-nosaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					MsgBox('Error removing file associations.', mbError, MB_OK);
 			end;
 		end;
