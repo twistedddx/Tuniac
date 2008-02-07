@@ -256,14 +256,18 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 		case WM_MOUSEMOVE:
 			{
+				KillTimer(m_hWnd, ID_TIMER_HIDE);
+				KillTimer(m_hWnd, ID_TIMER_FADE);
+				ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+				SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha = 254, LWA_ALPHA);
+				SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS / 2, NULL);
+
 				POINTS pt = MAKEPOINTS(lParam);
 				if(pt.x >= m_rcHit.left) {
 					SetCursor(LoadCursor(NULL, IDC_HAND));
 					RedrawWindow(m_hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
 				}
-				KillTimer(m_hWnd, ID_TIMER_HIDE);
-				KillTimer(m_hWnd, ID_TIMER_FADE);
-				SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS / 2, NULL);
+
 				SetTimer(m_hWnd, ID_TIMER_PAINT, 100, NULL);
 			}
 			break;
@@ -310,10 +314,11 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case PLUGINNOTIFY_SONGCHANGE:
 		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 			{
+				KillTimer(m_hWnd, ID_TIMER_HIDE);
+				KillTimer(m_hWnd, ID_TIMER_FADE);
 				ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 				SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha = 254, LWA_ALPHA);
 				RedrawWindow(m_hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
-				KillTimer(m_hWnd, ID_TIMER_HIDE);
 				SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS, NULL);
 			}
 			break;
