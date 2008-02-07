@@ -1,3 +1,11 @@
+Feb 07, 2008
+------------
+-fix reg delete function(uninstall/-wipeprefs)
+-make szURL size MAX_PATH(I know streams could have a longer path but who cares?)
+-stick moreso with widechars in std_InfoManager (also set to fast accuracy)
+-tidied up things in coreaudio
+-popup notify restart fade when needed
+
 Feb 05, 2008
 ------------
 -make functions and variables clearer/more consistent
