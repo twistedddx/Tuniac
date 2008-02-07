@@ -277,25 +277,25 @@ void *			CPluginManager::GetVariable(Variable eVar)
 	{
 		case Variable_NumChannels:
 			{
-				return (void *)CCoreAudio::Instance()->GetChannels();
+				return (void*)(CCoreAudio::Instance()->GetChannels());
 			}
 			break;
 
 		case Variable_SampleRate:
 			{
-				return (void *)CCoreAudio::Instance()->GetSampleRate();
+				return (void*)(CCoreAudio::Instance()->GetSampleRate());
 			}
 			break;
 
 		case Variable_PositionMS:
 			{
-				return (void *)CCoreAudio::Instance()->GetPosition();
+				return (void*)(CCoreAudio::Instance()->GetPosition());
 			}
 			break;
 
 		case Variable_LengthMS:
 			{
-				return (void *)CCoreAudio::Instance()->GetLength();
+				return (void*)(CCoreAudio::Instance()->GetLength());
 			}
 			break;
 

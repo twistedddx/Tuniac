@@ -464,6 +464,36 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
 	if(m_waveHandle && (m_LastPlayedBuffer != -1))
 	{
+#ifdef VISTAAUDIOHACK
+
+		unsigned long offset = (GetSamplesOut() & ((m_BlockSize/m_waveFormatPCMEx.Format.nChannels)-1))*m_waveFormatPCMEx.Format.nChannels;
+		short * pBuffer		= (short *)m_Buffers[(m_LastPlayedBuffer+1) & (m_NumBuffers-1)].lpData;
+
+		if( (offset + ulNumSamples) > m_BlockSize )
+		{
+			unsigned long SamplesThisBlock = (m_BlockSize - offset);
+			unsigned long SamplesNextBlock = ulNumSamples - SamplesThisBlock;
+			short * pNextBuffer = (short *)m_Buffers[(m_LastPlayedBuffer+2) & (m_NumBuffers-1)].lpData;
+
+			for(unsigned long x=0; x<SamplesThisBlock; x++)
+			{
+				ToHere[x] = ((float)pBuffer[offset+x]) / 32768.0f;
+			}
+
+			for(unsigned long x=0; x<SamplesNextBlock; x++)
+			{
+				ToHere[SamplesThisBlock+x] = ((float)pNextBuffer[SamplesThisBlock+x]) / 32768.0f;
+			}
+		}
+		else
+		{
+			for(unsigned long x=0; x<ulNumSamples; x++)
+			{
+				ToHere[x] = (float)pBuffer[offset+x] / 32768.0f;
+			}
+		}
+#else
+
 		unsigned long offset = (GetSamplesOut() & ((m_BlockSize/m_waveFormatPCMEx.Format.nChannels)-1))*m_waveFormatPCMEx.Format.nChannels;
 		float * pBuffer		= (float *)m_Buffers[(m_LastPlayedBuffer+1) & (m_NumBuffers-1)].lpData;
 
@@ -475,11 +505,19 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 
 			CopyFloat(ToHere,						&pBuffer[offset],	SamplesThisBlock);
 			CopyFloat(&ToHere[SamplesThisBlock],	pNextBuffer,		SamplesNextBlock);
+
 		}
 		else
 		{
-			CopyFloat(ToHere, &pBuffer[offset], ulNumSamples);
+			for(unsigned long x=0; x<ulNumSamples; x++)
+			{
+				ToHere[x] = (float)pBuffer[offset+x] / 32768.0f;
+			}
 		}
+
+#endif
+
+
 		return true;
 	}
 

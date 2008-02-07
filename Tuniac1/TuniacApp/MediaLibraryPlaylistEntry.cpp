@@ -32,7 +32,7 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 	{
 		case FIELD_KIND:
 			{
-				return (void *)m_LibraryEntry.dwKind;
+				return (void*)(m_LibraryEntry.dwKind);
 			}
 			break;
 
@@ -50,7 +50,7 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 
 		case FIELD_FILESIZE:
 			{
-				return (void *)m_LibraryEntry.dwFilesize;
+				return (void*)(m_LibraryEntry.dwFilesize);
 			}
 			break;
 

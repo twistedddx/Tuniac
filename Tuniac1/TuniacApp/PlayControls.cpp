@@ -113,7 +113,7 @@ bool CPlayControls::SysColorChange(WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK CPlayControls::PrevWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CPlayControls * pPC = (CPlayControls *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CPlayControls * pPC = (CPlayControls *)(ULONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch(message)
 	{
@@ -133,7 +133,7 @@ LRESULT CALLBACK CPlayControls::PrevWndProc(HWND hWnd, UINT message, WPARAM wPar
 
 LRESULT CALLBACK CPlayControls::NextWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CPlayControls * pPC = (CPlayControls *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CPlayControls * pPC = (CPlayControls *)(ULONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch(message)
 	{
@@ -161,11 +161,11 @@ LRESULT CALLBACK CPlayControls::WndProcStub(HWND hWnd, UINT message, WPARAM wPar
 		LPCREATESTRUCT lpCS = (LPCREATESTRUCT)lParam;
 		pPC = (CPlayControls *)lpCS->lpCreateParams;
 
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pPC);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (ULONG_PTR)pPC);
 	}
 	else
 	{
-		pPC = (CPlayControls *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+		pPC = (CPlayControls *)(ULONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	}
 
 	return(pPC->WndProc(hWnd, message, wParam, lParam));
@@ -194,7 +194,9 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 											tuniacApp.getMainInstance(), 
 											NULL);
 				SetWindowLongPtr(m_hPrevWnd, GWLP_USERDATA, (DWORD_PTR)this);
-				m_origPrevWndProc = (WNDPROC)SetWindowLongPtr(m_hPrevWnd, GWLP_WNDPROC, (DWORD)PrevWndProc);
+				//m_origPrevWndProc = (WNDPROC)SetWindowLongPtr(m_hPrevWnd, GWLP_WNDPROC, (DWORD)PrevWndProc);
+
+
 
 
 				m_hPlayWnd = CreateWindow(	L"BUTTON",
@@ -209,6 +211,8 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 											tuniacApp.getMainInstance(), 
 											NULL);
 
+
+
 				m_hNextWnd = CreateWindow(	L"BUTTON",
 											L"Next",
 											WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
@@ -221,7 +225,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 											tuniacApp.getMainInstance(), 
 											NULL);
 				SetWindowLongPtr(m_hNextWnd, GWLP_USERDATA, (DWORD_PTR)this);
-				m_origNextWndProc = (WNDPROC)SetWindowLongPtr(m_hNextWnd, GWLP_WNDPROC, (DWORD)NextWndProc);
+				//m_origNextWndProc = (WNDPROC)SetWindowLongPtr(m_hNextWnd, GWLP_WNDPROC, (DWORD)NextWndProc);
 
 
 				m_hVolumeWnd = CreateWindow(	TRACKBAR_CLASS,
