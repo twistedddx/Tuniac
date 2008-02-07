@@ -42,7 +42,7 @@ bool			CFileAssoc::CleanAssociations()
 		m_ExtList[i].bAssociated = false;
 	}
 	ReAssociate(0, false);
-	tuniacApp.m_Preferences.RecursiveDeleteReg(HKEY_CLASSES_ROOT, TEXT("Tuniac.audio"));
+	SHDeleteKey(HKEY_CLASSES_ROOT, TEXT("Tuniac.audio"));
 	return true;
 }
 
