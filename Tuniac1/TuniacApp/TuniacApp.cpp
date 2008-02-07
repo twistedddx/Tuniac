@@ -607,7 +607,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				HDROP hDrop = (HDROP)wParam;
 
-				TCHAR szURL[1024];
+				TCHAR szURL[MAX_PATH];
 
 				UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
 
@@ -615,7 +615,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					for(UINT file = 0; file<uNumFiles; file++)
 					{
-						DragQueryFile(hDrop, file, szURL, 2048);
+						DragQueryFile(hDrop, file, szURL, MAX_PATH);
 						m_MediaLibrary.AddItem(szURL);
 					}
 
@@ -1107,17 +1107,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									//multiple files were selected(path + multiple filenames, need to join)
 									else
 									{
-										TCHAR szFilePath[256];
-										TCHAR szURL[256];
+										TCHAR szFilePath[MAX_PATH];
+										TCHAR szURL[MAX_PATH];
 
 										LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
 
-										StringCbCopy( szFilePath, 256, szURLBuffer );
+										StringCbCopy( szFilePath, MAX_PATH, szURLBuffer );
 										while( lstrlen(szOFNName) != 0 )
 										{
-											StringCbCopy( szURL, 256, szFilePath );
-											StringCbCat( szURL, 256, TEXT("\\") );
-											StringCbCat( szURL, 256, szOFNName );
+											StringCbCopy( szURL, MAX_PATH, szFilePath );
+											StringCbCat( szURL, MAX_PATH, TEXT("\\") );
+											StringCbCat( szURL, MAX_PATH, szOFNName );
 
 											m_MediaLibrary.AddItem(szURL);
 

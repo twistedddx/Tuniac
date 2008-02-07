@@ -15,7 +15,7 @@ typedef struct
 {
 public:
 	unsigned long		dwKind;
-	TCHAR				szURL[512];
+	TCHAR				szURL[MAX_PATH];
 	unsigned long		dwFilesize;
 
 	unsigned long		dwAvailablility;
