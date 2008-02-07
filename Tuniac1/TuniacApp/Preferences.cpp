@@ -74,89 +74,6 @@
 #define HISTORY_MAX		(40)
 #define FUTURE_MAX		(40)
 
-// copied (with modifications) from april 2005 msdn library
-// ms-help://MS.MSDNQTR.2005APR.1033/sysinfo/base/deleting_a_key_with_subkeys.htm
-bool CPreferences::RecursiveDeleteReg(HKEY hKeyRoot, LPTSTR lpSubKey)
-{
-    LPTSTR lpEnd;
-    LONG lResult;
-    DWORD dwSize;
-    TCHAR szName[MAX_PATH];
-    HKEY hKey;
-    FILETIME ftWrite;
-
-    // First, see if we can delete the key without having
-    // to recurse.
-
-    lResult = RegDeleteKey(hKeyRoot, lpSubKey);
-
-    if (lResult == ERROR_SUCCESS) 
-        return true;
-
-    lResult = RegOpenKeyEx (hKeyRoot, lpSubKey, 0, KEY_READ, &hKey);
-
-    if (lResult != ERROR_SUCCESS) 
-    {
-        if (lResult == ERROR_FILE_NOT_FOUND) {
-            return true;
-        } 
-        else {
-            return true;
-        }
-    }
-
-    // Check for an ending slash and add one if it is missing.
-
-    lpEnd = lpSubKey + lstrlen(lpSubKey);
-
-    if (*(lpEnd - 1) != TEXT('\\')) 
-    {
-		//crash is here
-        *lpEnd =  TEXT('\\');
-        lpEnd++;
-        *lpEnd =  TEXT('\0');
-    }
-
-    // Enumerate the keys
-
-    dwSize = MAX_PATH;
-    lResult = RegEnumKeyEx(hKey, 0, szName, &dwSize, NULL,
-                           NULL, NULL, &ftWrite);
-
-    if (lResult == ERROR_SUCCESS) 
-    {
-        do {
-
-            lstrcpy (lpEnd, szName);
-
-            if (!RecursiveDeleteReg(hKeyRoot, lpSubKey)) {
-                break;
-            }
-
-            dwSize = MAX_PATH;
-
-            lResult = RegEnumKeyEx(hKey, 0, szName, &dwSize, NULL,
-                                   NULL, NULL, &ftWrite);
-
-        } while (lResult == ERROR_SUCCESS);
-    }
-
-    lpEnd--;
-    *lpEnd = TEXT('\0');
-
-    RegCloseKey (hKey);
-
-    // Try again to delete the key.
-
-    lResult = RegDeleteKey(hKeyRoot, lpSubKey);
-
-    if (lResult == ERROR_SUCCESS) 
-        return true;
-
-    return false;
-}
-
-
 LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
@@ -1723,9 +1640,15 @@ bool CPreferences::SavePreferences(void)
 	return true;
 }
 
-bool CPreferences::CleanPreferences(void)
+void CPreferences::CleanPreferences(void)
 {
-	return RecursiveDeleteReg(HKEY_CURRENT_USER, PREFERENCES_KEY);
+	LONG lResult;
+	HKEY hKey;
+	if(RegOpenKeyEx(HKEY_CURRENT_USER, PREFERENCES_KEY, 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
+	{
+		lResult = SHDeleteKey(HKEY_CURRENT_USER, PREFERENCES_KEY);
+	}
+   RegCloseKey(hKey);
 }
 
 bool CPreferences::ShowPreferences(HWND hParentWnd, unsigned int iStartPage)
