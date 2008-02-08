@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "NowPlayingTxt.h"
 
+//not defined in vista?
+#define WM_MCOMMAND   WM_USER + 200
+
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ulReason, 
                        LPVOID lpReserved
@@ -125,12 +128,14 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						WriteFile(hOutFile, &szSong, (strlen(szSong)) * sizeof(char), &ulBytesWritten, NULL);
 						CloseHandle(hOutFile);
 
+						//we need a real setting for this ;)
+						bool bMirc = 0;
 
-						//if (bMirc) {
+						if (bMirc) {
 							/* eh... this is probably incomplete.  I did not test it as
 							far as using another application that communicates with mIRC at
 							the same time. */
-						/*
+						
 							HWND hwnd = FindWindow(L"mIRC", NULL);
 
 							if (hwnd != NULL) {
@@ -170,7 +175,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 								}
 							}
 						}
-						*/
+						
 
 					}
 					break;
