@@ -1420,16 +1420,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//do we have a valid next song, if not we have run out of songs(end of playlist?)
 							if(pPlaylist->Next())
 							{
-								//notify plugins of change of state
-								if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
-								{
+
 									//play the current song
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
 										if(CCoreAudio::Instance()->SetSource(pIPE))
-											CCoreAudio::Instance()->Play();
+										{
+											if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+												CCoreAudio::Instance()->Play();
 
+										//notify plugins of change of state
 										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 									}
 								}
@@ -1459,16 +1460,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
 								if(pPlaylist->Previous())
 								{
-									//notify plugins of change of state
-									if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+									//play the current song
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
 									{
-										//play the current song
-										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-										if(pIPE)
+										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
-											if(CCoreAudio::Instance()->SetSource(pIPE))
+											if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 												CCoreAudio::Instance()->Play();
 
+											//notify plugins of change of state
 											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 										}
 									}
