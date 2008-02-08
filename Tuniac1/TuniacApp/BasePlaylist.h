@@ -42,6 +42,7 @@ public:
 	~CBasePlaylist(void);
 
 	bool				ApplyFilter(void);
+	void				RebuildPlaylistArrays(void);
 
 	unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex);				// returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
 	unsigned long		NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex);	// returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX

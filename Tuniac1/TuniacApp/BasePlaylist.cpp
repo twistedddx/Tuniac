@@ -100,7 +100,13 @@ bool				CBasePlaylist::ApplyFilter(void)
 		}
 	}
 
+	RebuildPlaylistArrays();
 
+	return true;
+}
+
+void				CBasePlaylist::RebuildPlaylistArrays(void)
+{
 	//remake our filtered lists(normal and shuffle) based on new filter
 	g_Rand.RandomInit(GetTickCount());
 
@@ -153,9 +159,8 @@ bool				CBasePlaylist::ApplyFilter(void)
 		m_RandomIndexArray[0] = m_RandomIndexArray[ulCurrentIndex];
 		m_RandomIndexArray[ulCurrentIndex] = temp;
 	}
-
-	return true;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -261,9 +266,6 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 //will set m_ActiveRealIndex to the previous song and return that songs index or -1 if it fails
 bool				CBasePlaylist::Previous(void)
 {
-
-	if(CCoreAudio::Instance()->GetPosition() < 3500)
-	{
 		unsigned long ulFilteredIndex;
 
 		//check if we are repeatingall and play last song in list
@@ -274,38 +276,7 @@ bool				CBasePlaylist::Previous(void)
 			//try to set active as -1 of current active
 			ulFilteredIndex = GetActiveFilteredIndex() - 1;
 
-		if(CheckFilteredIndex(ulFilteredIndex))
-		{
-			SetActiveFilteredIndex(ulFilteredIndex);
-
-			IPlaylistEntry * pIPE = GetActiveItem();
-
-			//are we crossfading?
-			if(tuniacApp.m_Preferences.GetCrossfadeTime())
-				//crossfade to next song
-				CCoreAudio::Instance()->TransitionTo(pIPE);
-
-			else
-				//move straight to next song
-				CCoreAudio::Instance()->SetSource(pIPE);
-			
-			CCoreAudio::Instance()->Play();
-			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-		}
-		//no valid previous song(start of playlist?), simply rewind
-		else
-		{
-			CCoreAudio::Instance()->Stop();
-			CCoreAudio::Instance()->SetPosition(0);
-		}
-	}
-	//still at start, simply rewind
-	else
-	{
-		CCoreAudio::Instance()->SetPosition(0);
-	}
-
-	return true;
+		return SetActiveFilteredIndex(ulFilteredIndex);
 }
 
 //will set m_ActiveRealIndex to the next song and return that songs index or -1 if it fails
@@ -314,40 +285,8 @@ bool				CBasePlaylist::Next(void)
 	//get the next index
 	unsigned long ulFilteredIndex = GetNextFilteredIndex(GetActiveFilteredIndex(), 1, 1);
 
-	//check that index is valid
-	bool bCheck = CheckFilteredIndex(ulFilteredIndex);
-
-	//if we got an index and it's valid, set it
-	if(bCheck)
-	{
-		//set our found next index
-		SetActiveFilteredIndex(ulFilteredIndex);
-
-		//activeitem should now be the NEXT song
-
-		IPlaylistEntry * pIPE = GetActiveItem();
-
-		//are we crossfading?
-		if(tuniacApp.m_Preferences.GetCrossfadeTime())
-			//crossfade to next song
-			CCoreAudio::Instance()->TransitionTo(pIPE);
-
-		else
-			//move straight to next song
-			CCoreAudio::Instance()->SetSource(pIPE);
-
-
-		CCoreAudio::Instance()->Play();
-		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-
-
-		//check if we were set to stop at this next song
-		tuniacApp.DoSoftPause();
-
-		return true;
-	}
-	else
-		return false;
+	//set our found next index
+	return SetActiveFilteredIndex(ulFilteredIndex);
 }
 
 bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
@@ -515,12 +454,9 @@ unsigned long		CBasePlaylist::GetNumItems(void)
 //set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
 bool				CBasePlaylist::SetActiveFilteredIndex(unsigned long ulFilteredIndex)
 {
-	if(ulFilteredIndex < 0)
+	//check that index is valid
+	if(!CheckFilteredIndex(ulFilteredIndex))
 		return false;
-
-	if(ulFilteredIndex >= m_NormalIndexArray.GetCount())
-		return false;
-
 
 	if(tuniacApp.m_Preferences.GetShuffleState())
 		m_ActiveRealIndex = RandomFilteredIndexToRealIndex(ulFilteredIndex);
@@ -533,10 +469,8 @@ bool				CBasePlaylist::SetActiveFilteredIndex(unsigned long ulFilteredIndex)
 //set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
 bool				CBasePlaylist::SetActiveNormalFilteredIndex(unsigned long ulFilteredIndex)
 {
-	if(ulFilteredIndex < 0)
-		return false;
-
-	if(ulFilteredIndex >= m_NormalIndexArray.GetCount())
+	//check that index is valid
+	if(!CheckFilteredIndex(ulFilteredIndex))
 		return false;
 
 	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
