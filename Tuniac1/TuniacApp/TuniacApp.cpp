@@ -715,29 +715,27 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//end of song, or start of crossfade. Next Song needed
 					case NOTIFY_MIXPOINTREACHED:
 						{
-							/*// handle infinite streams differently
-							CMediaLibraryPlaylistEntry * pCurrent = m_MediaLibrary.GetItemByID(pPlaylist->GetActiveItem()->GetEntryID());
-							if(pCurrent != NULL && (unsigned long)pCurrent->GetField(FIELD_KIND) == ENTRY_KIND_URL && (unsigned long)pCurrent->GetField(FIELD_PLAYBACKTIME) == (-1))
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+							//do we have a valid previous song, if not we have run out of songs(end of playlist?)
+							if(pPlaylist->Previous())
 							{
-								TCHAR szOldURL[512];
-								StrCpyN(szOldURL, pCurrent->GetLibraryEntry()->szURL[0], 512);
-								int i = 1;
-								do
+								//play the current song
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+								if(pIPE)
 								{
-									if(wcslen(pCurrent->GetLibraryEntry()->szURL[i]) < 1)
-										break;
-									StrCpyN(pCurrent->GetLibraryEntry()->szURL[i - 1], pCurrent->GetLibraryEntry()->szURL[i], 512);
-									i++;
-								} while(i < LIBENTRY_MAX_URLS);
-								StrCpyN(pCurrent->GetLibraryEntry()->szURL[i - 1], szOldURL, 512);
-								m_CoreAudio.SetSource((IPlaylistEntry *)pCurrent);
-								m_SourceSelectorWindow->UpdateView();
-								break;
-							}*/
-
-							//do we have a valid next song, if not we have run out of songs(end of playlist?)
-
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+									//play the song we got
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
+									{
+										if(CCoreAudio::Instance()->TransitionTo(pIPE))
+											CCoreAudio::Instance()->Play();
+										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+									}
+								}
+							}
+							//else
+							//no next song??
 						}
 						break;
 
@@ -746,8 +744,30 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							//crossfade would have triggered mixpointreached itself n seconds ago
 							if(!m_Preferences.GetCrossfadeTime())
+							{
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
 								//try next song for non crossfade mode
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+								//do we have a valid next song, if not we have run out of songs(end of playlist?)
+								if(pPlaylist->Next())
+								{
+									//play the current song
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
+									{
+										//play the song we got
+										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+										if(pIPE)
+										{
+											if(CCoreAudio::Instance()->SetSource(pIPE))
+												CCoreAudio::Instance()->Play();
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+										}
+									}
+								}
+								//else
+								//no next song??
+							}
 
 							//clear out old streams from crossfades and last song
 							CCoreAudio::Instance()->CheckOldStreams();
@@ -767,6 +787,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									m_SourceSelectorWindow->ShowCurrentlyPlaying();
 
 							UpdateQueues();
+
+							//check if we were set to stop at this next song
+							tuniacApp.DoSoftPause();
 						}
 						break;
 
@@ -1362,43 +1385,21 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//if only paused we can simply play again
 							if(!CCoreAudio::Instance()->Play())
 							{
-								//not paused and need a song from active playlist
-								if(m_PlaylistManager.SetActivePlaylist(m_SourceSelectorWindow->GetVisiblePlaylistIndex()))
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+								//play the current song
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+								if(pIPE)
 								{
-									IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+									if(CCoreAudio::Instance()->SetSource(pIPE))
+										CCoreAudio::Instance()->Play();
 
-									if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-									{
-										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-
-										if(m_Preferences.GetShuffleState())
-										{
-											//get random song
-											pPlaylistEX->SetActiveFilteredIndex(g_Rand.IRandom(0, pPlaylistEX->GetNumItems()));
-										}
-										else
-										{
-											//get first song
-											pPlaylistEX->SetActiveFilteredIndex(0);
-										}
-									}
-
-									//play the song we got
-									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-									if(pIPE)
-									{
-										if(CCoreAudio::Instance()->SetSource(pIPE))
-										{
-											CCoreAudio::Instance()->Play();
-										}
-									}
-									//update playlsit view to reflect new current song
-									m_SourceSelectorWindow->UpdateView();
+									//notify plugins of change of state
+									if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 								}
 							}
-							//notify plugins of change of state
-							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+
 
 						}
 						break;
@@ -1415,10 +1416,24 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
+							//try next song for non crossfade mode
+							//do we have a valid next song, if not we have run out of songs(end of playlist?)
 							if(pPlaylist->Next())
-								break;
-							//else
-								//we have nothing?
+							{
+								//notify plugins of change of state
+								if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+								{
+									//play the current song
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
+									{
+										if(CCoreAudio::Instance()->SetSource(pIPE))
+											CCoreAudio::Instance()->Play();
+
+										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+									}
+								}
+							}
 						}
 						break;
 
@@ -1435,13 +1450,41 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> previous
 					case ID_PLAYBACK_PREVIOUS:
 						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							//still at start, skip backwards
+							if(CCoreAudio::Instance()->GetPosition() < 3500)
+							{
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
-							//do we have a valid previous song?
-							if(pPlaylist->Previous())
-								break;
-							//else
-								//break;
+								//try next song for non crossfade mode
+								//do we have a valid next song, if not we have run out of songs(end of playlist?)
+								if(pPlaylist->Previous())
+								{
+									//notify plugins of change of state
+									if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+									{
+										//play the current song
+										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+										if(pIPE)
+										{
+											if(CCoreAudio::Instance()->SetSource(pIPE))
+												CCoreAudio::Instance()->Play();
+
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+										}
+									}
+								}
+								//no valid previous song(start of playlist?), simply rewind
+								else
+								{
+									CCoreAudio::Instance()->Stop();
+									CCoreAudio::Instance()->SetPosition(0);
+								}
+							}
+							//past start of song, simply rewind
+							else
+							{
+								CCoreAudio::Instance()->SetPosition(0);
+							}
 						}
 						break;
 
