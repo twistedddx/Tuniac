@@ -193,10 +193,7 @@ unsigned long		CBasePlaylist::RealIndexToNormalFilteredIndex(unsigned long ulRea
 unsigned long		CBasePlaylist::NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex)
 {
 	//m_NormalIndexArray is valid between 0 and m_NormalIndexArray.GetCount() -1
-	if(ulNormalFilteredIndex < 0)
-		return INVALID_PLAYLIST_INDEX;
-
-	if(ulNormalFilteredIndex >= m_NormalIndexArray.GetCount())
+	if(!CheckFilteredIndex(ulNormalFilteredIndex))
 		return INVALID_PLAYLIST_INDEX;
 
 		return m_NormalIndexArray[ulNormalFilteredIndex];
@@ -218,13 +215,10 @@ unsigned long		CBasePlaylist::RealIndexToRandomFilteredIndex(unsigned long ulRea
 unsigned long		CBasePlaylist::RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex)
 {
 	//m_NormalIndexArray is valid between 0 and m_NormalIndexArray.GetCount() -1
-	if(ulRandomFilteredIndex < 0)
+	if(!CheckFilteredIndex(ulRandomFilteredIndex))
 		return INVALID_PLAYLIST_INDEX;
 
-	if(ulRandomFilteredIndex >= m_RandomIndexArray.GetCount())
-		return INVALID_PLAYLIST_INDEX;
-
-		return m_RandomIndexArray[ulRandomFilteredIndex];
+	return m_RandomIndexArray[ulRandomFilteredIndex];
 }
 
 
