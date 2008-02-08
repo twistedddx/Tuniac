@@ -718,7 +718,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
 							//do we have a valid previous song, if not we have run out of songs(end of playlist?)
-							if(pPlaylist->Previous())
+							if(pPlaylist->Next())
 							{
 								//play the current song
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
