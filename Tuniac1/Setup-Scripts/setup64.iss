@@ -1,3 +1,5 @@
+#define DateTime GetDateTimeString('yymmdd','','')
+
 [Setup]
 AppName=Tuniac
 AppVerName=Tuniac (Beta)
@@ -9,8 +11,8 @@ DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
 AllowNoIcons=true
 OutputDir=.
-OutputBaseFilename=..\Tuniac_Setup64
-SetupIconFile=..\win64\release\iconsets\default.ico
+OutputBaseFilename=..\Tuniac_Setup64_{#DateTime}
+SetupIconFile=..\TuniacApp\icons\tuniac.ico
 Compression=lzma/ultra
 SolidCompression=true
 Uninstallable=true
@@ -33,24 +35,24 @@ Name: {app}\Guide\*.css; Type: files; Components: Guide
 Name: {app}\Guide\Images\*.jpg; Type: files; Components: Guide
 
 [Files]
-Source: ..\win64\release\TuniacApp.exe; DestDir: {app}\; Flags: ignoreversion
-Source: ..\win64\release\iconsets\*.ico; DestDir: {app}\iconsets\; Flags: recursesubdirs
-Source: ..\win64\release\visuals\*.dll; DestDir: {app}\visuals; Flags: ignoreversion; Components: Visuals
-Source: ..\win64\release\mp3_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_MP3
-Source: ..\win64\release\mp3_InfoManager.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_MP3
-Source: ..\win64\release\ogg_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_OGG
-Source: ..\win64\release\ape_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_APE
-Source: ..\win64\release\m4a_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_M4A
-Source: ..\win64\release\mp3streamer_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_MP3Streamer
-Source: ..\win64\release\importexport\m3u_Plugin.dll; DestDir: {app}\importexport\; Flags: ignoreversion; Components: ImportExport_M3U
-Source: ..\win64\release\importexport\pls_Plugin.dll; DestDir: {app}\importexport\; Flags: ignoreversion; Components: ImportExport_PLS
-Source: ..\win64\release\plugins\MSNInfo_Plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_MSNInfo
-Source: ..\win64\release\plugins\NowPlayingTxt_Plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_NowPlayingTxt
-Source: ..\win64\release\plugins\PopupNotify_plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_PopupNotify
+Source: ..\Win64\Release\TuniacApp.exe; DestDir: {app}\; Flags: ignoreversion
+Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: recursesubdirs
+Source: ..\Win64\Release\std_InfoManager.dll; DestDir: {app}\; Flags: ignoreversion;
+Source: ..\Win64\Release\visuals\*.dll; DestDir: {app}\visuals; Flags: ignoreversion; Components: Visuals
+Source: ..\Win64\Release\mp3_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_MP3
+Source: ..\Win64\Release\ogg_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_OGG
+Source: ..\Win64\Release\ape_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_APE
+Source: ..\Win64\Release\m4a_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_M4A
+Source: ..\Win64\Release\mp3streamer_Plugin.dll; DestDir: {app}\; Flags: ignoreversion; Components: Decoder_MP3Streamer
+Source: ..\Win64\Release\importexport\m3u_Plugin.dll; DestDir: {app}\importexport\; Flags: ignoreversion; Components: ImportExport_M3U
+Source: ..\Win64\Release\importexport\pls_Plugin.dll; DestDir: {app}\importexport\; Flags: ignoreversion; Components: ImportExport_PLS
+Source: ..\Win64\Release\plugins\MSNInfo_Plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_MSNInfo
+Source: ..\Win64\Release\plugins\NowPlayingTxt_Plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_NowPlayingTxt
+Source: ..\Win64\Release\plugins\PopupNotify_plugin.dll; DestDir: {app}\plugins\; Flags: ignoreversion; Components: Plugin_PopupNotify
 Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: recursesubdirs createallsubdirs; Components: Guide
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ''; ValueData: '{app}\TuniacApp.exe'
 
 [Icons]
 Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe
@@ -87,12 +89,12 @@ begin
 		begin
 			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then
 			begin
-                if not Exec(ExpandConstant('{app}\Tuniac.exe'), '-nosaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+                if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 				    MsgBox('Error removing settings & file associations.', mbError, MB_OK);
 			end
 			else
 			begin
-			    if not Exec(ExpandConstant('{app}\Tuniac.exe'), '-nosaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					MsgBox('Error removing file associations.', mbError, MB_OK);
 			end;
 		end;
