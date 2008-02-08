@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "tuniacvisual.h"
 
+#define TIMES	8
+
 #define DISPLAYSAMPLES	4096
-#define VISUALSIZE		DISPLAYSAMPLES*8
+#define VISUALSIZE		DISPLAYSAMPLES*TIMES
 
 CTuniacVisual::CTuniacVisual(void)
 {
@@ -163,7 +165,6 @@ bool	CTuniacVisual::Render(int w, int h)
 			float halfheight = ((float)m_LastHeight / 2.0f);
 
 
-#define TIMES	8
 			
 			glColor4f(0,0,0, 1.0f / (float)TIMES);
 			for(int start=0; start<TIMES; start++)
