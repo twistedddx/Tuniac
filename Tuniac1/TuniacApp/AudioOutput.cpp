@@ -4,147 +4,42 @@
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
 #define BUFFERSIZEMS			(300)
+#define MAX_BUFFER_COUNT		10
+
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#endif
+
+
+
+///////////////////////////////////////////////////////////////
+//					FUNDAMENTAL
+//
+//
+//
+//					m_BlockSize is in SAMPLES
+//					SO FUCKING REMEMBER THIS YOU IDIOTS
 
 CAudioOutput::CAudioOutput(void) :
-	m_waveHandle(NULL),
-	m_pCallback(NULL),
 	m_hThread(NULL),
 	m_hEvent(NULL),
-	m_dwSamplesOut(0),
-	m_LastPlayedBuffer(-1),
-	m_NumBuffers(4)
+	m_pXAudio(NULL),
+	m_pSourceVoice(NULL),
+	m_pMasteringVoice(NULL),
+	m_pfAudioBuffer(NULL),
+	m_pCallback(NULL),
+	m_BufferInProgress(0)
 {
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
-
-	QueryPerformanceFrequency(&m_liCountsPerSecond);
-
-#ifdef VISTAAUDIOHACK
-	pVistaTempBuffer = NULL;
-#endif
 	m_pfAudioBuffer = NULL;
+	OutputDebugString(TEXT("CAudioOutput Created\r\n"));
 }
 
 CAudioOutput::~CAudioOutput(void)
 {
 	Shutdown();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//	Actual Audio Output Stuff!
-//
-//
-
-void CALLBACK CAudioOutput::WaveCallback(HWAVEOUT hWave, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD dw2)
-{
-    if(uMsg == WOM_DONE) 
-	{
-		CAudioOutput	*	to			= (CAudioOutput *)dwUser;
-		LPWAVEHDR	whr					= (LPWAVEHDR)dw1;
-
-		to->m_dwSamplesOut		+= (whr->dwBufferLength / to->m_waveFormatPCMEx.Format.nBlockAlign);
-		to->m_LastPlayedBuffer	= (unsigned long)whr->dwUser;
-
-		QueryPerformanceCounter(&to->m_liLastPerformanceCount);
-
- 		SetEvent(to->m_hEvent);
-   }
-}
-
-bool CAudioOutput::Open(void)
-{
-	int r;
-	int currentdevice = tuniacApp.m_Preferences.GetOutputDevice();
-	CAutoLock lock(&m_AudioLock);
-
-	if(m_waveHandle==NULL)
-	{
-		r = waveOutOpen(&m_waveHandle, currentdevice, (WAVEFORMATEX*)&m_waveFormatPCMEx, (DWORD_PTR)WaveCallback, (DWORD_PTR)this, CALLBACK_FUNCTION);
-		//r = waveOutOpen(&m_waveHandle, WAVE_MAPPER, (WAVEFORMATEX*)&m_waveFormatPCMEx, (DWORD_PTR)WaveCallback, (DWORD_PTR)this, CALLBACK_FUNCTION);
-		if(r != MMSYSERR_NOERROR) 
-		{
-			return(false);
-		}
-
-#ifdef VISTAAUDIOHACK
-		if (pVistaTempBuffer == NULL)
-		{
-			pVistaTempBuffer = (float *)malloc(m_BlockSize * m_NumBuffers);
-		}
-#endif
-
-		m_Buffers = (WAVEHDR *)VirtualAlloc(NULL, m_NumBuffers * sizeof(WAVEHDR), MEM_COMMIT, PAGE_READWRITE);
-		m_dwBufferSize = m_BlockSize * m_NumBuffers;
-
-		m_pfAudioBuffer = (float *)VirtualAlloc(NULL, m_dwBufferSize * m_NumBuffers, MEM_COMMIT, PAGE_READWRITE);		// allocate audio memory
-		VirtualLock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);													// lock the audio memory into physical memory
-
-		for(unsigned long x=0; x<m_NumBuffers; x++)
-		{
-			#ifdef VISTAAUDIOHACK
-			m_Buffers[x].dwBufferLength		= m_BlockSize * (m_waveFormatPCMEx.Format.wBitsPerSample/8);
-			#else
-			m_Buffers[x].dwBufferLength		= m_BlockSize * m_NumBuffers;
-			#endif
-			m_Buffers[x].lpData				= (LPSTR)&m_pfAudioBuffer[x * m_BlockSize];
- 			m_Buffers[x].dwUser				= x;
-			m_Buffers[x].dwBytesRecorded	= 0;
-			m_Buffers[x].dwFlags			= 0;
-			m_Buffers[x].dwLoops			= 0;
-
-			waveOutPrepareHeader(m_waveHandle, &m_Buffers[x], sizeof(WAVEHDR));
-		}
-
-		QueryPerformanceCounter(&m_liLastPerformanceCount);
-
-	}
-
-	return true;
-}
-
-bool CAudioOutput::Close(void)
-{
-	if(m_waveHandle)
-	{
-		CAutoLock lock(&m_AudioLock);
-		m_Playing = false;
-
-again:
-		if(waveOutReset(m_waveHandle) == MMSYSERR_NOERROR)
-		{
-			for(unsigned long x=0; x<m_NumBuffers; x++)
-			{
-				if(m_Buffers[x].dwFlags & WHDR_PREPARED)
-					waveOutUnprepareHeader(m_waveHandle, &m_Buffers[x], sizeof(WAVEHDR));
-			}
-		}
-
-		int r;
-
-		while((r = waveOutClose(m_waveHandle)) != MMSYSERR_NOERROR)
-		{
-			goto again;
-		}
-
-		m_waveHandle = NULL;
-
-#ifdef VISTAAUDIOHACK
-		if (pVistaTempBuffer != NULL)
-		{
-			free(pVistaTempBuffer);
-			pVistaTempBuffer = NULL;
-		}
-#endif
-
-		VirtualUnlock(m_pfAudioBuffer, m_dwBufferSize * m_NumBuffers);
-		VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
-		m_pfAudioBuffer = NULL;
-
-		VirtualFree(m_Buffers, 0, MEM_RELEASE);
-		m_Buffers = NULL;
-	}
-
-	return true;
+	OutputDebugString(TEXT("CAudioOutput Destroyed\r\n"));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -162,63 +57,56 @@ unsigned long CAudioOutput::ThreadProc(void)
 {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
+	DWORD currentDiskReadBuffer = 0;
 	while(m_bThreadRun)
 	{
-		while(m_Playing)
+
+		float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
+
+		if(m_pCallback && m_bPlaying)
 		{
-			CAutoLock lock(&m_AudioLock);
-
-			while(	(m_Buffers[m_ActiveBuffer].dwFlags & WHDR_INQUEUE) && m_Playing )
+			if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
 			{
-				if(WaitForSingleObject(m_hEvent, m_Interval) == WAIT_OBJECT_0)
+				// HACK: this is highly inefficient and must be fixed!
+				if(currentDiskReadBuffer == 0)
 				{
-					ResetEvent(m_hEvent);
+					CopyFloat(	&m_pfAudioBuffer[(MAX_BUFFER_COUNT*m_BlockSize)], 
+								m_pfAudioBuffer,
+								m_BlockSize);
 				}
+
+				XAUDIO2_BUFFER buf	=	{0};
+				buf.AudioBytes		=	m_BlockSizeBytes;
+				buf.pAudioData		=	(BYTE*)pOffset;
+				buf.pContext		=	(VOID*)currentDiskReadBuffer;
+
+				m_pSourceVoice->SubmitSourceBuffer( &buf );
+
+				currentDiskReadBuffer++;
+				currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 			}
-
-			if(m_Playing)
+			else
 			{
-				#ifdef VISTAAUDIOHACK
-					if(m_pCallback->GetBuffer((float*)pVistaTempBuffer, m_BlockSize))
-				#else
-					if(m_pCallback->GetBuffer((float*)m_Buffers[m_ActiveBuffer].lpData, m_BlockSize))
-				#endif
-				{
-
-#ifdef VISTAAUDIOHACK
-					short * pShortBuffer = (short *)m_Buffers[m_ActiveBuffer].lpData;
-					float * pFloatBuffer = pVistaTempBuffer;
-
-					for(unsigned long x=0; x<m_BlockSize; x++)	
-					{
-						*pShortBuffer = (short)((*pFloatBuffer) * 32767.0f);
-						pShortBuffer++;
-						pFloatBuffer++;
-					}
-#endif
-
-
-					m_Buffers[m_ActiveBuffer].dwUser = m_ActiveBuffer;
-					waveOutWrite(m_waveHandle, &m_Buffers[m_ActiveBuffer], sizeof(WAVEHDR));
-					m_ActiveBuffer++;
-					m_ActiveBuffer &= (m_NumBuffers-1);
-
-					if(WaitForSingleObject(m_hEvent, m_Interval) == WAIT_OBJECT_0)
-					{
-						ResetEvent(m_hEvent);
-					}
-				}
-				else
-				{
-					m_Playing = false;
-				}
+				// write an empty end of stream buffer!
+				XAUDIO2_BUFFER buf	= {0};
+				buf.AudioBytes		= 0;
+				buf.pAudioData		= (BYTE*)pOffset;
+				buf.Flags = XAUDIO2_END_OF_STREAM;
+				m_pSourceVoice->SubmitSourceBuffer( &buf );
 			}
 		}
 
-		if(WaitForSingleObject(m_hEvent, m_Interval) == WAIT_OBJECT_0)
-		{
-			ResetEvent(m_hEvent);
-		}
+        //
+        // Now that the event has been signaled, we know we have audio available. The next
+        // question is whether our XAudio2 source voice has played enough data for us to give
+        // it another buffer full of audio. We'd like to keep no more than MAX_BUFFER_COUNT - 1
+        // buffers on the queue, so that one buffer is always free for disk I/O.
+        //
+        XAUDIO2_VOICE_STATE state;
+        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT) && m_bThreadRun)
+        {
+			WaitForSingleObject( m_hEvent, m_Interval );
+        }
 	}
 
 	return(0);
@@ -233,15 +121,35 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 bool CAudioOutput::Initialize(void)
 {
-	m_Playing = false;
-	m_ActiveBuffer	= 0;
-	m_QueuedBuffers	= 0;
+	if(FAILED(XAudio2Create(&m_pXAudio)))
+	{
+		//booo we dont have an XAudio2 object!
+		m_pXAudio = NULL;
+		return false;
+	}
 
-	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	if(!m_hEvent)
-		return(false);
+	HRESULT hr;
 
-	m_bThreadRun = true;
+    if ( FAILED(hr = m_pXAudio->CreateMasteringVoice( &m_pMasteringVoice ) ) )
+    {
+        wprintf( L"Failed creating mastering voice: %#X\n", hr );
+        return false;
+    }
+
+	hr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
+										(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
+										0, 
+										1.0f, 
+										this);
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+
+	m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 	m_hThread = CreateThread(	NULL,
 								16384,
 								ThreadStub,
@@ -252,15 +160,12 @@ bool CAudioOutput::Initialize(void)
 	if(!m_hThread)
 		return false;
 
+
 	return(true);
 }
 
 bool CAudioOutput::Shutdown(void)
 {
-	Close();
-
-	CAutoLock lock(&m_AudioLock);
-
 	if(m_hThread)
 	{
 		m_bThreadRun = false;
@@ -279,6 +184,32 @@ bool CAudioOutput::Shutdown(void)
 		CloseHandle(m_hEvent);
 		m_hEvent = NULL;
 	}
+
+	if(m_pfAudioBuffer)
+	{
+		free(m_pfAudioBuffer);
+		m_pfAudioBuffer = NULL;
+	}
+
+	if(m_pSourceVoice)
+	{
+		HRESULT hRes = m_pSourceVoice->DestroyVoice();
+		if(!SUCCEEDED(hRes))
+		{
+			MessageBox(NULL, TEXT("Error Destroying Voice"), TEXT("This is pretty serious"), MB_OK);
+		}
+
+		m_pSourceVoice = NULL;
+	}
+
+    // All XAudio2 interfaces are released when the engine is destroyed, but being tidy
+	if(m_pMasteringVoice)
+	{
+	    m_pMasteringVoice->DestroyVoice();
+		m_pMasteringVoice = NULL;
+	}
+
+	SAFE_RELEASE(m_pXAudio);
 
 	return(true);
 }
@@ -324,16 +255,6 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 			speakerconfig = 0;
 		}
 
-#ifdef VISTAAUDIOHACK
-		m_waveFormatPCMEx.Format.cbSize					= sizeof(WAVEFORMATEX);
-		m_waveFormatPCMEx.Format.wFormatTag				= WAVE_FORMAT_PCM;
-		m_waveFormatPCMEx.Format.nChannels				= (WORD)Channels;
-		m_waveFormatPCMEx.Format.nSamplesPerSec			= SampleRate;
-		m_waveFormatPCMEx.Format.wBitsPerSample			= 16;
-		m_waveFormatPCMEx.Format.nBlockAlign			= (m_waveFormatPCMEx.Format.wBitsPerSample/8) * m_waveFormatPCMEx.Format.nChannels;
-		m_waveFormatPCMEx.Format.nAvgBytesPerSec		= ((m_waveFormatPCMEx.Format.wBitsPerSample/8) * m_waveFormatPCMEx.Format.nChannels) * m_waveFormatPCMEx.Format.nSamplesPerSec; //Compute using nBlkAlign * nSamp/Sec 
-
-#else
 		m_waveFormatPCMEx.Format.cbSize					= 22;
 		m_waveFormatPCMEx.Format.wFormatTag				= WAVE_FORMAT_EXTENSIBLE;
 		m_waveFormatPCMEx.Format.nChannels				= (WORD)Channels;
@@ -348,15 +269,15 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 		
 		m_waveFormatPCMEx.dwChannelMask					= speakerconfig; 
 		m_waveFormatPCMEx.SubFormat						= KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
-
-#endif	
-		
+	
 		unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
-		m_Interval			= (BUFFERSIZEMS / m_NumBuffers) / 2;
-		m_BlockSize			= (BUFFERSIZEMS / m_NumBuffers) * samplesperms;				// this should be a 300MS buffer size!
-		while(m_BlockSize & m_waveFormatPCMEx.Format.nBlockAlign)
-			m_BlockSize++;
+		m_BlockSize			= samplesperms * (BUFFERSIZEMS / MAX_BUFFER_COUNT);
+		//m_BlockSize			=	65536;				// this should be a 300MS buffer size! 
+													// so 3*100ms buffers pls
+		m_BlockSizeBytes	=	m_BlockSize * sizeof(float);
+
+		m_Interval = 100;
 
 		if(!Initialize())
 			return false;
@@ -371,155 +292,62 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 //
 //
 bool CAudioOutput::Start(void)
-{
+{	
 	CAutoLock lock(&m_AudioLock);
 
-	if(!Open())
-		return(false);
+	m_bPlaying = true;
+	m_pSourceVoice->Start( 0, 0 );
 
-	while(m_QueuedBuffers)
-	{
-		waveOutWrite(m_waveHandle, &m_Buffers[m_ActiveBuffer], sizeof(WAVEHDR));
-		m_ActiveBuffer++;
-		m_ActiveBuffer &= (m_NumBuffers-1);
-
-		m_QueuedBuffers--;
-	}
-
-	m_Playing = true;
-	SetEvent(m_hEvent);
+	m_ulLastTickCount = GetTickCount();
 
 	return true;
 }
 
 bool CAudioOutput::Stop(void)
 {
-	m_QueuedBuffers = 0;
-	m_Playing = false;
-
 	CAutoLock lock(&m_AudioLock);
-
-	if(m_waveHandle)
-	{
-		for(unsigned long buffer=0; buffer<m_NumBuffers; buffer++)
-		{
-			if(	!(m_Buffers[buffer].dwFlags & WHDR_INQUEUE) )
-			{
-				m_QueuedBuffers++;
-			}
-		}
-		m_ActiveBuffer-= m_QueuedBuffers;
-		m_ActiveBuffer &= (m_NumBuffers-1);
-	}
-
-	Close();
+	m_pSourceVoice->Stop(0);
+	m_bPlaying = false;
 
 	return true;
 }
 
 bool CAudioOutput::Reset(void)
 {
-//	CAutoLock lock(&m_AudioLock);
+	CAutoLock lock(&m_AudioLock);
 
-	// simmilar to stop, except we dont rewind the stream
-	if(m_waveHandle) 
-	{
-		waveOutReset(m_waveHandle);
+	m_pSourceVoice->Stop(0);
 
-		m_ActiveBuffer = 0;
-		m_dwSamplesOut = 0;
+	m_pSourceVoice->FlushSourceBuffers();
 
-		m_LastPlayedBuffer = 0;
+	m_pSourceVoice->Start( 0, 0 );
 
-		QueryPerformanceCounter(&m_liLastPerformanceCount);
-		return(true);
-	}
-	return false;
+	return true;
 }
 
 __int64 CAudioOutput::GetSamplesOut(void)
 {
-	double t;
+	XAUDIO2_VOICE_STATE state;
+	m_pSourceVoice->GetState( &state );
 
-	if(m_waveHandle == NULL)
-	{
-		t = 0;
-	}
-	else
-	{
-		LARGE_INTEGER ThisCount;
-		QueryPerformanceCounter(&ThisCount);
-
-		double val = (double)(ThisCount.QuadPart - m_liLastPerformanceCount.QuadPart);
-		t =  (val / (double)(m_liCountsPerSecond.QuadPart / 1000.0));
-	}
-
-	unsigned long samplesperms = (unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f);
-	unsigned long samplesdif = (unsigned long)(t * samplesperms);
-
-	return(m_dwSamplesOut + samplesdif);
+	return state.SamplesPlayed;
 }
 
 bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
-	if(m_waveHandle && (m_LastPlayedBuffer != -1))
+	unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
+
+	unsigned long ulThisTickCount = GetTickCount();
+	unsigned long msDif = ulThisTickCount - m_ulLastTickCount;
+	
+	unsigned long offset = min(msDif, m_BlockSize) * samplesperms;
+
+	if(m_bPlaying)
 	{
-#ifdef VISTAAUDIOHACK
-
-		unsigned long offset = (GetSamplesOut() & ((m_BlockSize/m_waveFormatPCMEx.Format.nChannels)-1))*m_waveFormatPCMEx.Format.nChannels;
-		short * pBuffer		= (short *)m_Buffers[(m_LastPlayedBuffer+1) & (m_NumBuffers-1)].lpData;
-
-		if( (offset + ulNumSamples) > m_BlockSize )
-		{
-			unsigned long SamplesThisBlock = (m_BlockSize - offset);
-			unsigned long SamplesNextBlock = ulNumSamples - SamplesThisBlock;
-			short * pNextBuffer = (short *)m_Buffers[(m_LastPlayedBuffer+2) & (m_NumBuffers-1)].lpData;
-
-			for(unsigned long x=0; x<SamplesThisBlock; x++)
-			{
-				ToHere[x] = ((float)pBuffer[offset+x]) / 32768.0f;
-			}
-
-			for(unsigned long x=0; x<SamplesNextBlock; x++)
-			{
-				ToHere[SamplesThisBlock+x] = ((float)pNextBuffer[SamplesThisBlock+x]) / 32768.0f;
-			}
-		}
-		else
-		{
-			for(unsigned long x=0; x<ulNumSamples; x++)
-			{
-				ToHere[x] = (float)pBuffer[offset+x] / 32768.0f;
-			}
-		}
-#else
-
-		unsigned long offset = (GetSamplesOut() & ((m_BlockSize/m_waveFormatPCMEx.Format.nChannels)-1))*m_waveFormatPCMEx.Format.nChannels;
-		float * pBuffer		= (float *)m_Buffers[(m_LastPlayedBuffer+1) & (m_NumBuffers-1)].lpData;
-
-		if( (offset + ulNumSamples) > m_BlockSize )
-		{
-			unsigned long SamplesThisBlock = (m_BlockSize - offset);
-			unsigned long SamplesNextBlock = ulNumSamples - SamplesThisBlock;
-			float * pNextBuffer = (float *)m_Buffers[(m_LastPlayedBuffer+2) & (m_NumBuffers-1)].lpData;
-
-			CopyFloat(ToHere,						&pBuffer[offset],	SamplesThisBlock);
-			CopyFloat(&ToHere[SamplesThisBlock],	pNextBuffer,		SamplesNextBlock);
-
-		}
-		else
-		{
-			for(unsigned long x=0; x<ulNumSamples; x++)
-			{
-				ToHere[x] = (float)pBuffer[offset+x] / 32768.0f;
-			}
-		}
-
-#endif
-
-
-		return true;
+		CopyFloat(	ToHere,
+					&m_pfAudioBuffer[(m_BufferInProgress*m_BlockSize) + offset], 
+					ulNumSamples);
 	}
 
-	return false;
+	return true;
 }

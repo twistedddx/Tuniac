@@ -21,13 +21,14 @@ CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry)
 
 	m_SamplesOut	= 0;
 
-	m_Output.SetCallback(this);
 
 	unsigned long srate;
 	pSource->GetFormat(&srate, &m_Channels);
 	m_Output.SetFormat(srate, m_Channels);
 
 	m_Packetizer.SetPacketSize(m_Output.GetBlockSize());
+
+	m_Output.SetCallback(this);
 }
 
 CAudioStream::~CAudioStream(void)
