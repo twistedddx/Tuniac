@@ -883,10 +883,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DirectSoundOutput.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DoubleBuffer.cpp"
 				>
 			</File>
@@ -1049,10 +1045,6 @@
 			</File>
 			<File
 				RelativePath=".\devioctl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DirectSoundOutput.h"
 				>
 			</File>
 			<File
