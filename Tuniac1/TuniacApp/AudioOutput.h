@@ -3,6 +3,9 @@
 #include "CriticalSection.h"
 
 #include "IAudioCallback.h"
+#include <xaudio2.h>
+
+
 
 class CAudioOutput
 {

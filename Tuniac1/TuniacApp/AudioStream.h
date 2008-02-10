@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AudioOutput.h"
-#include "DirectSoundOutput.h"
 
 #include "IAudioSource.h"
 #include "AudioPacketizer.h"
