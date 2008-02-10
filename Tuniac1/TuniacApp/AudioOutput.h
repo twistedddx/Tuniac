@@ -7,36 +7,33 @@
 
 
 
-class CAudioOutput
+class CAudioOutput : public IXAudio2VoiceCallback
 {
 protected:
 	WAVEFORMATPCMEX						m_waveFormatPCMEx;
-	HWAVEOUT							m_waveHandle;
-	WAVEHDR					*			m_Buffers;
 
-#ifdef VISTAAUDIOHACK
-	float					*			pVistaTempBuffer;
-#endif
+	IXAudio2				*			m_pXAudio;
+	IXAudio2SourceVoice		*			m_pSourceVoice;
+    IXAudio2MasteringVoice	*			m_pMasteringVoice;
+
+
+
+	/////////////////////////////////////////////
+	//	Some of this stuff needs remoing due to oldness
+
 
 	float					*			m_pfAudioBuffer;
-	unsigned long						m_dwBufferSize;
 
-	bool								m_Playing;
+	bool								m_bPlaying;
 
-	unsigned long						m_BufferLengthMS;
 	unsigned long						m_BlockSize;
+	unsigned long						m_BlockSizeBytes;
+
 	unsigned long						m_Interval;
-	unsigned long						m_NumBuffers;
 
-	unsigned long						m_ActiveBuffer;
-	unsigned long						m_QueuedBuffers;
-	unsigned long						m_LastPlayedBuffer;
-
-	__int64								m_dwSamplesOut;
-
-	LARGE_INTEGER						m_liCountsPerSecond;
-	LARGE_INTEGER						m_liLastPerformanceCount;
-	unsigned long						m_dwLastTickCount;
+	// new for XAudio, it tells us what bufer its working on, so we can point to it, get the m_liLastPerformanceCount, compare then grab the data right out the buffer!
+	unsigned long						m_BufferInProgress;
+	unsigned long						m_ulLastTickCount;
 
 	IAudioCallback			*			m_pCallback;
 
@@ -50,12 +47,27 @@ protected:
 	static unsigned long __stdcall		ThreadStub(void * in);
 	unsigned long						ThreadProc(void);
 
-	static void CALLBACK WaveCallback(HWAVEOUT hWave, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD dw2);
 
 	bool Open(void);
 	bool Close(void);
 	bool Initialize(void);
 	bool Shutdown(void);
+
+/////////////////////////////////////////////////////////////
+//			XAUDIO CALLBACKS!!!!!!
+public:
+	STDMETHOD_(void, OnVoiceProcessingPassStart) () {}
+    STDMETHOD_(void, OnVoiceProcessingPassEnd) () {}
+    STDMETHOD_(void,OnStreamEnd) () {}
+    STDMETHOD_(void,OnBufferStart) ( void* context) 
+	{
+		//QueryPerformanceCounter(&m_liLastPerformanceCount);
+		m_BufferInProgress = (unsigned long)context;
+		m_ulLastTickCount = GetTickCount();
+	}
+    STDMETHOD_(void,OnBufferEnd) ( void* ) { SetEvent( m_hEvent ); }
+    STDMETHOD_(void,OnLoopEnd) ( void* ) {}   
+
 
 public:
 	CAudioOutput(void);
@@ -95,11 +107,6 @@ public:
 		return m_Interval;
 	}
 
-	unsigned long GetMaxRewind(void)
-	{
-		return m_NumBuffers;
-	}
-
 	unsigned long GetMSOut(void)
 	{
 		__int64 SamplesOut = GetSamplesOut();
@@ -112,3 +119,11 @@ public:
 	bool GetVisData(float * ToHere, unsigned long ulNumSamples);
 
 };
+
+/*
+	HWAVEOUT							m_waveHandle;
+	WAVEHDR					*			m_Buffers;
+
+	static void CALLBACK WaveCallback(HWAVEOUT hWave, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD dw2);
+
+*/
