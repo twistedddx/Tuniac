@@ -1,5 +1,5 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
@@ -34,7 +34,6 @@
 #include "mpcfile.h"
 #include "wavpackfile.h"
 #include "speexfile.h"
-#include "mp4file.h"
 #include "trueaudiofile.h"
 
 using namespace TagLib;
@@ -122,9 +121,6 @@ StringList FileRef::defaultFileExtensions()
   l.append("wv");
   l.append("spx");
   l.append("tta");
-  l.append("m4a");
-  l.append("m4p");
-  l.append("mp4");
 
   return l;
 }
@@ -201,14 +197,8 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
       return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".SPX")
       return new Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
-   if(s.substr(s.size() - 4, 4).upper() == ".TTA")
+    if(s.substr(s.size() - 4, 4).upper() == ".TTA")
       return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
-	if(s.substr(s.size() - 4, 4).upper() == ".m4a")
-      return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
-	if(s.substr(s.size() - 4, 4).upper() == ".m4p")
-      return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
-	if(s.substr(s.size() - 4, 4).upper() == ".mp4")
-      return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
   }
 
   return 0;

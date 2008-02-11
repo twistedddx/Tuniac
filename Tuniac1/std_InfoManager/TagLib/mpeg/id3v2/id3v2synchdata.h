@@ -1,5 +1,5 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
@@ -59,9 +59,9 @@ namespace TagLib {
       ByteVector fromUInt(uint value);
 
       /*!
-       * Deunsynchronize the data (in-place).
+       * Convert the data from unsynchronized data to its original format.
        */
-      void decode(ByteVector &data);
+      ByteVector decode(const ByteVector &input);
     }
 
   }

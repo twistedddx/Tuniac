@@ -115,15 +115,15 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->iYear = m_File->tag()->year();
 		libEnt->dwTrack[0] = m_File->tag()->track();
 
-		swprintf(libEnt->szTitle, 128, L"%s", m_File->tag()->title().to32Bit().c_str());
+		swprintf(libEnt->szTitle, 128, L"%s", m_File->tag()->title().toWString().c_str());
 
-		swprintf(libEnt->szArtist, 128, L"%s", m_File->tag()->artist().to32Bit().c_str());
+		swprintf(libEnt->szArtist, 128, L"%s", m_File->tag()->artist().toWString().c_str());
 
-		swprintf(libEnt->szAlbum, 128, L"%s", m_File->tag()->album().to32Bit().c_str());
+		swprintf(libEnt->szAlbum, 128, L"%s", m_File->tag()->album().toWString().c_str());
 
-		swprintf(libEnt->szGenre, 128, L"%s", m_File->tag()->genre().to32Bit().c_str());
+		swprintf(libEnt->szGenre, 128, L"%s", m_File->tag()->genre().toWString().c_str());
 
-		swprintf(libEnt->szComment, 128, L"%s", m_File->tag()->comment().to32Bit().c_str());
+		swprintf(libEnt->szComment, 128, L"%s", m_File->tag()->comment().toWString().c_str());
 	}
 	delete m_File;
 	return true;
