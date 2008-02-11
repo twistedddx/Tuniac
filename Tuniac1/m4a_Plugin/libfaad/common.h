@@ -311,7 +311,7 @@ char *strchr(), *strrchr();
   }
 
 
-  #if defined(_WIN32) && !defined(__MINGW32__)
+  #if defined(_WIN32) && !defined(__MINGW32__) && !defined(_WIN64)
     #define HAS_LRINTF
     static INLINE int lrintf(float f)
     {
@@ -340,7 +340,6 @@ char *strchr(), *strrchr();
     }
     #endif /* HAVE_LRINTF */
   #endif
-
 
   #ifdef __ICL /* only Intel C compiler has fmath ??? */
 
