@@ -1071,10 +1071,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\m4aInfoManager.h"
-				>
-			</File>
-			<File
 				RelativePath=".\libfaad\mdct.h"
 				>
 			</File>
