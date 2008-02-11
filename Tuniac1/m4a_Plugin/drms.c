@@ -2,7 +2,7 @@
  * drms.c: DRMS
  *****************************************************************************
  * Copyright (C) 2004 VideoLAN
- * $Id: drms.c,v 1.1 2005/07/22 01:14:52 twistedddx Exp $
+ * $Id: drms.c,v 1.7 2005/02/01 13:15:55 menno Exp $
  *
  * Authors: Jon Lech Johansen <jon-vl@nanocrew.net>
  *          Sam Hocevar <sam@zoy.org>
@@ -1031,8 +1031,7 @@ static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
 
     if( psz_ipod == NULL )
     {
-//TODO: fix this at some point
-#ifdef FORFUTUREADDION_WIN32
+#ifdef _WIN32
         char *p_filename = "\\Apple Computer\\iTunes\\SC Info\\SC Info.sidb";
         typedef HRESULT (WINAPI *SHGETFOLDERPATH)( HWND, int, HANDLE, DWORD,
                                                    LPSTR );
