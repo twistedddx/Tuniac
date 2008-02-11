@@ -1,28 +1,31 @@
 /*
 ** FAAD2 - Freeware Advanced Audio (AAC) Decoder including SBR decoding
-** Copyright (C) 2003-2004 M. Bakker, Ahead Software AG, http://www.nero.com
-**
+** Copyright (C) 2003-2005 M. Bakker, Nero AG, http://www.nero.com
+**  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
-**
+** 
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU General Public License for more details.
-**
+** 
 ** You should have received a copy of the GNU General Public License
-** along with this program; if not, write to the Free Software
+** along with this program; if not, write to the Free Software 
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 **
 ** Any non-GPL usage of this software or parts of this software is strictly
 ** forbidden.
 **
-** Commercial non-GPL licensing of this software is possible.
-** For more info contact Ahead Software through Mpeg4AAClicense@nero.com.
+** The "appropriate copyright message" mentioned in section 2c of the GPLv2
+** must read: "Code from FAAD2 is copyright (c) Nero AG, www.nero.com"
 **
-** $Id: mp4ffint.h,v 1.1 2005/07/22 01:14:52 twistedddx Exp $
+** Commercial non-GPL licensing of this software is possible.
+** For more info contact Nero AG through Mpeg4AAClicense@nero.com.
+**
+** $Id: mp4ffint.h,v 1.22 2007/11/01 12:33:29 menno Exp $
 **/
 
 #ifndef MP4FF_INTERNAL_H
@@ -33,7 +36,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "mp4ff_int_types.h"
-
+#include <stdlib.h>
 
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 #define ITUNES_DRM
@@ -81,7 +84,6 @@ static __inline uint64_t U64_AT( void const * _p )
 #define FOURCC_priv VLC_FOURCC( 'p', 'r', 'i', 'v' )
 
 #endif
-
 #define MAX_TRACKS 1024
 #define TRACK_UNKNOWN 0
 #define TRACK_AUDIO   1
@@ -153,11 +155,14 @@ static __inline uint64_t U64_AT( void const * _p )
 #define ATOM_SCHI 25
 
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"
+#include "../../config.h"   
 #endif
 
 #if !(defined(_WIN32) || defined(_WIN32_WCE))
 #define stricmp strcasecmp
+#else
+#define stricmp _stricmp
+#define strdup _strdup
 #endif
 
 /* file callback structure */
@@ -345,7 +350,7 @@ mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f);
 mp4ff_t *mp4ff_open_edit(mp4ff_callback_t *f);
 #endif
 void mp4ff_close(mp4ff_t *ff);
-void mp4ff_track_add(mp4ff_t *f);
+//void mp4ff_track_add(mp4ff_t *f);
 int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only);
 int32_t parse_atoms(mp4ff_t *f,int meta_only);
 

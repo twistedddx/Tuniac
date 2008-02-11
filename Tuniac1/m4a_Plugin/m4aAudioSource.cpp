@@ -19,7 +19,7 @@ static uint32_t write_callback(void *user_data, void *buffer, uint32_t length)
 
 static uint32_t truncate_callback(void *user_data)
 {
-    _chsize(fileno((FILE*)user_data), ftell((FILE*)user_data));
+    _chsize(_fileno((FILE*)user_data), ftell((FILE*)user_data));
     return 1;
 }
 
