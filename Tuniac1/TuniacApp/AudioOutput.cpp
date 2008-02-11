@@ -3,8 +3,8 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-#define BUFFERSIZEMS			(300)
-#define MAX_BUFFER_COUNT		10
+#define BUFFERSIZEMS			(200)
+#define MAX_BUFFER_COUNT		4
 
 
 #ifndef SAFE_RELEASE
@@ -19,6 +19,7 @@
 //
 //
 //					m_BlockSize is in SAMPLES
+//					m_BlockSizeBytes is in bytes calculated from the size of a block * size of a sample!!!!
 //					SO FUCKING REMEMBER THIS YOU IDIOTS
 
 CAudioOutput::CAudioOutput(void) :
@@ -76,11 +77,16 @@ unsigned long CAudioOutput::ThreadProc(void)
 				}
 
 				XAUDIO2_BUFFER buf	=	{0};
+				buf.Flags			=	0;
 				buf.AudioBytes		=	m_BlockSizeBytes;
 				buf.pAudioData		=	(BYTE*)pOffset;
 				buf.pContext		=	(VOID*)currentDiskReadBuffer;
 
-				m_pSourceVoice->SubmitSourceBuffer( &buf );
+				HRESULT hr = m_pSourceVoice->SubmitSourceBuffer( &buf );
+				if(FAILED(hr))
+				{
+					MessageBox(NULL, TEXT("Error Writing Buffer"), TEXT("UH OH"), MB_OK);
+				}
 
 				currentDiskReadBuffer++;
 				currentDiskReadBuffer %= MAX_BUFFER_COUNT;
@@ -128,6 +134,8 @@ bool CAudioOutput::Initialize(void)
 		return false;
 	}
 
+	m_pXAudio->StartEngine();
+
 	HRESULT hr;
 
     if ( FAILED(hr = m_pXAudio->CreateMasteringVoice( &m_pMasteringVoice ) ) )
@@ -136,20 +144,29 @@ bool CAudioOutput::Initialize(void)
         return false;
     }
 
-	hr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
+	HRESULT chr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
 										(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
 										0, 
 										1.0f, 
 										this);
-	if(FAILED(hr))
+	if(chr != S_OK)
 	{
 		return false;
 	}
 
-	m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+	//m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+		
+	m_pfAudioBuffer = (float *)VirtualAlloc(NULL, 
+											(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1), 
+											MEM_COMMIT, 
+											PAGE_READWRITE);		// allocate audio memory
+	VirtualLock(m_pfAudioBuffer, 
+				(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+
 
 	m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
+	m_bThreadRun = true;
 	m_hThread = CreateThread(	NULL,
 								16384,
 								ThreadStub,
@@ -187,7 +204,12 @@ bool CAudioOutput::Shutdown(void)
 
 	if(m_pfAudioBuffer)
 	{
-		free(m_pfAudioBuffer);
+//		free(m_pfAudioBuffer);
+		VirtualUnlock(	m_pfAudioBuffer, 
+						(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+
+		VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
+
 		m_pfAudioBuffer = NULL;
 	}
 
@@ -272,15 +294,16 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 	
 		unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
-		m_BlockSize			= samplesperms * (BUFFERSIZEMS / MAX_BUFFER_COUNT);
-		//m_BlockSize			=	65536;				// this should be a 300MS buffer size! 
-													// so 3*100ms buffers pls
-		m_BlockSizeBytes	=	m_BlockSize * sizeof(float);
+		m_BlockSize			=	samplesperms	* (BUFFERSIZEMS / MAX_BUFFER_COUNT);												// so 3*100ms buffers pls
+		m_BlockSizeBytes	=	m_BlockSize		* sizeof(float);
 
-		m_Interval = 100;
+		m_Interval = (BUFFERSIZEMS / MAX_BUFFER_COUNT);
 
 		if(!Initialize())
+		{
+			MessageBox(NULL, TEXT("Initialize() Failed - No Sound!"), TEXT("XAudio Error..."), MB_OK);
 			return false;
+		}
 	}
 
 	return true;
