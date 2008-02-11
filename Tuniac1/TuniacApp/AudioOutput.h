@@ -32,7 +32,7 @@ protected:
 	unsigned long						m_Interval;
 
 	// new for XAudio, it tells us what bufer its working on, so we can point to it, get the m_liLastPerformanceCount, compare then grab the data right out the buffer!
-	unsigned long						m_BufferInProgress;
+	unsigned __int64					m_BufferInProgress;
 	unsigned long						m_ulLastTickCount;
 
 	IAudioCallback			*			m_pCallback;
@@ -62,7 +62,7 @@ public:
     STDMETHOD_(void,OnBufferStart) ( void* context) 
 	{
 		//QueryPerformanceCounter(&m_liLastPerformanceCount);
-		m_BufferInProgress = (unsigned long)context;
+		m_BufferInProgress = reinterpret_cast<unsigned __int64>(context);
 		m_ulLastTickCount = GetTickCount();
 	}
     STDMETHOD_(void,OnBufferEnd) ( void* ) { SetEvent( m_hEvent ); }
