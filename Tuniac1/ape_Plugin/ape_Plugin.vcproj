@@ -135,9 +135,6 @@
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -184,12 +181,12 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
-
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -208,6 +205,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -220,6 +218,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="shlwapi.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -275,10 +274,6 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG"
-				StringPooling="true"
-				MinimalRebuild="false"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"

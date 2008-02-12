@@ -136,8 +136,6 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
