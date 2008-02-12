@@ -36,8 +36,8 @@ Name: {app}\Guide\*.css; Type: files; Components: Guide
 Name: {app}\Guide\Images\*.jpg; Type: files; Components: Guide
 
 [Files]
-Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion 64bit recursesubdirs
-Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion 64bit recursesubdirs createallsubdirs; Components: Guide
+Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
+Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs createallsubdirs; Components: Guide
 
 Source: ..\x64\Release\TuniacApp.exe; DestDir: {app}\; Check: Is64BitInstallMode; Flags: ignoreversion
 Source: ..\x64\Release\std_InfoManager.dll; DestDir: {app}\; Check: Is64BitInstallMode; Flags: ignoreversion
