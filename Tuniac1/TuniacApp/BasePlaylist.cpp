@@ -165,13 +165,13 @@ void				CBasePlaylist::RebuildPlaylistArrays(void)
 /////////////////////////////////////////////////////////////////////////////////
 //
 //			Playlist transposing code
-//realindex = m_MediaLibrary
+//realindex = m_PlaylistArray
 //normalfilteredindex = m_NormalIndexArray (these are valid playback files with shuffle off)
 //randomfilteredindex = m_RandomIndexArray (these are valid playback files with shuffle on)
 
 //m_MediaLibrary = FULL ML array. Contains all file info
 //based on m_MediaLibrary
-//m_PlaylistArray = full current(view) playlist array. Contains only indexes of m_MediaLibrary
+//m_PlaylistArray = full current(view) playlist array. Contains entries from m_MediaLibrary
 //based on m_PlaylistArray
 //m_NormalIndexArray = filtered normal m_PlaylistArray. Contains only indexes of m_MediaLibrary
 //m_RandomIndexArray = filtered random m_PlaylistArray. Contains only indexes of m_MediaLibrary
@@ -593,11 +593,9 @@ void			CBasePlaylist::GetFieldFilteredList(EntryArray & entryArray, unsigned lon
 		}
 	}
 }
-
-bool				CBasePlaylist::Sort(unsigned long ulSortBy)
+bool CBasePlaylist::Sort (unsigned long ulSortBy)
 {
-
-	bool reversesort = false;
+   bool reversesort = false;
 
 	if(m_LastSortBy == ulSortBy)
 	{
@@ -619,100 +617,108 @@ bool				CBasePlaylist::Sort(unsigned long ulSortBy)
 	m_LastSortBy = ulSortBy;
 
 	if (m_PlaylistArray.GetCount() < 2)
+   {
 		return true;
+   }
+   
+   PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
+   
+   if (scratch == NULL)
+   {
+      return false;
+   }
+   
+	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 
-	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, ulSortBy, reversesort);
+   delete[] scratch;
 
-	ApplyFilter();
+	//ApplyFilter();
 
 	return true;
 }
 
-void				CBasePlaylist::Sort_Algorithm(unsigned long begin, unsigned long end, unsigned long ulSortBy, bool reverse)
-{	// quicksort
-
-	IPlaylistEntry * pTemp;
-
-
-	// find a better pivot to avoid obvious worse cases (ie, reverse sorting)
-	// move best pivot to the end
-	if((end - begin) >= 5)
-	{
-		int middle = (end + begin) / 2;
-		int iBeginEnd = Sort_CompareItems(m_PlaylistArray[begin].pEntry, m_PlaylistArray[end].pEntry, ulSortBy);
-		int iBeginMiddle = Sort_CompareItems(m_PlaylistArray[begin].pEntry, m_PlaylistArray[middle].pEntry, ulSortBy);
-		int iMiddleEnd = Sort_CompareItems(m_PlaylistArray[middle].pEntry, m_PlaylistArray[end].pEntry, ulSortBy);
-		
-		if(iBeginEnd < 0 && iBeginMiddle < 0)
-		{ //best pivot is middle
-
-			pTemp = m_PlaylistArray[end].pEntry;
-			m_PlaylistArray[end].pEntry = m_PlaylistArray[middle].pEntry;
-			m_PlaylistArray[middle].pEntry = pTemp;
-
-			if(m_ActiveRealIndex == end)
-				m_ActiveRealIndex = middle;
-			else if(m_ActiveRealIndex == middle)
-				m_ActiveRealIndex = end;
-
-		}
-		else if(iBeginMiddle > 0 && iBeginEnd < 0)
-		{ //best pivot is begin
-
-			pTemp = m_PlaylistArray[begin].pEntry;
-			m_PlaylistArray[begin].pEntry = m_PlaylistArray[end].pEntry;
-			m_PlaylistArray[end].pEntry = pTemp;
-
-			if(m_ActiveRealIndex == begin)
-				m_ActiveRealIndex = end;
-			else if(m_ActiveRealIndex == end)
-				m_ActiveRealIndex = begin;
-
-		}
-	}
-
-	int iComp = 0;
-	unsigned long m = begin;
-	IPlaylistEntry * pPivot = m_PlaylistArray[end].pEntry;
-
-	for (unsigned long i = begin; i < end; i++)
-	{
-		iComp = Sort_CompareItems(m_PlaylistArray[i].pEntry, pPivot, ulSortBy);
-		if(reverse)
-			iComp = iComp * (-1);
-		if (iComp < 0)
-		{
-			pTemp = m_PlaylistArray[m].pEntry;
-			m_PlaylistArray[m].pEntry = m_PlaylistArray[i].pEntry;
-			m_PlaylistArray[i].pEntry = pTemp;
-
-			if(m_ActiveRealIndex == m)
-				m_ActiveRealIndex = i;
-			else if(m_ActiveRealIndex == i)
-				m_ActiveRealIndex = m;
-
-			m++;
-		}
-	}
-
-	pTemp = m_PlaylistArray[end].pEntry;
-	m_PlaylistArray[end].pEntry = m_PlaylistArray[m].pEntry;
-	m_PlaylistArray[m].pEntry = pTemp;
-
-	if(m_ActiveRealIndex == end)
-		m_ActiveRealIndex = m;
-	else if(m_ActiveRealIndex == m)
-		m_ActiveRealIndex = end;
-
-	if ((m - 1) > 0 && begin < (m - 1))
-		Sort_Algorithm(begin, m - 1, ulSortBy, reverse);
-	if ((m + 1) > 0 && (m + 1) < end)
-		Sort_Algorithm(m + 1, end, ulSortBy, reverse);
-
-
+void CBasePlaylist::Sort_Algorithm (unsigned long head, unsigned long tail, PlaylistEntry *scratch, unsigned long ulSortBy, bool reverse)
+{
+   // Merge Sort: O(nlogn) STABLE sort
+   
+   if (head != tail) // i.e. if we have more than 1 item
+   {
+      unsigned long mid = (head+tail)/2;
+      Sort_Algorithm (head, mid, scratch, ulSortBy, reverse);
+      Sort_Algorithm (mid+1, tail, scratch, ulSortBy, reverse);
+      Sort_Merge (head, tail, scratch, ulSortBy, reverse);
+   }
 }
 
-int				CBasePlaylist::Sort_CompareItems(IPlaylistEntry * pItem1, IPlaylistEntry * pItem2, unsigned long ulSortBy)
+void CBasePlaylist::Sort_Merge (unsigned long head, unsigned long tail, PlaylistEntry *scratch, unsigned long ulSortBy, bool reverse)
+{
+   // because the two lists are always sequential we can create the boundary point by finding the middle
+   unsigned long mid = (head+tail)/2;
+   int order = Sort_CompareItems (m_PlaylistArray[mid].pEntry, m_PlaylistArray[mid+1].pEntry, ulSortBy);
+   
+   // only merge if not already in order
+   // i.e. largest of left list is bigger than smallest of right list if normal order
+   // i.e. largest of left list is smaller than smallest of right list if reversed
+   if ((order == 1 && !reverse) || (order == -1 && reverse))
+   {
+      // if there are only two items, just swap them
+      if (tail == (head+1))
+      {
+         // bitwise swap, doesn't need temp variable and is FAST
+        // m_PlaylistArray[head] ^= m_PlaylistArray[tail];
+        // m_PlaylistArray[tail] ^= m_PlaylistArray[head];
+        // m_PlaylistArray[head] ^= m_PlaylistArray[tail];
+      }
+      else
+      {
+         // do normal merge
+         int i = head;
+         int j = mid+1;
+         int k = 0;
+         
+         // merge until either list is empty or the scratch space is full
+         while ((i <= mid || j <= tail) && k < m_PlaylistArray.GetCount())
+         {
+            // if both lists contain items
+            if (i <= mid && j <= tail)
+            {
+               order = Sort_CompareItems (m_PlaylistArray[i].pEntry, m_PlaylistArray[j].pEntry, ulSortBy);
+               // put the smallest of the two into the scratch list if not reverse
+               // IMPORTANT: if they are equal put the sequential first one into scratch list
+               // otherwise this sort will no longer be stable
+               if (order < 1 && !reverse)
+               {
+                  scratch[k] = m_PlaylistArray[i++]; // hacky variable incrementation
+               }
+               else
+               {
+                  scratch[k] = m_PlaylistArray[j++]; // hacky variable incrementation
+               }
+            }
+            // if only the left list contains items
+            else if (i <= mid && j > tail)
+            {
+               // fill scratch list with left list
+               scratch[k] = m_PlaylistArray[i++];
+            }
+            // if only the right list contains items
+            else if (j <= tail && i > mid)
+            {
+               // fill scratch list with right list
+               scratch[k] = m_PlaylistArray[j++];
+            }
+            k++;
+         }
+         // copy (ordered) scratch list back to playlist
+         for (i = head; i <= tail; i++)
+         {
+            m_PlaylistArray[i] = scratch[i-head];
+         }
+      }
+   }
+}
+
+int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * pItem2, unsigned long ulSortBy)
 {
 
 	switch(ulSortBy)
@@ -884,6 +890,7 @@ int				CBasePlaylist::Sort_CompareItems(IPlaylistEntry * pItem1, IPlaylistEntry 
 	return(0);
 
 }
+
 
 bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
 {
