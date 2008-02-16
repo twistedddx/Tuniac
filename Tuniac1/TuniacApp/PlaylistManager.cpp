@@ -147,6 +147,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 	if(ulBytesRead != sizeof(PLDH))
 	{
 		MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+		bOK = false;
 	}
 	else if(PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION)
 	{
@@ -156,7 +157,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 	else
 	{
 
-		for(unsigned long iPlaylist = 0; iPlaylist < PLDH.NumEntries; iPlaylist++)
+		for(unsigned long ulPlaylist = 0; ulPlaylist < PLDH.NumEntries; ulPlaylist++)
 		{
 			PLDiskSubHeader SubHeader;
 			EntryArray		myEntryArray;
@@ -182,6 +183,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				if(ulBytesRead != sizeof(unsigned long))
 				{
 					MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					delete pPlaylist;
+					m_StandardPlaylists.RemoveAll();
 					bOK = false;
 					break;
 				}
@@ -192,12 +195,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 					myEntryArray.AddTail(pIPE);
 				}
 			}
-			if(!bOK)
-			{
-				delete pPlaylist;
-				m_StandardPlaylists.RemoveAll();
-				break;
-			}
+
 
 			pPlaylist->AddEntryArray(myEntryArray);
 			
@@ -207,15 +205,15 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			pPlaylist->SetTextFilter(SubHeader.Filter);
 
 			m_StandardPlaylists.AddTail(pPlaylist);
-			if(PLDH.ActivePlaylist - 1 == iPlaylist)
+			if(PLDH.ActivePlaylist - 1 == ulPlaylist)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
+				pPlaylist->RebuildPlaylistArrays();
 				pPlaylist->SetActiveFilteredIndex(PLDH.ActiveIndex);
 				if(pPlaylist->GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX)
 					CCoreAudio::Instance()->SetSource(pPlaylist->GetActiveItem());
 			}
 		}
-
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
@@ -472,9 +470,6 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 		m_ActivePlaylist = m_StandardPlaylists[ulPlaylistNumber];
 		//return true;
 	}
-	ulPlaylistNumber -= m_StandardPlaylists.GetCount();
-
-
 	return true;
 }
 
@@ -543,14 +538,14 @@ bool CPlaylistManager::MoveStandardPlaylist(unsigned long ulIndex, unsigned long
 	return true;
 }
 
-bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long iPlaylistNumber)
+bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
 {
-	if(iPlaylistNumber == 0)
+	if(ulPlaylistNumber == 0)
 		return false;
 
-	iPlaylistNumber-=1;
+	ulPlaylistNumber-=1;
 
-	if(iPlaylistNumber < m_CDPlaylists.GetCount())
+	if(ulPlaylistNumber < m_CDPlaylists.GetCount())
 	{	// cd playlist playlist
 		
 		// maybe we can eject here?
@@ -558,18 +553,18 @@ bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long iPlaylistNumber)
 		SetActivePlaylist(0);
 		return true;
 	}
-	iPlaylistNumber -= m_CDPlaylists.GetCount();
+	ulPlaylistNumber -= m_CDPlaylists.GetCount();
 
-	if(iPlaylistNumber < m_StandardPlaylists.GetCount())
+	if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
 	{	// standard playlist
-		if(m_StandardPlaylists[iPlaylistNumber] == GetActivePlaylist())
+		if(m_StandardPlaylists[ulPlaylistNumber] == GetActivePlaylist())
 		{
 			SetActivePlaylist(0);
 		}
-		delete m_StandardPlaylists[iPlaylistNumber];
-		m_StandardPlaylists.RemoveAt(iPlaylistNumber);
+		delete m_StandardPlaylists[ulPlaylistNumber];
+		m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
 	}
-	iPlaylistNumber -= m_StandardPlaylists.GetCount();
+	ulPlaylistNumber -= m_StandardPlaylists.GetCount();
 
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 

@@ -524,7 +524,8 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 	{
 		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
 	}
-	else{
+	else
+	{
 		//cant get appdata path
 		return false;
 	}
@@ -613,13 +614,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 						m_Queue.Append(pIPE);
 				}
 			}
-		}
-		if(m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
-			tuniacApp.m_Preferences.SetRepeatMode(RepeatAll);
 
-
-		if(bOK)
-		{
 			unsigned long ulHistorySize;
 			ReadFile(hLibraryFile, &ulHistorySize, sizeof(unsigned long), &BytesRead, NULL);
 			if(BytesRead != sizeof(unsigned long))
@@ -647,6 +642,8 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			}
 		}
 
+		if(m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+			tuniacApp.m_Preferences.SetRepeatMode(RepeatAll);
 
 	}
 
