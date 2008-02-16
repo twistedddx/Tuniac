@@ -27,61 +27,86 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef TAGLIB_SPEEXPROPERTIES_H
-#define TAGLIB_SPEEXPROPERTIES_H
+#include <bitset>
 
-#include <audioproperties.h>
+#include <tstring.h>
+#include <tdebug.h>
 
-namespace TagLib {
+#include "speexfile.h"
 
-  namespace Speex {
+using namespace TagLib;
+using namespace TagLib::Ogg;
 
-    class File;
+class Speex::File::FilePrivate
+{
+public:
+  FilePrivate() :
+    comment(0),
+    properties(0) {}
 
-    //! An implementation of audio property reading for Ogg Speex
-
-    /*!
-     * This reads the data from an Ogg Speex stream found in the AudioProperties
-     * API.
-     */
-
-    class Properties : public AudioProperties
-    {
-    public:
-      /*!
-       * Create an instance of Speex::Properties with the data read from the
-       * Speex::File \a file.
-       */
-      Properties(File *file, ReadStyle style = Average);
-
-      /*!
-       * Destroys this Speex::Properties instance.
-       */
-      virtual ~Properties();
-
-      // Reimplementations.
-
-      virtual int length() const;
-      virtual int bitrate() const;
-      virtual int sampleRate() const;
-      virtual int channels() const;
-
-      /*!
-       * Returns the Speex version, currently "0" (as specified by the spec).
-       */
-      int speexVersion() const;
-
-    private:
-      Properties(const Properties &);
-      Properties &operator=(const Properties &);
-
-      void read();
-
-      class PropertiesPrivate;
-      PropertiesPrivate *d;
-    };
+  ~FilePrivate()
+  {
+    delete comment;
+    delete properties;
   }
 
+  Ogg::XiphComment *comment;
+  Properties *properties;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// public members
+////////////////////////////////////////////////////////////////////////////////
+
+Speex::File::File(FileName file, bool readProperties,
+                   Properties::ReadStyle propertiesStyle) : Ogg::File(file)
+{
+  d = new FilePrivate;
+  read(readProperties, propertiesStyle);
 }
 
-#endif
+Speex::File::~File()
+{
+  delete d;
+}
+
+Ogg::XiphComment *Speex::File::tag() const
+{
+  return d->comment;
+}
+
+Speex::Properties *Speex::File::audioProperties() const
+{
+  return d->properties;
+}
+
+bool Speex::File::save()
+{
+  if(!d->comment)
+    d->comment = new Ogg::XiphComment;
+
+  setPacket(1, d->comment->render());
+
+  return Ogg::File::save();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// private members
+////////////////////////////////////////////////////////////////////////////////
+
+void Speex::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+{
+  ByteVector speexHeaderData = packet(0);
+
+  if(!speexHeaderData.startsWith("Speex   ")) {
+    debug("Speex::File::read() -- invalid Speex identification header");
+    return;
+  }
+
+  ByteVector commentHeaderData = packet(1);
+
+  d->comment = new Ogg::XiphComment(commentHeaderData);
+
+  if(readProperties)
+    d->properties = new Properties(this, propertiesStyle);
+}

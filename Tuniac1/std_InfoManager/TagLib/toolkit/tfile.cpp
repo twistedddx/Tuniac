@@ -471,7 +471,7 @@ bool File::readOnly() const
 
 bool File::isReadable(const char *file)
 {
-  return _access(file, R_OK) == 0;
+  return access(file, R_OK) == 0;
 }
 
 bool File::isOpen() const
@@ -537,7 +537,7 @@ long File::length()
 
 bool File::isWritable(const char *file)
 {
-  return _access(file, W_OK) == 0;
+  return access(file, W_OK) == 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -551,7 +551,7 @@ void File::setValid(bool valid)
 
 void File::truncate(long length)
 {
-  ftruncate(_fileno(d->file), length);
+  ftruncate(fileno(d->file), length);
 }
 
 TagLib::uint File::bufferSize()
