@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -134,7 +134,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -211,7 +211,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -294,7 +294,7 @@
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -688,18 +688,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="speex"
-				>
-				<File
-					RelativePath=".\TagLib\speex\speexfile.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\speex\speexproperties.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="toolkit"
 				>
 				<File
@@ -760,6 +748,14 @@
 				</File>
 				<File
 					RelativePath=".\TagLib\ogg\oggpageheader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexproperties.h"
 					>
 				</File>
 				<File
@@ -1107,6 +1103,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TagLib\ogg\speex\speexfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexproperties.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TagLib\ogg\vorbis\vorbisfile.cpp"
 					>
 				</File>
@@ -1148,18 +1152,6 @@
 				</File>
 				<File
 					RelativePath=".\TagLib\toolkit\unicode.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="speex"
-				>
-				<File
-					RelativePath=".\TagLib\speex\speexfile.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\speex\speexproperties.cpp"
 					>
 				</File>
 			</Filter>
