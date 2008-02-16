@@ -10,10 +10,6 @@ class CBasePlaylist :
 {
 
 protected:
-	int					Sort_CompareItems(IPlaylistEntry * pItem1, IPlaylistEntry * pItem2, unsigned long ulSortBy); // returns comparison between feild of playlist entries
-	void				Sort_Algorithm(unsigned long begin, unsigned long end, unsigned long ulSortBy, bool reverse);
-
-protected:
 
 	typedef struct
 	{
@@ -26,7 +22,7 @@ protected:
 	Array<unsigned long, 100>				m_RandomIndexArray;
 	Array<unsigned long, 100>				m_NormalIndexArray;
 
-	int										m_ActiveRealIndex;
+	unsigned long							m_ActiveRealIndex;
 
 	unsigned long							m_SortType;
 	unsigned long							m_LastSortBy;
@@ -36,6 +32,13 @@ protected:
 	TCHAR									m_szTextFilter[128];
 	unsigned long							m_ulTextFilterField;
 	bool									m_bTextFilterReversed;
+
+
+protected:
+	int					Sort_CompareItems(IPlaylistEntry * pItem1, IPlaylistEntry * pItem2, unsigned long ulSortBy); // returns comparison between feild of playlist entries
+	void				Sort_Algorithm(unsigned long head, unsigned long tail, PlaylistEntry * scratch, unsigned long ulSortBy, bool reverse);
+	void				Sort_Merge(unsigned long head, unsigned long tail, PlaylistEntry * scratch, unsigned long ulSortBy, bool reverse);
+
 
 public:
 	CBasePlaylist(void);
