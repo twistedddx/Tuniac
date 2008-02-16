@@ -1,5 +1,6 @@
 //the playlist manager handles all tuniac's playlists, whther they be playlist 0 the LibraryPlaylist.cpp or low numbered AudioCDPlaylist.cpp(when valid) or the StandardPlaylist.cpp
 
+
 #include "stdafx.h"
 #include ".\playlistmanager.h"
 
@@ -545,7 +546,7 @@ bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
 
 	ulPlaylistNumber-=1;
 
-	if (IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Select entries in the playlist to export."), TEXT("Export"), MB_YESNO | MB_ICONINFORMATION)) 
+	if (IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION)) 
 	{
 
 		if(ulPlaylistNumber < m_CDPlaylists.GetCount())
