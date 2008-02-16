@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include ".\playlistmanager.h"
 
+
 // only increment this when a change becomes incompatable with older versions!
 #define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 2)
 
@@ -476,7 +477,6 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 bool CPlaylistManager::CreateNewStandardPlaylist(LPTSTR szName)
 {
 	CStandardPlaylist * pPlaylist = new CStandardPlaylist;
-
 	if(pPlaylist)
 	{
 		pPlaylist->SetPlaylistName(szName);
@@ -545,30 +545,34 @@ bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
 
 	ulPlaylistNumber-=1;
 
-	if(ulPlaylistNumber < m_CDPlaylists.GetCount())
-	{	// cd playlist playlist
-		
-		// maybe we can eject here?
+	if (IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Select entries in the playlist to export."), TEXT("Export"), MB_YESNO | MB_ICONINFORMATION)) 
+	{
 
-		SetActivePlaylist(0);
+		if(ulPlaylistNumber < m_CDPlaylists.GetCount())
+		{	// cd playlist playlist
+			
+			// maybe we can eject here?
+
+			SetActivePlaylist(0);
+			return true;
+		}
+		ulPlaylistNumber -= m_CDPlaylists.GetCount();
+
+		if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
+		{	// standard playlist
+			if(m_StandardPlaylists[ulPlaylistNumber] == GetActivePlaylist())
+			{
+				SetActivePlaylist(0);
+			}
+			delete m_StandardPlaylists[ulPlaylistNumber];
+			m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
+		}
+		ulPlaylistNumber -= m_StandardPlaylists.GetCount();
+
+		PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 		return true;
 	}
-	ulPlaylistNumber -= m_CDPlaylists.GetCount();
-
-	if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
-	{	// standard playlist
-		if(m_StandardPlaylists[ulPlaylistNumber] == GetActivePlaylist())
-		{
-			SetActivePlaylist(0);
-		}
-		delete m_StandardPlaylists[ulPlaylistNumber];
-		m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
-	}
-	ulPlaylistNumber -= m_StandardPlaylists.GetCount();
-
-	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
-
-	return true;
+	return false;
 }
 
 unsigned long CPlaylistManager::PMThreadStub(void * in)
