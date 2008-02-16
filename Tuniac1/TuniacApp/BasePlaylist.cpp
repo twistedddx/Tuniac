@@ -661,61 +661,57 @@ void CBasePlaylist::Sort_Merge (unsigned long head, unsigned long tail, Playlist
    // i.e. largest of left list is smaller than smallest of right list if reversed
    if ((order == 1 && !reverse) || (order == -1 && reverse))
    {
-      // if there are only two items, just swap them
-      if (tail == (head+1))
-      {
-         // bitwise swap, doesn't need temp variable and is FAST
-        // m_PlaylistArray[head] ^= m_PlaylistArray[tail];
-        // m_PlaylistArray[tail] ^= m_PlaylistArray[head];
-        // m_PlaylistArray[head] ^= m_PlaylistArray[tail];
-      }
-      else
-      {
-         // do normal merge
-         int i = head;
-         int j = mid+1;
-         int k = 0;
-         
-         // merge until either list is empty or the scratch space is full
-         while ((i <= mid || j <= tail) && k < m_PlaylistArray.GetCount())
-         {
-            // if both lists contain items
-            if (i <= mid && j <= tail)
-            {
-               order = Sort_CompareItems (m_PlaylistArray[i].pEntry, m_PlaylistArray[j].pEntry, ulSortBy);
-               // put the smallest of the two into the scratch list if not reverse
-               // IMPORTANT: if they are equal put the sequential first one into scratch list
-               // otherwise this sort will no longer be stable
-               if (order < 1 && !reverse)
-               {
-                  scratch[k] = m_PlaylistArray[i++]; // hacky variable incrementation
-               }
-               else
-               {
-                  scratch[k] = m_PlaylistArray[j++]; // hacky variable incrementation
-               }
-            }
-            // if only the left list contains items
-            else if (i <= mid && j > tail)
-            {
-               // fill scratch list with left list
-               scratch[k] = m_PlaylistArray[i++];
-            }
-            // if only the right list contains items
-            else if (j <= tail && i > mid)
-            {
-               // fill scratch list with right list
-               scratch[k] = m_PlaylistArray[j++];
-            }
-            k++;
-         }
-         // copy (ordered) scratch list back to playlist
-         for (i = head; i <= tail; i++)
-         {
-            m_PlaylistArray[i] = scratch[i-head];
-         }
-      }
-   }
+
+		// if there are only two items, just swap them
+		/*if (tail == (head+1))
+		{
+			// bitwise swap, doesn't need temp variable and is FAST
+			m_PlaylistArray[head] ^= m_PlaylistArray[tail];
+			m_PlaylistArray[tail] ^= m_PlaylistArray[head];
+			m_PlaylistArray[head] ^= m_PlaylistArray[tail];
+		}
+		else
+		{
+*/
+			// do normal merge
+			int i = head;
+			int j = mid+1;
+			int k = 0;
+
+			// merge until either list is empty or the scratch space is full
+			while ((i <= mid || j <= tail) && k < m_PlaylistArray.GetCount())
+			{
+				// if both lists contain items
+				if (i <= mid && j <= tail)
+				{
+				 order = Sort_CompareItems (m_PlaylistArray[i].pEntry, m_PlaylistArray[j].pEntry, ulSortBy);
+				   // put the smallest of the two into the scratch list if not reverse
+				   // IMPORTANT: if they are equal put the sequential first one into scratch list
+				   // otherwise this sort will no longer be stable
+				   if (order < 1 && !reverse)
+					  scratch[k] = m_PlaylistArray[i++]; // hacky variable incrementation
+				   else
+					  scratch[k] = m_PlaylistArray[j++]; // hacky variable incrementation
+				}
+				// if only the left list contains items
+				else if (i <= mid && j > tail)
+				   // fill scratch list with left list
+				   scratch[k] = m_PlaylistArray[i++];
+
+				// if only the right list contains items
+				else if (j <= tail && i > mid)
+				   // fill scratch list with right list
+				   scratch[k] = m_PlaylistArray[j++];
+
+				k++;
+			}
+			// copy (ordered) scratch list back to playlist
+			for (i = head; i <= tail; i++)
+			{
+				m_PlaylistArray[i] = scratch[i-head];
+			}
+		//}
+	}
 }
 
 int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * pItem2, unsigned long ulSortBy)

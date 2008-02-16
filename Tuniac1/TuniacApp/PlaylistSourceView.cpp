@@ -1193,17 +1193,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						{
 							LPNMLISTVIEW pnmv = (LPNMLISTVIEW) lParam;
 
-							bool bNotPlayOrder = false;
-							if(pnmv->iSubItem == 0){
-								bNotPlayOrder = true;
-							}
-							else if(m_ColumnIDArray[pnmv->iSubItem-1] != FIELD_PLAYORDER)
+							bool bNotPlayOrder = true;
+							if(m_ColumnIDArray[pnmv->iSubItem-1] == FIELD_PLAYORDER)
 							{
-								bNotPlayOrder = true;
+								bNotPlayOrder = false;
 							}
 
 							if(bNotPlayOrder && m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANSORT)
 							{
+								//??bitsnote - sort is fucked
 								if(pnmv->iSubItem > 0)
 									m_pPlaylist->Sort(m_ColumnIDArray[pnmv->iSubItem-1]);
 								else
@@ -1449,7 +1447,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							RECT rc;
 							Header_GetItemRect(hListHeader, 0, &rc);
 
-							if(cpt.y > rc.bottom) // check user didn't right-click the header
+							if(cpt.y > rc.bottom) // check user didn't right-click the coloumn headers
 							{
 								// check user clicked a valid item + didn't right-click the icon column(right click item menu)
 								if(m_iLastClickedItem >= 0 && m_iLastClickedSubitem > 0)
