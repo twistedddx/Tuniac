@@ -285,16 +285,12 @@ bool				CBasePlaylist::Next(void)
 
 bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
 {
-	//no files so cant be valid
-	if(m_NormalIndexArray.GetCount() == 0)
-		return false;
-
 	//too low
 	if(ulFilteredIndex < 0)
 		return false;
 
 	//too high, m_NormalIndexArray/m_RandomIndexArray should be the same length
-	if(ulFilteredIndex > m_NormalIndexArray.GetCount() - 1)
+	if(ulFilteredIndex >= m_NormalIndexArray.GetCount())
 		return false;
 
 	return true;
