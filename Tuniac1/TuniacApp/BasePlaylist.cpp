@@ -196,7 +196,7 @@ unsigned long		CBasePlaylist::NormalFilteredIndexToRealIndex(unsigned long ulNor
 	if(!CheckFilteredIndex(ulNormalFilteredIndex))
 		return INVALID_PLAYLIST_INDEX;
 
-		return m_NormalIndexArray[ulNormalFilteredIndex];
+	return m_NormalIndexArray[ulNormalFilteredIndex];
 }
 
 //send index in m_MediaLibrary and return the index in m_NormalIndexArray
@@ -285,6 +285,10 @@ bool				CBasePlaylist::Next(void)
 
 bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
 {
+	//no files so cant be valid
+	if(m_NormalIndexArray.GetCount() == 0)
+		return false;
+
 	//too low
 	if(ulFilteredIndex < 0)
 		return false;
