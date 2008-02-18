@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m3u_Plugin", "m3u_Plugin\m3
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m4a_Plugin", "m4a_Plugin\m4a_Plugin.vcproj", "{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3_InfoManager", "mp3_InfoManager\mp3_InfoManager.vcproj", "{066BEBD5-CF57-4BA8-AC73-398C2FB638E9}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3streamer_Plugin", "mp3streamer_Plugin\mp3streamer_Plugin.vcproj", "{62528D67-C778-4582-8C41-7A99E2C3527D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSNInfo", "MSNInfo\MSNInfo.vcproj", "{E2E626FD-694B-40D0-B088-D84615FA7B70}"
@@ -70,10 +68,6 @@ Global
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|Win32.Build.0 = Release|Win32
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|x64.ActiveCfg = Release|x64
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|x64.Build.0 = Release|x64
-		{066BEBD5-CF57-4BA8-AC73-398C2FB638E9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{066BEBD5-CF57-4BA8-AC73-398C2FB638E9}.Debug|x64.ActiveCfg = Debug|x64
-		{066BEBD5-CF57-4BA8-AC73-398C2FB638E9}.Release|Win32.ActiveCfg = Release|Win32
-		{066BEBD5-CF57-4BA8-AC73-398C2FB638E9}.Release|x64.ActiveCfg = Release|x64
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Debug|Win32.Build.0 = Debug|Win32
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Debug|x64.ActiveCfg = Debug|x64
