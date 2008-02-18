@@ -194,7 +194,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 											tuniacApp.getMainInstance(), 
 											NULL);
 				SetWindowLongPtr(m_hPrevWnd, GWLP_USERDATA, (DWORD_PTR)this);
-				//m_origPrevWndProc = (WNDPROC)SetWindowLongPtr(m_hPrevWnd, GWLP_WNDPROC, (DWORD)PrevWndProc);
+				m_origPrevWndProc = (WNDPROC)SetWindowLongPtr(m_hPrevWnd, GWLP_WNDPROC, (LONG_PTR)PrevWndProc);
 
 
 
@@ -225,7 +225,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 											tuniacApp.getMainInstance(), 
 											NULL);
 				SetWindowLongPtr(m_hNextWnd, GWLP_USERDATA, (DWORD_PTR)this);
-				//m_origNextWndProc = (WNDPROC)SetWindowLongPtr(m_hNextWnd, GWLP_WNDPROC, (DWORD)NextWndProc);
+				m_origNextWndProc = (WNDPROC)SetWindowLongPtr(m_hNextWnd, GWLP_WNDPROC, (LONG_PTR)NextWndProc);
 
 
 				m_hVolumeWnd = CreateWindow(	TRACKBAR_CLASS,
@@ -399,7 +399,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				}
 			}
 			break;
-
+/* //we dont need this?
 		case WM_LBUTTONDOWN:
 			{
 				POINT		pt;
@@ -427,7 +427,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				}
 			}
 			break;
-
+*/
 		case WM_HSCROLL:
 			{
 				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
