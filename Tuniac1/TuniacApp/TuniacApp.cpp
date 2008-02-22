@@ -1291,6 +1291,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//edit -> show currently paylist track (jump focus to current track)
 					case ID_EDIT_SHOWCURRENTLYPLAYINGTRACK:
 						{
+							for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
+	 						{
+ 								m_WindowArray[item]->Hide();
+	 						}
+							m_SourceSelectorWindow->Show();
 							m_SourceSelectorWindow->ShowCurrentlyPlaying();
 						}
 						break;
