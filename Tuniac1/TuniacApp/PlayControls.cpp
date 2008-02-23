@@ -399,7 +399,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				}
 			}
 			break;
-/* //we dont need this?
+
 		case WM_LBUTTONDOWN:
 			{
 				POINT		pt;
@@ -427,7 +427,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				}
 			}
 			break;
-*/
+
 		case WM_HSCROLL:
 			{
 				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
