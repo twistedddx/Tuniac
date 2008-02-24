@@ -1193,15 +1193,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						{
 							LPNMLISTVIEW pnmv = (LPNMLISTVIEW) lParam;
 
-							bool bNotPlayOrder = true;
-							if(m_ColumnIDArray[pnmv->iSubItem-1] == FIELD_PLAYORDER)
-							{
-								bNotPlayOrder = false;
-							}
+							bool bNotPlayOrder = false;
+							if(pnmv->iSubItem == 0)
+								bNotPlayOrder = true;
+
+							else if(m_ColumnIDArray[pnmv->iSubItem-1] != FIELD_PLAYORDER)
+								bNotPlayOrder = true;
 
 							if(bNotPlayOrder && m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANSORT)
 							{
-								//??bitsnote - sort is fucked
 								if(pnmv->iSubItem > 0)
 									m_pPlaylist->Sort(m_ColumnIDArray[pnmv->iSubItem-1]);
 								else
