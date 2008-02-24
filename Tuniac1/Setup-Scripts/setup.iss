@@ -7,22 +7,20 @@ AppPublisher=Tuniac Dev Team
 AppPublisherURL=http://www.tuniac.com
 AppSupportURL=http://www.tuniac.com
 AppUpdatesURL=http://www.tuniac.com
+AppMutex=TUNIACWINDOWCLASS
 ArchitecturesInstallIn64BitMode=x64
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
-AllowNoIcons=true
+AllowNoIcons=yes
 OutputDir=.
 OutputBaseFilename=..\Tuniac_Setup_{#DateTime}
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 Compression=lzma/ultra
-SolidCompression=true
-Uninstallable=true
+SolidCompression=yes
 InternalCompressLevel=ultra
 MinVersion=0,5.0.2195
 AppID={{A2A3A9DE-A195-4A66-8DA6-59968E0EF943}
-ShowLanguageDialog=yes
-ShowTasksTreeLines=true
-ShowComponentSizes=true
+ShowTasksTreeLines=yes
 WizardImageFile=WizardImage.bmp
 WizardSmallImageFile=WizardImageSmall.bmp
 
@@ -96,6 +94,49 @@ Name: Plugin_MSNInfo; Description: MSN v7+ Info plugin; Types: custom
 
 
 [Code]
+procedure AboutButtonOnClick(Sender: TObject);
+begin
+  MsgBox('This installer will install the Tuniac (Beta) media player onto your computer', mbInformation, mb_Ok);
+end;
+
+procedure URLLabelOnClick(Sender: TObject);
+var
+  ErrorCode: Integer;
+begin
+  ShellExec('open', 'http://www.tuniac.com', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
+end;
+
+procedure InitializeWizard();
+var
+  AboutButton, CancelButton: TButton;
+  URLLabel: TNewStaticText;
+begin
+
+  { Other custom controls }
+
+  CancelButton := WizardForm.CancelButton;
+
+  AboutButton := TButton.Create(WizardForm);
+  AboutButton.Left := WizardForm.ClientWidth - CancelButton.Left - CancelButton.Width;
+  AboutButton.Top := CancelButton.Top;
+  AboutButton.Width := CancelButton.Width;
+  AboutButton.Height := CancelButton.Height;
+  AboutButton.Caption := '&About...';
+  AboutButton.OnClick := @AboutButtonOnClick;
+  AboutButton.Parent := WizardForm;
+
+  URLLabel := TNewStaticText.Create(WizardForm);
+  URLLabel.Caption := 'www.tuniac.com';
+  URLLabel.Cursor := crHand;
+  URLLabel.OnClick := @URLLabelOnClick;
+  URLLabel.Parent := WizardForm;
+  { Alter Font *after* setting Parent so the correct defaults are inherited first }
+  URLLabel.Font.Style := URLLabel.Font.Style + [fsUnderline];
+  URLLabel.Font.Color := clBlue;
+  URLLabel.Top := AboutButton.Top + AboutButton.Height - URLLabel.Height - 2;
+  URLLabel.Left := AboutButton.Left + AboutButton.Width + ScaleX(20);
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   ResultCode: Integer;
