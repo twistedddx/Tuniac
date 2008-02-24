@@ -1,3 +1,22 @@
+Feb 24, 2008
+------------
+-fix "previous" in menu
+-Dont show "next:" on popup notify plugin if not needed
+-various
+
+
+Feb 23, 2008
+------------
+-Waveout replaced with xaudio2(xaudio2 dll required!)
+-Sort code fixed
+-Library updates for m4a, ape, ogg, taglib
+-Readded 64bit build
+-Single installer which will autodetect 32/64bit environment
+-show playing song will show the source selector if it is not already currently
+-delete playlist question corrected
+-Im sure theres more
+
+
 Feb 07, 2008
 ------------
 -fix reg delete function(uninstall/-wipeprefs)
