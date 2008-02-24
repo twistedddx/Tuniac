@@ -404,41 +404,49 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	rcDetails.bottom	+= 20;
 
 	m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 1);
-	SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
-    SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
-	DrawText(hDC, TEXT("Next:"), -1, &rcStatus, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+	if(wcslen(szTrack) > 0)
+	{
+		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
+		SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
+		DrawText(hDC, TEXT("Next:"), -1, &rcStatus, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 	
-	if(iHover == 1)
-	{
-		SelectObject(hDC, (HGDIOBJ) m_SmallFontU);
-		SetTextColor(hDC, GetSysColor(COLOR_HOTLIGHT));
-	}
-	else
-	{
-		SelectObject(hDC, (HGDIOBJ) m_SmallFont);
-	}
-	DrawText(hDC, szTrack, -1, &rcDetails, DT_LEFT | DT_VCENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+		if(iHover == 1)
+		{
+			SelectObject(hDC, (HGDIOBJ) m_SmallFontU);
+			SetTextColor(hDC, GetSysColor(COLOR_HOTLIGHT));
+		}
+		else
+		{
+			SelectObject(hDC, (HGDIOBJ) m_SmallFont);
+		}
+		DrawText(hDC, szTrack, -1, &rcDetails, DT_LEFT | DT_VCENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
 
-	rcStatus.top		+= 20;
-	rcStatus.bottom		+= 20;
-	rcDetails.top		+= 20;
-	rcDetails.bottom	+= 20;
+		rcStatus.top		+= 20;
+		rcStatus.bottom		+= 20;
+		rcDetails.top		+= 20;
+		rcDetails.bottom	+= 20;
+	}
+
+
 
 	m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 2);
-	SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
-    SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
-	DrawText(hDC, TEXT("Next:"), -1, &rcStatus, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
-	
-	if(iHover == 2)
+	if(wcslen(szTrack) > 0)
 	{
-		SelectObject(hDC, (HGDIOBJ) m_SmallFontU);
-		SetTextColor(hDC, GetSysColor(COLOR_HOTLIGHT));
+		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
+		SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
+		DrawText(hDC, TEXT("Next:"), -1, &rcStatus, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+		
+		if(iHover == 2)
+		{
+			SelectObject(hDC, (HGDIOBJ) m_SmallFontU);
+			SetTextColor(hDC, GetSysColor(COLOR_HOTLIGHT));
+		}
+		else
+		{
+			SelectObject(hDC, (HGDIOBJ) m_SmallFont);
+		}
+		DrawText(hDC, szTrack, -1, &rcDetails, DT_LEFT | DT_VCENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
 	}
-	else
-	{
-		SelectObject(hDC, (HGDIOBJ) m_SmallFont);
-	}
-	DrawText(hDC, szTrack, -1, &rcDetails, DT_LEFT | DT_VCENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
 
 	EndPaint(hWnd, &ps);
 }
