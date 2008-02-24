@@ -71,9 +71,9 @@ BEGIN
     LTEXT           "Move all files into the Media Library base folder. ",IDC_STATIC,131,85,90,27
     LTEXT           "Reread the information from each file in the library and update the database.",IDC_STATIC,14,85,90,27
     GROUPBOX        "Media Library Base Folder",IDC_STATIC,7,7,221,45
-    EDITTEXT        IDC_EDIT1,14,19,188,12,ES_AUTOHSCROLL | WS_DISABLED
-    PUSHBUTTON      "...",IDC_BUTTON3,205,19,16,12,WS_DISABLED
-    PUSHBUTTON      "Consolidate Media Library",IDC_BUTTON2,131,66,90,14,WS_DISABLED
+    EDITTEXT        IDC_MEDIALIBRARY_TEXT,14,19,188,12,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "...",IDC_MEDIALIBRARYBROWSE_BUTTON,205,19,16,12,WS_DISABLED
+    PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,66,90,14,WS_DISABLED
     LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,38,207,8
 END
 
@@ -589,49 +589,49 @@ IDR_TUNIAC_MENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "Import &Files...\tCtrl+I",    40004
-        MENUITEM "Import &Directory...",        40005
-        MENUITEM "Import &Stream...",           ID_FILE_ADDOTHER
-        MENUITEM "&ForceSave MediaLibrary",     ID_FILE_FORCESAVEMEDIALIBRARY
+        MENUITEM "Import &Files...\tCtrl+I",	ID_FILE_ADDFILES
+        MENUITEM "Import &Directory...",		ID_FILE_ADDDIRECTORY
+        MENUITEM "Import &Stream...",			ID_FILE_ADDOTHER
+        MENUITEM "&ForceSave MediaLibrary",		ID_FILE_FORCESAVEMEDIALIBRARY
         MENUITEM SEPARATOR
         POPUP "&New Playlist"
         BEGIN
-            MENUITEM "Normal Playlist",             40002
+            MENUITEM "Normal Playlist",			ID_FILE_NEWPLAYLIST_NORMALPLAYLIST
         END
         MENUITEM SEPARATOR
-        MENUITEM "Export &Playlist...",         ID_FILE_EXPORTPLAYLIST
+        MENUITEM "Export &Playlist...",			ID_FILE_EXPORTPLAYLIST
         MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       40001
+        MENUITEM "E&xit",						ID_FILE_EXIT
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "Edit Track &Info\tAlt+I",     ID_EDIT_EDITFILEINFORMATION
-        MENUITEM "Show &Currently Playing\tCtrl+L", ID_EDIT_SHOWCURRENTLYPLAYINGTRACK
-        MENUITEM "View &Options",               ID_EDIT_SHOWVIEWOPTIONS
+        MENUITEM "Edit Track &Info\tAlt+I",				ID_EDIT_EDITFILEINFORMATION
+        MENUITEM "Show &Currently Playing\tCtrl+L",		ID_EDIT_SHOWCURRENTLYPLAYINGTRACK
+        MENUITEM "View &Options",						ID_EDIT_SHOWVIEWOPTIONS
         MENUITEM SEPARATOR
-        MENUITEM "Always On &Top",              ID_EDIT_ALWAYSONTOP
+        MENUITEM "Always On &Top",						ID_EDIT_ALWAYSONTOP
         MENUITEM SEPARATOR
-        MENUITEM "&Show Preferences\tCtrl+P",   ID_EDIT_PREFERENCES
+        MENUITEM "&Show Preferences\tCtrl+P",			ID_EDIT_PREFERENCES
     END
     POPUP "&Playback"
     BEGIN
-        MENUITEM "&Play / Pause\tCtrl+Spacebar", 40017
-        MENUITEM "S&oft Pause\tCtrl+Shift+Spacebar", ID_PLAYBACK_SOFTPAUSE
-        MENUITEM "&Next\tCtrl+Right Arrow",     ID_PLAYBACK_NEXT
-        MENUITEM "Random N&ext\tCtrl+Shift+Right Arrow", ID_PLAYBACK_RANDOMNEXT
-        MENUITEM "Pr&evious\tCtrl+Left Arrow",  ID_PLAYBACK_REPEATMODE
+        MENUITEM "&Play / Pause\tCtrl+Spacebar",		ID_PLAYBACK_PLAYPAUSE
+        MENUITEM "S&oft Pause\tCtrl+Shift+Spacebar",	ID_PLAYBACK_SOFTPAUSE
+        MENUITEM "&Next\tCtrl+Right Arrow",				ID_PLAYBACK_NEXT
+        MENUITEM "Random N&ext\tCtrl+Shift+Right Arrow",ID_PLAYBACK_RANDOMNEXT
+        MENUITEM "Pr&evious\tCtrl+Left Arrow",			ID_PLAYBACK_PREVIOUS
         MENUITEM SEPARATOR
-        MENUITEM "&Shuffle Play\tCtrl+S",       ID_PLAYBACK_TOGGLE_SHUFFLE
+        MENUITEM "&Shuffle Play\tCtrl+S",		ID_PLAYBACK_TOGGLE_SHUFFLE
         POPUP "&Repeat"
         BEGIN
-            MENUITEM "&Off",                        ID_REPEAT_OFF
-            MENUITEM "One &Track",                  ID_REPEAT_ONETRACK
-            MENUITEM "&All Tracks",                 ID_REPEAT_ALLTRACKS
-            MENUITEM "All &Queued",                 ID_REPEAT_ALLQUEUED
+            MENUITEM "&Off",					ID_REPEAT_OFF
+            MENUITEM "One &Track",				ID_REPEAT_ONETRACK
+            MENUITEM "&All Tracks",				ID_REPEAT_ALLTRACKS
+            MENUITEM "All &Queued",				ID_REPEAT_ALLQUEUED
         END
         MENUITEM SEPARATOR
-        MENUITEM "&Clear Queue",                ID_PLAYBACK_CLEARQUEUE
-        MENUITEM "Clear Scheduled Pause",       ID_PLAYBACK_CLEARPAUSEAT
+        MENUITEM "&Clear Queue",				ID_PLAYBACK_CLEARQUEUE
+        MENUITEM "Clear Scheduled Pause",		ID_PLAYBACK_CLEARPAUSEAT
     END
     POPUP "&View"
     BEGIN
@@ -639,10 +639,10 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "Tuniac &Help...",             ID_HELP_TUNIACHELP
-        MENUITEM "Check For &Updates...",       ID_HELP_CHECKFORUPDATES
+        MENUITEM "Tuniac &Help...",				ID_HELP_TUNIACHELP
+        MENUITEM "Check For &Updates...",		ID_HELP_CHECKFORUPDATES
         MENUITEM SEPARATOR
-        MENUITEM "&About Tuniac...",            40009
+        MENUITEM "&About Tuniac...",			ID_HELP_ABOUT
     END
 END
 
@@ -654,10 +654,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        MENUITEM "FullScreen",                  ID_VIS_FULLSCREEN
+        MENUITEM "FullScreen",				ID_VIS_FULLSCREEN
         MENUITEM SEPARATOR
-        MENUITEM "Configure...",                ID_VIS_CONFIGURE
-        MENUITEM "About...",                    ID_VIS_ABOUT
+        MENUITEM "Configure...",			ID_VIS_CONFIGURE
+        MENUITEM "About...",				ID_VIS_ABOUT
     END
 END
 
@@ -665,29 +665,29 @@ IDR_TRAYMENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "&Show",                       ID_APP_SHOW
+        MENUITEM "&Show",					ID_APP_SHOW
         MENUITEM SEPARATOR
-        MENUITEM "S&huffle Play",               40026
+        MENUITEM "S&huffle Play",			ID_PLAYBACK_TOGGLE_SHUFFLE
         POPUP "&Repeat"
         BEGIN
-            MENUITEM "&Off",                        40028
-            MENUITEM "One &Track",                  40030
-            MENUITEM "&All Tracks",                 40031
-            MENUITEM "All &Queued",                 ID_REPEAT_ALLQUEUED
+            MENUITEM "&Off",				ID_REPEAT_OFF
+            MENUITEM "One &Track",			ID_REPEAT_ONETRACK
+            MENUITEM "&All Tracks",			ID_REPEAT_ALLTRACKS
+            MENUITEM "All &Queued",			ID_REPEAT_ALLQUEUED
         END
         MENUITEM SEPARATOR
-        MENUITEM "Pr&evious",                   ID_PLAYBACK_PREVIOUS
-        MENUITEM "&Next",                       ID_PLAYBACK_NEXT
-        MENUITEM "S&oft Pause",                 ID_PLAYBACK_SOFTPAUSE
-        MENUITEM "&Play / Pause",               ID_PLAYBACK_PLAYPAUSE
+        MENUITEM "Pr&evious",				ID_PLAYBACK_PREVIOUS
+        MENUITEM "&Next",					ID_PLAYBACK_NEXT
+        MENUITEM "S&oft Pause",				ID_PLAYBACK_SOFTPAUSE
+        MENUITEM "&Play / Pause",			ID_PLAYBACK_PLAYPAUSE
         MENUITEM SEPARATOR
         POPUP "Playlists"
         BEGIN
-            MENUITEM "Media Library",               ID_PLAYLISTS_MEDIALIBRARY
+            MENUITEM "Media Library",		ID_PLAYLISTS_MEDIALIBRARY
             MENUITEM SEPARATOR
         END
         MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       ID_FILE_EXIT
+        MENUITEM "E&xit",					ID_FILE_EXIT
     END
 END
 
@@ -695,18 +695,18 @@ IDR_PLAYLISTITEM_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "&Play",                       ID_PLAY
-        MENUITEM "Play &next",                  ID_PLAYNEXT
-        MENUITEM "&Queue",                      ID_QUEUE
-        MENUITEM "Pause &here",                 ID_PAUSEHERE
+        MENUITEM "&Play",					ID_PLAY
+        MENUITEM "Play &next",				ID_PLAYNEXT
+        MENUITEM "&Queue",					ID_QUEUE
+        MENUITEM "Pause &here",				ID_PAUSEHERE
         MENUITEM SEPARATOR
-        MENUITEM "To &new playlist",            ID_TONEWPLAYLIST
-        MENUITEM "&Filter by field",            ID_FILTERBYFIELD
-        MENUITEM "Q&ueue by field",             ID_QUEUEBYFIELD
+        MENUITEM "To &new playlist",		ID_TONEWPLAYLIST
+        MENUITEM "&Filter by field",		ID_FILTERBYFIELD
+        MENUITEM "Q&ueue by field",			ID_QUEUEBYFIELD
         MENUITEM SEPARATOR
-        MENUITEM "&Remove",                     ID_REMOVE
+        MENUITEM "&Remove",					ID_REMOVE
         MENUITEM SEPARATOR
-        MENUITEM "Show File...",                40148
+        MENUITEM "Show File...",			ID_SHOWFILE
     END
 END
 
@@ -744,20 +744,20 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_TUNIAC              ICON                    ".\\icons\\tuniac.ico"
-IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON                    ".\\default-theme\\playlist-medialibrary.ico"
-IDI_THEMEICON_PLAYLIST_STANDARD ICON                    ".\\default-theme\\playlist-standard.ico"
-IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
-IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
-IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
+IDI_TUNIAC              ICON					".\\icons\\tuniac.ico"
+IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON		".\\default-theme\\playlist-medialibrary.ico"
+IDI_THEMEICON_PLAYLIST_STANDARD ICON			".\\default-theme\\playlist-standard.ico"
+IDI_THEMEICON_PLAYLIST_CD ICON					".\\default-theme\\playlist-cd.ico"
+IDI_THEMEICON_ITEM_NORMAL ICON					".\\default-theme\\item-normal.ico"
+IDI_THEMEICON_ITEM_ACTIVE ICON					".\\default-theme\\item-active.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Cursor
 //
 
-IDC_ADDARROW            CURSOR                  ".\\cursors\\addarrow.cur"
-IDC_NEWPLAYLISTARROW    CURSOR                  ".\\cursors\\newplaylistcursor.cur"
+IDC_ADDARROW            CURSOR					".\\cursors\\addarrow.cur"
+IDC_NEWPLAYLISTARROW    CURSOR					".\\cursors\\newplaylistcursor.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -857,13 +857,13 @@ IDR_SOURCESELECT_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "&Play",                       ID_PLAYPLAYLIST
+        MENUITEM "&Play",					ID_PLAYPLAYLIST
         MENUITEM SEPARATOR
-        MENUITEM "&Rename",                     ID_RENAME
-        MENUITEM "R&emove",                     ID_REMOVE
+        MENUITEM "&Rename",					ID_RENAME
+        MENUITEM "R&emove",					ID_REMOVE
         MENUITEM SEPARATOR
-        MENUITEM "Remove &Duplicates",          ID_REMOVEDUPLICATES
-        MENUITEM "E&xport...",                  ID_EXPORT
+        MENUITEM "Remove &Duplicates",		ID_REMOVEDUPLICATES
+        MENUITEM "E&xport...",				ID_EXPORT
     END
 END
 
@@ -871,18 +871,18 @@ IDR_FILTERBYFIELD_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "Artist, Album && Title",      ID_FILTERBY_NORMAL
+        MENUITEM "Artist, Album && Title",	ID_FILTERBY_NORMAL
         MENUITEM SEPARATOR
-        MENUITEM "Artist",                      ID_FILTERBY_ARTIST
-        MENUITEM "Title",                       ID_FILTERBY_TITLE
-        MENUITEM "Album",                       ID_FILTERBY_ALBUM
-        MENUITEM "Genre",                       ID_FILTERBY_GENRE
-        MENUITEM "Year",                        ID_FILTERBY_YEAR
-        MENUITEM "Comment",                     ID_FILTERBY_COMMENT
+        MENUITEM "Artist",					ID_FILTERBY_ARTIST
+        MENUITEM "Title",					ID_FILTERBY_TITLE
+        MENUITEM "Album",					ID_FILTERBY_ALBUM
+        MENUITEM "Genre",					ID_FILTERBY_GENRE
+        MENUITEM "Year",					ID_FILTERBY_YEAR
+        MENUITEM "Comment",					ID_FILTERBY_COMMENT
         MENUITEM SEPARATOR
-        MENUITEM "URL",                         ID_FILTERBY_URL
-        MENUITEM "Filename",                    ID_FILTERBY_FILENAME
-        MENUITEM "Extension",                   ID_FILTERBY_EXTENSION
+        MENUITEM "URL",						ID_FILTERBY_URL
+        MENUITEM "Filename",				ID_FILTERBY_FILENAME
+        MENUITEM "Extension",				ID_FILTERBY_EXTENSION
     END
 END
 
@@ -890,9 +890,9 @@ IDR_SOURCESELECT_DRAGMENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "&Copy To",                    ID_COPYTO
-        MENUITEM "&Merge Into",                 ID_MERGEINTO
-        MENUITEM "&Remove From",                ID_REMOVEFROM
+        MENUITEM "&Copy To",				ID_COPYTO
+        MENUITEM "&Merge Into",				ID_MERGEINTO
+        MENUITEM "&Remove From",			ID_REMOVEFROM
     END
 END
 
@@ -900,8 +900,8 @@ IDR_PLAYLISTHEADER_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "&Filter by...",               40141
-        MENUITEM "&Options...",                 ID_EDIT_SHOWVIEWOPTIONS
+        MENUITEM "&Filter by...",			ID_FILTERBY 
+        MENUITEM "&Options...",				ID_EDIT_SHOWVIEWOPTIONS
     END
 END
 

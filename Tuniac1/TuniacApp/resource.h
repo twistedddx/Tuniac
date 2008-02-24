@@ -10,12 +10,10 @@
 #define IDD_PLAYLISTSOURCE              107
 #define IDD_PREFERENCES_AUDIO           108
 #define IDI_TUNIAC                      109
-#define IDI_MEDIALIBRARY                110
 #define IDI_THEMEICON_PLAYLIST_MEDIALIBRARY 110
 #define IDC_ADDARROW                    113
 #define IDD_ALBUMFILTER                 114
 #define IDC_NEWPLAYLISTARROW            114
-#define IDI_PLAYLIST                    115
 #define IDI_THEMEICON_PLAYLIST_STANDARD 115
 #define IDD_EDITOR_SONG                 120
 #define IDD_EDITOR_FILE                 121
@@ -24,7 +22,6 @@
 #define IDD_PREFERENCES_MEDIALIBRARY    124
 #define IDR_MAINWINDOWACCEL             124
 #define IDD_PREFERENCES_COREAUDIO       125
-#define IDI_CDDRIVE                     126
 #define IDD_CDAUDIOSOURCE               126
 #define IDI_THEMEICON_PLAYLIST_CD       126
 #define IDD_PREFERENCES_IMPORTING       127
@@ -46,7 +43,6 @@
 #define IDD_PREFERENCES_FORMATTING      164
 #define IDR_PLAYLISTHEADER_MENU         165
 #define IDD_LOGVIEW                     166
-#define IDB_BITMAP1                     178
 #define IDB_EDITINFO                    178
 #define IDB_NEXT                        179
 #define IDB_PAUSE                       180
@@ -57,24 +53,21 @@
 #define IDB_REPEATONE                   185
 #define IDB_SHUFFLEOFF                  186
 #define IDB_SHUFFLEON                   187
-#define IDR_RT_MANIFEST1                192
 #define IDC_ADDOTHER_ADD                1001
 #define IDC_ADDOTHER_EDIT               1002
 #define IDC_ADDOTHER_CANCEL             1003
 #define IDC_ADDINGFILES_PROGRESS        1004
 #define IDC_BUFFERING_PROGRESS          1004
 #define IDC_SOURCESELECTOR              1005
-#define IDC_LIBRARY_LIST                1006
 #define IDC_LIBRARY_FILTER              1009
 #define IDC_PLAYLIST_FILTER             1009
 #define IDC_PLAYLIST_LIST               1010
 #define IDC_CROSSFADE_ENABLE            1012
 #define IDC_CROSSFADE_TIME_SLIDER       1013
-#define IDC_PLAYLIST_ALBUMSELECTOR      1038
 #define IDD_FILTERSELECTOR              1040
 #define IDC_FILTER_ARTIST               1041
 #define IDC_CROSSFADE_TIME_TEXT         1042
-#define IDC_EDIT1                       1043
+#define IDC_MEDIALIBRARY_TEXT           1043
 #define IDC_TITLE_EDIT                  1043
 #define IDC_ARTIST_COMBO                1044
 #define IDC_RATING_CONTROL              1045
@@ -89,14 +82,13 @@
 #define IDC_GENRE_COMBO                 1050
 #define IDC_PLAYLISTVIEWOPTIONS_LIST    1051
 #define IDC_REBUILD_ML                  1052
-#define IDC_BUTTON2                     1053
-#define IDC_BUTTON3                     1054
+#define IDC_CONSOLIDATE_BUTTON          1053
+#define IDC_MEDIALIBRARYBROWSE_BUTTON   1054
 #define IDC_PLAYLIST_SOURCE_MAKEPLAYLIST 1055
 #define IDC_PLAYLIST_SOURCE_CLEARFILTER 1056
 #define IDC_ALBUMARTIST_ALBUMLIST       1059
 #define IDC_ALBUMARTIST_ARTISTLIST      1060
 #define IDC_ALBUMARTIST_PLAYLISTLIST    1062
-#define IDC_LIST1                       1064
 #define IDC_CDSOURCE_TRACKLIST          1064
 #define IDC_AUDIOPLUGIN_CONFIGURE       1065
 #define IDC_AUDIOPLUGIN_ABOUT           1066
@@ -110,15 +102,12 @@
 #define IDC_BUFFERING_INFO              1074
 #define IDC_VISUALPREFS_FPS             1075
 #define IDC_AUDIOPLUGINS_LIST           1076
-#define IDC_PROGRESS1                   1078
 #define IDC_SAVINGLIBRARY_PROGRESS      1078
 #define IDC_SOURCE_ADDPLAYLIST          1081
 #define IDC_SOURCE_DELPLAYLIST          1082
-#define IDC_DTITLE                      1084
 #define IDC_CDTITLE                     1085
 #define IDC_GENERAL_TASKBAR_NORMAL      1089
 #define IDC_GENERAL_TASKBAR_MINIMIZE    1090
-#define IDC_RADIO4                      1092
 #define IDC_GENERAL_PAUSEONLOCK         1093
 #define IDC_GENERAL_FOLLOWCURRENTSONG   1094
 #define IDC_GENERAL_WINDOWTITLEFORMAT   1095
@@ -193,7 +182,6 @@
 #define ID_REPEAT_OFF                   40028
 #define ID_REPEAT_ONETRACK              40030
 #define ID_REPEAT_ALLTRACKS             40031
-#define ID__PLUGIN                      40032
 #define ID_VIS_CONFIGURE                40038
 #define ID_VIS_ABOUT                    40039
 #define ID_FILE_FORCESAVEMEDIALIBRARY   40040
@@ -231,8 +219,7 @@
 #define ID_FILTERBY_FILENAME            40113
 #define ID_FILTERBY_EXTENSION           40114
 #define ID_PLAYBACK_RANDOMNEXT          40115
-#define ID_Menu                         40116
-#define ID__PLAYLISTS                   40118
+#define ID_PLAYLISTS                    40118
 #define ID_PLAYLISTS_MEDIALIBRARY       40119
 #define ID_PLAYBACK_CLEARPAUSEAT        40121
 #define ID_RENAME                       40122
@@ -244,7 +231,6 @@
 #define ID_EXPORT                       40134
 #define ID_REMOVEDUPLICATES             40135
 #define ID_FILTERBY                     40141
-#define ID_FILTERBY_YEP                 40142
 #define ID_SHOWFILE                     40148
 
 // Next default values for new objects
