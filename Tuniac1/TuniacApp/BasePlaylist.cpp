@@ -595,7 +595,7 @@ void			CBasePlaylist::GetFieldFilteredList(EntryArray & entryArray, unsigned lon
 }
 bool CBasePlaylist::Sort (unsigned long ulSortBy)
 {
-   bool reversesort = false;
+	bool reversesort = false;
 
 	if(m_LastSortBy == ulSortBy)
 	{
@@ -617,20 +617,22 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	m_LastSortBy = ulSortBy;
 
 	if (m_PlaylistArray.GetCount() < 2)
-   {
+	{
 		return true;
-   }
-   
-   PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
-   
-   if (scratch == NULL)
-   {
-      return false;
-   }
-   
-	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
+	}
 
-   delete[] scratch;
+	PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
+
+	if (scratch == NULL)
+	{
+	  return false;
+	}
+	IPlaylistEntry * pEntry = GetActiveItem();
+	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
+	unsigned long ulFilteredIndex = GetFilteredIndexforItem(pEntry);
+	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
+
+	delete[] scratch;
 
 	//ApplyFilter();
 
