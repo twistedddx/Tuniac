@@ -43,7 +43,7 @@ protected:
 	int			m_CrossfadeEnabled;
 	int			m_CrossfadeTime;
 
-	int			m_OutputDevice;
+	int			m_AudioBuffering;
 
 	float		m_VolumeScale;
 
@@ -134,7 +134,7 @@ public:
 	int		GetCrossfadeTime(void);
 	void	SetCrossfadeTime(int time);
 
-	int		GetOutputDevice(void);
+	int		GetAudioBuffering(void);
 
 	float	GetVolumePercent(void);
 	void	SetVolumeScale(float Scale);

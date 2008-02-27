@@ -3,7 +3,6 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-#define BUFFERSIZEMS			(500)
 #define MAX_BUFFER_COUNT		5
 
 
@@ -34,6 +33,27 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio) :
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
 	m_pfAudioBuffer = NULL;
 	OutputDebugString(TEXT("CAudioOutput Created\r\n"));
+
+	switch(tuniacApp.m_Preferences.GetAudioBuffering())
+	{
+		case 0:
+			{
+				m_ulBuffersizeMS = 250;
+			}
+			break;
+
+		case 1:
+			{
+				m_ulBuffersizeMS = 500;
+			}
+			break;
+
+		case 2:
+			{
+				m_ulBuffersizeMS = 1000;
+			}
+			break;
+	}
 }
 
 CAudioOutput::~CAudioOutput(void)
@@ -268,10 +288,10 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 	
 		unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
-		m_BlockSize			=	samplesperms	* (BUFFERSIZEMS / MAX_BUFFER_COUNT);												// so 3*100ms buffers pls
+		m_BlockSize			=	samplesperms	* (m_ulBuffersizeMS / MAX_BUFFER_COUNT);												// so 3*100ms buffers pls
 		m_BlockSizeBytes	=	m_BlockSize		* sizeof(float);
 
-		m_Interval = (BUFFERSIZEMS / MAX_BUFFER_COUNT);
+		m_Interval = (m_ulBuffersizeMS / MAX_BUFFER_COUNT);
 
 		if(!Initialize())
 		{

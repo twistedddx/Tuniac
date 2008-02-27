@@ -14,6 +14,7 @@ protected:
 	/////////////////////////////////////////////
 	//	Some of this stuff needs remoing due to oldness
 
+	unsigned long						m_ulBuffersizeMS;
 
 	float					*			m_pfAudioBuffer;
 
