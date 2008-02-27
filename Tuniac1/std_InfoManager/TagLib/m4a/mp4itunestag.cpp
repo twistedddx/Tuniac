@@ -127,13 +127,13 @@ void MP4::Tag::setGenre(const String &s)
   d->isEmpty = false;
 }
 
-void MP4::Tag::setYear(TagLib::uint i)
+void MP4::Tag::setYear(const TagLib::uint i)
 {
   d->year = i;
   d->isEmpty = false;
 }
 
-void MP4::Tag::setTrack(TagLib::uint i)
+void MP4::Tag::setTrack(const TagLib::uint i)
 {
   d->track = i;
   d->isEmpty = false;

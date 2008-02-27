@@ -39,8 +39,8 @@ namespace TagLib
       virtual void setAlbum(const String &s);
       virtual void setComment(const String &s);
       virtual void setGenre(const String &s);
-      virtual void setYear(uint i);
-      virtual void setTrack(uint i);
+      virtual void setYear(const uint i);
+      virtual void setTrack(const uint i);
 
       // MP4 specific fields
 
