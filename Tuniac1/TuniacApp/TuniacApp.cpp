@@ -840,12 +840,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 				else if(wParam == m_aVolUp)
 				{
-					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) + 0.1f);
+					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) + 0.05f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aVolDn)
 				{
-					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) - 0.1f);
+					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) - 0.05f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aSeekForward)
