@@ -23,6 +23,7 @@
 #include <mmreg.h>
 #include <ks.h>
 #include <ksmedia.h>
+#include <xaudio2.h>
 
 #include <stdio.h>
 #include <memory.h>

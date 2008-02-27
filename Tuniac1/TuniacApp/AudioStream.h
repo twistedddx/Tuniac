@@ -43,7 +43,7 @@ public:
 	unsigned long						m_Channels;
 
 public:
-	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry);
+	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio);
 	~CAudioStream(void);
 
 public:

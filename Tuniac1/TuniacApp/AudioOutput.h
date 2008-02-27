@@ -1,22 +1,15 @@
 #pragma once
 
 #include "CriticalSection.h"
-
 #include "IAudioCallback.h"
-#include <xaudio2.h>
-
-
 
 class CAudioOutput : public IXAudio2VoiceCallback
 {
 protected:
 	WAVEFORMATPCMEX						m_waveFormatPCMEx;
 
-	IXAudio2				*			m_pXAudio;
 	IXAudio2SourceVoice		*			m_pSourceVoice;
-    IXAudio2MasteringVoice	*			m_pMasteringVoice;
-
-
+	IXAudio2				*			m_pXAudio;
 
 	/////////////////////////////////////////////
 	//	Some of this stuff needs remoing due to oldness
@@ -70,7 +63,7 @@ public:
 
 
 public:
-	CAudioOutput(void);
+	CAudioOutput(IXAudio2 * pXAudio);
 	~CAudioOutput(void);
 
 

@@ -22,15 +22,14 @@
 //					m_BlockSizeBytes is in bytes calculated from the size of a block * size of a sample!!!!
 //					SO FUCKING REMEMBER THIS YOU IDIOTS
 
-CAudioOutput::CAudioOutput(void) :
+CAudioOutput::CAudioOutput(IXAudio2 * pXAudio) : 
 	m_hThread(NULL),
 	m_hEvent(NULL),
-	m_pXAudio(NULL),
 	m_pSourceVoice(NULL),
-	m_pMasteringVoice(NULL),
 	m_pfAudioBuffer(NULL),
 	m_pCallback(NULL),
-	m_BufferInProgress(0)
+	m_BufferInProgress(0),
+	m_pXAudio(pXAudio)
 {
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
 	m_pfAudioBuffer = NULL;
@@ -127,22 +126,6 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 bool CAudioOutput::Initialize(void)
 {
-	if(FAILED(XAudio2Create(&m_pXAudio)))
-	{
-		//booo we dont have an XAudio2 object!
-		m_pXAudio = NULL;
-		return false;
-	}
-
-	m_pXAudio->StartEngine();
-
-	HRESULT hr;
-
-    if ( FAILED(hr = m_pXAudio->CreateMasteringVoice( &m_pMasteringVoice ) ) )
-    {
-        wprintf( L"Failed creating mastering voice: %#X\n", hr );
-        return false;
-    }
 
 	HRESULT chr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
 										(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
@@ -223,15 +206,6 @@ bool CAudioOutput::Shutdown(void)
 
 		m_pSourceVoice = NULL;
 	}
-
-    // All XAudio2 interfaces are released when the engine is destroyed, but being tidy
-	if(m_pMasteringVoice)
-	{
-	    m_pMasteringVoice->DestroyVoice();
-		m_pMasteringVoice = NULL;
-	}
-
-	SAFE_RELEASE(m_pXAudio);
 
 	return(true);
 }

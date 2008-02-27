@@ -5,6 +5,11 @@
 #include "TuniacApp.h"
 #include "resource.h"
 
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#endif
+
+
 CCoreAudio::CCoreAudio(void)
 {
 }
@@ -15,6 +20,29 @@ CCoreAudio::~CCoreAudio(void)
 
 bool			CCoreAudio::Startup()
 {
+	//////////////////////////////////////////////////////////////////////////
+	//
+	// FIRST INITIALIZE XAUDIO
+	//
+	if(FAILED(XAudio2Create(&m_pXAudio)))
+	{
+		//booo we dont have an XAudio2 object!
+		MessageBox(NULL, TEXT("Failed initializing XAudio"), TEXT("Fatal Error"), MB_OK | MB_ICONERROR);
+		m_pXAudio = NULL;
+		return false;
+	}
+
+	m_pXAudio->StartEngine();
+
+	HRESULT hr;
+
+    if ( FAILED(hr = m_pXAudio->CreateMasteringVoice( &m_pMasteringVoice ) ) )
+    {
+		MessageBox(NULL, TEXT("Failed creating mastering voice"), TEXT("Fatal Error"), MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+
 
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
@@ -84,6 +112,16 @@ bool			CCoreAudio::Shutdown(void)
 		m_AudioSources.RemoveAt(0);
 	}
 
+
+    // All XAudio2 interfaces are released when the engine is destroyed, but being tidy
+	if(m_pMasteringVoice)
+	{
+	    m_pMasteringVoice->DestroyVoice();
+		m_pMasteringVoice = NULL;
+	}
+
+	SAFE_RELEASE(m_pXAudio);
+
 	return true;
 }
 
@@ -105,7 +143,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource);
 			if(pSource)
 			{
-				pStream = new CAudioStream(pSource, pEntry);
+				pStream = new CAudioStream(pSource, pEntry, m_pXAudio);
 				CAutoLock	t(&m_Lock);
 
 				if(m_Streams.GetCount())
