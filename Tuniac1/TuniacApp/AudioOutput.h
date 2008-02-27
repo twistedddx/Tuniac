@@ -6,6 +6,9 @@
 class CAudioOutput : public IXAudio2VoiceCallback
 {
 protected:
+
+	friend class CAudioStream;
+
 	WAVEFORMATPCMEX						m_waveFormatPCMEx;
 
 	IXAudio2SourceVoice		*			m_pSourceVoice;

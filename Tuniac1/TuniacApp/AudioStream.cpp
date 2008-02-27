@@ -34,6 +34,8 @@ CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAu
 
 CAudioStream::~CAudioStream(void)
 {
+	m_Output.Shutdown();
+
 	m_pSource->Destroy();
 }
 

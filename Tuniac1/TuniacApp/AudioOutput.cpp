@@ -85,8 +85,11 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 		if(m_pCallback && m_bPlaying)
 		{
+			CAutoLock lock(&m_AudioLock);
+
 			if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
 			{
+
 				// HACK: this is highly inefficient and must be fixed!
 				if(currentDiskReadBuffer == 0)
 				{
@@ -186,6 +189,8 @@ bool CAudioOutput::Initialize(void)
 
 bool CAudioOutput::Shutdown(void)
 {
+	CAutoLock lock(&m_AudioLock);
+
 	if(m_hThread)
 	{
 		m_bThreadRun = false;

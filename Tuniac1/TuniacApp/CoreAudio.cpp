@@ -199,8 +199,8 @@ bool			CCoreAudio::Reset(void)
 	while(m_Streams.GetCount())
 	{
 		m_Streams[0]->Stop();
-		delete m_Streams[0];
 
+		delete m_Streams[0];
 		m_Streams.RemoveAt(0);
 	}
 	return true;
