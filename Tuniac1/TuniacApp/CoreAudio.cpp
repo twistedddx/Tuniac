@@ -148,11 +148,23 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				if(m_Streams.GetCount())
 				{
-					m_Streams[m_Streams.GetCount() - 1]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
+
 					pStream->FadeIn(tuniacApp.m_Preferences.GetCrossfadeTime());
 
-					if(m_Streams[m_Streams.GetCount() - 1]->GetState() == STATE_PLAYING)
-						pStream->Start();
+					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
+					{
+						m_Streams[m_Streams.GetCount() - 1]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
+					}
+
+					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
+					{
+						if(m_Streams[m_Streams.GetCount() - 1]->GetState() == STATE_PLAYING)
+						{
+							// if ANY of the streams are playing then the new track should play!
+							pStream->Start();
+							break;
+						}
+					}
 				}
 
 				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01f;

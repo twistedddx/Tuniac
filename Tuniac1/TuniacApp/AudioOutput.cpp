@@ -3,8 +3,8 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-#define BUFFERSIZEMS			(200)
-#define MAX_BUFFER_COUNT		4
+#define BUFFERSIZEMS			(500)
+#define MAX_BUFFER_COUNT		5
 
 
 #ifndef SAFE_RELEASE
@@ -55,7 +55,7 @@ unsigned long CAudioOutput::ThreadStub(void * in)
 
 unsigned long CAudioOutput::ThreadProc(void)
 {
-	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
 
 	DWORD currentDiskReadBuffer = 0;
 	while(m_bThreadRun)
@@ -108,7 +108,7 @@ unsigned long CAudioOutput::ThreadProc(void)
         // buffers on the queue, so that one buffer is always free for disk I/O.
         //
         XAUDIO2_VOICE_STATE state;
-        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT) && m_bThreadRun)
+        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT-1) && m_bThreadRun)
         {
 			WaitForSingleObject( m_hEvent, m_Interval );
         }
