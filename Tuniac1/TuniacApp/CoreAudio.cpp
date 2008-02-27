@@ -148,23 +148,12 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				if(m_Streams.GetCount())
 				{
-
+					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
+					{
+						m_Streams[ttt]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
+					}
 					pStream->FadeIn(tuniacApp.m_Preferences.GetCrossfadeTime());
 
-					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
-					{
-						m_Streams[m_Streams.GetCount() - 1]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
-					}
-
-					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
-					{
-						if(m_Streams[m_Streams.GetCount() - 1]->GetState() == STATE_PLAYING)
-						{
-							// if ANY of the streams are playing then the new track should play!
-							pStream->Start();
-							break;
-						}
-					}
 				}
 
 				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01f;
@@ -173,12 +162,14 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				m_Streams.AddTail(pStream);
 
+				if(m_Streams.GetCount())
+					pStream->Start();
 				return true;
 			}
 		}
 	}
 
-	tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+	//tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
 
 	return false;
 }

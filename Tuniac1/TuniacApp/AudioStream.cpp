@@ -47,8 +47,6 @@ bool			CAudioStream::SetVolumeScale(float scale)
 
 bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
-	CAutoLock t(&m_Lock);
-
 	//if no buffer available
 	while(!m_Packetizer.IsBufferAvailable())
 	{
@@ -78,31 +76,46 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		//crossfading code
 		if(m_FadeState != FADE_NONE)
 		{
-			for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+			if(m_FadeState == FADE_FADEIN)
 			{
-				for(unsigned long chan=0; chan<m_Channels; chan++)
+				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
 				{
-					pAudioBuffer[x+chan]		*= fVolume;
+					for(unsigned long chan=0; chan<m_Channels; chan++)
+					{
+						pAudioBuffer[x+chan]		*= fVolume;
+					}
+					fVolume += fVolumeChange;
+					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
-				fVolume += fVolumeChange;
-				fVolume = max(0.0f, min(fVolume, 1.0f));
+			}
+			else if(m_FadeState == FADE_FADEOUT)
+			{
+				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+				{
+					for(unsigned long chan=0; chan<m_Channels; chan++)
+					{
+						pAudioBuffer[x+chan]		*= fVolume;
+					}
+					fVolume += fVolumeChange;
+					fVolume = max(0.0f, min(fVolume, 1.0f));
+				}
 			}
 
-			if( fVolume == 1.0 )
+			if( fVolume >= 1.0 )
 			{
 				m_FadeState = FADE_NONE;
 			}
 
 			//crossfade completed, we want to stop this song!
-			if( fVolume == 0.0 )
+			if( fVolume <= 0.0 )
 			{
 				m_FadeState = FADE_NONE;
-					if(!m_bFinishNotify)
-					{
-						m_bIsFinished = true;
-						m_Packetizer.Finished();
-						tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
-					}
+				if(!m_bFinishNotify)
+				{
+					m_bIsFinished = true;
+					m_Packetizer.Finished();
+					tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+				}
 			}
 		}
 
@@ -181,7 +194,7 @@ bool			CAudioStream::IsFinished(void)
 
 bool			CAudioStream::FadeIn(unsigned long ulMS)
 {
-	CAutoLock t(&m_Lock);
+	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEIN;
 	fVolumeChange =  1.0f / ((float)ulMS * (float)m_Output.GetSampleRate());
@@ -191,11 +204,10 @@ bool			CAudioStream::FadeIn(unsigned long ulMS)
 
 bool			CAudioStream::FadeOut(unsigned long ulMS)
 {
-
-	CAutoLock t(&m_Lock);
+	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEOUT;
-	fVolumeChange =  -(1.0f / ((float)ulMS * (float)m_Output.GetSampleRate()));
+	fVolumeChange =  (-1.0f / ((float)ulMS * (float)m_Output.GetSampleRate()));
 	fVolume  = 1.0f;
 	return true;
 }
@@ -241,12 +253,17 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 	unsigned long Pos = MS;
 
+	m_Output.Stop();
 	if(m_pSource->SetPosition(&Pos))
 	{
 		m_SamplesOut = Pos * ((m_Output.GetSampleRate()/1000) * m_Output.GetChannels());
 
 		m_Packetizer.Reset();
 		m_Output.Reset();
+
+		if(m_PlayState == STATE_PLAYING)
+			m_Output.Start();
+
 
 		return true;
 	}
