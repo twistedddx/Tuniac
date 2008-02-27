@@ -14,6 +14,7 @@
 #include "resource.h"
 
 #include "VisualWindow.h"
+#include "AboutWindow.h"
 #include ".\tuniacapp.h"
 
 #define szClassName			TEXT("TUNIACWINDOWCLASS")
@@ -1327,9 +1328,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//help -> about tuniac
 					case ID_HELP_ABOUT:
 						{
-							TCHAR szAbout[512];
-							wnsprintf(szAbout, 512, TEXT("Tuniac Audio Player (Beta)\nBuild: %s\n\nBased on code originally developed by Tony Million.\nNow developed by: Blair 'Blur' McBride.\n\n\nContributers (in chronological order):\n\n%s."), TEXT(__DATE__), TEXT(TUNIACABOUT_CONTRIBUTERS));
-							MessageBox(tuniacApp.getMainWindow(), szAbout, TEXT("About"), MB_OK | MB_DEFBUTTON2 | MB_ICONQUESTION);
+							CAboutWindow about;
+
+							about.Show();
+							//wnsprintf(szAbout, 512, TEXT("Tuniac Audio Player (Beta)\nBuild: %s\n\nBased on code originally developed by Tony Million.\nNow developed by: Blair 'Blur' McBride.\n\n\nContributers (in chronological order):\n\n%s."), TEXT(__DATE__), TEXT(TUNIACABOUT_CONTRIBUTERS));
 						}
 						break;
 

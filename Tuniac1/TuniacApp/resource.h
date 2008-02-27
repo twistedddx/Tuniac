@@ -53,6 +53,8 @@
 #define IDB_REPEATONE                   185
 #define IDB_SHUFFLEOFF                  186
 #define IDB_SHUFFLEON                   187
+#define IDD_DIALOG1                     193
+#define IDD_ABOUTBOX                    193
 #define IDC_ADDOTHER_ADD                1001
 #define IDC_ADDOTHER_EDIT               1002
 #define IDC_ADDOTHER_CANCEL             1003
@@ -159,7 +161,6 @@
 #define IDC_RADIO2                      1140
 #define IDC_AUDIOBUFFER_SMALL           1140
 #define IDC_VISUALPREFS_FPSDISPLAY      1141
-#define IDC_RADIO3                      1141
 #define IDC_AUDIOBUFFER_HUGE            1141
 #define IDC_CHECK1                      1142
 #define IDC_CDSOURCE_IMPORT             1143
@@ -242,7 +243,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        193
+#define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         40149
 #define _APS_NEXT_CONTROL_VALUE         1148
 #define _APS_NEXT_SYMED_VALUE           104

@@ -486,6 +486,17 @@ BEGIN
     CONTROL         "",IDC_SAVINGLIBRARY_PROGRESS,"msctls_progress32",WS_BORDER,7,18,219,14
 END
 
+IDD_ABOUTBOX DIALOGEX 0, 0, 218, 126
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Tuniac..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,160,104,50,14
+    ICON            IDI_TUNIAC,IDC_STATIC,7,7,21,20
+    LTEXT           "LOOOOLZ ITS TUNIAC!!!!",IDC_STATIC,61,14,107,10
+    LTEXT           "Developed by Tony Million, Bits, Daniel Somebody. RA. Brice helped out. Blur did some code then vanished. Mike Vierya did some co development in the beginning. Thanks to people who developed the decoders that Tuniac uses (AAC/APE/OGG etc)",IDC_STATIC,7,38,203,43
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -577,6 +588,14 @@ BEGIN
         RIGHTMARGIN, 226
         TOPMARGIN, 7
         BOTTOMMARGIN, 31
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
     END
 END
 #endif    // APSTUDIO_INVOKED
