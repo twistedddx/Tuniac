@@ -729,8 +729,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										if(CCoreAudio::Instance()->TransitionTo(pIPE))
-											CCoreAudio::Instance()->Play();
+										CCoreAudio::Instance()->TransitionTo(pIPE);
+										//	CCoreAudio::Instance()->Play();
 										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 									}
 								}
