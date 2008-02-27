@@ -146,6 +146,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 				pStream = new CAudioStream(pSource, pEntry, m_pXAudio);
 				CAutoLock	t(&m_Lock);
 
+				bool bShoudStart = false;
 				if(m_Streams.GetCount())
 				{
 					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
@@ -153,6 +154,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 						m_Streams[ttt]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
 					}
 					pStream->FadeIn(tuniacApp.m_Preferences.GetCrossfadeTime());
+					bShoudStart = true;
 
 				}
 
@@ -162,7 +164,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				m_Streams.AddTail(pStream);
 
-				if(m_Streams.GetCount())
+				if(bShoudStart)
 					pStream->Start();
 				return true;
 			}
