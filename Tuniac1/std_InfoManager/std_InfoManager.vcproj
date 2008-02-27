@@ -158,6 +158,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -208,11 +209,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -233,15 +236,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				IgnoreImportLibrary="true"
-				AdditionalDependencies="shlwapi.lib"
+				IgnoreImportLibrary="false"
 				OutputFile="$(OutDir)\std_InfoManager.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				GenerateDebugInformation="false"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
 				FixedBaseAddress="0"
-				DataExecutionPrevention="0"
+				DataExecutionPrevention="2"
+				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -294,7 +300,10 @@
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				Detect64BitPortabilityProblems="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -307,6 +316,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="0"
+				ImportLibrary=""
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"

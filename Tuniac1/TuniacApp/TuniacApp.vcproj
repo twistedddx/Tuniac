@@ -54,7 +54,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x501;  VISTAAUDIOHACK"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502"
 				StringPooling="true"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
@@ -150,7 +150,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x501"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -175,7 +175,7 @@
 				SuppressStartupBanner="true"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/TuniacApp.pdb"
+				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -226,12 +226,21 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -239,6 +248,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				SetChecksum="true"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -299,16 +316,16 @@
 				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="0"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x501"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600"
 				TreatWChar_tAsBuiltInType="true"
 				OpenMP="false"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="1"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
 				CompileAs="0"
 			/>
@@ -331,6 +348,8 @@
 				GenerateMapFile="false"
 				MapExports="false"
 				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
 				SetChecksum="true"
 				RandomizedBaseAddress="0"
 				FixedBaseAddress="0"

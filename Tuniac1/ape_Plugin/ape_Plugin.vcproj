@@ -205,7 +205,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -219,6 +225,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="2"
+				ImportLibrary=""
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -269,11 +283,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				UsePrecompiledHeader="0"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
@@ -293,9 +309,13 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\ape_Plugin.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				GenerateDebugInformation="false"
 				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
 				FixedBaseAddress="0"
 				ImportLibrary=""
 				TargetMachine="17"
