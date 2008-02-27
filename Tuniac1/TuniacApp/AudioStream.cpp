@@ -189,6 +189,7 @@ bool			CAudioStream::FadeIn(unsigned long ulMS)
 
 bool			CAudioStream::FadeOut(unsigned long ulMS)
 {
+
 	CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEOUT;

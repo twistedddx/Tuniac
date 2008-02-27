@@ -50,9 +50,8 @@ bool CMP3Decoder::GetXingHeader(unsigned char * XingBuffer)
 
 	m_bXingValid = false;
 
-	if(strncmp((char *)XingBuffer, "Xing", 4))
-		if(strncmp((char *)XingBuffer, "Info", 4))
-			return false;
+	if((strncmp((char *)XingBuffer, "Xing", 4)!=0) && (strncmp((char *)XingBuffer, "Info", 4) != 0))
+		return false;
 
 	XingBuffer += 4;
 
@@ -108,13 +107,13 @@ bool CMP3Decoder::GetStreamData(void)
 
 			m_StreamDataLength = GetFileSize(m_hFile, NULL) - m_ID3v2Length;
 			// TODO: check for ID3 TAG at the end of the file and subtract
-			// also remove the size of this current header
-			m_StreamDataLength -= fr.m_Header.GetTotalFrameSize();
 
 			m_NumFrames = m_StreamDataLength / fr.m_Header.GetTotalFrameSize(); 
 		}
 		else
 		{
+			// also remove the size of this current header
+			m_StreamDataLength -= fr.m_Header.GetTotalFrameSize();
 			if(m_bXingValid == false)
 				m_pHelper->LogConsoleMessage(TEXT("MP3 Decoder"), TEXT("Mp3 has Xing header but it is invalid."));
 		}
