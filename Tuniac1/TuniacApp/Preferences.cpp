@@ -24,7 +24,7 @@
 #define CROSSFADETIME			TEXT("CrossFadeTime")
 #define CROSSFADEENABLED		TEXT("CrossFadeEnabled")
 
-#define OUTPUTDEVICE			TEXT("OutputDevice")
+#define AUDIOBUFFERING			TEXT("AudioBuffering")
 
 #define VOLUMESCALE 			TEXT("VolumeScale")
 
@@ -508,17 +508,6 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(2, 15));
 				SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_SETPOS,		TRUE, pPrefs->m_CrossfadeTime);
 
-				SendDlgItemMessage(hDlg, IDC_DEVICESELECTOR_COMBO, CB_ADDSTRING, 0, (LPARAM)TEXT("Wave Mapper"));
-				SendDlgItemMessage(hDlg, IDC_DEVICESELECTOR_COMBO, CB_SETCURSEL, 0, 0);
-				int j;
-				int i = (int)waveOutGetNumDevs();
-				for(j = 0; j < i; j++) {
-					WAVEOUTCAPS woc;
-					waveOutGetDevCaps(j, &woc, sizeof(WAVEOUTCAPS));
-					SendDlgItemMessage(hDlg, IDC_DEVICESELECTOR_COMBO, CB_ADDSTRING, 0, (LPARAM)woc.szPname);
-				}
-				SendDlgItemMessage(hDlg, IDC_DEVICESELECTOR_COMBO, CB_SETCURSEL, pPrefs->m_OutputDevice + 1, 0);
-
 				if(pPrefs->m_CrossfadeEnabled == 0)
 				{
 					EnableWindow(GetDlgItem(hDlg, IDC_CROSSFADE_TIME_TEXT), FALSE);
@@ -530,6 +519,31 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					EnableWindow(GetDlgItem(hDlg, IDC_CROSSFADE_TIME_TEXT), TRUE);
 					EnableWindow(GetDlgItem(hDlg, IDC_CROSSFADE_TIME_SLIDER), TRUE);
 					SendDlgItemMessage(hDlg, IDC_CROSSFADE_ENABLE, BM_SETCHECK, BST_CHECKED, 0);
+				}
+
+				switch(pPrefs->m_AudioBuffering)
+				{
+					case 0:
+						{
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_CHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_UNCHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_UNCHECKED, 0);
+						}
+						break;
+					case 1:
+						{
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_UNCHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_CHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_UNCHECKED, 0);
+						}
+						break;
+					case 2:
+						{
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_UNCHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_UNCHECKED, 0);
+							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_CHECKED, 0);
+						}
+						break;
 				}
 			}
 			break;
@@ -558,13 +572,26 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							}
 						}
 						break;
-						
-					case IDC_DEVICESELECTOR_COMBO:
+					case IDC_AUDIOBUFFER_HUGE:
 						{
-							pPrefs->m_OutputDevice = SendDlgItemMessage(hDlg, IDC_DEVICESELECTOR_COMBO, CB_GETCURSEL, 0, 0) - 1;
+							pPrefs->m_AudioBuffering = 2;
 						}
 						break;
+
+					case IDC_AUDIOBUFFER_MEDIUM:
+						{
+							pPrefs->m_AudioBuffering = 1;
+						}
+						break;
+
+					case IDC_AUDIOBUFFER_SMALL:
+						{
+							pPrefs->m_AudioBuffering = 0;
+						}
+						break;	
 				}
+
+
 			}
 			break;
 
@@ -1062,7 +1089,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_CrossfadeEnabled			= TRUE;
 	m_CrossfadeTime				= 6;
 
-	m_OutputDevice				= 0;
+	m_AudioBuffering			= 1;
 
 	m_VolumeScale				= 1.0;
 
@@ -1272,10 +1299,10 @@ bool CPreferences::LoadPreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegQueryValueEx(	hTuniacPrefKey,
-							OUTPUTDEVICE,
+							AUDIOBUFFERING,
 							NULL,
 							&Type,
-							(LPBYTE)&m_OutputDevice,
+							(LPBYTE)&m_AudioBuffering,
 							&Size);
 
 		Size = sizeof(int);
@@ -1535,10 +1562,10 @@ bool CPreferences::SavePreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegSetValueEx(	hTuniacPrefKey, 
-						OUTPUTDEVICE, 
+						AUDIOBUFFERING, 
 						0,
 						Type,
-						(LPBYTE)&m_OutputDevice, 
+						(LPBYTE)&m_AudioBuffering, 
 						Size);
 
 
@@ -1966,15 +1993,12 @@ void CPreferences::SetCrossfadeTime(int time)
 {
 	m_CrossfadeTime = time;
 }
-int CPreferences::GetOutputDevice(void)
+
+int CPreferences::GetAudioBuffering(void)
 {
-	if(m_OutputDevice == 0)
-		return 0;
+	return m_AudioBuffering;
 
-	return m_OutputDevice;
 }
-
-
 
 float	CPreferences::GetVolumePercent(void)
 {

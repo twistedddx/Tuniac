@@ -155,8 +155,12 @@
 #define IDC_COMBO1                      1138
 #define IDC_DEVICESELECTOR_COMBO        1138
 #define IDC_RADIO1                      1139
+#define IDC_AUDIOBUFFER_MEDIUM          1139
 #define IDC_RADIO2                      1140
+#define IDC_AUDIOBUFFER_SMALL           1140
 #define IDC_VISUALPREFS_FPSDISPLAY      1141
+#define IDC_RADIO3                      1141
+#define IDC_AUDIOBUFFER_HUGE            1141
 #define IDC_CHECK1                      1142
 #define IDC_CDSOURCE_IMPORT             1143
 #define IDC_LOGVIEW_EDIT                1144
