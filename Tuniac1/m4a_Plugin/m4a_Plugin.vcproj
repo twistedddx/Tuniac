@@ -75,7 +75,7 @@
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/m4a_Plugin.lib"
+				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -152,9 +152,9 @@
 				OutputFile="$(OutDir)/m4a_Plugin.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/m4a_Plugin.pdb"
+				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/m4a_Plugin.lib"
+				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -203,7 +203,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -217,6 +223,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="2"
+				ImportLibrary=""
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -266,12 +280,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="USE_TAGGING"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -286,12 +305,14 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)/m4a_Plugin.dll"
-				LinkIncremental="1"
+				LinkIncremental="0"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/m4a_Plugin.lib"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
+				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
