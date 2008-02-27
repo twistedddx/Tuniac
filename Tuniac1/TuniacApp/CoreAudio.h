@@ -27,6 +27,10 @@ protected:
 	Array<IAudioSourceSupplier *, 2>	m_AudioSources;
 
 	CCriticalSection					m_Lock;
+
+	IXAudio2				*			m_pXAudio;
+    IXAudio2MasteringVoice	*			m_pMasteringVoice;
+
 public:
 	CCoreAudio(void);
 	~CCoreAudio(void);

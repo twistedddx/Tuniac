@@ -3,7 +3,8 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry)
+CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio) :
+	m_Output(pXAudio)
 {
 	m_pEntry		= pEntry;
 	m_bEntryPlayed	= false;
