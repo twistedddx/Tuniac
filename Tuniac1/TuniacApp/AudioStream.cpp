@@ -47,6 +47,8 @@ bool			CAudioStream::SetVolumeScale(float scale)
 
 bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
+	CAutoLock t(&m_Lock);
+
 	//if no buffer available
 	while(!m_Packetizer.IsBufferAvailable())
 	{

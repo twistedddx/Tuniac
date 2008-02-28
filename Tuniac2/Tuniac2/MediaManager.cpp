@@ -241,7 +241,7 @@ bool CMediaManager::ShowAddFiles(HWND hWndParent)
 
 bool CMediaManager::AddFile(String filename)
 {
-	String alreadyExistsSQL = "SELECT count(*) FROM MediaLibrary WHERE Filename = ?;";
+	String alreadyExis tsSQL = "SELECT count(*) FROM MediaLibrary WHERE Filename = ?;";
 
 	try
 	{

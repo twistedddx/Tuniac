@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tuniac2", "Tuniac2\Tuniac2.vcproj", "{91610FA8-5E4E-46DD-AB8B-8D661C4E26A2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Globals", "Globals\Globals.vcproj", "{25DF3FBA-DF2D-493A-A70B-C298D42162FC}"
