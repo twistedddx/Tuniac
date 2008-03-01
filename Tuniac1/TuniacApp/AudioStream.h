@@ -37,7 +37,6 @@ public:
 	bool								m_bMixNotify;
 	bool								m_bFinishNotify;
 
-	IPlaylistEntry				*		m_pEntry;
 	bool								m_bEntryPlayed;
 
 	unsigned long						m_Channels;
@@ -45,7 +44,7 @@ public:
 	unsigned long						m_CrossfadeTimeMS;
 
 public:
-	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize = 250);
+	CAudioStream(IAudioSource * pSource, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize = 250);
 	~CAudioStream(void);
 
 	bool Initialize(void);
