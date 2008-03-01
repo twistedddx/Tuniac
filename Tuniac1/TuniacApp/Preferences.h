@@ -45,7 +45,7 @@ protected:
 
 	int			m_AudioBuffering;
 
-	float		m_VolumeScale;
+	float		m_Volume;
 
 	RECT		m_MainWindowRect;
 	BOOL		m_MainWindowMaximized;
@@ -139,7 +139,7 @@ public:
 	int		GetAudioBuffering(void);
 
 	float	GetVolumePercent(void);
-	void	SetVolumeScale(float Scale);
+	void	SetVolumePercent(float percent);
 
 	int		GetPlaylistViewNumColumns(void);
 	void	SetPlaylistViewNumColumns(int iColumns);

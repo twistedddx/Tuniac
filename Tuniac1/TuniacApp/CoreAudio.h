@@ -31,6 +31,11 @@ protected:
 	IXAudio2				*			m_pXAudio;
     IXAudio2MasteringVoice	*			m_pMasteringVoice;
 
+	unsigned long						m_CrossfadeTimeMS;
+	unsigned long						m_BufferSizeMS;
+
+	float								m_fVolume;
+
 public:
 	CCoreAudio(void);
 	~CCoreAudio(void);
@@ -64,8 +69,11 @@ public:
 	void				CheckOldStreams(void);
 
 	float				GetVolumePercent();
-	void				SetVolumeScale(float scale);
+	void				SetVolumePercent(float fPercent);
 
+	void				SetCrossfadeTime(unsigned long ulMS);
+	void				SetAudioBufferSize(unsigned long ulMS) { m_BufferSizeMS = ulMS; }
+	
 public:
 	void				UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID);
 	void				LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage);

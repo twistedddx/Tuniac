@@ -10,7 +10,10 @@
 #endif
 
 
-CCoreAudio::CCoreAudio(void)
+CCoreAudio::CCoreAudio(void) : 
+	m_CrossfadeTimeMS(6000),
+	m_BufferSizeMS(250),
+	m_fVolume(100.0f)
 {
 }
 
@@ -143,7 +146,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource);
 			if(pSource)
 			{
-				pStream = new CAudioStream(pSource, pEntry, m_pXAudio);
+				pStream = new CAudioStream(pSource, pEntry, m_pXAudio, m_BufferSizeMS);
 				CAutoLock	t(&m_Lock);
 
 				bool bShoudStart = false;
@@ -151,18 +154,17 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 				{
 					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
 					{
-						m_Streams[ttt]->FadeOut(tuniacApp.m_Preferences.GetCrossfadeTime());
+						m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
 					}
-					pStream->FadeIn(tuniacApp.m_Preferences.GetCrossfadeTime());
+					pStream->FadeIn(m_CrossfadeTimeMS);
 					bShoudStart = true;
 
 				}
 
-				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01f;
+				float scale = m_fVolume * 0.01f;
 
 				pStream->SetVolumeScale(scale);
-				pStream->SetCrossfadePoint(tuniacApp.m_Preferences.GetCrossfadeTime() * 1000);
-
+				pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
 				m_Streams.AddTail(pStream);
 
 				if(bShoudStart)
@@ -171,8 +173,6 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			}
 		}
 	}
-
-	//tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
 
 	return false;
 }
@@ -400,27 +400,27 @@ void CCoreAudio::CheckOldStreams(void)
 
 float CCoreAudio::GetVolumePercent()
 {
-	return tuniacApp.m_Preferences.GetVolumePercent();
+	return m_fVolume;
 }
 
 
-void CCoreAudio::SetVolumeScale(float scale)
+void CCoreAudio::SetVolumePercent(float fVolume)
 {
-	if(scale < 0.0)
+	if(fVolume < 0.0)
 	{
-		scale = 0.0;
+		fVolume = 0.0;
 	}
-	if(scale > 1.0)
+	if(fVolume > 100.0)
 	{
-		scale = 1.0;
+		fVolume = 100.0;
 	}
+
+	m_fVolume = fVolume;
 
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
-		m_Streams[x]->SetVolumeScale(scale);
+		m_Streams[x]->SetVolumeScale(m_fVolume / 100.0f);
 	}
-
-	tuniacApp.m_Preferences.SetVolumeScale(scale);
 }
 
 void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID)
@@ -442,4 +442,14 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
+}
+
+void CCoreAudio::SetCrossfadeTime(unsigned long ulMS) 
+{ 
+	m_CrossfadeTimeMS = ulMS; 
+
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->SetCrossfadePoint(ulMS);
+	}
 }

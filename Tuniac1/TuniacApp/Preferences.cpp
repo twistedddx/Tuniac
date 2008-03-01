@@ -26,7 +26,7 @@
 
 #define AUDIOBUFFERING			TEXT("AudioBuffering")
 
-#define VOLUMESCALE 			TEXT("VolumeScale")
+#define VOLUME 			TEXT("Volume")
 
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
@@ -1091,7 +1091,7 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_AudioBuffering			= 1;
 
-	m_VolumeScale				= 1.0;
+	m_Volume					= 100.0;
 
 	m_ShuffleState				= FALSE;
 
@@ -1308,10 +1308,10 @@ bool CPreferences::LoadPreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegQueryValueEx(	hTuniacPrefKey,
-							VOLUMESCALE,
+							VOLUME,
 							NULL,
 							&Type,
-							(LPBYTE)&m_VolumeScale,
+							(LPBYTE)&m_Volume,
 							&Size);
 
 		Size = sizeof(int);
@@ -1572,10 +1572,10 @@ bool CPreferences::SavePreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegSetValueEx(	hTuniacPrefKey, 
-						VOLUMESCALE, 
+						VOLUME, 
 						0,
 						Type,
-						(LPBYTE)&m_VolumeScale, 
+						(LPBYTE)&m_Volume, 
 						Size);
 
 		Size = sizeof(int);
@@ -2007,12 +2007,12 @@ int CPreferences::GetAudioBuffering(void)
 
 float	CPreferences::GetVolumePercent(void)
 {
-	return m_VolumeScale * 100.0f;
+	return m_Volume;
 }
 
-void	CPreferences::SetVolumeScale(float Scale)
+void	CPreferences::SetVolumePercent(float fPercent)
 {
-	m_VolumeScale = Scale;
+	m_Volume = fPercent;
 }
 
 int		CPreferences::GetPlaylistViewNumColumns(void)
