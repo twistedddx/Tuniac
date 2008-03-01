@@ -196,8 +196,6 @@ bool		CMP3Decoder::SetState(unsigned long State)
 
 bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	static float SampleBuffer[2304];
-
 	if(m_Splitter.Process(m_hFile, m_Frame))
 	{
 		if((m_Frame.m_Header.GetLayer() != m_LastLayer) || (m_pDecoder == NULL))
@@ -223,7 +221,7 @@ bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 			}
 		}
 
-		if(!m_pDecoder->ProcessFrame(&m_Frame, SampleBuffer, NumSamples))
+		if(!m_pDecoder->ProcessFrame(&m_Frame, m_SampleBuffer, NumSamples))
 		{
 			*ppBuffer	= NULL;
 			*NumSamples = 0;
@@ -232,7 +230,7 @@ bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 			return true;
 		}
 
-		*ppBuffer = SampleBuffer;
+		*ppBuffer = m_SampleBuffer;
 
 		return(true);
 	}

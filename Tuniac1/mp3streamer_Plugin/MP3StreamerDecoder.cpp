@@ -56,7 +56,7 @@ bool		CMP3StreamerDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSampl
 {
 	unsigned long		BytesUsed = 0;
 
-	static float SampleBuffer[2304];
+	float SampleBuffer[2304];
 
 	unsigned long BytesAvail = 0;
 

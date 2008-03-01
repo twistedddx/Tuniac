@@ -3,147 +3,135 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
+#define NiceCloseHandle(handle)  if(handle) { CloseHandle(handle); handle = NULL; }
+
 CAudioPacketizer::CAudioPacketizer(void) :
-	m_pMainBuffer(NULL),
 	m_PacketSize(0),
-	m_ReadBlock(0),
-	m_WriteBlock(0),
-	m_Finished(false),
-	m_OverflowSize(0)
+	m_hReadEnd(NULL),
+	m_hWriteEnd(NULL),
+	m_bFinished(false)
+
 {
 }
 
 CAudioPacketizer::~CAudioPacketizer(void)
 {
-	SetPacketSize(0);
 }
 
 bool CAudioPacketizer::SetPacketSize(unsigned long Size)
 {
-	if(Size != m_PacketSize)
-	{
-		if(m_pMainBuffer)
-		{
-			delete [] m_pMainBuffer;
-			m_pMainBuffer = NULL;
-		}
+	NiceCloseHandle(m_hReadEnd);
+	NiceCloseHandle(m_hWriteEnd);
 
-		if(Size)
-		{
-			m_pMainBuffer	= new float[Size * 16];
-			m_PacketSize	= Size;
-
-			for(int x=0; x<16; x++)
-			{
-				m_pBufferArray[x] = &m_pMainBuffer[x*Size];
-			}
-
-			m_pOverflowBuffer = new float[Size];
-		}
-	}
-
-	m_ReadBlock		= 0;
-	m_WriteBlock	= 0;
-	m_OverflowSize	= 0;
-	m_Finished		= false;
+	m_PacketSize		= Size;
+	m_PacketSizeBytes	= Size*sizeof(float);
+	CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, (Size*sizeof(float))*3);
 
 	return(true);
 }
 
 bool CAudioPacketizer::WriteData(float * Data, unsigned long Samples)
 {
-	unsigned long SamplesLeft = Samples;
+	unsigned long BytesWritten;
 
-	if(Samples >= m_PacketSize*16)
-		return(false);
-
-	if(m_OverflowSize)
+	if(!WriteFile(m_hWriteEnd, Data, Samples*sizeof(float), &BytesWritten, NULL))
 	{
-		if((m_OverflowSize+Samples) >= m_PacketSize) // if overflow and new samples can create a packet make one
-		{
-			CopyFloat(m_pBufferArray[m_WriteBlock & 0x0f],					m_pOverflowBuffer,	m_OverflowSize);
-			CopyFloat(&m_pBufferArray[m_WriteBlock & 0x0f][m_OverflowSize],	Data,				m_PacketSize - m_OverflowSize);
-
-			SamplesLeft -= (m_PacketSize - m_OverflowSize);
-			Data = &Data[m_PacketSize - m_OverflowSize];
-			m_WriteBlock++;
-			m_OverflowSize = 0;
-		}
-	}
-
-	while(SamplesLeft >= m_PacketSize)	// if the samples we have left can make packets
-	{
-		CopyFloat(m_pBufferArray[m_WriteBlock & 0x0f], Data, m_PacketSize);
-
-		SamplesLeft -= (m_PacketSize);
-		Data = &Data[m_PacketSize];
-		m_WriteBlock++;
+		return false;
 	}
 	
-	if(SamplesLeft)
-	{
-		CopyFloat(&m_pOverflowBuffer[m_OverflowSize], Data, SamplesLeft);
-		m_OverflowSize += SamplesLeft;
-	}
-
-	return(true);
-}
-
-bool CAudioPacketizer::Finished(void)
-{
-	float * pData = m_pBufferArray[m_WriteBlock & 0x0f];
-	for(unsigned long x=0; x<m_PacketSize; x++)
-	{
-		pData[x] = 0.0f;
-	}
-
-	if(m_OverflowSize)
-	{
-		CopyFloat(pData, m_pOverflowBuffer, m_OverflowSize);
-		m_OverflowSize = 0;
-	}
-
-	m_WriteBlock++;
-
 	return true;
 }
 
 bool	CAudioPacketizer::IsBufferAvailable(void)
 {
-	if(m_ReadBlock >= m_WriteBlock)
+	unsigned long BytesAvailable;
+
+	if(IsFinished())
 	{
-		return(false);
+		// return true here anyway, because we'll always supply an empty buffer for as long as it takes
+		return true;
 	}
 
-	return true;
+
+	if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
+	{
+		if(BytesAvailable > m_PacketSizeBytes)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool	CAudioPacketizer::GetBuffer(float * ToHere)
 {
-	CopyFloat(ToHere, m_pBufferArray[m_ReadBlock & 0x0f], m_PacketSize);
+	if(IsFinished())
+	{
+		// ok this is the last packet. 
+		//lets read whatever else is in the pipe and fill the rest with zeros
+		// then return true!!
 
-	return true;
+		// lets wipe the entire buffer ahead of time then overwrite it at the beginning!
+		ZeroMemory(ToHere, m_PacketSizeBytes);
+
+		unsigned long BytesAvailable;
+		unsigned long BytesRead;
+		if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
+		{
+			if(BytesAvailable)
+			{
+				if(ReadFile(m_hReadEnd, ToHere, BytesAvailable, &BytesRead, NULL))
+				{
+					// ok we read the data now to wipe the rest of the buffer.
+				}
+			}
+		}
+
+		return true;
+	}
+
+	if(IsBufferAvailable())
+	{
+		unsigned long BytesRead;
+
+		if(ReadFile(m_hReadEnd, ToHere, m_PacketSizeBytes, &BytesRead, NULL))
+		{
+			return true;
+		}
+	}
+
+
+	return false;
 }
 
-bool CAudioPacketizer::Advance(unsigned long Packets)
+void CAudioPacketizer::Reset(void)
 {
-	m_ReadBlock += Packets;
-	return true;
+	//FlushFileBuffers
+	SetPacketSize(m_PacketSize);
 }
 
-bool CAudioPacketizer::Rewind(unsigned long Packets)
+void CAudioPacketizer::Finished(void)
 {
-	m_ReadBlock -= Packets;
-
-	if(m_ReadBlock<0)
-		m_ReadBlock = 0;
-
-	return true;
+	m_bFinished = true;
 }
-bool CAudioPacketizer::Reset(void)
+
+bool CAudioPacketizer::IsFinished(void)
 {
-	m_ReadBlock		= 0;
-	m_WriteBlock	= 0;
-	m_OverflowSize	= 0;
-	return true;
+	return m_bFinished;
 }
+
+bool CAudioPacketizer::AnyMoreBuffer(void)
+{
+	unsigned long BytesAvailable;
+	if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
+	{
+		if(BytesAvailable)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+

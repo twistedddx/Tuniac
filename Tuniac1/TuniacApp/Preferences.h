@@ -131,6 +131,8 @@ public:
 	void	SetMainWindowMaximized(bool bMaximized);
 	bool	GetMainWindowMaximized(void);
 
+	bool	CrossfadingEnabled(void);
+
 	int		GetCrossfadeTime(void);
 	void	SetCrossfadeTime(int time);
 

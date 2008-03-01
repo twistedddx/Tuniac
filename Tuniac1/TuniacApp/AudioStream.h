@@ -42,12 +42,18 @@ public:
 
 	unsigned long						m_Channels;
 
+	unsigned long						m_CrossfadeTimeMS;
+
 public:
 	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio);
 	~CAudioStream(void);
 
+	bool Initialize(void);
+	bool Shutdown(void);
+
 public:
 	bool GetBuffer(float * pAudioBuffer, unsigned long NumSamples);
+	bool ServiceStream(void);			// new so audio playback thread can produce a new buffer while its not doing anything else!!!
 
 public:
 
@@ -69,4 +75,6 @@ public:
 	bool			Stop(void);
 
 	bool			GetVisData(float * ToHere, unsigned long ulNumSamples);
+
+	void			SetCrossfadePoint(unsigned long ulCrossfadeTimeMS) { m_CrossfadeTimeMS = ulCrossfadeTimeMS; }
 };

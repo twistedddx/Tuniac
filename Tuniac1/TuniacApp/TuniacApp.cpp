@@ -716,27 +716,31 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//end of song, or start of crossfade. Next Song needed
 					case NOTIFY_MIXPOINTREACHED:
 						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-							//do we have a valid previous song, if not we have run out of songs(end of playlist?)
-							if(pPlaylist->Next())
+							// we only care about this if crossfading is enabled, Core Audio will notify us anyway, its up to us to ignore it!!!
+							if(m_Preferences.CrossfadingEnabled())
 							{
-								//play the current song
-								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-								if(pIPE)
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+								//do we have a valid previous song, if not we have run out of songs(end of playlist?)
+								if(pPlaylist->Next())
 								{
-									//play the song we got
+									//play the current song
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										CCoreAudio::Instance()->TransitionTo(pIPE);
-										//	CCoreAudio::Instance()->Play();
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+										//play the song we got
+										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+										if(pIPE)
+										{
+											CCoreAudio::Instance()->TransitionTo(pIPE);
+											//	CCoreAudio::Instance()->Play();
+											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+										}
 									}
 								}
+								//else
+								//no next song??
 							}
-							//else
-							//no next song??
 						}
 						break;
 
@@ -744,7 +748,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case NOTIFY_PLAYBACKFINISHED:
 						{
 							//crossfade would have triggered mixpointreached itself n seconds ago
-							if(!m_Preferences.GetCrossfadeTime())
+							// Core Audio will send this too. its up to us to decide what we want to do about it eh
+							if(!m_Preferences.CrossfadingEnabled())
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 

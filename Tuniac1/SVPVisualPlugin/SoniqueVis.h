@@ -78,12 +78,14 @@ class SoniqueQueryInterface : public QueryInterface
 {
 	bool QueryInt(char* expression, int* result)
 	{
+		*result = 0;
+
 		return false;
 	}
 
 	char* QueryString(char* expression)
 	{
-		return (char*)NULL;
+		return (char*)"TestThing";
 	}
 
 	void FreeString(char* String)
