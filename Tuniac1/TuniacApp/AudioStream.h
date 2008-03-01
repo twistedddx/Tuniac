@@ -45,7 +45,7 @@ public:
 	unsigned long						m_CrossfadeTimeMS;
 
 public:
-	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio);
+	CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize = 250);
 	~CAudioStream(void);
 
 	bool Initialize(void);

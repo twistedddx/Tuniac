@@ -431,7 +431,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 		case WM_HSCROLL:
 			{
 				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
-				CCoreAudio::Instance()->SetVolumeScale(vol/100.0f);
+				CCoreAudio::Instance()->SetVolumePercent((float)vol);
 			}
 			break;
 

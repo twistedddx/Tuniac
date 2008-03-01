@@ -98,6 +98,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(!CCoreAudio::Instance()->Startup())
 		return false;
 
+	CCoreAudio::Instance()->SetVolumePercent(m_Preferences.GetVolumePercent());
+
 	if (!m_History.Initialize())
 		return false;
 
@@ -219,6 +221,7 @@ bool CTuniacApp::Shutdown()
 {
 	//close tuniac
 
+	m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
 
 	m_SysEvents.Shutdown();
 	m_PluginManager.Shutdown();
@@ -711,6 +714,24 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_APP:
 			{
+				// lets just keep core Audio up to date anyway!!!
+				CCoreAudio::Instance()->SetCrossfadeTime(m_Preferences.GetCrossfadeTime() * 1000);
+
+				unsigned long ulBuffer;
+				if(m_Preferences.GetAudioBuffering() == 0)
+				{
+					ulBuffer = 250;
+				}
+				else if(m_Preferences.GetAudioBuffering() == 1)
+				{
+					ulBuffer = 350;
+				}
+				else if(m_Preferences.GetAudioBuffering() == 2)
+				{
+					ulBuffer = 500;
+				}
+				CCoreAudio::Instance()->SetAudioBufferSize(ulBuffer);
+
 				switch (wParam)
 				{
 					//end of song, or start of crossfade. Next Song needed
@@ -846,12 +867,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 				else if(wParam == m_aVolUp)
 				{
-					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) + 0.05f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 0.5f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aVolDn)
 				{
-					CCoreAudio::Instance()->SetVolumeScale((CCoreAudio::Instance()->GetVolumePercent() * 0.01f) - 0.05f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 0.5f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == m_aSeekForward)

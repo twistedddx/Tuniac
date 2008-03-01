@@ -21,7 +21,7 @@
 //					m_BlockSizeBytes is in bytes calculated from the size of a block * size of a sample!!!!
 //					SO FUCKING REMEMBER THIS YOU IDIOTS
 
-CAudioOutput::CAudioOutput(IXAudio2 * pXAudio) : 
+CAudioOutput::CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize) : 
 	m_hThread(NULL),
 	m_hEvent(NULL),
 	m_pSourceVoice(NULL),
@@ -34,26 +34,7 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio) :
 	m_pfAudioBuffer = NULL;
 	OutputDebugString(TEXT("CAudioOutput Created\r\n"));
 
-	switch(tuniacApp.m_Preferences.GetAudioBuffering())
-	{
-		case 0:
-			{
-				m_ulBuffersizeMS = 250;
-			}
-			break;
-
-		case 1:
-			{
-				m_ulBuffersizeMS = 500;
-			}
-			break;
-
-		case 2:
-			{
-				m_ulBuffersizeMS = 1000;
-			}
-			break;
-	}
+	m_ulBuffersizeMS = ulBufferSize;
 }
 
 CAudioOutput::~CAudioOutput(void)

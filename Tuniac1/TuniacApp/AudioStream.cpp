@@ -3,8 +3,8 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio) :
-	m_Output(pXAudio)
+CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize) :
+	m_Output(pXAudio, ulAudioBufferSize)
 {
 	m_pEntry		= pEntry;
 	m_bEntryPlayed	= false;
@@ -112,6 +112,17 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					}
 					fVolume += fVolumeChange;
 					fVolume = max(0.0f, min(fVolume, 1.0f));
+				}
+			}
+			else
+			{
+				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+				{
+					for(unsigned long chan=0; chan<m_Channels; chan++)
+					{
+						// and apply the volume
+						pAudioBuffer[x+chan]		*= fVolumeScale;
+					}
 				}
 			}
 
