@@ -161,6 +161,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 				float scale = tuniacApp.m_Preferences.GetVolumePercent() * 0.01f;
 
 				pStream->SetVolumeScale(scale);
+				pStream->SetCrossfadePoint(tuniacApp.m_Preferences.GetCrossfadeTime() * 1000);
 
 				m_Streams.AddTail(pStream);
 

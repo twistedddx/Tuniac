@@ -12,8 +12,9 @@ class CAPEDecoder :
 {
 protected:
 	float				m_Buffer[4096];
-	IAPEDecompress*		MACDecompressor;
+	IAPEDecompress	*	MACDecompressor;
 
+	char			*	pRawData;
 public:
 	CAPEDecoder(void);
 	~CAPEDecoder(void);

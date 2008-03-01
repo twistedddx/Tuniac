@@ -230,7 +230,7 @@ bool SVPRenderer::RenderVisual(void)
 
 		unsigned long temp = 0;
 
-		static float vis[1024*6];
+		float vis[1024*6];
 		this->m_pHelper->GetVisData(vis, 512 * NumChannels);
 
 		for(int x=0; x<512; x++)

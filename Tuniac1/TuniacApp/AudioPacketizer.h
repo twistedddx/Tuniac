@@ -3,20 +3,14 @@
 class CAudioPacketizer
 {
 protected:
-
-	float *			m_pMainBuffer;
-	float *			m_pBufferArray[16];
-
-
 	unsigned long	m_PacketSize;
+	unsigned long	m_PacketSizeBytes;
 
-	long			m_ReadBlock;
-	long			m_WriteBlock;
+	bool			m_bFinished;
 
-	float *			m_pOverflowBuffer;
-	unsigned long	m_OverflowSize;
 
-	bool			m_Finished;
+	HANDLE			m_hReadEnd;
+	HANDLE			m_hWriteEnd;
 
 public:
 	CAudioPacketizer(void);
@@ -25,12 +19,13 @@ public:
 	bool SetPacketSize(unsigned long Size);
 
 	bool WriteData(float * Data, unsigned long Samples);
-	bool Finished(void);
 
-	bool	IsBufferAvailable(void);
-	bool	GetBuffer(float * ToHere);
+	bool IsBufferAvailable(void);
+	bool GetBuffer(float * ToHere);
 
-	bool Advance(unsigned long Packets = 1);
-	bool Rewind(unsigned long Packets);
-	bool Reset(void);
+	void Reset(void);
+
+	void Finished(void);
+	bool IsFinished(void);
+	bool AnyMoreBuffer(void);
 };

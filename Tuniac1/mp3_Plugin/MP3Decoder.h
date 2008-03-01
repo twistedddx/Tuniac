@@ -26,6 +26,9 @@ protected:
 	unsigned long				m_VbrScale;
 	unsigned char				m_TOC[100];
 
+	float						m_SampleBuffer[2304];
+
+
 	bool						m_bXingValid;
 
 	IAudioSourceHelper		*	m_pHelper;

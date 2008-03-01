@@ -2,7 +2,8 @@
 #include "APEdecoder.h"
 
 
-CAPEDecoder::CAPEDecoder(void)
+CAPEDecoder::CAPEDecoder(void) :
+	pRawData(NULL)
 {
 }
 
@@ -24,6 +25,13 @@ bool CAPEDecoder::Open(LPTSTR szSource)
 bool CAPEDecoder::Close()
 {
 	delete MACDecompressor;
+
+	if(pRawData)
+	{
+		delete [] pRawData;
+		pRawData = NULL;
+	}
+
 	return true;
 }
 
@@ -79,8 +87,6 @@ bool		CAPEDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	int nBlockAlign		= MACDecompressor->GetInfo(APE_INFO_BLOCK_ALIGN);
 	int nBitsPerSample	= MACDecompressor->GetInfo(APE_INFO_BITS_PER_SAMPLE);
 	int nBytesPerSample	= MACDecompressor->GetInfo(APE_INFO_BYTES_PER_SAMPLE);
-
-	static char * pRawData = NULL;
 	
 	if(!pRawData)
 	{

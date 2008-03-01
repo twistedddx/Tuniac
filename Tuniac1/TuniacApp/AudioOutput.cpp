@@ -3,7 +3,7 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-#define MAX_BUFFER_COUNT		5
+#define MAX_BUFFER_COUNT		10
 
 
 #ifndef SAFE_RELEASE
@@ -75,12 +75,9 @@ unsigned long CAudioOutput::ThreadStub(void * in)
 
 unsigned long CAudioOutput::ThreadProc(void)
 {
-	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-
 	DWORD currentDiskReadBuffer = 0;
 	while(m_bThreadRun)
 	{
-
 		float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
 
 		if(m_pCallback && m_bPlaying)
@@ -131,9 +128,12 @@ unsigned long CAudioOutput::ThreadProc(void)
         // buffers on the queue, so that one buffer is always free for disk I/O.
         //
         XAUDIO2_VOICE_STATE state;
-        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT-1) && m_bThreadRun)
+        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT) && m_bThreadRun)
         {
-			WaitForSingleObject( m_hEvent, m_Interval );
+			if(m_pCallback->ServiceStream())
+				WaitForSingleObject( m_hEvent, m_Interval/8 );
+			else
+				WaitForSingleObject( m_hEvent, m_Interval/2 );
         }
 	}
 
@@ -189,10 +189,9 @@ bool CAudioOutput::Initialize(void)
 
 bool CAudioOutput::Shutdown(void)
 {
-	CAutoLock lock(&m_AudioLock);
-
 	if(m_hThread)
 	{
+		m_bPlaying = false;
 		m_bThreadRun = false;
 
 		SetEvent(m_hEvent);
@@ -339,9 +338,7 @@ bool CAudioOutput::Reset(void)
 	CAutoLock lock(&m_AudioLock);
 
 	m_pSourceVoice->Stop(0);
-
 	m_pSourceVoice->FlushSourceBuffers();
-
 	m_pSourceVoice->Start( 0, 0 );
 
 	return true;
@@ -363,6 +360,10 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 	unsigned long msDif = ulThisTickCount - m_ulLastTickCount;
 	
 	unsigned long offset = min(msDif, m_BlockSize) * samplesperms;
+
+	// ok lets clamp offset so it can't gobeyond the end of the buffer
+
+	offset = min(offset, m_BlockSize);
 
 	if(m_bPlaying)
 	{

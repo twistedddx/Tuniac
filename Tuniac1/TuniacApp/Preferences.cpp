@@ -1981,11 +1981,16 @@ bool	CPreferences::GetMainWindowMaximized(void)
 	return m_MainWindowMaximized == TRUE;
 }
 
+bool	CPreferences::CrossfadingEnabled(void)
+{
+	if(m_CrossfadeEnabled)
+		return true;
+
+	return false;
+}
+
 int CPreferences::GetCrossfadeTime(void)
 {
-	if(m_CrossfadeEnabled == 0)
-		return 0;
-
 	return m_CrossfadeTime;
 }
 
