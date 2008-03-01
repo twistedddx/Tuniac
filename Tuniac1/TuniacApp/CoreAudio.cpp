@@ -161,7 +161,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 				}
 
-				float scale = m_fVolume * 0.01f;
+				float scale = m_fVolume / 100.0f;
 
 				pStream->SetVolumeScale(scale);
 				pStream->SetCrossfadePoint(m_CrossfadeTimeMS);

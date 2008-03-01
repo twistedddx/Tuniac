@@ -176,7 +176,7 @@ bool			CAudioStream::FadeIn(unsigned long ulMS)
 	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEIN;
-	fVolumeChange =  1.0f / ((float)ulMS * (float)m_Output.GetSampleRate());
+	fVolumeChange =  1.0f / ((float)ulMS * ((float)m_Output.GetSampleRate() / 1000.0f) );
 	fVolume = 0.0f;
 	return true;
 }
@@ -186,7 +186,7 @@ bool			CAudioStream::FadeOut(unsigned long ulMS)
 	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEOUT;
-	fVolumeChange =  (-1.0f / ((float)ulMS * (float)m_Output.GetSampleRate()));
+	fVolumeChange =  (-1.0f / ((float)ulMS * ((float)m_Output.GetSampleRate() / 1000.0f)  )   );
 	fVolume  = 1.0f;
 	return true;
 }
