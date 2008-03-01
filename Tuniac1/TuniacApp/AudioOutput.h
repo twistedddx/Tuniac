@@ -56,13 +56,19 @@ public:
 	STDMETHOD_(void, OnVoiceProcessingPassStart) () {}
     STDMETHOD_(void, OnVoiceProcessingPassEnd) () {}
     STDMETHOD_(void,OnStreamEnd) () {}
+
     STDMETHOD_(void,OnBufferStart) ( void* context) 
 	{
 		//QueryPerformanceCounter(&m_liLastPerformanceCount);
 		m_BufferInProgress = reinterpret_cast<unsigned __int64>(context);
 		m_ulLastTickCount = GetTickCount();
 	}
-    STDMETHOD_(void,OnBufferEnd) ( void* ) { SetEvent( m_hEvent ); }
+
+    STDMETHOD_(void,OnBufferEnd) ( void* ) 
+	{ 
+		SetEvent( m_hEvent ); 
+	}
+
     STDMETHOD_(void,OnLoopEnd) ( void* ) {}   
 
 
@@ -116,11 +122,3 @@ public:
 	bool GetVisData(float * ToHere, unsigned long ulNumSamples);
 
 };
-
-/*
-	HWAVEOUT							m_waveHandle;
-	WAVEHDR					*			m_Buffers;
-
-	static void CALLBACK WaveCallback(HWAVEOUT hWave, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD dw2);
-
-*/

@@ -89,6 +89,8 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 	while(ServiceStream())
 	{
+		OutputDebugString(TEXT("GetBuffer - Serviced Stream\r\n"));
+
 	}
 
 	if(m_Packetizer.AnyMoreBuffer())
