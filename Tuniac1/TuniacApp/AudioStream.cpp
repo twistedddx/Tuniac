@@ -3,10 +3,9 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-CAudioStream::CAudioStream(IAudioSource * pSource, IPlaylistEntry * pEntry, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize) :
+CAudioStream::CAudioStream(IAudioSource * pSource, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize) :
 	m_Output(pXAudio, ulAudioBufferSize)
 {
-	m_pEntry		= pEntry;
 	m_bEntryPlayed	= false;
 
 	m_PlayState		= STATE_UNKNOWN;
@@ -136,6 +135,10 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
 				}
 			}
+
+			// TODO: if we have played more than 'x' percent of a song send a last played notification back to our controller
+			// could be a LastFM thing there!!
+
 			return true;
 		}
 	}
@@ -256,92 +259,7 @@ bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 	return m_Output.GetVisData(ToHere, ulNumSamples);
 }
 
-
-
 /*
-	//if no buffer available
-	while(!m_Packetizer.IsBufferAvailable())
-	{
-		float *			pBuffer			= NULL;
-		unsigned long	ulNumSamples	= 0;
-
-		//get buffer
-		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
-		{
-			m_Packetizer.WriteData(pBuffer, ulNumSamples);
-		}
-		//can not buffer(end of song?)
-		else
-		{	
-			if(!m_bFinishNotify)
-			{
-				m_bIsFinished = true;
-				m_Packetizer.Finished();
-				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
-			}
-		}
-	}
-*/
-
-
-/*
-	if(m_Packetizer.GetBuffer(pAudioBuffer))
-	{
-		
-		//crossfading code
-		if(m_FadeState != FADE_NONE)
-		{
-			
-			if(m_FadeState == FADE_FADEIN)
-			{
-				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
-				{
-					for(unsigned long chan=0; chan<m_Channels; chan++)
-					{
-						pAudioBuffer[x+chan]		*= fVolume;
-					}
-					fVolume += fVolumeChange;
-					fVolume = max(0.0f, min(fVolume, 1.0f));
-				}
-			}
-			else if(m_FadeState == FADE_FADEOUT)
-			{
-				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
-				{
-					for(unsigned long chan=0; chan<m_Channels; chan++)
-					{
-						pAudioBuffer[x+chan]		*= fVolume;
-					}
-					fVolume += fVolumeChange;
-					fVolume = max(0.0f, min(fVolume, 1.0f));
-				}
-			}
-
-
-//			if( fVolume >= 1.0 )
-//			{
-//				m_FadeState = FADE_NONE;
-//			}
-			//crossfade completed, we want to stop this song!
-			if( fVolume <= 0.0 )
-			{
-				m_FadeState = FADE_NONE;
-			}
-		}
-
-		// now apply the volume scale, only if we need to
-		if(fVolumeScale != 1.0)
-		{
-			for(unsigned long x=0; x<NumSamples; x+=m_Channels)
-			{
-				for(unsigned long chan=0; chan<m_Channels; chan++)
-				{
-					pAudioBuffer[x+chan]		*= fVolumeScale;
-				}
-			}
-		}
-		m_SamplesOut +=  NumSamples;
-
 		//set time file was played after 1/4 is played
 		if(!m_bEntryPlayed)
 		{
@@ -356,31 +274,4 @@ bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 				m_bEntryPlayed = true;
 			}
 		}
-
-		unsigned long cft = tuniacApp.m_Preferences.GetCrossfadeTime() * 1000;
-
-		//check if coreaudio has not been notified yet and if we are crossfading
-		if(!m_bMixNotify && cft)
-		{
-			//length longer then crossfade time
-			if(GetLength() > cft)
-			{
-				//position greaten or equal to length minus crossfade (standard point to crossfade)
-				if(GetPosition() >= (GetLength() - cft))
-				{
-					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
-					m_bMixNotify = true;
-				}
-			}
-			//length shorten than crossfade time
-			else
-			{
-				tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
-				m_bMixNotify = true;
-			}
-		}
-
-		return true;
-
-	}
 */

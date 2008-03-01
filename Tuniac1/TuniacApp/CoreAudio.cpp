@@ -128,6 +128,7 @@ bool			CCoreAudio::Shutdown(void)
 	return true;
 }
 
+// TODO: Make core audio just take in a filename, we shouldn't be reliant on IPlaylistEntries for any of this!!!!!
 bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 {
 	{
@@ -146,7 +147,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource);
 			if(pSource)
 			{
-				pStream = new CAudioStream(pSource, pEntry, m_pXAudio, m_BufferSizeMS);
+				pStream = new CAudioStream(pSource, m_pXAudio, m_BufferSizeMS);
 				CAutoLock	t(&m_Lock);
 
 				bool bShoudStart = false;
@@ -430,6 +431,7 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 	
 	for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
 	{
+		/*
 		if(m_Streams[0]->m_pSource == pSource)
 		{
 			m_Streams[0]->m_pEntry->SetField(ulFieldID, szTitle);
@@ -437,6 +439,7 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 			break;
 		}
+		*/
 	}
 }
 
