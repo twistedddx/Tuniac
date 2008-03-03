@@ -50,7 +50,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 10;
+	return 13;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -62,9 +62,18 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".ogg"),
 		TEXT(".mpc"),
 		TEXT(".wv"),
+<<<<<<< .mine
+		TEXT(".m4a"),
+		TEXT(".m4b"),
+		TEXT(".m4p"),
+		TEXT(".mp4"),
+=======
 //		TEXT(".m4a"),
 //		TEXT(".m4p"),
 //		TEXT(".mp4"),
+>>>>>>> .r153
+		TEXT(".3g2"),
+		TEXT(".wma"),
 		TEXT(".tta"),
 		TEXT(".spx")
 	};
@@ -85,6 +94,16 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("WV")))
 		return true;
+<<<<<<< .mine
+	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
+		return true;
+	if(StrStrI(PathFindExtension(szSource), TEXT("M4B")))
+		return true;
+	if(StrStrI(PathFindExtension(szSource), TEXT("M4P")))
+		return true;
+	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
+		return true;
+=======
 
 //	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
 //		return true;
@@ -92,6 +111,11 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 //		return true;
 
 
+>>>>>>> .r153
+	if(StrStrI(PathFindExtension(szSource), TEXT("3G2")))
+		return true;
+	if(StrStrI(PathFindExtension(szSource), TEXT("WMA")))
+		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("TTA")))
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("SPX")))
