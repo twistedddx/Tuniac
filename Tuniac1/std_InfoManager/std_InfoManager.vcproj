@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -134,7 +134,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -214,7 +214,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -301,7 +301,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/m4a;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\speex;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				Detect64BitPortabilityProblems="true"
 			/>
@@ -439,150 +439,26 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="m4a"
+				Name="mp4"
 				>
 				<File
-					RelativePath=".\TagLib\m4a\boxfactory.h"
+					RelativePath=".\TagLib\mp4\mp4atom.h"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunesalbbox.h"
+					RelativePath=".\TagLib\mp4\mp4file.h"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunesartbox.h"
+					RelativePath=".\TagLib\mp4\mp4item.h"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunescmtbox.h"
+					RelativePath=".\TagLib\mp4\mp4properties.h"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunescvrbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdatabox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdaybox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdiskbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesgenbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesgrpbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesnambox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunestmpobox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunestrknbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\ituneswrtbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4audioproperties.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4audiosampleentry.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4file.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4fourcc.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4hdlrbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4ilstbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4isobox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4isofullbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4itunestag.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4mdiabox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4metabox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4minfbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4moovbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4mvhdbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4propsproxy.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4sampleentry.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4skipbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4stblbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4stsdbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4tagsproxy.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4trakbox.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4udtabox.h"
+					RelativePath=".\TagLib\mp4\mp4tag.h"
 					>
 				</File>
 			</Filter>
@@ -798,6 +674,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="asf"
+				>
+				<File
+					RelativePath=".\TagLib\asf\asfattribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asffile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asfproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asftag.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Taglib Source"
@@ -847,150 +743,26 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="m4a"
+				Name="mp4"
 				>
 				<File
-					RelativePath=".\TagLib\m4a\boxfactory.cpp"
+					RelativePath=".\TagLib\mp4\mp4atom.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunesalbbox.cpp"
+					RelativePath=".\TagLib\mp4\mp4file.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunesartbox.cpp"
+					RelativePath=".\TagLib\mp4\mp4item.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunescmtbox.cpp"
+					RelativePath=".\TagLib\mp4\mp4properties.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\TagLib\m4a\itunescvrbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdatabox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdaybox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesdiskbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesgenbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesgrpbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunesnambox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunestmpobox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\itunestrknbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\ituneswrtbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4audioproperties.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4audiosampleentry.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4file.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4fourcc.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4hdlrbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4ilstbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4isobox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4isofullbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4itunestag.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4mdiabox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4metabox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4minfbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4moovbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4mvhdbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4propsproxy.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4sampleentry.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4skipbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4stblbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4stsdbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4tagsproxy.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4trakbox.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TagLib\m4a\mp4udtabox.cpp"
+					RelativePath=".\TagLib\mp4\mp4tag.cpp"
 					>
 				</File>
 			</Filter>
@@ -1191,6 +963,26 @@
 				</File>
 				<File
 					RelativePath=".\TagLib\trueaudio\trueaudioproperties.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="asf"
+				>
+				<File
+					RelativePath=".\TagLib\asf\asfattribute.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asffile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asfproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asftag.cpp"
 					>
 				</File>
 			</Filter>
