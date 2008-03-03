@@ -258,7 +258,8 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			{
 				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
 				{
-					m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry);
+					if(m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+						break;
 				}
 			}
 
@@ -474,7 +475,8 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			{
 				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
 				{
-					m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry);
+					if(m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+						break;
 				}
 			}
 
