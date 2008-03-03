@@ -9,6 +9,8 @@
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 #endif
 
+// TODO: Derive this from XAudioEngineCallback to let us know if we need to restart XAudio :(
+// TODO: Change AudioStream to have Initialize and Shutdown so we can return audio errors back up the chain!
 
 CCoreAudio::CCoreAudio(void) : 
 	m_CrossfadeTimeMS(6000),
@@ -36,6 +38,7 @@ bool			CCoreAudio::Startup()
 	}
 
 	m_pXAudio->StartEngine();
+	m_pXAudio->RegisterForCallbacks(this);
 
 	HRESULT hr;
 
@@ -123,7 +126,12 @@ bool			CCoreAudio::Shutdown(void)
 		m_pMasteringVoice = NULL;
 	}
 
-	SAFE_RELEASE(m_pXAudio);
+	if(m_pXAudio)
+	{
+		m_pXAudio->UnregisterForCallbacks(this);
+		m_pXAudio->StopEngine();
+		SAFE_RELEASE(m_pXAudio);
+	}
 
 	return true;
 }
@@ -144,33 +152,43 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 		if(m_AudioSources[x]->CanHandle(szSource))
 		{
 			CAudioStream * pStream;
+			CAudioOutput * pOutput;
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource);
 			if(pSource)
 			{
-				pStream = new CAudioStream(pSource, m_pXAudio, m_BufferSizeMS);
-				CAutoLock	t(&m_Lock);
+				pStream = new CAudioStream();
+				pOutput = new CAudioOutput(m_pXAudio, m_BufferSizeMS);
 
-				bool bShoudStart = false;
-				if(m_Streams.GetCount())
+				if(pStream->Initialize(pSource, pOutput))
 				{
-					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
+					CAutoLock	t(&m_Lock);
+
+					bool bShoudStart = false;
+					if(m_Streams.GetCount())
 					{
-						m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
+						for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
+						{
+							m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
+						}
+						pStream->FadeIn(m_CrossfadeTimeMS);
+						bShoudStart = true;
 					}
-					pStream->FadeIn(m_CrossfadeTimeMS);
-					bShoudStart = true;
 
+					float scale = m_fVolume / 100.0f;
+
+					pStream->SetVolumeScale(scale);
+					pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
+					m_Streams.AddTail(pStream);
+
+					if(bShoudStart)
+						pStream->Start();
+					return true;
 				}
-
-				float scale = m_fVolume / 100.0f;
-
-				pStream->SetVolumeScale(scale);
-				pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
-				m_Streams.AddTail(pStream);
-
-				if(bShoudStart)
-					pStream->Start();
-				return true;
+				else
+				{
+					pStream->Destroy();
+					break;
+				}
 			}
 		}
 	}
@@ -193,9 +211,7 @@ bool			CCoreAudio::Reset(void)
 
 	while(m_Streams.GetCount())
 	{
-		m_Streams[0]->Stop();
-
-		delete m_Streams[0];
+		m_Streams[0]->Destroy();
 		m_Streams.RemoveAt(0);
 	}
 	return true;
@@ -263,8 +279,7 @@ bool			CCoreAudio::SetPosition(unsigned long MS)
 	{
 		if(m_Streams[x]->GetFadeState() == FADE_FADEOUT)
 		{
-			m_Streams[x]->Stop();
-			delete m_Streams[x];
+			m_Streams[x]->Destroy();
 			m_Streams.RemoveAt(x);
 
 			x-=1;
@@ -311,7 +326,7 @@ unsigned long CCoreAudio::GetChannels(void)
 
 	if(m_Streams.GetCount())
 	{
-		return(m_Streams[m_Streams.GetCount()-1]->m_Output.GetChannels());
+		return(m_Streams[m_Streams.GetCount()-1]->m_Output->GetChannels());
 	}
 
 	return -1;
@@ -323,7 +338,7 @@ unsigned long CCoreAudio::GetSampleRate(void)
 
 	if(m_Streams.GetCount())
 	{
-		return(m_Streams[m_Streams.GetCount()-1]->m_Output.GetSampleRate());
+		return(m_Streams[m_Streams.GetCount()-1]->m_Output->GetSampleRate());
 	}
 
 	return -1;
@@ -389,8 +404,7 @@ void CCoreAudio::CheckOldStreams(void)
 	{
 		if(m_Streams[x]->IsFinished())
 		{
-			m_Streams[x]->Stop();
-			delete m_Streams[x];
+			m_Streams[x]->Destroy();
 			m_Streams.RemoveAt(x);
 
 			x-=1;
@@ -454,5 +468,88 @@ void CCoreAudio::SetCrossfadeTime(unsigned long ulMS)
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
 		m_Streams[x]->SetCrossfadePoint(ulMS);
+	}
+}
+
+
+
+void CCoreAudio::OnCriticalError(HRESULT Error)
+{
+	switch(Error)
+	{
+		case XAUDIO2_E_NOT_INITIALIZED:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_ALREADY_INITIALIZED:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_INVALID_ARGUMENT:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_INVALID_FLAGS:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_INVALID_POINTER:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_INVALID_INDEX:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_INVALID_CALL:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_STILL_IN_USE:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_UNSUPPORTED:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_XMA_DECODER_ERROR:
+			{
+				int x=0;
+			}
+			break;
+
+		case XAUDIO2_E_EFFECT_CREATION_FAILED:
+			{
+				int x=0;
+			}
+			break;
+
+		default:
+		case XAUDIO2_E_DEVICE_INVALIDATED:
+			{
+				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIORESET, 0);
+			}
+			break;
+
+
 	}
 }

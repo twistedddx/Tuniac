@@ -10,10 +10,12 @@
 #define NOTIFY_MIXPOINTREACHED			0
 #define NOTIFY_PLAYBACKFINISHED			1
 #define NOTIFY_PLAYBACKSTARTED			2
+#define NOTIFY_COREAUDIORESET			3
 
 class CCoreAudio : 
 	public CSingleton<CCoreAudio>,
-	public IAudioSourceHelper
+	public IAudioSourceHelper,
+	public IXAudio2EngineCallback
 {
 protected:
 
@@ -42,7 +44,7 @@ public:
 
 	bool				Startup(void);
 	bool				Shutdown(void);
-
+	
 	bool				TransitionTo(IPlaylistEntry * pEntry);
 	bool				SetSource(IPlaylistEntry * pEntry);
 
@@ -74,7 +76,20 @@ public:
 	void				SetCrossfadeTime(unsigned long ulMS);
 	void				SetAudioBufferSize(unsigned long ulMS) { m_BufferSizeMS = ulMS; }
 	
+// IAudioSourceHelper inherited methods
 public:
 	void				UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID);
 	void				LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage);
+
+//IXAudio2EngineCallback inherited methods
+public:
+	    // Called by XAudio2 just before an audio processing pass begins.
+	STDMETHOD_(void, OnProcessingPassStart) (THIS) { };
+
+    // Called just after an audio processing pass ends.
+	STDMETHOD_(void, OnProcessingPassEnd) (THIS) { };
+
+    // Called in the event of a critical system error which requires XAudio2
+    // to be closed down and restarted.  The error code is given in Error.
+    STDMETHOD_(void, OnCriticalError) (THIS_ HRESULT Error);
 };

@@ -6,9 +6,6 @@
 class CAudioOutput : public IXAudio2VoiceCallback
 {
 protected:
-
-	friend class CAudioStream;
-
 	WAVEFORMATPCMEX						m_waveFormatPCMEx;
 
 	IXAudio2SourceVoice		*			m_pSourceVoice;
@@ -50,6 +47,9 @@ protected:
 	bool Initialize(void);
 	bool Shutdown(void);
 
+	~CAudioOutput(void);
+
+
 /////////////////////////////////////////////////////////////
 //			XAUDIO CALLBACKS!!!!!!
 public:
@@ -74,9 +74,8 @@ public:
 
 public:
 	CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize = 250);
-	~CAudioOutput(void);
 
-
+	void Destroy();
 
 	void SetCallback(IAudioCallback * pCallback)
 	{

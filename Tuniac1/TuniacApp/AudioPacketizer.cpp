@@ -25,7 +25,8 @@ bool CAudioPacketizer::SetPacketSize(unsigned long Size)
 
 	m_PacketSize		= Size;
 	m_PacketSizeBytes	= Size*sizeof(float);
-	CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, (Size*sizeof(float))*3);
+	if(!CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, (Size*sizeof(float))*3))
+		return false;
 
 	return(true);
 }

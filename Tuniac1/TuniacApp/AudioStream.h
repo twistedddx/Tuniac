@@ -15,11 +15,16 @@
 
 class CAudioStream : public IAudioCallback
 {
+private:
+	~CAudioStream(void);
+	bool Shutdown(void);
+
+	
 public:
 	IAudioSource		*				m_pSource;
+	CAudioOutput		*				m_Output;
 
-	CAudioOutput						m_Output;
-	//CDirectSoundOutput					m_Output;
+
 	CAudioPacketizer					m_Packetizer;
 
 	CCriticalSection					m_Lock;
@@ -44,11 +49,11 @@ public:
 	unsigned long						m_CrossfadeTimeMS;
 
 public:
-	CAudioStream(IAudioSource * pSource, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize = 250);
-	~CAudioStream(void);
+	CAudioStream();
 
-	bool Initialize(void);
-	bool Shutdown(void);
+	bool Initialize(IAudioSource * pSource, CAudioOutput * pOutput);
+
+	void Destroy();
 
 public:
 	bool GetBuffer(float * pAudioBuffer, unsigned long NumSamples);
