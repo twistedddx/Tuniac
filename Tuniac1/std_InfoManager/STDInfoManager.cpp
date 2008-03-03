@@ -62,16 +62,10 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".ogg"),
 		TEXT(".mpc"),
 		TEXT(".wv"),
-<<<<<<< .mine
 		TEXT(".m4a"),
 		TEXT(".m4b"),
 		TEXT(".m4p"),
 		TEXT(".mp4"),
-=======
-//		TEXT(".m4a"),
-//		TEXT(".m4p"),
-//		TEXT(".mp4"),
->>>>>>> .r153
 		TEXT(".3g2"),
 		TEXT(".wma"),
 		TEXT(".tta"),
@@ -94,7 +88,6 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("WV")))
 		return true;
-<<<<<<< .mine
 	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("M4B")))
@@ -103,15 +96,6 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
 		return true;
-=======
-
-//	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
-//		return true;
-//	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
-//		return true;
-
-
->>>>>>> .r153
 	if(StrStrI(PathFindExtension(szSource), TEXT("3G2")))
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("WMA")))
