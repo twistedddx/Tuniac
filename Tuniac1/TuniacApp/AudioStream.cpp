@@ -3,15 +3,13 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-CAudioStream::CAudioStream(IAudioSource * pSource, IXAudio2 * pXAudio, unsigned long ulAudioBufferSize) :
-	m_Output(pXAudio, ulAudioBufferSize)
+CAudioStream::CAudioStream()
 {
 	m_bEntryPlayed	= false;
 
 	m_PlayState		= STATE_UNKNOWN;
 	m_FadeState		= FADE_NONE;
 
-	m_pSource		= pSource;
 
 	fVolume			= 1.0f;
 	m_bMixNotify	= false;
@@ -23,32 +21,59 @@ CAudioStream::CAudioStream(IAudioSource * pSource, IXAudio2 * pXAudio, unsigned 
 
 	m_CrossfadeTimeMS = 0;
 
-
-	unsigned long srate;
-	pSource->GetFormat(&srate, &m_Channels);
-	m_Output.SetFormat(srate, m_Channels);
-
-	m_Packetizer.SetPacketSize(m_Output.GetBlockSize());
-
-	m_Output.SetCallback(this);
+	m_Output	= NULL;
 }
 
 CAudioStream::~CAudioStream(void)
 {
-	m_Output.Shutdown();
 
-	m_pSource->Destroy();
 }
 
-bool CAudioStream::Initialize(void)
+bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput)
 {
+	unsigned long srate;
+	m_pSource		= pSource;
+	m_Output		= pOutput;
+
+
+	if(m_pSource->GetFormat(&srate, &m_Channels))
+	{
+		if(!pOutput->SetFormat(srate, m_Channels))
+			return false;
+	}
+	else
+		return false;
+
+	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
+	m_Output->SetCallback(this);
+
 	return true;
 }
 
 bool CAudioStream::Shutdown(void)
 {
+	Stop(); 
+
+	if(m_Output)
+	{
+		m_Output->Destroy();
+		m_Output = NULL;
+	}
+
+	if(m_pSource)
+	{
+		m_pSource->Destroy();
+	}
+
 	return true;
 }
+
+void CAudioStream::Destroy()
+{
+	Shutdown();
+	delete this;
+}
+
 
 bool			CAudioStream::SetVolumeScale(float scale)
 {
@@ -181,7 +206,7 @@ bool			CAudioStream::FadeIn(unsigned long ulMS)
 	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEIN;
-	fVolumeChange =  1.0f / ((float)ulMS * ((float)m_Output.GetSampleRate() / 1000.0f) );
+	fVolumeChange =  1.0f / ((float)ulMS * ((float)m_Output->GetSampleRate() / 1000.0f) );
 	fVolume = 0.0f;
 	return true;
 }
@@ -191,7 +216,7 @@ bool			CAudioStream::FadeOut(unsigned long ulMS)
 	//CAutoLock t(&m_Lock);
 
 	m_FadeState = FADE_FADEOUT;
-	fVolumeChange =  (-1.0f / ((float)ulMS * ((float)m_Output.GetSampleRate() / 1000.0f)  )   );
+	fVolumeChange =  (-1.0f / ((float)ulMS * ((float)m_Output->GetSampleRate() / 1000.0f)  )   );
 	fVolume  = 1.0f;
 	return true;
 }
@@ -200,13 +225,13 @@ bool			CAudioStream::Start(void)
 {
 	tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKSTARTED, NULL);
 	m_PlayState = STATE_PLAYING;
-	return m_Output.Start();
+	return m_Output->Start();
 }
 
 bool			CAudioStream::Stop(void)
 {
 	m_PlayState = STATE_STOPPED;
-	return m_Output.Stop();
+	return m_Output->Stop();
 }
 
 unsigned long	CAudioStream::GetLength(void)
@@ -221,7 +246,7 @@ unsigned long	CAudioStream::GetLength(void)
 
 unsigned long	CAudioStream::GetPosition(void)
 {
-	unsigned long MSOutput = (m_SamplesOut / ((m_Output.GetSampleRate()/1000) * m_Output.GetChannels()));
+	unsigned long MSOutput = (m_SamplesOut / ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels()));
 
 	return(MSOutput);
 }
@@ -238,16 +263,16 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 	unsigned long Pos = MS;
 
-	m_Output.Stop();
+	m_Output->Stop();
 	if(m_pSource->SetPosition(&Pos))
 	{
-		m_SamplesOut = Pos * ((m_Output.GetSampleRate()/1000) * m_Output.GetChannels());
+		m_SamplesOut = Pos * ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels());
 
 		m_Packetizer.Reset();
-		m_Output.Reset();
+		m_Output->Reset();
 
 		if(m_PlayState == STATE_PLAYING)
-			m_Output.Start();
+			m_Output->Start();
 
 
 		return true;
@@ -258,7 +283,7 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
-	return m_Output.GetVisData(ToHere, ulNumSamples);
+	return m_Output->GetVisData(ToHere, ulNumSamples);
 }
 
 /*

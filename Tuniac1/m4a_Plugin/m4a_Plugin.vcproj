@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="m4a_Plugin"
 	ProjectGUID="{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}"
+	RootNamespace="m4a_Plugin"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -45,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="USE_TAGGING"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -128,10 +129,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="USE_TAGGING"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -153,7 +152,6 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
-				SubSystem="2"
 				ImportLibrary=""
 				TargetMachine="17"
 			/>
@@ -162,6 +160,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -408,6 +407,10 @@
 			</File>
 			<File
 				RelativePath=".\m4aAudioSourceSupplier.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\m4aInfoManager.cpp"
 				>
 			</File>
 			<File
@@ -686,6 +689,10 @@
 			</File>
 			<File
 				RelativePath=".\m4aAudioSourceSupplier.h"
+				>
+			</File>
+			<File
+				RelativePath=".\m4aInfoManager.h"
 				>
 			</File>
 			<File

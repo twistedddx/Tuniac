@@ -37,8 +37,15 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize) :
 
 CAudioOutput::~CAudioOutput(void)
 {
-	Shutdown();
 }
+
+void CAudioOutput::Destroy()
+{
+	SetCallback(NULL);
+	Shutdown();
+	delete this;
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -141,10 +148,10 @@ bool CAudioOutput::Initialize(void)
 {
 
 	HRESULT chr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
-										(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
-										0, 
-										1.0f, 
-										this);
+												(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
+												XAUDIO2_VOICE_MUSIC, 
+												1.0f, 
+												this);
 	if(chr != S_OK)
 	{
 		return false;
@@ -307,7 +314,9 @@ bool CAudioOutput::Start(void)
 	CAutoLock lock(&m_AudioLock);
 
 	m_bPlaying = true;
-	m_pSourceVoice->Start( 0, 0 );
+
+	if(m_pSourceVoice)
+		m_pSourceVoice->Start( 0, 0 );
 
 	m_ulLastTickCount = GetTickCount();
 
@@ -317,7 +326,8 @@ bool CAudioOutput::Start(void)
 bool CAudioOutput::Stop(void)
 {
 	CAutoLock lock(&m_AudioLock);
-	m_pSourceVoice->Stop(0);
+	if(m_pSourceVoice)
+		m_pSourceVoice->Stop(0);
 	m_bPlaying = false;
 
 	return true;
@@ -326,11 +336,14 @@ bool CAudioOutput::Stop(void)
 bool CAudioOutput::Reset(void)
 {
 	CAutoLock lock(&m_AudioLock);
+	if(m_pSourceVoice)
+	{
+		m_pSourceVoice->Stop(0);
+		m_pSourceVoice->FlushSourceBuffers();
 
-	m_pSourceVoice->Stop(0);
-	m_pSourceVoice->FlushSourceBuffers();
-	m_pSourceVoice->Start( 0, 0 );
-
+		if(m_bPlaying)
+			m_pSourceVoice->Start( 0, 0 );
+	}
 	return true;
 }
 

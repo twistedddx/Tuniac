@@ -734,6 +734,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				switch (wParam)
 				{
+					case NOTIFY_COREAUDIORESET:
+						{
+							CCoreAudio::Instance()->Reset();
+							CCoreAudio::Instance()->Shutdown();
+							CCoreAudio::Instance()->Startup();
+						}
+						break;
+
 					//end of song, or start of crossfade. Next Song needed
 					case NOTIFY_MIXPOINTREACHED:
 						{

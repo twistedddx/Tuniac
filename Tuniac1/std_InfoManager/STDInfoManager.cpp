@@ -62,9 +62,9 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".ogg"),
 		TEXT(".mpc"),
 		TEXT(".wv"),
-		TEXT(".m4a"),
-		TEXT(".m4p"),
-		TEXT(".mp4"),
+//		TEXT(".m4a"),
+//		TEXT(".m4p"),
+//		TEXT(".mp4"),
 		TEXT(".tta"),
 		TEXT(".spx")
 	};
@@ -85,12 +85,13 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("WV")))
 		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("M4P")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
-		return true;
+
+//	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
+//		return true;
+//	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
+//		return true;
+
+
 	if(StrStrI(PathFindExtension(szSource), TEXT("TTA")))
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("SPX")))

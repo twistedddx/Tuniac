@@ -130,11 +130,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="0"
-				EnableIntrinsicFunctions="false"
-				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="..\ape_SDK;../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -164,6 +162,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				VerboseOutput="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
