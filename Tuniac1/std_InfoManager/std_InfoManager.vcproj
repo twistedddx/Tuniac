@@ -237,6 +237,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
+				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\std_InfoManager.dll"
 				LinkIncremental="0"
 				GenerateDebugInformation="false"
@@ -316,6 +317,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="shlwapi.lib"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
