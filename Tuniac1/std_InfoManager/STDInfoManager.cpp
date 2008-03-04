@@ -5,7 +5,6 @@
 //
 
 #include "stdafx.h"
-#include <atlbase.h>
 #include "STDinfomanager.h"
 #include "tag.h"
 #include "tfile.h"
@@ -77,7 +76,6 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 {
-
 	if(StrStrI(PathFindExtension(szSource), TEXT("FLAC")))
 		return true;
 	if(StrStrI(PathFindExtension(szSource), TEXT("MP3")))
@@ -110,7 +108,6 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 
 bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 {
-	USES_CONVERSION;
 	TagLib::File		*		m_File;
 	m_File = TagLib::FileRef::create(libEnt->szURL, 1, TagLib::AudioProperties::Fast);
 
