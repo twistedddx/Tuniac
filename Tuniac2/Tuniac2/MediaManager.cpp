@@ -49,6 +49,7 @@ bool CMediaManager::Initialize(void)
 			// Title
 			// Artist
 			// Album
+			// Album Artist
 			// Year
 			// Genre
 			// TrackNumber
@@ -59,9 +60,13 @@ bool CMediaManager::Initialize(void)
 			// Rating
 
 			// Playback Time
+			// Playback Time Accuracy
+
 			// Sample Rate
 			// Channels
 			// Bitrate
+
+			// BPM
 
 			// Last Played
 			// Playcount
@@ -70,6 +75,8 @@ bool CMediaManager::Initialize(void)
 			{
 				"EntryID			 INTEGER PRIMARY KEY",
 				"DateAdded			 DATETIME",
+				"DirtyFlag			 INT",
+				"FileUnavailable	 INT",
 
 				"Filename			 TEXT",
 				"Filesize			 INT",
@@ -81,6 +88,7 @@ bool CMediaManager::Initialize(void)
 				"DiscTitle			 TEXT",
 				"Composer			 TEXT",
 				"Album				 TEXT",
+				"AlbumArtist		 TEXT",
 				"Year				 INT",
 				"Genre				 TEXT",
 				"Track				 INT",
@@ -88,17 +96,21 @@ bool CMediaManager::Initialize(void)
 				"MaxTrack			 INT",
 				"Disc				 INT",
 				"MaxDisc			 INT",
-				"Comment			 TEXT",
-				"Rating				 INT",
+				"Comment				TEXT",
+				"Rating					INT",
 
-				"PlaybackTime		 INT",
-				"SampleRate			 INT",
-				"Channels			 INT",
-				"Bitrate			 INT",
+				"PlaybackTime			INT",
+				"PlaybackTimeAccuracy	INT",
 
-				"FirstPlayed		 DATETIME",
-				"LastPlayed			 DATETIME",
-				"Playcount			 INT",
+				"SampleRate				INT",
+				"Channels				INT",
+				"Bitrate				INT",
+
+				"BPM					INT",
+
+				"FirstPlayed			DATETIME",
+				"LastPlayed				DATETIME",
+				"Playcount				INT",
 				""
 			};
 
