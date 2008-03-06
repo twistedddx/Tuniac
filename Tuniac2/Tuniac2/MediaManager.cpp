@@ -10,6 +10,12 @@
 //
 // select * from medialibrary where title like '%stormy%' Order By Artist, Album, Track;
 
+/*
+[16:44] <mefisto> the way I'd store playlists would be something like:  
+create table 'Playlists' ('id' INT PRIMARY KEY AUTO_INCREMENT, 'name' VARCHAR(50));  
+create table Playlist_Entries('id' INT PRIMARY KEY AUTO_INCREMENT, 'playlist_id' INT, 'order' INT, 'song_id' INT);
+*/
+
 CMediaManager::CMediaManager(void)
 {
 }
