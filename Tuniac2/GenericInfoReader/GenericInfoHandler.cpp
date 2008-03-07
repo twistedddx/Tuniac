@@ -15,9 +15,9 @@ void			CGenericInfoHandler::Destroy(void)
 	delete this;
 }
 
-bool			CGenericInfoHandler::GetName(String & nameString)
+bool			CGenericInfoHandler::GetName(WCHAR ** nameString)
 {
-	nameString = "Generic Info Handler";
+	*nameString = TEXT("Generic Info Handler");
 
 	return true;
 }

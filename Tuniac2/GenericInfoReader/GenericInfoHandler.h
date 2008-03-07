@@ -12,7 +12,7 @@ public:
 public:
 	void			Destroy(void);
 
-	bool			GetName(String & nameString);
+	bool			GetName(WCHAR ** nameString);
 	GUID			GetPluginID(void);
 
 	unsigned long	GetFlags(void);

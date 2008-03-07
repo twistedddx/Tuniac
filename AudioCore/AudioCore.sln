@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioCore", "AudioCore\AudioCore.vcproj", "{C82A6F57-E1E2-42D6-9097-E5C7993D7DDD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioCoreTestHarness", "AudioCoreTestHarness\AudioCoreTestHarness.vcproj", "{AD99E2D2-33FD-40B0-8C7D-C31E09FD01D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C82A6F57-E1E2-42D6-9097-E5C7993D7DDD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C82A6F57-E1E2-42D6-9097-E5C7993D7DDD}.Debug|Win32.Build.0 = Debug|Win32
+		{C82A6F57-E1E2-42D6-9097-E5C7993D7DDD}.Release|Win32.ActiveCfg = Release|Win32
+		{C82A6F57-E1E2-42D6-9097-E5C7993D7DDD}.Release|Win32.Build.0 = Release|Win32
+		{AD99E2D2-33FD-40B0-8C7D-C31E09FD01D0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AD99E2D2-33FD-40B0-8C7D-C31E09FD01D0}.Debug|Win32.Build.0 = Debug|Win32
+		{AD99E2D2-33FD-40B0-8C7D-C31E09FD01D0}.Release|Win32.ActiveCfg = Release|Win32
+		{AD99E2D2-33FD-40B0-8C7D-C31E09FD01D0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
