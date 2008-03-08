@@ -33,6 +33,8 @@ public:
 	// A> nothing else can lock the stream as long as you own the lock
 	// B> the stream can't be destroyed out from under you
 	// C> Potentially playback of the stream will be stopped for the duration of your lock - SO BE QUICK!
+	// ^^ that is to say you will have at least as long as the output buffer to do your work
+	// it may also not affect the stream at all...
 	virtual void *				LockAudioStream(AUDIOSTREAMID	streamID)		= 0;
 	virtual bool				UnlockAudioStream(void * pAudioStream)			= 0
 
