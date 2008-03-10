@@ -1,6 +1,6 @@
 #pragma once
 
-typedef unsigned long AUDIOSTREAMID;
+#include <IAudioStream.h>
 
 class IAudioCoreCallback
 {
@@ -35,8 +35,8 @@ public:
 	// C> Potentially playback of the stream will be stopped for the duration of your lock - SO BE QUICK!
 	// ^^ that is to say you will have at least as long as the output buffer to do your work
 	// it may also not affect the stream at all...
-	virtual void *				LockAudioStream(AUDIOSTREAMID	streamID)		= 0;
-	virtual bool				UnlockAudioStream(void * pAudioStream)			= 0
+	virtual IAudioStream *		LockAudioStream(AUDIOSTREAMID	streamID)		= 0;
+	virtual bool				UnlockAudioStream(IAudioStream * pAudioStream)	= 0;
 
 
 	///////////////////////////////////////////////////////////////////////

@@ -11,25 +11,38 @@
 //static inline void __cdecl operator delete(void *, void *) {return; }
 
 
-template<class TYPE, int BLOCKSIZE> 
+template<class TYPE, int BLOCKSIZE = 5> 
 class Array  
 {
 protected:
-	unsigned long m_nCount;
-	unsigned long m_nAllocated;
-	unsigned long m_nBlockSize;
-	TYPE	*m_pItems;
+	unsigned long		m_nCount;
+	unsigned long		m_nAllocated;
+	unsigned long		m_nBlockSize;
+	TYPE			*	m_pItems;
+
+	HANDLE				m_hHeap;
+
 public:
-	Array() { m_nCount = m_nAllocated = 0;
-			  m_pItems = NULL;
-			  m_nBlockSize = BLOCKSIZE; };
+	Array() 
+	{ 
+		m_nCount = m_nAllocated = 0;
+		m_pItems = NULL;
+		m_nBlockSize = BLOCKSIZE; 
+
+		m_hHeap = HeapCreate(0, sizeof(TYPE) * BLOCKSIZE, 0);
+	};
 
 	virtual ~Array()
 	{
 		if( m_pItems )
 		{
-			VirtualFree(m_pItems, 0, MEM_RELEASE);
+			HeapFree(m_hHeap, 0, m_pItems);
 			m_pItems = 0;
+		}
+
+		if(m_hHeap)
+		{
+			HeapDestroy(m_hHeap);
 		}
 	};
 
@@ -47,12 +60,15 @@ public:
 		{
 			{
 				TYPE *temp;
-				temp  = (TYPE*) VirtualAlloc(NULL, (m_nAllocated + m_nBlockSize)*sizeof(TYPE), MEM_COMMIT, PAGE_READWRITE);
+				temp = (TYPE*) HeapReAlloc(m_hHeap, 0, m_pItems, (m_nAllocated + m_nBlockSize)*sizeof(TYPE));
 
 				if( temp )
 				{
-					CopyMemory( temp, m_pItems, m_nAllocated * sizeof(TYPE) );
-					VirtualFree(m_pItems, 0, MEM_RELEASE);
+					if(temp != m_pItems)
+					{
+						CopyMemory( temp, m_pItems, m_nAllocated * sizeof(TYPE) );
+						HeapFree(m_hHeap, 0, m_pItems);
+					}
 				}
 				else 
 					return false;
@@ -62,7 +78,7 @@ public:
 		}
 		else
 		{
-			m_pItems =  (TYPE*) VirtualAlloc(NULL, (m_nBlockSize)*sizeof(TYPE), MEM_COMMIT, PAGE_READWRITE);
+			m_pItems =  (TYPE*) HeapAlloc(m_hHeap, 0, (m_nBlockSize)*sizeof(TYPE));
 		}
 
 		m_nAllocated += m_nBlockSize;
