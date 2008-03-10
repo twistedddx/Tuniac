@@ -76,34 +76,18 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 {
-	if(StrStrI(PathFindExtension(szSource), TEXT("FLAC")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("MP3")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("OGG")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("MPC")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("WV")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("M4A")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("M4B")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("M4P")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("MP4")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("3G2")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("WMA")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("TTA")))
-		return true;
-	if(StrStrI(PathFindExtension(szSource), TEXT("SPX")))
-		return true;
+	if(PathIsURL(szSource))
+		return(false);
 
-	return false;
+	for(unsigned int x=0; x<GetNumExtensions(); x++)
+	{
+		if(!StrCmpI(SupportedExtension(x), PathFindExtension(szSource)))
+		{
+			return(true);
+		}
+	}
+
+	return(false);
 }
 
 bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
