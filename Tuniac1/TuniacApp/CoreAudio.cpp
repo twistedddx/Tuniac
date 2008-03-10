@@ -15,7 +15,10 @@
 CCoreAudio::CCoreAudio(void) : 
 	m_CrossfadeTimeMS(6000),
 	m_BufferSizeMS(250),
-	m_fVolume(100.0f)
+	m_fVolume(100.0f),
+	m_pXAudio(NULL),
+	m_pMasteringVoice(NULL)
+
 {
 }
 

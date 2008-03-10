@@ -58,23 +58,24 @@ public:
 	{
 		if( m_nAllocated )
 		{
+			TYPE *temp;
+			temp = (TYPE*) HeapReAlloc(m_hHeap, 0, m_pItems, (m_nAllocated + m_nBlockSize)*sizeof(TYPE));
+
+			if( temp )
 			{
-				TYPE *temp;
-				temp = (TYPE*) HeapReAlloc(m_hHeap, 0, m_pItems, (m_nAllocated + m_nBlockSize)*sizeof(TYPE));
-
-				if( temp )
+				if(temp != m_pItems)
 				{
-					if(temp != m_pItems)
-					{
-						CopyMemory( temp, m_pItems, m_nAllocated * sizeof(TYPE) );
-						HeapFree(m_hHeap, 0, m_pItems);
-					}
-				}
-				else 
-					return false;
 
-				m_pItems = temp;
+					int x=0;
+//					CopyMemory( temp, m_pItems, m_nAllocated * sizeof(TYPE) );
+//					HeapFree(m_hHeap, 0, m_pItems);
+				}
 			}
+			else 
+				return false;
+
+			m_pItems = temp;
+
 		}
 		else
 		{
