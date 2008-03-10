@@ -363,6 +363,8 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 
 	offset = min(offset, m_BlockSize);
 
+	ulNumSamples = min(m_BlockSize, ulNumSamples);
+
 	if(m_bPlaying)
 	{
 		CopyFloat(	ToHere,

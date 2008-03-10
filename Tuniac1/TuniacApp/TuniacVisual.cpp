@@ -3,8 +3,7 @@
 
 #define TIMES	8
 
-#define DISPLAYSAMPLES	4096
-#define VISUALSIZE		DISPLAYSAMPLES*TIMES
+#define DISPLAYSAMPLES	1024
 
 CTuniacVisual::CTuniacVisual(void)
 {
@@ -132,61 +131,73 @@ bool	CTuniacVisual::Render(int w, int h)
 		glLoadIdentity();
 	}
 
-	glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-	glClear (GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();					// Reset The Modelview Matrix
+	static float AudioData[DISPLAYSAMPLES*2];
+	unsigned long NumSamples = DISPLAYSAMPLES;
 
-
-	// draw background grid
-	glColor4f(0,0,0, 0.2f);
-	glBegin(GL_LINES);
-		for(unsigned long x=0; x<m_LastWidth; x+=64)
-		{
-			glVertex2i(x, 0);
-			glVertex2i(x, m_LastHeight);
-		}
-
-		for(unsigned long y=0; y<m_LastHeight; y+=64)
-		{
-			glVertex2i(0,			y);
-			glVertex2i(m_LastWidth, y);
-		}
-	glEnd();
-
-	static float AudioData[VISUALSIZE];
-
-	unsigned long NumSamples = min(m_LastWidth, DISPLAYSAMPLES);
-
-	unsigned long Channels = (unsigned long)pHelper->GetVariable(Variable_NumChannels);
-	if(pHelper->GetVisData(AudioData, NumSamples * Channels))
+	if(pHelper->GetVisData(AudioData, NumSamples))
 	{
-		if(Channels == 2)
+		glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
+		glClear (GL_COLOR_BUFFER_BIT);
+		glLoadIdentity();					// Reset The Modelview Matrix
+		//glColor4f(0.9f, 0.92f, 0.96f, 0.4f);
+		//glRectf(0,0,m_LastWidth, m_LastHeight);
+
+
+		// draw background grid
+		glColor4f(0,0,0, 0.2f);
+		glBegin(GL_LINES);
+			for(unsigned long x=0; x<m_LastWidth; x+=64)
+			{
+				glVertex2i(x, 0);
+				glVertex2i(x, m_LastHeight);
+			}
+
+			for(unsigned long y=0; y<m_LastHeight; y+=64)
+			{
+				glVertex2i(0,			y);
+				glVertex2i(m_LastWidth, y);
+			}
+		glEnd();
+
+
+
+//		if(Channels == 2)
 		{
 			float halfheight = ((float)m_LastHeight / 2.0f);
+			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
 
-
-			
-			glColor4f(0,0,0, 1.0f / (float)TIMES);
-			for(int start=0; start<TIMES; start++)
+			glColor4f(0,0,0, 0.6f);
+			glBegin(GL_QUADS);
 			{
-				glBegin(GL_QUAD_STRIP);
+				for(unsigned int samp=0; samp<NumSamples; samp++)
 				{
-					for(unsigned int samp=start; samp<NumSamples; samp+=TIMES)
-					{
-						glVertex2f(samp,	halfheight);
-						glVertex2f(samp,	halfheight + (AudioData[samp*2]		* halfheight));
+					glVertex2f(samp*multiplier,	(halfheight - (halfheight/2)));
+					glVertex2f(samp*multiplier,	(halfheight - (halfheight/2))		+ (AudioData[samp*2]		* halfheight));
 
-
-						glVertex2f(samp,	halfheight);
-						glVertex2f(samp,	halfheight - (AudioData[(samp*2)+1]	* halfheight));
-					}
+					glVertex2f((samp+1)*multiplier,	(halfheight - (halfheight/2))	+ (AudioData[samp*2]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	(halfheight - (halfheight/2)));
 				}
-				glEnd();
 			}
+			glEnd();
+
+			glColor4f(0,0,0, 0.6f);
+			glBegin(GL_QUADS);
+			{
+				for(unsigned int samp=0; samp<NumSamples; samp++)
+				{
+					glVertex2f(samp*multiplier,	(halfheight + (halfheight/2)));
+					glVertex2f(samp*multiplier,	(halfheight + (halfheight/2))		+ (AudioData[(samp*2)+1]		* halfheight));
+
+					glVertex2f((samp+1)*multiplier,	(halfheight + (halfheight/2))	+ (AudioData[(samp*2)+1]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	(halfheight + (halfheight/2)));
+				}
+			}
+			glEnd();
+
 		}
+		SwapBuffers(m_glDC);
 	}
 
-	SwapBuffers(m_glDC);
 
 	return true;
 }
