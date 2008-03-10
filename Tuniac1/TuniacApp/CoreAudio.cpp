@@ -477,67 +477,7 @@ void CCoreAudio::OnCriticalError(HRESULT Error)
 {
 	switch(Error)
 	{
-		case XAUDIO2_E_NOT_INITIALIZED:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_ALREADY_INITIALIZED:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_INVALID_ARGUMENT:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_INVALID_FLAGS:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_INVALID_POINTER:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_INVALID_INDEX:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_INVALID_CALL:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_STILL_IN_USE:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_UNSUPPORTED:
-			{
-				int x=0;
-			}
-			break;
-
 		case XAUDIO2_E_XMA_DECODER_ERROR:
-			{
-				int x=0;
-			}
-			break;
-
-		case XAUDIO2_E_EFFECT_CREATION_FAILED:
 			{
 				int x=0;
 			}

@@ -70,6 +70,7 @@ public:
 	}
 
     STDMETHOD_(void,OnLoopEnd) ( void* ) {}   
+	STDMETHOD_(void, OnVoiceError) (THIS_ void* pBufferContext, HRESULT Error) {};
 
 
 public:

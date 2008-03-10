@@ -75,6 +75,22 @@
 				RelativePath=".\IAudioCore.h"
 				>
 			</File>
+			<File
+				RelativePath=".\IAudioOutput.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IAudioStream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Signal.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

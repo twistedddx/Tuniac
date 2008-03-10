@@ -219,12 +219,7 @@ bool CAudioOutput::Shutdown(void)
 
 	if(m_pSourceVoice)
 	{
-		HRESULT hRes = m_pSourceVoice->DestroyVoice();
-		if(!SUCCEEDED(hRes))
-		{
-			MessageBox(NULL, TEXT("Error Destroying Voice"), TEXT("This is pretty serious"), MB_OK);
-		}
-
+		m_pSourceVoice->DestroyVoice();
 		m_pSourceVoice = NULL;
 	}
 
