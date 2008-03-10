@@ -395,7 +395,7 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
 								SetParent(hWnd, NULL);
-								SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
+								SetWindowPos(hWnd, 0, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
 								
 								m_bFullScreen = true;
 
