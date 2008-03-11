@@ -31,6 +31,24 @@ extern HANDLE	hInst;
 					SetCurrentDirectory(oldFolder);
 */
 
+typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
+PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+
+void setVSync(int interval=1)
+{
+	const char *extensions = (char*)glGetString( GL_EXTENSIONS );
+
+	if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
+	else
+	{
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+
+		if( wglSwapIntervalEXT )
+			wglSwapIntervalEXT(interval);
+	}
+}
+
 __m64 Get_m64(__int64 n)
 {
     union __m64__m64
@@ -337,6 +355,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 	{
 		return false;								// Return FALSE
 	}
+
+	setVSync(1);
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);

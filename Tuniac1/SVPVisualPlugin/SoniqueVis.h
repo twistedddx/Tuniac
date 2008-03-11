@@ -85,6 +85,7 @@ class SoniqueQueryInterface : public QueryInterface
 
 	char* QueryString(char* expression)
 	{
+		OutputDebugStringA(expression);
 		return (char*)"TestThing";
 	}
 
