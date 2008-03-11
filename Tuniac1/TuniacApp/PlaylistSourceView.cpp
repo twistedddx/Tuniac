@@ -6,7 +6,7 @@
 #define WM_UPDATE					(WM_APP+2)
 #define WM_SHOWACTIVEITEM			(WM_APP+3)
 
-#define DARKCOL						RGB(248, 248, 248)
+#define DARKCOL						RGB(148, 208, 255)
 #define BARCOLOR					GetSysColor(COLOR_MENUHILIGHT)
 
 #define FILTERBYFIELD_MENUBASE		(7000)
