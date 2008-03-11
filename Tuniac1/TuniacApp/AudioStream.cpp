@@ -281,6 +281,9 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
+	if(m_Output == NULL)
+		return false;
+
 	return m_Output->GetVisData(ToHere, ulNumSamples);
 }
 
