@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPVisualPlugin", "SVPVisua
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_InfoManager", "std_InfoManager\std_InfoManager.vcproj", "{D1FD9348-BB12-4357-AD7E-17089D89C5E6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FLAC_Plugin", "FLAC_Plugin\FLAC_Plugin.vcproj", "{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -146,6 +148,14 @@ Global
 		{D1FD9348-BB12-4357-AD7E-17089D89C5E6}.Release|Win32.Build.0 = Release|Win32
 		{D1FD9348-BB12-4357-AD7E-17089D89C5E6}.Release|x64.ActiveCfg = Release|x64
 		{D1FD9348-BB12-4357-AD7E-17089D89C5E6}.Release|x64.Build.0 = Release|x64
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Debug|Win32.Build.0 = Debug|Win32
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Debug|x64.ActiveCfg = Debug|x64
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Debug|x64.Build.0 = Debug|x64
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Release|Win32.ActiveCfg = Release|Win32
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Release|Win32.Build.0 = Release|Win32
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Release|x64.ActiveCfg = Release|x64
+		{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
