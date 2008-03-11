@@ -139,7 +139,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 
 	wcex.cbSize			= sizeof(WNDCLASSEX); 
-	wcex.style			= CS_OWNDC | CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW;
+	wcex.style			= CS_OWNDC | CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS ;
 	wcex.lpfnWndProc	= (WNDPROC)WndProcStub;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
@@ -440,6 +440,8 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					m_VisualArray[m_iActivePlugin].pPlugin->MouseFunction(VISUAL_MOUSEFUNCTION_DOWN, pts.x, pts.y);
 				}
+
+				return(DefWindowProc(hWnd, message, wParam, lParam));
 			}
 			break;
 
@@ -451,6 +453,15 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					m_VisualArray[m_iActivePlugin].pPlugin->MouseFunction(VISUAL_MOUSEFUNCTION_UP, pts.x, pts.y);
 				}
+
+				return(DefWindowProc(hWnd, message, wParam, lParam));
+
+			}
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			{
+				SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_VIS_FULLSCREEN, 0), 0);
 			}
 			break;
 
