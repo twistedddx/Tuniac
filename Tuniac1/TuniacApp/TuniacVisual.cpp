@@ -5,6 +5,24 @@
 
 #define DISPLAYSAMPLES	1024
 
+typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
+PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+
+void setVSync(int interval=1)
+{
+	const char *extensions = (char*)glGetString( GL_EXTENSIONS );
+
+	if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
+	else
+	{
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+
+		if( wglSwapIntervalEXT )
+			wglSwapIntervalEXT(interval);
+	}
+}
+
 CTuniacVisual::CTuniacVisual(void)
 {
 }
@@ -48,8 +66,7 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	pfd.dwFlags    =	PFD_DOUBLEBUFFER |
 						PFD_SUPPORT_OPENGL |
 						PFD_DRAW_TO_WINDOW |
-						PFD_GENERIC_ACCELERATED |
-						PFD_SUPPORT_COMPOSITION;
+						PFD_GENERIC_ACCELERATED;
 	pfd.iPixelType = PFD_TYPE_RGBA;
 	pfd.cColorBits = 24 ;
 	pfd.cDepthBits = 32 ;
@@ -78,6 +95,8 @@ bool	CTuniacVisual::Attach(HDC hDC)
 		return false;								// Return FALSE
 	}
 
+	setVSync(1);
+
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);
 
@@ -86,7 +105,6 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_POLYGON_SMOOTH);
-
 
 	return true;
 }
@@ -195,9 +213,9 @@ bool	CTuniacVisual::Render(int w, int h)
 			}
 			glEnd();
 
-			glFinish();
 		}
-		GdiFlush();
+		glFinish();
+
 		SwapBuffers(m_glDC);
 
 	}
