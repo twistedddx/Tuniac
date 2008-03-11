@@ -329,6 +329,7 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 		case WM_ERASEBKGND:
 			{
 				SetEvent(m_hRenderEvent);
+				return TRUE;
 			}
 			break;
 
