@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "FLACAudioSourceSupplier.h"
+#include "FLACAudioSource.h"
 
 CFLACAudioSourceSupplier::CFLACAudioSourceSupplier(void)
 {
@@ -48,7 +49,12 @@ bool			CFLACAudioSourceSupplier::Configure(HWND hParent)
 
 bool			CFLACAudioSourceSupplier::CanHandle(LPTSTR szSource)
 {
-	return false;
+	if(!StrCmpI(TEXT(".flac"), PathFindExtension(szSource)))
+	{
+		return(true);
+	}
+
+	return(false);
 }
 
 unsigned long	CFLACAudioSourceSupplier::GetNumCommonExts(void)
@@ -63,5 +69,13 @@ LPTSTR			CFLACAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 
 IAudioSource *	CFLACAudioSourceSupplier::CreateAudioSource(LPTSTR szSource)
 {
+	CFLACAudioSource * pSource = new CFLACAudioSource;
+
+	if(pSource->Open(szSource))
+	{
+		return (IAudioSource*)pSource;
+	}
+
+	delete pSource;
 	return NULL;
 }
