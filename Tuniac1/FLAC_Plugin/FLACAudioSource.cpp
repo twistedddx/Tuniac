@@ -22,20 +22,11 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 
 ::FLAC__StreamDecoderWriteStatus OurDecoder::write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[])
 {
-//	const FLAC__uint32 total_size = (FLAC__uint32)(total_samples * channels * (bps/8));
-//	size_t i;
-
-//	if(total_samples == 0) 
-//	{
-//		fprintf(stderr, "ERROR: this example only works for FLAC files that have a total_samples count in STREAMINFO\n");
-//		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-//	}
-
-//	if(channels != 2 || bps != 16) 
-//	{
-//		fprintf(stderr, "ERROR: this example only supports 16bit stereo streams\n");
-//		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-//	}
+	if(ulTotalSamples == 0) 
+	{
+		//fprintf(stderr, "ERROR: this example only works for FLAC files that have a total_samples count in STREAMINFO\n");
+		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+	}
 
 	/* write decoded PCM samples */
 	for(int i = 0; i < frame->header.blocksize; i++) 
@@ -52,8 +43,6 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 			}
 			else if(ulBitsPerSample == 24)
 			{
-				//
-				unsigned long tempsample=0;
 				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int32)buffer[channel][i] / 8388608.0f;
 			}
 			else if(ulBitsPerSample == 32)
@@ -112,9 +101,7 @@ bool		CFLACAudioSource::GetLength(unsigned long * MS)
 {
 	unsigned long samplesperms = 	m_FileDecoder.ulSampleRate / 1000;
 
-	unsigned __int64 length = m_FileDecoder.ulTotalSamples / m_FileDecoder.ulChannels;
-
-	*MS = length / samplesperms;
+	*MS = (unsigned long)((double)m_FileDecoder.ulTotalSamples / (double)samplesperms);
 
 	return true;
 }
@@ -123,7 +110,7 @@ bool		CFLACAudioSource::SetPosition(unsigned long * MS)
 {
 	unsigned long samplesperms = 	m_FileDecoder.ulSampleRate / 1000;
 
-	unsigned __int64 pos = *MS * (samplesperms * m_FileDecoder.ulChannels);
+	unsigned __int64 pos = *MS * samplesperms;
 
 	m_FileDecoder.seek_absolute(pos);
 
