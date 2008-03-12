@@ -70,10 +70,12 @@ CFLACAudioSource::~CFLACAudioSource(void)
 
 bool		CFLACAudioSource::Open(LPTSTR szStream)
 {
+//TODO: replace this with FILE * fp = fopen() code, which supports unicode, cos wcstomb isn't going to cut it!
+
 	char tempname[_MAX_PATH];
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_UTF8,
+	WideCharToMultiByte(CP_ACP,
 						0,
 						szStream,
 						-1,
@@ -83,7 +85,12 @@ bool		CFLACAudioSource::Open(LPTSTR szStream)
 						NULL);
 #endif
 
-	if(m_FileDecoder.init(tempname) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
+	//fopen(
+
+	::FLAC__StreamDecoderInitStatus		flacStat;
+
+	flacStat = m_FileDecoder.init(tempname);
+	if(flacStat != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 		return false;
 
 	m_FileDecoder.process_until_end_of_metadata();
