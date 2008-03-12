@@ -11,11 +11,21 @@ public:
 	{ 
 	}
 
+	unsigned long		ulSampleRate;
+	unsigned long		ulChannels;
+	unsigned long		ulBitsPerSample;
+
+	unsigned __int64	ulTotalSamples;
+
+	float				m_AudioBuffer[FLAC__MAX_BLOCK_SIZE];
+	unsigned long		m_ulLastDecodedBufferSize;
+
+
 protected:
 	virtual ::FLAC__StreamDecoderWriteStatus write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
 	virtual void error_callback(::FLAC__StreamDecoderErrorStatus status);
 
-	//virtual void metadata_callback(const ::FLAC__StreamMetadata *metadata);
+	virtual void metadata_callback(const ::FLAC__StreamMetadata *metadata);
 };
 
 
@@ -25,8 +35,6 @@ class CFLACAudioSource :
 private:
 	OurDecoder		m_FileDecoder;
 
-	float			m_AudioBuffer[FLAC__MAX_BLOCK_SIZE];
-	unsigned long	m_ulLastDecodedBufferSize;
 
 public:
 	CFLACAudioSource(void);

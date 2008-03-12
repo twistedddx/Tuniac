@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib flaclib\debug\libFLAC++_static64.lib"
+				AdditionalDependencies="shlwapi.lib flaclib\release\libFLAC++_static64.lib flaclib\release\libFLAC_static64.lib flaclib\release\ogg_static64.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
