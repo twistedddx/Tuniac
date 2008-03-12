@@ -42,7 +42,7 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 	{
 		for(int channel=0; channel<ulChannels; channel++)
 		{
-			m_AudioBuffer[(i*channel)+channel]	= (float)(FLAC__int16)buffer[channel][i] / 32767.0f;
+			m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int16)buffer[channel][i] / 32767.0f;
 		}
 	}
 
