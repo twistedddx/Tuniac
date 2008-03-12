@@ -42,7 +42,25 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 	{
 		for(int channel=0; channel<ulChannels; channel++)
 		{
-			m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int16)buffer[channel][i] / 32767.0f;
+			if(ulBitsPerSample == 8)
+			{
+				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int8)buffer[channel][i] / 128.0f;
+			}
+			else if(ulBitsPerSample == 16)
+			{
+				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int16)buffer[channel][i] / 32767.0f;
+			}
+			else if(ulBitsPerSample == 24)
+			{
+				//
+				unsigned long tempsample=0;
+				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int32)buffer[channel][i] / 8388608.0f;
+			}
+			else if(ulBitsPerSample == 32)
+			{
+				m_AudioBuffer[(i*ulChannels)+channel]	= (float)((double)(FLAC__int32)buffer[channel][i] / 2147483648.0);
+			}
+
 		}
 	}
 
