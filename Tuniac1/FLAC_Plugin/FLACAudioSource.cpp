@@ -64,7 +64,7 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 		}
 	}
 
-	m_ulLastDecodedBufferSize = frame->header.blocksize * 2;
+	m_ulLastDecodedBufferSize = frame->header.blocksize * ulChannels;
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
