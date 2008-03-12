@@ -101,6 +101,11 @@ bool		CFLACAudioSource::Open(LPTSTR szStream)
 void		CFLACAudioSource::Destroy(void)
 {
 	m_FileDecoder.reset();
+	if(m_FileDecoder.get_state() != FLAC__STREAM_DECODER_UNINITIALIZED)
+	{
+		m_FileDecoder.finish();
+	}
+
 	delete this;
 }
 
