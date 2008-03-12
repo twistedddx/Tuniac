@@ -144,7 +144,14 @@ bool		CFLACAudioSource::GetFormat(unsigned long * SampleRate, unsigned long * Ch
 
 bool		CFLACAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	m_FileDecoder.process_single();
+	if(m_FileDecoder.get_state() == FLAC__STREAM_DECODER_END_OF_STREAM)
+	{
+		return false;
+	}
+
+
+	if(!m_FileDecoder.process_single())
+		return false;
 
 	*ppBuffer		= m_FileDecoder.m_AudioBuffer;
 	*NumSamples		= m_FileDecoder.m_ulLastDecodedBufferSize;
