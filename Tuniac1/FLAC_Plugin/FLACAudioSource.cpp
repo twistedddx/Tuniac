@@ -2,6 +2,8 @@
 #include "FLACAudioSource.h"
 
 
+//#define 8BitToFloat(char x) 
+
 void OurDecoder::error_callback(::FLAC__StreamDecoderErrorStatus status)
 {
 	fprintf(stderr, "Got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
@@ -38,8 +40,10 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 	/* write decoded PCM samples */
 	for(int i = 0; i < frame->header.blocksize; i++) 
 	{
-		m_AudioBuffer[i*2]		= (float)(FLAC__int16)buffer[0][i] / 32767.0f;
-		m_AudioBuffer[(i*2)+1]	= (float)(FLAC__int16)buffer[1][i] / 32767.0f;
+		for(int channel=0; channel<ulChannels; channel++)
+		{
+			m_AudioBuffer[(i*channel)+channel]	= (float)(FLAC__int16)buffer[channel][i] / 32767.0f;
+		}
 	}
 
 	m_ulLastDecodedBufferSize = frame->header.blocksize * 2;
