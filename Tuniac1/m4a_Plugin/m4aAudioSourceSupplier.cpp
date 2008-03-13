@@ -38,7 +38,8 @@ unsigned long	Cm4aAudioSourceSupplier::GetFlags(void)
 
 bool			Cm4aAudioSourceSupplier::About(HWND hParent)
 {
-	return false;
+	MessageBox(hParent, TEXT("M4A Decoder Plugin for Tuniac.\n\nUsing the FAAD2 decoder from Nero.\nCopyright (C) 2003-2005 M. Bakker"), GetName(), MB_OK | MB_ICONINFORMATION);
+	return true;
 }
 
 bool			Cm4aAudioSourceSupplier::Configure(HWND hParent)
