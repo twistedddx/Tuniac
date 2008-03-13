@@ -40,7 +40,8 @@ unsigned long	CFLACAudioSourceSupplier::GetFlags(void)
 
 bool			CFLACAudioSourceSupplier::About(HWND hParent)
 {
-	return false;
+	MessageBox(hParent, TEXT("FLAC Decoder Plugin for Tuniac.\n\nUsing the libFLAC decoder from Xiph.\nCopyright (c) 2004,2005,2006,2007,2008 Josh Coalson"), GetName(), MB_OK | MB_ICONINFORMATION);
+	return true;
 }
 bool			CFLACAudioSourceSupplier::Configure(HWND hParent)
 {
