@@ -37,7 +37,7 @@ unsigned long	COGGDecoderPlugin::GetFlags(void)
 
 bool			COGGDecoderPlugin::About(HWND hParent)
 {
-	MessageBox(hParent, TEXT("OGG Decoder Plugin for Tuniac.\n\nUsing the OggVorbis decoder from Xiph.\nCopyright 1994-2002 Xiph.Org Foundation."), GetName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hParent, TEXT("OGG Decoder Plugin for Tuniac.\n\nUsing the OggVorbis decoder from Xiph.\nCopyright 1994-2007 Xiph.Org Foundation."), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
