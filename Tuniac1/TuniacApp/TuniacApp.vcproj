@@ -55,13 +55,14 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x502"
-				StringPooling="true"
+				StringPooling="false"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
-				StructMemberAlignment="5"
+				StructMemberAlignment="0"
 				BufferSecurityCheck="true"
 				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="1"
+				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
 				WarningLevel="3"
@@ -152,6 +153,7 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -208,7 +210,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -235,7 +237,8 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				PreprocessorDefinitions="_WIN32_WINNT=0x502"
-				CompileAs="0"
+				StringPooling="false"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -257,7 +260,7 @@
 				LinkTimeCodeGeneration="1"
 				SetChecksum="true"
 				RandomizedBaseAddress="0"
-				DataExecutionPrevention="2"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -287,7 +290,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -322,6 +324,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600"
+				StringPooling="false"
 				TreatWChar_tAsBuiltInType="true"
 				OpenMP="false"
 				UsePrecompiledHeader="0"
@@ -356,6 +359,7 @@
 				SetChecksum="true"
 				RandomizedBaseAddress="0"
 				FixedBaseAddress="0"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 				CLRThreadAttribute="0"
 			/>
