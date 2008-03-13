@@ -26,7 +26,7 @@
 
 #define AUDIOBUFFERING			TEXT("AudioBuffering")
 
-#define VOLUME 			TEXT("Volume")
+#define VOLUME 					TEXT("Volume")
 
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
@@ -521,30 +521,10 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					SendDlgItemMessage(hDlg, IDC_CROSSFADE_ENABLE, BM_SETCHECK, BST_CHECKED, 0);
 				}
 
-				switch(pPrefs->m_AudioBuffering)
-				{
-					case 0:
-						{
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_CHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_UNCHECKED, 0);
-						}
-						break;
-					case 1:
-						{
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_CHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_UNCHECKED, 0);
-						}
-						break;
-					case 2:
-						{
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_SMALL,		BM_SETCHECK, BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_MEDIUM,	BM_SETCHECK, BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_AUDIOBUFFER_HUGE,		BM_SETCHECK, BST_CHECKED, 0);
-						}
-						break;
-				}
+				wsprintf(tstr, TEXT("Buffer size %d milliseconds"), pPrefs->m_AudioBuffering);
+				SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
+				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(250, 5000));
+				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETPOS,	TRUE, pPrefs->m_AudioBuffering);
 			}
 			break;
 
@@ -572,23 +552,6 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							}
 						}
 						break;
-					case IDC_AUDIOBUFFER_HUGE:
-						{
-							pPrefs->m_AudioBuffering = 2;
-						}
-						break;
-
-					case IDC_AUDIOBUFFER_MEDIUM:
-						{
-							pPrefs->m_AudioBuffering = 1;
-						}
-						break;
-
-					case IDC_AUDIOBUFFER_SMALL:
-						{
-							pPrefs->m_AudioBuffering = 0;
-						}
-						break;	
 				}
 
 
@@ -607,6 +570,10 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							pPrefs->m_CrossfadeTime = SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_GETPOS, 0, 0); 
 							wsprintf(tstr, TEXT("Crossfade for %d seconds"), pPrefs->m_CrossfadeTime);
 							SetDlgItemText(hDlg, IDC_CROSSFADE_TIME_TEXT, tstr);
+
+							pPrefs->m_AudioBuffering = SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_GETPOS, 0, 0); 
+							wsprintf(tstr, TEXT("Buffer length %d milliseconds"), pPrefs->m_AudioBuffering);
+							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 						}
 						break;
 				}
@@ -1089,7 +1056,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_CrossfadeEnabled			= TRUE;
 	m_CrossfadeTime				= 6;
 
-	m_AudioBuffering			= 1;
+	m_AudioBuffering			= 500;
 
 	m_Volume					= 100.0;
 
@@ -1290,19 +1257,24 @@ bool CPreferences::LoadPreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegQueryValueEx(	hTuniacPrefKey,
-							CROSSFADEENABLED,
-							NULL,
-							&Type,
-							(LPBYTE)&m_CrossfadeEnabled,
-							&Size);
-
-		Size = sizeof(int);
-		Type = REG_DWORD;
-		RegQueryValueEx(	hTuniacPrefKey,
 							AUDIOBUFFERING,
 							NULL,
 							&Type,
 							(LPBYTE)&m_AudioBuffering,
+							&Size);
+
+		if(m_AudioBuffering > 5000)
+			m_AudioBuffering = 5000;
+		if(m_AudioBuffering < 250)
+			m_AudioBuffering = 250;
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							CROSSFADEENABLED,
+							NULL,
+							&Type,
+							(LPBYTE)&m_CrossfadeEnabled,
 							&Size);
 
 		Size = sizeof(int);
@@ -1553,21 +1525,20 @@ bool CPreferences::SavePreferences(void)
 		Size = sizeof(int);
 		Type = REG_DWORD;
 		RegSetValueEx(	hTuniacPrefKey, 
-						CROSSFADEENABLED, 
-						0,
-						Type,
-						(LPBYTE)&m_CrossfadeEnabled, 
-						Size);
-
-		Size = sizeof(int);
-		Type = REG_DWORD;
-		RegSetValueEx(	hTuniacPrefKey, 
 						AUDIOBUFFERING, 
 						0,
 						Type,
 						(LPBYTE)&m_AudioBuffering, 
 						Size);
 
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey, 
+						CROSSFADEENABLED, 
+						0,
+						Type,
+						(LPBYTE)&m_CrossfadeEnabled, 
+						Size);
 
 		Size = sizeof(int);
 		Type = REG_DWORD;
@@ -1978,7 +1949,7 @@ void	CPreferences::SetMainWindowMaximized(bool bMaximized)
 
 bool	CPreferences::GetMainWindowMaximized(void)
 {
-	return m_MainWindowMaximized == TRUE;
+	return m_MainWindowMaximized;
 }
 
 bool	CPreferences::CrossfadingEnabled(void)

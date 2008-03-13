@@ -53,15 +53,12 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     GROUPBOX        "      Crossfade Playback",IDC_STATIC,7,7,222,48
     CONTROL         "",IDC_CROSSFADE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,7,10,10
-    CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,18,209,20
-    CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,40,209,8
+    CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,20,209,20
+    CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,41,209,8
     GROUPBOX        "Audio Buffering",IDC_STATIC,7,63,222,74
-    CONTROL         "Medium Buffer (best trade off between skips and effects response)",IDC_AUDIOBUFFER_MEDIUM,
-                    "Button",BS_AUTORADIOBUTTON | BS_MULTILINE,13,92,209,20
-    CONTROL         "Small Buffer (faster effects response but audio may skip)",IDC_AUDIOBUFFER_SMALL,
-                    "Button",BS_AUTORADIOBUTTON,13,72,209,19
-    CONTROL         "Huge Buffer (effects take a long time to take effect, should have no skips in audio)",IDC_AUDIOBUFFER_HUGE,
-                    "Button",BS_AUTORADIOBUTTON | BS_MULTILINE,13,113,209,20
+    CONTROL         "",IDC_BUFFER_TIME_SLIDER,"msctls_trackbar32",WS_TABSTOP,13,77,209,20
+    CTEXT           "%d Milliseconds",IDC_BUFFER_TIME_TEXT,20,100,209,8
+    LTEXT           "A larger buffer will help prevent audio skips but will increase delay in audio effects.",IDC_STATIC,13,113,209,17
 END
 
 IDD_PREFERENCES_MEDIALIBRARY DIALOGEX 0, 0, 235, 176
@@ -638,10 +635,10 @@ BEGIN
     BEGIN
         MENUITEM "&Play / Pause\tWinKey+Numpad5", ID_PLAYBACK_PLAYPAUSE
         MENUITEM "S&oft Pause\tCtrl+Shift+Spacebar", ID_PLAYBACK_SOFTPAUSE
-		MENUITEM "Sto&p\tWinKey+Numpad0", ID_PLAYBACK_STOP
-        MENUITEM "&Next\tWinKey+Numpad6",     ID_PLAYBACK_NEXT
+        MENUITEM "Sto&p\tWinKey+Numpad0",       ID_PLAYBACK_STOP
+        MENUITEM "&Next\tWinKey+Numpad6",       ID_PLAYBACK_NEXT
         MENUITEM "Random N&ext\tWinKey+Numpad9", ID_PLAYBACK_RANDOMNEXT
-        MENUITEM "Pr&evious\tWinkey+Numpad4",  ID_PLAYBACK_PREVIOUS
+        MENUITEM "Pr&evious\tWinkey+Numpad4",   ID_PLAYBACK_PREVIOUS
         MENUITEM SEPARATOR
         MENUITEM "&Shuffle Play\tCtrl+S",       ID_PLAYBACK_TOGGLE_SHUFFLE
         POPUP "&Repeat"
@@ -698,12 +695,12 @@ BEGIN
             MENUITEM "All &Queued",                 ID_REPEAT_ALLQUEUED
         END
         MENUITEM SEPARATOR
-        MENUITEM "&Play / Pause", ID_PLAYBACK_PLAYPAUSE
-        MENUITEM "S&oft Pause", ID_PLAYBACK_SOFTPAUSE
-		MENUITEM "Sto&p", ID_PLAYBACK_STOP
-        MENUITEM "&Next",     ID_PLAYBACK_NEXT
-        MENUITEM "Random N&ext", ID_PLAYBACK_RANDOMNEXT
-        MENUITEM "Pr&evious",  ID_PLAYBACK_PREVIOUS
+        MENUITEM "&Play / Pause",               ID_PLAYBACK_PLAYPAUSE
+        MENUITEM "S&oft Pause",                 ID_PLAYBACK_SOFTPAUSE
+        MENUITEM "Sto&p",                       ID_PLAYBACK_STOP
+        MENUITEM "&Next",                       ID_PLAYBACK_NEXT
+        MENUITEM "Random N&ext",                ID_PLAYBACK_RANDOMNEXT
+        MENUITEM "Pr&evious",                   ID_PLAYBACK_PREVIOUS
         MENUITEM SEPARATOR
         POPUP "Playlists"
         BEGIN

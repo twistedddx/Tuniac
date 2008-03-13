@@ -134,6 +134,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	t = m_LogWindow;
 	m_WindowArray.AddTail(t);
 
+	//get max state before sizing, which will reset this anyways
+	bool bMax = m_Preferences.GetMainWindowMaximized();
+
 	//theme the tray icon?
 	m_wc.cbSize			= sizeof(WNDCLASSEX); 
 	m_wc.style			= 0;
@@ -177,14 +180,14 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 							hInstance,
 							this);
 
+	if(bMax)
+		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+
 	//window did not create!
 	if(!m_hWnd)
 	{
 		return(false);
 	}
-
-	//if(m_Preferences.GetMainWindowMaximized())
-		//SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 
 	//set always ontop state
 	CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | (m_Preferences.GetAlwaysOnTop() ? MF_CHECKED : MF_UNCHECKED));
@@ -591,6 +594,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					}
 				}
 
+				if(wParam==SIZE_MAXIMIZED)
+					m_Preferences.SetMainWindowMaximized(true);
+				else
+					m_Preferences.SetMainWindowMaximized(false);
+
 				m_PlayControls.Move(playcontrolsrect.left, playcontrolsrect.top, playcontrolsrect.right, playcontrolsrect.bottom);
 
 				SendMessage(m_hWndStatus, message, wParam, lParam);
@@ -716,21 +724,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				// lets just keep core Audio up to date anyway!!!
 				CCoreAudio::Instance()->SetCrossfadeTime(m_Preferences.GetCrossfadeTime() * 1000);
-
-				unsigned long ulBuffer;
-				if(m_Preferences.GetAudioBuffering() == 0)
-				{
-					ulBuffer = 250;
-				}
-				else if(m_Preferences.GetAudioBuffering() == 1)
-				{
-					ulBuffer = 500;
-				}
-				else if(m_Preferences.GetAudioBuffering() == 2)
-				{
-					ulBuffer = 1000;
-				}
-				CCoreAudio::Instance()->SetAudioBufferSize(ulBuffer);
+				CCoreAudio::Instance()->SetAudioBufferSize(m_Preferences.GetAudioBuffering());
 
 				switch (wParam)
 				{
