@@ -46,7 +46,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -68,6 +68,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -121,7 +122,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -195,14 +196,16 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
+				EnableFunctionLevelLinking="false"
+				UsePrecompiledHeader="0"
+				WarningLevel="1"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -216,19 +219,23 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				LinkIncremental="0"
+				IgnoreDefaultLibraryNames=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
+				ErrorReporting="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
+				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -252,7 +259,6 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -273,14 +279,16 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="1"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -294,11 +302,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				LinkIncremental="0"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
+				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -306,7 +318,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -464,16 +475,20 @@
 					RelativePath=".\flaclib\release\libFLAC++_static64.lib"
 					>
 				</File>
-			</Filter>
-			<Filter
-				Name="Debug"
-				>
 				<File
-					RelativePath=".\flaclib\debug\libFLAC++_static.lib"
+					RelativePath=".\flaclib\release\libFLAC_static.lib"
 					>
 				</File>
 				<File
-					RelativePath=".\flaclib\debug\libFLAC++_static64.lib"
+					RelativePath=".\flaclib\release\libFLAC_static64.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\ogg_static.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\ogg_static64.lib"
 					>
 				</File>
 			</Filter>

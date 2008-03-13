@@ -2,8 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="NowPlayingTxt"
+	Name="NowPlayingTxt_Plugin"
 	ProjectGUID="{F5B70CFE-5F0D-4C02-8725-142E860D53F6}"
+	RootNamespace="NowPlayingTxt_Plugin"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -21,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\plugins"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\plugins"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
@@ -45,9 +46,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;NOWPLAYINGTXT_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				StringPooling="false"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -66,7 +68,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				OutputFile="$(OutDir)/NowPlayingTxt.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -103,7 +105,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\plugins"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\plugins"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
@@ -128,8 +130,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;NOWPLAYINGTXT_EXPORTS"
-				MinimalRebuild="true"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -149,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				OutputFile="$(OutDir)/NowPlayingTxt.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
@@ -183,7 +185,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\plugins"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\plugins"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
@@ -212,7 +214,7 @@
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="true"
+				StringPooling="false"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
@@ -232,7 +234,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				OutputFile="$(OutDir)/NowPlayingTxt_Plugin.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -240,7 +242,7 @@
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
 				RandomizedBaseAddress="0"
-				DataExecutionPrevention="2"
+				DataExecutionPrevention="0"
 				ImportLibrary=""
 				TargetMachine="1"
 			/>
@@ -269,9 +271,8 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\plugins"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\plugins"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -299,6 +300,7 @@
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				StringPooling="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
@@ -316,7 +318,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				OutputFile="$(OutDir)/NowPlayingTxt_Plugin.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -324,6 +326,7 @@
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
 				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
 				ImportLibrary=""
 				TargetMachine="17"
 			/>
