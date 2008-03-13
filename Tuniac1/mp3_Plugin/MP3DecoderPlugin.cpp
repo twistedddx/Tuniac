@@ -39,7 +39,7 @@ unsigned long	CMP3DecoderPlugin::GetFlags(void)
 
 bool			CMP3DecoderPlugin::About(HWND hParent)
 {
-	MessageBox(hParent, TEXT("MP3 Decoder Plugin for Tuniac.\n\nUsing Tony Million's MP3 Decoder.\nCopyright (c) 2002 Tony Million."), GetName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hParent, TEXT("MP3 Decoder Plugin for Tuniac.\n\nUsing Tony Million's MP3 Decoder.\nCopyright (c) 2002-2008 Tony Million."), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
