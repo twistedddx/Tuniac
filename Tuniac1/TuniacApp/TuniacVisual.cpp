@@ -162,8 +162,20 @@ bool	CTuniacVisual::Render(int w, int h)
 		//glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
 		//glClear (GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();					// Reset The Modelview Matrix
-		glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
-		glRectf(0,0,m_LastWidth, m_LastHeight);
+
+		glBegin(GL_QUAD_STRIP);
+			glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
+			glVertex2f(0,			0);
+	
+			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glVertex2f(0,			m_LastHeight);
+		
+			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glVertex2f(m_LastWidth,	0);
+		
+			glColor4f(0.6f, 0.62f, 0.66f, 0.5f);
+			glVertex2f(m_LastWidth,	m_LastHeight);
+		glEnd();
 
 
 		// draw background grid
