@@ -255,14 +255,14 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 			TCHAR szTitle[128];
 			if(pImporter->ImportTitle(szTitle, 128))
 			{
-				if(wcslen(pStreamEntry->GetLibraryEntry()->szArtist) == 0)
+				if(pStreamEntry->GetLibraryEntry()->szArtist[0] == TEXT('\0'))
 					StrCpyN(pStreamEntry->GetLibraryEntry()->szArtist, szTitle, 128);
-				if(wcslen(pStreamEntry->GetLibraryEntry()->szComment) == 0)
+				if(pStreamEntry->GetLibraryEntry()->szComment[0] == TEXT('\0'))
 				StrCpyN(pStreamEntry->GetLibraryEntry()->szComment, szTitle, 128);
 			}
 			else
 			{
-				if(wcslen(pStreamEntry->GetLibraryEntry()->szArtist) == 0)
+				if(pStreamEntry->GetLibraryEntry()->szArtist[0] == TEXT('\0'))
 					StrCpy(pStreamEntry->GetLibraryEntry()->szArtist, TEXT("[Unknown Stream]"));
 			}
 

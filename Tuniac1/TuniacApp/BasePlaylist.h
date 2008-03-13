@@ -80,6 +80,7 @@ public:
 	IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex);
 	IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
 	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pEntry);
+	unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pEntry);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);
