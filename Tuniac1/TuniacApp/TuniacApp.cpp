@@ -724,11 +724,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 				else if(m_Preferences.GetAudioBuffering() == 1)
 				{
-					ulBuffer = 350;
+					ulBuffer = 500;
 				}
 				else if(m_Preferences.GetAudioBuffering() == 2)
 				{
-					ulBuffer = 500;
+					ulBuffer = 1000;
 				}
 				CCoreAudio::Instance()->SetAudioBufferSize(ulBuffer);
 
