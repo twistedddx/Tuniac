@@ -204,12 +204,12 @@ bool	CTuniacVisual::Render(int w, int h)
 			glColor4f(0,0,0, 0.5f);
 			glBegin(GL_QUADS);
 			{
-				for(unsigned int samp=0; samp<NumSamples; samp++)
+				for(unsigned int samp=0; samp<NumSamples-2; samp++)
 				{
 					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight 	- abs(AudioData[samp*2]		* halfheight) );
+					glVertex2f(samp*multiplier,		halfheight 	- abs(AudioData[(samp*2)]		* halfheight) );
 
-					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(AudioData[samp*2]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(AudioData[(samp*2)+2]		* halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}
@@ -218,12 +218,12 @@ bool	CTuniacVisual::Render(int w, int h)
 			glColor4f(0,0,0, 0.5f);
 			glBegin(GL_QUADS);
 			{
-				for(unsigned int samp=0; samp<NumSamples; samp++)
+				for(unsigned int samp=0; samp<NumSamples-2; samp++)
 				{
 					glVertex2f(samp*multiplier,		halfheight);
 					glVertex2f(samp*multiplier,		halfheight + abs(AudioData[(samp*2)+1]		* halfheight));
 
-					glVertex2f((samp+1)*multiplier,	halfheight + abs(AudioData[(samp*2)+1]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight + abs(AudioData[(samp*2)+3]		* halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}
