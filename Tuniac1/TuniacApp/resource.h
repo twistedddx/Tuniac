@@ -65,12 +65,14 @@
 #define IDC_PLAYLIST_FILTER             1009
 #define IDC_PLAYLIST_LIST               1010
 #define IDC_CROSSFADE_ENABLE            1012
-#define IDC_CROSSFADE_TIME_SLIDER       1013
+#define IDC_BUFFER_TIME_SLIDER          1013
+#define IDC_CROSSFADE_TIME_SLIDER       1014
 #define IDD_FILTERSELECTOR              1040
 #define IDC_FILTER_ARTIST               1041
 #define IDC_CROSSFADE_TIME_TEXT         1042
 #define IDC_MEDIALIBRARY_TEXT           1043
 #define IDC_TITLE_EDIT                  1043
+#define IDC_BUFFER_TIME_TEXT            1043
 #define IDC_ARTIST_COMBO                1044
 #define IDC_RATING_CONTROL              1045
 #define IDC_TRACKNO_EDIT                1045
@@ -157,11 +159,8 @@
 #define IDC_COMBO1                      1138
 #define IDC_DEVICESELECTOR_COMBO        1138
 #define IDC_RADIO1                      1139
-#define IDC_AUDIOBUFFER_MEDIUM          1139
 #define IDC_RADIO2                      1140
-#define IDC_AUDIOBUFFER_SMALL           1140
 #define IDC_VISUALPREFS_FPSDISPLAY      1141
-#define IDC_AUDIOBUFFER_HUGE            1141
 #define IDC_CHECK1                      1142
 #define IDC_CDSOURCE_IMPORT             1143
 #define IDC_LOGVIEW_EDIT                1144
