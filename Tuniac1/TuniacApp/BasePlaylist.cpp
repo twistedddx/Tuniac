@@ -540,6 +540,18 @@ unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pEntry)
 	return INVALID_PLAYLIST_INDEX;
 }
 
+//gets real index then returns filtered index for item 
+unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pEntry)
+{
+	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+	{
+		if(m_PlaylistArray[x].pEntry == pEntry)
+			return RealIndexToNormalFilteredIndex(x);
+	}
+
+	return INVALID_PLAYLIST_INDEX;
+}
+
 bool				CBasePlaylist::SetTextFilter(LPTSTR	szFilterString)
 {
 	StrCpyN(m_szTextFilter, szFilterString, 255);
@@ -629,12 +641,12 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	}
 	IPlaylistEntry * pEntry = GetActiveItem();
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
-	unsigned long ulFilteredIndex = GetFilteredIndexforItem(pEntry);
-	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
-
 	delete[] scratch;
 
-	//ApplyFilter();
+	ApplyFilter();
+
+	unsigned long ulNormalFilteredIndex = GetNormalFilteredIndexforItem(pEntry);
+	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulNormalFilteredIndex);
 
 	return true;
 }

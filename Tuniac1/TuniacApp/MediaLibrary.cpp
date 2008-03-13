@@ -481,7 +481,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			}
 
 			//set filename as title if tag readers didn't find one
-			if(wcslen(libraryEntry.szTitle) == 0)
+			if(libraryEntry.szTitle[0] ==  TEXT('\0'))
 			{
 				TCHAR	szFileTitle[128];
 				GetFileTitle(szURL, szFileTitle, 128);

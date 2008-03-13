@@ -971,7 +971,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							for(unsigned long i = 0; i < m_pPlaylist->GetNumItems(); i++)
 							{
 								m_pPlaylist->GetItemAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
-								if(wcslen(szCurrent) == 0) continue;
+								if(szCurrent[0] == TEXT('\0')) continue;
 
 								iLeft = 0;
 								iRight = setArray.GetCount() - 1;
@@ -1078,7 +1078,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					for(unsigned long i = 0; i < m_pPlaylist->GetNumItems(); i++)
 					{
 						m_pPlaylist->GetItemAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
-						if(wcslen(szCurrent) == 0) continue;
+						if(szCurrent == TEXT('\0')) continue;
 
 						iLeft = 0;
 						iRight = setArray.GetCount() - 1;
