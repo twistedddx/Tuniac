@@ -643,7 +643,7 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 
-	ApplyFilter();
+	RebuildPlaylistArrays();
 
 	unsigned long ulNormalFilteredIndex = GetNormalFilteredIndexforItem(pEntry);
 	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulNormalFilteredIndex);
