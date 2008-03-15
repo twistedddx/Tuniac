@@ -1,3 +1,43 @@
+Mar 14, 2008
+------------
+-Fix 100% CPU usage
+
+
+Mar 13, 2008
+------------
+-remember maximized state
+-buffer size slider
+-fix sorting
+-add stop to tray/playback menu's
+-update about windows
+
+
+Mar 13, 2008
+------------
+-Installer update. 32bit/64bit selection(if possible)/text, DirectX test/download
+-Tuniac, coreaudio xaudio test, prompt/redirection to download directx
+-Speed improvements, visual update and other changes
+-FLAC decoder. Supports multichannel,8/16/24/32 bitdepths and all sample rates. Also has x64 support which is fairly rare for flac.
+
+
+Mar 11, 2008
+------------
+-Heap mistake fixed
+
+
+Mar 10, 2008
+------------
+-mass Audio Engine work
+-DirectX March 2008 SDK update
+-speed improvements
+-millions of other things
+
+
+Mar 02, 2008
+------------
+-audio engine overhaul/rewrite
+
+
 Feb 24, 2008
 ------------
 -fix "previous" in menu
