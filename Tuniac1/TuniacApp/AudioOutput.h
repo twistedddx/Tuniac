@@ -120,6 +120,11 @@ public:
 		return( (unsigned long)((float)SamplesOut / ((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) );
 	}
 
+	unsigned long GetAudioBufferMS(void)
+	{
+		return m_ulBuffersizeMS;
+	}
+
 	__int64 GetSamplesOut(void);
 
 	bool GetVisData(float * ToHere, unsigned long ulNumSamples);
