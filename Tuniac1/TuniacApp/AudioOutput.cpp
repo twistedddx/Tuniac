@@ -3,7 +3,7 @@
 
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
-#define MAX_BUFFER_COUNT		10
+#define MAX_BUFFER_COUNT		8
 
 
 #ifndef SAFE_RELEASE
@@ -65,73 +65,89 @@ unsigned long CAudioOutput::ThreadProc(void)
 	{
 		float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
 
-		if(m_pCallback && m_bPlaying)
+		if(m_pCallback)
 		{
+			XAUDIO2_VOICE_STATE state;
+			m_pSourceVoice->GetState( &state );
 
-			if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
+			if(state.BuffersQueued < MAX_BUFFER_COUNT)
 			{
-				CAutoLock lock(&m_AudioLock);
-
-				// HACK: this is highly inefficient and must be fixed!
-				// what this hack does, is to copy the first bufer, PAST the end of the 'last buffer'
-				// we actually allocate 'n'+1 buffers for this reason
-				// this means, when we want to copy visuals out, we can just do a single memcopy
-				// instead of two, this is probably more efficient anyway?
-				// if I could do so in windows, I'd just memmap the block of data after itself,
-				// so it would all be virtual and let the MMU deal with it
-				// BUT I CAN'T :((((((
-				if(currentDiskReadBuffer == 0)
+				if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
 				{
-					CopyFloat(	&m_pfAudioBuffer[(MAX_BUFFER_COUNT*m_BlockSize)], 
-								m_pfAudioBuffer,
-								m_BlockSize);
+					CAutoLock lock(&m_AudioLock);
+
+					// HACK: this is highly inefficient and must be fixed!
+					// what this hack does, is to copy the first bufer, PAST the end of the 'last buffer'
+					// we actually allocate 'n'+1 buffers for this reason
+					// this means, when we want to copy visuals out, we can just do a single memcopy
+					// instead of two, this is probably more efficient anyway?
+					// if I could do so in windows, I'd just memmap the block of data after itself,
+					// so it would all be virtual and let the MMU deal with it
+					// BUT I CAN'T :((((((
+					if(currentDiskReadBuffer == 0)
+					{
+						CopyFloat(	&m_pfAudioBuffer[(MAX_BUFFER_COUNT*m_BlockSize)], 
+									m_pfAudioBuffer,
+									m_BlockSize);
+					}
+
+					XAUDIO2_BUFFER buf	=	{0};
+					buf.Flags			=	0;
+					buf.AudioBytes		=	m_BlockSizeBytes;
+					buf.pAudioData		=	(BYTE*)pOffset;
+					buf.pContext		=	(VOID*)currentDiskReadBuffer;
+
+					HRESULT hr = m_pSourceVoice->SubmitSourceBuffer( &buf );
+					if(FAILED(hr))
+					{
+						MessageBox(NULL, TEXT("Error Writing Buffer"), TEXT("UH OH"), MB_OK);
+					}
+
+					currentDiskReadBuffer++;
+					currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 				}
-
-				XAUDIO2_BUFFER buf	=	{0};
-				buf.Flags			=	0;
-				buf.AudioBytes		=	m_BlockSizeBytes;
-				buf.pAudioData		=	(BYTE*)pOffset;
-				buf.pContext		=	(VOID*)currentDiskReadBuffer;
-
-				HRESULT hr = m_pSourceVoice->SubmitSourceBuffer( &buf );
-				if(FAILED(hr))
+				else
 				{
-					MessageBox(NULL, TEXT("Error Writing Buffer"), TEXT("UH OH"), MB_OK);
+					// write an empty end of stream buffer!
+					XAUDIO2_BUFFER buf	= {0};
+					buf.AudioBytes		= 0;
+					buf.pAudioData		= (BYTE*)pOffset;
+					buf.Flags = XAUDIO2_END_OF_STREAM;
+					m_pSourceVoice->SubmitSourceBuffer( &buf );
 				}
-
-				currentDiskReadBuffer++;
-				currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 			}
 			else
 			{
-				// write an empty end of stream buffer!
-				XAUDIO2_BUFFER buf	= {0};
-				buf.AudioBytes		= 0;
-				buf.pAudioData		= (BYTE*)pOffset;
-				buf.Flags = XAUDIO2_END_OF_STREAM;
-				m_pSourceVoice->SubmitSourceBuffer( &buf );
+				///////////////////////////////////////////////////////////////////////
+				//
+				// ok we wait here while we have no buffers available
+				//
+				// While we wait we see if we can service the stream to make sure 
+				// we have a buffer ready to go when a buffer becomes available!
+				// this way, we dont have to suddenly jump up, do a crapload of 
+				// decoding then write the buffer a simple memory copy will suffice!
+				//
+				if(m_pCallback)
+				{
+					if(!m_pCallback->ServiceStream())
+					{
+						// if the stream didn't need servicing then we have a full buffer ready for when we 
+						// are able to write to the audio device. So.. lets go to sleep!
+						// we'll be awoken by the audio device, but lets sleep for the length of one buffer
+						WaitForSingleObject( m_hEvent, m_Interval );
+					}
+				}
+				else
+				{
+					// we should NEVER get here, but we did once in the past :/
+					WaitForSingleObject( m_hEvent, m_Interval );
+				}
 			}
 		}
-		///////////////////////////////////////////////////////////////////////
-		//
-		// ok we wait here while we have no buffers available
-		//
-		// While we wait we see if we can service the stream to make sure 
-		// we have a buffer ready to go when a buffer becomes available!
-		// this way, we dont have to suddenly jump up, do a crapload of 
-		// decoding then write the buffer a simple memory copy will suffice!
-		//
-        XAUDIO2_VOICE_STATE state;
-        while( (m_pSourceVoice->GetState( &state ), state.BuffersQueued >= MAX_BUFFER_COUNT) && m_bThreadRun)
-        {
-			if(!m_pCallback->ServiceStream())
-			{
-				// if the stream didn't need servicing then we have a full buffer ready for when we 
-				// are able to write to the audio device. So.. lets go to sleep!
-				// we'll be awoken by the audio device, but lets sleep for the length of one buffer
-				WaitForSingleObject( m_hEvent, m_Interval );
-			}
-        }
+		else
+		{
+			WaitForSingleObject( m_hEvent, m_Interval );
+		}
 	}
 
 	return(0);

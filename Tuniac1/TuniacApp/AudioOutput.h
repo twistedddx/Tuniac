@@ -81,6 +81,7 @@ public:
 	void SetCallback(IAudioCallback * pCallback)
 	{
 		m_pCallback = pCallback;
+		SetEvent(m_hEvent);
 	}
 
 	bool SetFormat(unsigned long SampleRate, unsigned long Channels);
