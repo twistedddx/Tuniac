@@ -18,6 +18,7 @@ CAudioStream::CAudioStream()
 
 
 	m_SamplesOut	= 0;
+	m_ulLastSeekMS	= 0;
 
 	m_CrossfadeTimeMS = 0;
 
@@ -244,9 +245,9 @@ unsigned long	CAudioStream::GetLength(void)
 
 unsigned long	CAudioStream::GetPosition(void)
 {
-	unsigned long MSOutput = (m_SamplesOut / ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels()));
+	unsigned long MSOutput = (m_Output->GetSamplesOut() / ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels()));
 
-	return(MSOutput);
+	return(MSOutput + m_ulLastSeekMS);
 }
 
 bool			CAudioStream::SetPosition(unsigned long MS)
@@ -261,6 +262,8 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 	unsigned long Pos = MS;
 
+	bool bReturn = false;
+
 	m_Output->Stop();
 	if(m_pSource->SetPosition(&Pos))
 	{
@@ -268,15 +271,15 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 
 		m_Packetizer.Reset();
 		m_Output->Reset();
+		m_ulLastSeekMS = Pos;
 
-		if(m_PlayState == STATE_PLAYING)
-			m_Output->Start();
-
-
-		return true;
+		bReturn =  true;
 	}
 
-	return false;
+	if(m_PlayState == STATE_PLAYING)
+		m_Output->Start();
+
+	return bReturn;
 }
 
 bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)

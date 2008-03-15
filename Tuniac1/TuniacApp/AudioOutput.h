@@ -29,6 +29,8 @@ protected:
 	unsigned __int64					m_BufferInProgress;
 	unsigned long						m_ulLastTickCount;
 
+	unsigned __int64					m_SamplesOutLastReset;
+
 	IAudioCallback			*			m_pCallback;
 
 	CCriticalSection					m_AudioLock;

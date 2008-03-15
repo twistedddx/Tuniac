@@ -28,7 +28,8 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize) :
 	m_pfAudioBuffer(NULL),
 	m_pCallback(NULL),
 	m_BufferInProgress(0),
-	m_pXAudio(pXAudio)
+	m_pXAudio(pXAudio),
+	m_SamplesOutLastReset(0)
 {
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
 	m_pfAudioBuffer = NULL;
@@ -63,7 +64,6 @@ unsigned long CAudioOutput::ThreadProc(void)
 	DWORD currentDiskReadBuffer = 0;
 	while(m_bThreadRun)
 	{
-		float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
 
 		if(m_pCallback)
 		{
@@ -72,6 +72,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 			if(state.BuffersQueued < MAX_BUFFER_COUNT)
 			{
+				float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
 				if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
 				{
 					CAutoLock lock(&m_AudioLock);
@@ -352,6 +353,12 @@ bool CAudioOutput::Reset(void)
 		m_pSourceVoice->Stop(0);
 		m_pSourceVoice->FlushSourceBuffers();
 
+		//m_SamplesOutLastReset
+		XAUDIO2_VOICE_STATE state;
+		m_pSourceVoice->GetState(&state);
+		m_SamplesOutLastReset = state.SamplesPlayed;
+
+
 		if(m_bPlaying)
 			m_pSourceVoice->Start( 0, 0 );
 	}
@@ -363,7 +370,7 @@ __int64 CAudioOutput::GetSamplesOut(void)
 	XAUDIO2_VOICE_STATE state;
 	m_pSourceVoice->GetState( &state );
 
-	return state.SamplesPlayed;
+	return state.SamplesPlayed - m_SamplesOutLastReset;
 }
 
 bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)

@@ -30,6 +30,7 @@ public:
 	CCriticalSection					m_Lock;
 
 	unsigned long						m_SamplesOut;
+	unsigned long						m_ulLastSeekMS;
 
 	float								fVolumeScale;			//0.0 - 1.0 affects total volume output!
 	float								fVolume;
