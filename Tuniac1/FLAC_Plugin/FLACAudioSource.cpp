@@ -145,6 +145,7 @@ bool		CFLACAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
 	if(m_FileDecoder.get_state() == FLAC__STREAM_DECODER_END_OF_STREAM)
 	{
+		*NumSamples = 0;
 		return false;
 	}
 

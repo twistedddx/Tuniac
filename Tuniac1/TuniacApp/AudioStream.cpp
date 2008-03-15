@@ -17,7 +17,6 @@ CAudioStream::CAudioStream()
 	m_bIsFinished	= false;
 
 
-	m_SamplesOut	= 0;
 	m_ulLastSeekMS	= 0;
 
 	m_CrossfadeTimeMS = 0;
@@ -121,8 +120,6 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
-			m_SamplesOut +=  NumSamples;
-
 			if(m_FadeState != FADE_NONE)
 			{
 				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
@@ -155,7 +152,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			if(!m_bMixNotify)
 			{
 				//length longer then crossfade time
-				if((GetLength() - GetPosition()) < m_CrossfadeTimeMS)
+				if((GetLength() - (GetPosition() + m_Output->GetAudioBufferMS())) < m_CrossfadeTimeMS)
 				{
 					m_bMixNotify = true;
 					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
@@ -245,7 +242,7 @@ unsigned long	CAudioStream::GetLength(void)
 
 unsigned long	CAudioStream::GetPosition(void)
 {
-	unsigned long MSOutput = (m_Output->GetSamplesOut() / ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels()));
+	unsigned long MSOutput = (m_Output->GetSamplesOut() / (m_Output->GetSampleRate()/1000));
 
 	return(MSOutput + m_ulLastSeekMS);
 }
@@ -267,8 +264,6 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 	m_Output->Stop();
 	if(m_pSource->SetPosition(&Pos))
 	{
-		m_SamplesOut = Pos * ((m_Output->GetSampleRate()/1000) * m_Output->GetChannels());
-
 		m_Packetizer.Reset();
 		m_Output->Reset();
 		m_ulLastSeekMS = Pos;
