@@ -1817,6 +1817,7 @@ LRESULT CALLBACK CPreferences::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					case IDC_OK:
 						{
+							SavePreferences();
 							EndDialog(hDlg, 0);
 						}
 						break;
