@@ -15,6 +15,9 @@ cd Tuniac1_src
 Echo Deleting build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S Win32*') DO RMDIR /S /Q "%%G"
 
+Echo Deleting build folders from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S x64*') DO RMDIR /S /Q "%%G"
+
 Echo Deleting user files from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.user') DO DEL /Q "%%G"
 
