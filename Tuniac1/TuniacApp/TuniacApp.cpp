@@ -1533,10 +1533,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
-					//playback -> seek forward (50ms at a time)
+					//playback -> seek forward (750ms at a time)
 					case ID_PLAYBACK_SEEKFORWARD:
 						{
-							unsigned long pos = CCoreAudio::Instance()->GetPosition() + 50;
+							unsigned long pos = CCoreAudio::Instance()->GetPosition() + 750;
 							CCoreAudio::Instance()->SetPosition(pos);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
@@ -1545,7 +1545,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//playback -> seekback (1300ms at a time)
 					case ID_PLAYBACK_SEEKBACK:
 						{
-							unsigned long pos = CCoreAudio::Instance()->GetPosition() - 1300;
+							unsigned long pos;
+							if(CCoreAudio::Instance()->GetPosition() < 1300)
+								pos = 0;
+							else
+								pos = CCoreAudio::Instance()->GetPosition() - 1300;
 							CCoreAudio::Instance()->SetPosition(pos);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
@@ -1712,6 +1716,12 @@ LRESULT CALLBACK CTuniacApp::AddOtherProc(HWND hWnd, UINT message, WPARAM wParam
 						}
 						break;
 				}
+			}
+			break;
+
+		case WM_CLOSE:
+			{
+				EndDialog(hWnd, 0);
 			}
 			break;
 
