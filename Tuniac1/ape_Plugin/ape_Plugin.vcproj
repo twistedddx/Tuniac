@@ -215,6 +215,7 @@
 				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
+				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -290,6 +291,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"

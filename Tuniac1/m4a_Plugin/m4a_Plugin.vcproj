@@ -212,6 +212,7 @@
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
 				StringPooling="false"
+				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -289,6 +290,7 @@
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;USE_TAGGING"
 				StringPooling="false"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
