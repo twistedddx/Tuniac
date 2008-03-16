@@ -89,80 +89,6 @@ external 'DrawIconEx@user32.dll stdcall';
 function DestroyIcon(hIcon: LongInt): LongInt;
 external 'DestroyIcon@user32.dll stdcall';
 
-procedure DecodeVersion( verstr: String; var verint: array of Integer );
-var
-  i,p: Integer; s: string;
-begin
-  // initialize array
-  verint := [0,0,0,0];
-  i := 0;
-  while ( (Length(verstr) > 0) and (i < 4) ) do
-  begin
-  	p := pos('.', verstr);
-  	if p > 0 then
-  	begin
-      if p = 1 then s:= '0' else s:= Copy( verstr, 1, p - 1 );
-  	  verint[i] := StrToInt(s);
-  	  i := i + 1;
-  	  verstr := Copy( verstr, p+1, Length(verstr));
-  	end
-  	else
-  	begin
-  	  verint[i] := StrToInt( verstr );
-  	  verstr := '';
-  	end;
-  end;
-
-end;
-
-// This function compares version string
-// return -1 if ver1 < ver2
-// return  0 if ver1 = ver2
-// return  1 if ver1 > ver2
-function CompareVersion( ver1, ver2: String ) : Integer;
-var
-  verint1, verint2: array of Integer;
-  i: integer;
-begin
-
-  SetArrayLength( verint1, 4 );
-  DecodeVersion( ver1, verint1 );
-
-  SetArrayLength( verint2, 4 );
-  DecodeVersion( ver2, verint2 );
-
-  Result := 0; i := 0;
-  while ( (Result = 0) and ( i < 4 ) ) do
-  begin
-  	if verint1[i] > verint2[i] then
-  	  Result := 1
-  	else
-      if verint1[i] < verint2[i] then
-  	    Result := -1
-  	  else
-  	    Result := 0;
-
-  	i := i + 1;
-  end;
-
-end;
-
-// DirectX version is stored in registry as 4.majorversion.minorversion
-// DirectX 8.0 is 4.8.0
-// DirectX 8.1 is 4.8.1
-// DirectX 9.0 is 4.9.0
-
-function GetDirectXVersion(): String;
-var
-  sVersion:  String;
-begin
-  sVersion := '';
-
-  RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\DirectX', 'Version', sVersion );
-
-  Result := sVersion;
-end;
-
 const
   DI_NORMAL = 3;
 
@@ -283,7 +209,6 @@ end;
 
 procedure RegisterPreviousData(PreviousDataKey: Integer);
 begin
-  SetPreviousData(PreviousDataKey, 'DXMarch2008', IntToStr(Ord(DXMarch2008CheckBox.Checked)));
   SetPreviousData(PreviousDataKey, 'InstallLegacy', IntToStr(Ord(InstallLegacyCheckBox.Checked)));
 end;
 
@@ -357,17 +282,19 @@ begin
     Result := '32Bit';
 end;
 
-function UpdateDirectX: String;
+function GetXAudio2: String;
+var
+  XAudio: String;
 begin
-  if CompareVersion( GetDirectXVersion(), '4.9.0.904') < 0 then
-    Result := '1'
+  if RegQueryStringValue( HKCR, 'CLSID\{fac23f48-31f5-45a8-b49b-5225d61401aa}', '', XAudio ) then
+    Result := '0'
   else
-    Result := '0';
+    Result := '1';
 end;
 
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if (PageID = DXMarch2008Page.ID) and (UpdateDirectX = '0') then begin
+  if (PageID = DXMarch2008Page.ID) and (GetXAudio2 = '0') then begin
       Result := true;
   end;
   if (PageID = InstallLegacyPage.ID) and (IsNot64Mode = '1') then begin
@@ -383,7 +310,7 @@ begin
   CreateCustomPages;
   
   InstallLegacyCheckBox.Checked := GetPreviousData('InstallLegacy', IsNot64Mode) = '1';
-  DXMarch2008CheckBox.Checked := GetPreviousData('DXMarch2008', UpdateDirectX) = '1';
+  DXMarch2008CheckBox.Checked := GetPreviousData('DXMarch2008', GetXAudio2) = '1';
 
   { Other custom controls }
 
