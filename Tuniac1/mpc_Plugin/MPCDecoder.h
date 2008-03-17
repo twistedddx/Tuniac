@@ -7,12 +7,14 @@ class CMPCDecoder :
 	public IAudioSource
 {
 protected:
-	float			*	m_Buffer;
+	float				m_Buffer[MPC_DECODER_BUFFER_LENGTH];
 
-    mpc_reader reader;
-	mpc_demux* demux;
-	mpc_streaminfo si;
-	mpc_status err;
+    mpc_reader			reader;
+	mpc_streaminfo		si;
+
+	mpc_decoder		*	decoder;
+
+	double				m_MPCTime;
 
 	FILE			*	m_file;
 
