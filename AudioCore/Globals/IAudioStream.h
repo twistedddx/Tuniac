@@ -6,6 +6,12 @@ typedef unsigned long AUDIOSTREAMID;
 class IAudioStream
 {
 public:
-	virtual bool	Play(void) = 0;
-	virtual bool	Stop(void) = 0;
+	virtual bool			Play(void)						= 0;
+	virtual bool			Stop(void)						= 0;
+
+
+	virtual unsigned long	GetLength(void)					= 0;
+	virtual unsigned long	GetPosition(void)				= 0;
+	virtual bool			SetPosition(unsigned long MS)	= 0;
+
 };
