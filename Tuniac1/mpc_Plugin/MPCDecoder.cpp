@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+
+#include "mpc/reader.h"
 #include "mpcdecoder.h"
 
 CMPCDecoder::CMPCDecoder(void)
@@ -12,26 +14,36 @@ CMPCDecoder::~CMPCDecoder(void)
 
 bool CMPCDecoder::Open(LPTSTR szSource)
 {
-	m_file = _wfopen(szSource, TEXT("rbS"));
+//	m_file = _wfopen(szSource, TEXT("rbS"));
 
-	if(m_file == NULL)
+//	if(m_file == NULL)
+//		return false;
+
+//	mpc_reader_setup_file_reader(&reader, m_file);
+
+
+	char tempname[_MAX_PATH];
+	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
+
+	mpc_status err = mpc_reader_init_stdio(&reader, tempname);
+    if(err < 0) 
 		return false;
 
-	err = mpc_reader_init_stdio_stream(&reader, m_file);
-    if(err < 0) return false;
+
+
 
     demux = mpc_demux_init(&reader);
     if(!demux) return false;
 
     mpc_demux_get_info(demux,  &si);
-	m_Buffer = (float*)malloc(MPC_DECODER_BUFFER_LENGTH);
+
+	m_MPCTime = mpc_streaminfo_get_length(&si);
 
 	return(true);
 }
 
 bool CMPCDecoder::Close()
 {
-	free(m_Buffer);
     mpc_demux_exit(demux);
     mpc_reader_exit_stdio(&reader);
 	return(true);
@@ -53,17 +65,13 @@ bool		CMPCDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CMPCDecoder::GetLength(unsigned long * MS)
 {
-
-	double time = mpc_streaminfo_get_length(&si);
-
-	*MS = (unsigned long)(time * 1000.0);
+	*MS = (unsigned long)(m_MPCTime * 1000.0);
 
 	return(true);
 }
 
 bool		CMPCDecoder::SetPosition(unsigned long * MS)
 {
-	
 	double pos = *MS / 1000.0;
 	mpc_demux_seek_second(demux, pos);
 
@@ -77,27 +85,32 @@ bool		CMPCDecoder::SetState(unsigned long State)
 
 bool		CMPCDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	MPC_SAMPLE_FORMAT sample_buffer[MPC_DECODER_BUFFER_LENGTH];
 	mpc_frame_info frame;
 	*NumSamples =0;
 
-	frame.buffer = sample_buffer;
-	mpc_demux_decode(demux, &frame);
-	if(frame.bits == -1) return(false);
+	frame.buffer = m_Buffer;
+	mpc_status stat = mpc_demux_decode(demux, &frame);
 
-	float FloatSampleBuffer[MPC_DECODER_BUFFER_LENGTH];
+	if(stat != MPC_STATUS_OK)
+	{
+		return false;
+	}
+
+	if(frame.bits == -1) 
+		return(false);
+/*
 	int SampleLoc = 0;
 	for(int x=0; x<frame.samples; x++)
 	{
 		for(int ch=0; ch<si.channels; ch++)
 		{
-			FloatSampleBuffer[SampleLoc] = (float)sample_buffer[SampleLoc] / 32768.0f;
+			m_Buffer[SampleLoc] = (float)sample_buffer[SampleLoc] / 32768.0f;
 			SampleLoc++;
 		}
 	}
-
+*/
 	*NumSamples = frame.samples;
-	*ppBuffer = FloatSampleBuffer;
+	*ppBuffer	= m_Buffer;
 
 	return(true);
 }

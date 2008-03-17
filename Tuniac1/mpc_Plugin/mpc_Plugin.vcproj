@@ -413,6 +413,10 @@
 			Name="libs"
 			>
 			<File
+				RelativePath=".\mpc\datatypes.h"
+				>
+			</File>
+			<File
 				RelativePath=".\mpc\libcommon.lib"
 				>
 			</File>
@@ -426,6 +430,30 @@
 			</File>
 			<File
 				RelativePath=".\mpc\libmpcdec64.lib"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\minimax.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\mpc_types.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\mpcdec.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\mpcmath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\reader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpc\streaminfo.h"
 				>
 			</File>
 		</Filter>
