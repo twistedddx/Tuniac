@@ -73,9 +73,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib libmpcdec32d.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -160,9 +161,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib libmpcdec64d.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -236,7 +238,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib libmpcdec32.lib"
+				AdditionalLibraryDirectories="libs"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -320,9 +323,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib libmpcdec64.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
