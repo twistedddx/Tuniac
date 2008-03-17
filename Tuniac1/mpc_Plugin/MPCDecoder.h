@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include "mpc\mpcdec.h"
+#include "mpcdec.h"
 
 class CMPCDecoder :
 	public IAudioSource
