@@ -16,7 +16,9 @@ protected:
     mpc_reader_file		reader;
     mpc_decoder			decoder;
 
-	double				m_MPCTime;
+	mpc_int64_t			m_LengthSamples;
+
+
 
 
 	unsigned int		m_currentsection;
