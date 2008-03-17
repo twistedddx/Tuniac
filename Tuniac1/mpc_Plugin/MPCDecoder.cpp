@@ -35,7 +35,7 @@ bool CMPCDecoder::Open(LPTSTR szSource)
         return false;
     }
 
-	m_MPCTime = mpc_streaminfo_get_length(&si);
+	m_LengthSamples  = mpc_streaminfo_get_length_samples(&si);
 
 	return(true);
 }
@@ -61,17 +61,21 @@ bool		CMPCDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CMPCDecoder::GetLength(unsigned long * MS)
 {
-	*MS = (unsigned long)(m_MPCTime * 1000.0);
+	*MS = (unsigned long)(m_LengthSamples / (si.sample_freq / 1000));
 
 	return(true);
 }
 
 bool		CMPCDecoder::SetPosition(unsigned long * MS)
 {
-	double pos = *MS / 1000.0;
+	mpc_int64_t pos = *MS  * (si.sample_freq / 1000);
 
+	if(mpc_decoder_seek_sample(&decoder, pos) == FALSE)
+	{
+		return false;
+	}
 
-	return(false);
+	return(true);
 }
 
 bool		CMPCDecoder::SetState(unsigned long State)
