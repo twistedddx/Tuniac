@@ -145,7 +145,7 @@
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -410,42 +410,42 @@
 			>
 		</Filter>
 		<Filter
-			Name="mpcdev_includes"
+			Name="mpcdec_includes"
 			>
 			<File
-				RelativePath=".\mpcdev\config_win32.h"
+				RelativePath=".\mpcdec\config_win32.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\decoder.h"
+				RelativePath=".\mpcdec\decoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\huffman.h"
+				RelativePath=".\mpcdec\huffman.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\internal.h"
+				RelativePath=".\mpcdec\internal.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\math.h"
+				RelativePath=".\mpcdec\math.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\mpcdec.h"
+				RelativePath=".\mpcdec\mpcdec.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\reader.h"
+				RelativePath=".\mpcdec\reader.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\requant.h"
+				RelativePath=".\mpcdec\requant.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mpcdev\streaminfo.h"
+				RelativePath=".\mpcdec\streaminfo.h"
 				>
 			</File>
 		</Filter>

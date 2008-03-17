@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include "mpcdec.h"
+#include "mpcdec/mpcdec.h"
 
 class CMPCDecoder :
 	public IAudioSource
@@ -9,14 +9,15 @@ class CMPCDecoder :
 protected:
 	float				m_Buffer[MPC_DECODER_BUFFER_LENGTH];
 
-    mpc_reader			reader;
+	FILE			*	m_file;
+
 	mpc_streaminfo		si;
 
-	mpc_decoder		*	decoder;
+    mpc_reader_file		reader;
+    mpc_decoder			decoder;
 
 	double				m_MPCTime;
 
-	FILE			*	m_file;
 
 	unsigned int		m_currentsection;
 

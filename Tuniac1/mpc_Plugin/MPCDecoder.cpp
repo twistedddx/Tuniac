@@ -1,7 +1,8 @@
 #include "StdAfx.h"
 
-#include "mpc/reader.h"
 #include "mpcdecoder.h"
+#include "mpcdec/mpcdec.h"
+
 
 CMPCDecoder::CMPCDecoder(void)
 {
@@ -14,28 +15,25 @@ CMPCDecoder::~CMPCDecoder(void)
 
 bool CMPCDecoder::Open(LPTSTR szSource)
 {
-//	m_file = _wfopen(szSource, TEXT("rbS"));
-
-//	if(m_file == NULL)
-//		return false;
-
-//	mpc_reader_setup_file_reader(&reader, m_file);
-
-
-	char tempname[_MAX_PATH];
-	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
-
-	mpc_status err = mpc_reader_init_stdio(&reader, tempname);
-    if(err < 0) 
+	m_file = _wfopen(szSource, TEXT("rbS"));
+	if(m_file == NULL)
 		return false;
 
+	mpc_reader_setup_file_reader(&reader, m_file);
 
+    mpc_streaminfo_init(&si);
 
+    if(mpc_streaminfo_read(&si, &reader.reader) != ERROR_CODE_OK) 
+	{
+        return false;
+    }
 
-    demux = mpc_demux_init(&reader);
-    if(!demux) return false;
-
-    mpc_demux_get_info(demux,  &si);
+    /* instantiate a decoder with our file reader */
+    mpc_decoder_setup(&decoder, &reader.reader);
+    if(!mpc_decoder_initialize(&decoder, &si)) 
+	{
+        return false;
+    }
 
 	m_MPCTime = mpc_streaminfo_get_length(&si);
 
@@ -44,8 +42,6 @@ bool CMPCDecoder::Open(LPTSTR szSource)
 
 bool CMPCDecoder::Close()
 {
-    mpc_demux_exit(demux);
-    mpc_reader_exit_stdio(&reader);
 	return(true);
 }
 
@@ -57,7 +53,7 @@ void		CMPCDecoder::Destroy(void)
 
 bool		CMPCDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channels)
 {
-	*SampleRate = si.samples;
+	*SampleRate = si.sample_freq;
 	*Channels	= si.channels;
 
 	return(true);
@@ -73,7 +69,7 @@ bool		CMPCDecoder::GetLength(unsigned long * MS)
 bool		CMPCDecoder::SetPosition(unsigned long * MS)
 {
 	double pos = *MS / 1000.0;
-	mpc_demux_seek_second(demux, pos);
+
 
 	return(false);
 }
@@ -85,32 +81,22 @@ bool		CMPCDecoder::SetState(unsigned long State)
 
 bool		CMPCDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	mpc_frame_info frame;
-	*NumSamples =0;
+	*NumSamples = 0;
 
-	frame.buffer = m_Buffer;
-	mpc_status stat = mpc_demux_decode(demux, &frame);
-
-	if(stat != MPC_STATUS_OK)
+	unsigned status = mpc_decoder_decode(&decoder, m_Buffer, 0, 0);
+    if (status == (unsigned)(-1)) 
 	{
-		return false;
-	}
-
-	if(frame.bits == -1) 
-		return(false);
-/*
-	int SampleLoc = 0;
-	for(int x=0; x<frame.samples; x++)
-	{
-		for(int ch=0; ch<si.channels; ch++)
-		{
-			m_Buffer[SampleLoc] = (float)sample_buffer[SampleLoc] / 32768.0f;
-			SampleLoc++;
-		}
-	}
-*/
-	*NumSamples = frame.samples;
-	*ppBuffer	= m_Buffer;
+        return false;
+    }
+    else if (status == 0)   //EOF
+    {
+        return false;
+    }
+    else                    //status>0
+    {
+		*NumSamples = status * si.channels;
+		*ppBuffer	= m_Buffer;
+    }
 
 	return(true);
 }
