@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".\mpc;../TuniacApp"
+				AdditionalIncludeDirectories="./mpcdev;../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -137,7 +137,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".\mpc_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="./mpcdev;../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -220,7 +220,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="./mpc_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="./mpcdev;../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
@@ -299,7 +299,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="./mpc_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="./mpcdev;../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="2"
@@ -410,50 +410,62 @@
 			>
 		</Filter>
 		<Filter
+			Name="mpcdev_includes"
+			>
+			<File
+				RelativePath=".\mpcdev\config_win32.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\decoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\huffman.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\internal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\math.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\mpcdec.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\reader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\requant.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mpcdev\streaminfo.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="libs"
 			>
 			<File
-				RelativePath=".\mpc\datatypes.h"
+				RelativePath=".\libs\libmpcdec32.lib"
 				>
 			</File>
 			<File
-				RelativePath=".\mpc\libcommon.lib"
+				RelativePath=".\libs\libmpcdec32d.lib"
 				>
 			</File>
 			<File
-				RelativePath=".\mpc\libcommon64.lib"
+				RelativePath=".\libs\libmpcdec64.lib"
 				>
 			</File>
 			<File
-				RelativePath=".\mpc\libmpcdec.lib"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\libmpcdec64.lib"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\minimax.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\mpc_types.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\mpcdec.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\mpcmath.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\reader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mpc\streaminfo.h"
+				RelativePath=".\libs\libmpcdec64d.lib"
 				>
 			</File>
 		</Filter>
