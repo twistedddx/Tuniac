@@ -85,15 +85,19 @@ bool		CMPCDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	mpc_demux_decode(demux, &frame);
 	if(frame.bits == -1) return(false);
 
-	float * pDataBuffer = m_Buffer;
-	for(unsigned long x=0; x<frame.samples*si.channels; x++)
+	float FloatSampleBuffer[MPC_DECODER_BUFFER_LENGTH];
+	int SampleLoc = 0;
+	for(int x=0; x<frame.samples; x++)
 	{
-		*pDataBuffer = (float)frame.buffer[x] / 32767.0f;
-		pDataBuffer++;
+		for(int ch=0; ch<si.channels; ch++)
+		{
+			FloatSampleBuffer[SampleLoc] = (float)sample_buffer[SampleLoc] / 32768.0f;
+			SampleLoc++;
+		}
 	}
 
-	*NumSamples = frame.samples*si.channels;
-	*ppBuffer = m_Buffer;
+	*NumSamples = frame.samples;
+	*ppBuffer = FloatSampleBuffer;
 
 	return(true);
 }
