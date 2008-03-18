@@ -4,7 +4,8 @@
 #define NUM_SAMPLES_UNPACK 4096L
 
 CWVDecoder::CWVDecoder(void) : 
-	m_bFloatMode(false)
+	m_bFloatMode(false),
+		m_divider(0)
 {
 }
 
@@ -30,6 +31,31 @@ bool CWVDecoder::Open(LPTSTR szSource)
 
 	if(WavpackGetMode(wpc) & MODE_FLOAT)
 		m_bFloatMode = true;
+
+	if(ulBitsPerSample == 8)
+	{
+		m_divider = 128.0f;
+	}
+	else if(ulBitsPerSample == 12)
+	{
+		m_divider = 4095.0f;
+	}
+	else if(ulBitsPerSample == 16)
+	{
+		m_divider = 32767.0f;
+	}
+	else if(ulBitsPerSample == 20)
+	{
+		m_divider = 1048575.0f;
+	}
+	else if(ulBitsPerSample == 24)
+	{
+		m_divider = 8388608.0f;
+	}
+	else if(ulBitsPerSample == 32)
+	{
+		m_divider = 2147483648.0;
+	}
 
 	return(true);
 }
@@ -88,39 +114,12 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	}
 	else
 	{
-		int * pData = (int *)m_RawData;
-		float * pBuffer = m_Buffer;
-		
-		float divider = 0.0;
-
-		if(ulBitsPerSample == 8)
-		{
-			divider = 128.0f;
-		}
-		else if(ulBitsPerSample == 12)
-		{
-			divider = 4095.0f;
-		}
-		else if(ulBitsPerSample == 16)
-		{
-			divider = 32767.0f;
-		}
-		else if(ulBitsPerSample == 20)
-		{
-			divider = 1048575.0f;
-		}
-		else if(ulBitsPerSample == 24)
-		{
-			divider = 8388608.0f;
-		}
-		else if(ulBitsPerSample == 32)
-		{
-			divider = 2147483648.0;
-		}
+		int		* pData		= (int *)m_RawData;
+		float	* pBuffer	= m_Buffer;
 		
 		for(int x=0; x<status*ulChannels;x++)
 		{
-			*pBuffer = (float) ((double)(*pData) / divider);	
+			*pBuffer = (float) ((double)(*pData) / m_divider);	
 
 			pData ++;
 			pBuffer++;

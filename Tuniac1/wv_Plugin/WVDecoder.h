@@ -11,6 +11,8 @@ protected:
 	long				m_RawData[4096];
 	float				m_Buffer[4096];
 
+	float				m_divider;
+
 	bool				m_bFloatMode;
 
 	WavpackContext *wpc;
