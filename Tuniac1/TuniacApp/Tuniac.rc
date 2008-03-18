@@ -491,7 +491,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,160,104,50,14
     ICON            IDI_TUNIAC,IDC_STATIC,7,7,21,20
     LTEXT           "LOOOOLZ ITS TUNIAC!!!!",IDC_STATIC,61,14,107,10
-    LTEXT           "Developed by Tony Million, Bits, Daniel Somebody. RA. Brice helped out. Blur did some code then vanished. Mike Vierya did some co development in the beginning. Thanks to people who developed the decoders that Tuniac uses (AAC/APE/OGG etc)",IDC_STATIC,7,38,203,43
+    LTEXT           "Developed by Tony Million, Bits, Daniel Somebody. RA. Brice helped out. Blur did some code then vanished and came back again. Mike Vierya did some co development in the beginning. Thanks to people who developed the decoders that Tuniac uses (AAC/APE/OGG etc)",IDC_STATIC,7,38,203,43
 END
 
 
