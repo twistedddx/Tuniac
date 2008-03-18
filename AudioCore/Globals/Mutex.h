@@ -25,6 +25,14 @@ public:
 	{
 		ReleaseMutex(m_hMutex);
 	}
+
+	bool AttemptLock(void)
+	{
+		if(WaitForSingleObject(m_hMutex, 0) == WAIT_OBJECT_0)
+			return true
+
+		return false;
+	}
 };
 
 class CAutoLock
