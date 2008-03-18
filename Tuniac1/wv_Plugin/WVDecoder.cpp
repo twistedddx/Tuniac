@@ -3,7 +3,8 @@
 
 #define NUM_SAMPLES_UNPACK 576L
 
-CWVDecoder::CWVDecoder(void)
+CWVDecoder::CWVDecoder(void) : 
+	m_bFloatMode(false)
 {
 }
 
@@ -28,6 +29,9 @@ bool CWVDecoder::Open(LPTSTR szSource)
 	ulBytesPerSample = WavpackGetBytesPerSample(wpc);
 
 	pRawData = (char*)malloc(NUM_SAMPLES_UNPACK*ulChannels*4);
+
+	if(WavpackGetMode(wpc) & MODE_FLOAT)
+		m_bFloatMode = true;
 
 	return(true);
 }
@@ -83,44 +87,10 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
     if (!status)
         return false;
 
-	if(ulBytesPerSample == 2)  //16bit
+	if(m_bFloatMode)  //16bit
 	{
-		short * pData = (short *)pRawData;
-		float * pBuffer = m_Buffer;
-		
-		for(int x=0; x<status*ulChannels; x++)
-		{
-			*pBuffer = (*pData) / 32767.0f;	
-			pData ++;
-			pBuffer++;
-		}
 	}
-	else if (ulBytesPerSample == 3) //24bit
-	{
-		/*
-		char * pData = (char *)pRawData;
-		float *pBuffer = m_Buffer;
-		int sourceIndex = 0;
-		int padding = nBlockAlign - ulChannels * (ulBitsPerSample >> 3);
-		int32 workingValue;
-
-		for ( unsigned int i = 0; i < 1024; i++ ) {
-			for ( unsigned int j = 0; j < nChannels; j++ ) {
-				workingValue = 0;
-				workingValue |= ((int32)pRawData[sourceIndex++]) << 8 & 0xFF00;
-				workingValue |= ((int32)pRawData[sourceIndex++]) << 16 & 0xFF0000;
-				workingValue |= ((int32)pRawData[sourceIndex++]) << 24 & 0xFF000000;
-
-				*pBuffer = ((float)workingValue) * QUANTFACTOR;
-
-				pBuffer ++;
-				pData += 3;
-			}
-			sourceIndex += padding;
-		}
-		*/
-	}
-	else if(ulBytesPerSample == 4)  //32bit?
+	else
 	{
 		int * pData = (int *)pRawData;
 		float * pBuffer = m_Buffer;
