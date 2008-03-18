@@ -18,7 +18,7 @@ bool CWVDecoder::Open(LPTSTR szSource)
 	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
 
     char error [128];
-    wpc = WavpackOpenFileInput(tempname, error, (OPEN_WVC), 23);
+    wpc = WavpackOpenFileInput(tempname, error, OPEN_WVC | OPEN_NORMALIZE, 23);
     if (!wpc)
         return(false);
 
@@ -28,7 +28,7 @@ bool CWVDecoder::Open(LPTSTR szSource)
 	ulBitsPerSample = WavpackGetBitsPerSample(wpc);
 	ulBytesPerSample = WavpackGetBytesPerSample(wpc);
 
-	pRawData = (char*)malloc(NUM_SAMPLES_UNPACK*ulChannels*4);
+	pRawData = (long*)malloc(NUM_SAMPLES_UNPACK*ulChannels*4);
 
 	if(WavpackGetMode(wpc) & MODE_FLOAT)
 		m_bFloatMode = true;
@@ -87,8 +87,10 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
     if (!status)
         return false;
 
-	if(m_bFloatMode)  //16bit
+	if(m_bFloatMode)
 	{
+		float * pBuffer = m_Buffer;
+		pBuffer = (float *)pRawData;
 	}
 	else
 	{
