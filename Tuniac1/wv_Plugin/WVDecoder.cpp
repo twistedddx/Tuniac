@@ -89,8 +89,7 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	if(m_bFloatMode)
 	{
-		float * pBuffer = m_Buffer;
-		pBuffer = (float *)pRawData;
+		*ppBuffer = (float*)pRawData;
 	}
 	else
 	{
@@ -105,9 +104,9 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 			pData ++;
 			pBuffer++;
 		}
+		*ppBuffer = m_Buffer;
 	}
 
-	*ppBuffer = m_Buffer;
 	*NumSamples = status * ulChannels;
 
 	return(true);
