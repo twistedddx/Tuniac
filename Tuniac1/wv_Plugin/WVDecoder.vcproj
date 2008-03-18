@@ -395,6 +395,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wv\wavpack.h"
+				>
+			</File>
+			<File
 				RelativePath=".\WVDecoder.h"
 				>
 			</File>
