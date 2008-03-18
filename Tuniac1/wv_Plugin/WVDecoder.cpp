@@ -1,8 +1,6 @@
 #include "StdAfx.h"
 #include "wvdecoder.h"
 
-#define NUM_SAMPLES_UNPACK 4096L
-
 CWVDecoder::CWVDecoder(void) : 
 	m_bFloatMode(false),
 		m_divider(0)
@@ -104,7 +102,7 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
 	*NumSamples =0;
 
-	unsigned status = WavpackUnpackSamples(wpc, (int32_t *)m_RawData, (NUM_SAMPLES_UNPACK / ulChannels));
+	unsigned status = WavpackUnpackSamples(wpc, (int32_t *)m_RawData, 576);
     if (!status)
         return false;
 
