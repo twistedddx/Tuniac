@@ -7,6 +7,12 @@ class CWVDecoder :
 	public IAudioSource
 {
 protected:
+
+	long				m_RawData[4096];
+	float				m_Buffer[4096];
+
+	bool				m_bFloatMode;
+
 	WavpackContext *wpc;
 	unsigned long ulSampleRate;
 	unsigned long ulChannels;
@@ -14,9 +20,7 @@ protected:
 	unsigned long ulBitsPerSample;
 	unsigned long ulBytesPerSample;
 
-	long			*	pRawData;
-	float				m_Buffer[4096];
-	bool				m_bFloatMode;
+
 
 public:
 	CWVDecoder(void);
