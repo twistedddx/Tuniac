@@ -14,8 +14,9 @@ protected:
 	unsigned long ulBitsPerSample;
 	unsigned long ulBytesPerSample;
 
-	char			*	pRawData;
+	long			*	pRawData;
 	float				m_Buffer[4096];
+	bool				m_bFloatMode;
 
 public:
 	CWVDecoder(void);
