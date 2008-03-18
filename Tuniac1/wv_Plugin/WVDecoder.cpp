@@ -96,13 +96,29 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		int * pData = (int *)pRawData;
 		float * pBuffer = m_Buffer;
 		
-		unsigned long Divider = ((1<<ulBitsPerSample)-1);
+		float divider = 0.0;
 
-		float divider = (float)Divider;
+		if(ulBitsPerSample == 8)
+		{
+			divider = 128.0f;
+		}
+		else if(ulBitsPerSample == 16)
+		{
+			divider = 32767.0f;
+		}
+		else if(ulBitsPerSample == 24)
+		{
+			divider = 8388608.0f;
+		}
+		else if(ulBitsPerSample == 32)
+		{
+			divider = 2147483648.0;
+		}
 		
 		for(int x=0; x<status*ulChannels;x++)
 		{
-			*pBuffer = (*pData) / divider;	
+			*pBuffer = (float) ((double)(*pData) / divider);	
+
 			pData ++;
 			pBuffer++;
 		}
