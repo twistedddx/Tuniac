@@ -67,6 +67,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 		if(m_pCallback)
 		{
+			ResetEvent(m_hEvent);
 			XAUDIO2_VOICE_STATE state;
 			m_pSourceVoice->GetState( &state );
 
@@ -130,13 +131,16 @@ unsigned long CAudioOutput::ThreadProc(void)
 				//
 				if(m_pCallback)
 				{
-					if(!m_pCallback->ServiceStream())
+					while(m_pCallback->ServiceStream())
 					{
-						// if the stream didn't need servicing then we have a full buffer ready for when we 
-						// are able to write to the audio device. So.. lets go to sleep!
-						// we'll be awoken by the audio device, but lets sleep for the length of one buffer
-						WaitForSingleObject( m_hEvent, m_Interval );
+						if(WaitForSingleObject( m_hEvent, 0 ) == WAIT_OBJECT_0)
+							break;
 					}
+
+					// if the stream didn't need servicing then we have a full buffer ready for when we 
+					// are able to write to the audio device. So.. lets go to sleep!
+					// we'll be awoken by the audio device, but lets sleep for the length of one buffer
+					WaitForSingleObject( m_hEvent, m_Interval );
 				}
 				else
 				{
@@ -184,7 +188,7 @@ bool CAudioOutput::Initialize(void)
 				(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
 
 
-	m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 	m_bThreadRun = true;
 	m_hThread = CreateThread(	NULL,
