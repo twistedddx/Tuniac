@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "wvdecoder.h"
 
+#define NUM_SAMPLES_UNPACK 576L
+
 CWVDecoder::CWVDecoder(void)
 {
 }
@@ -19,16 +21,22 @@ bool CWVDecoder::Open(LPTSTR szSource)
     if (!wpc)
         return(false);
 
-	SAMPRATE = WavpackGetSampleRate(wpc);
+	ulSampleRate = WavpackGetSampleRate(wpc);
+	ulChannels = WavpackGetNumChannels(wpc);
+	ulSamples = WavpackGetNumSamples(wpc);
+	ulBitsPerSample = WavpackGetBitsPerSample(wpc);
+	ulBytesPerSample = WavpackGetBytesPerSample(wpc);
 
+	pRawData = (char*)malloc(NUM_SAMPLES_UNPACK*ulChannels*4);
 
 	return(true);
 }
 
 bool CWVDecoder::Close()
 {
-	free(m_Buffer);
+	free(pRawData);
 	wpc = WavpackCloseFile(wpc);
+	wpc = NULL;
 	return(true);
 }
 
@@ -40,8 +48,8 @@ void		CWVDecoder::Destroy(void)
 
 bool		CWVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channels)
 {
-	*SampleRate = WavpackGetSampleRate(wpc);
-	*Channels	= WavpackGetNumChannels(wpc);
+	*SampleRate = ulSampleRate;
+	*Channels	= ulChannels;
 
 	return(true);
 }
@@ -49,18 +57,15 @@ bool		CWVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channels
 bool		CWVDecoder::GetLength(unsigned long * MS)
 {
 
-	double time = WavpackGetNumSamples(wpc) * 1000.0 / SAMPRATE;
-
-	*MS = (unsigned long)(time * 1000.0);
+	*MS =  ulSamples * 1000 / ulSampleRate;
 
 	return(true);
 }
 
 bool		CWVDecoder::SetPosition(unsigned long * MS)
 {
-	
-	double pos = *MS / 1000.0;
-	WavpackSeekSample(wpc, (int)(SAMPRATE / 1000.0 * pos));
+	double pos = *MS;
+	WavpackSeekSample(wpc, (int)(ulSampleRate / 1000 * pos));
 
 	return(false);
 }
@@ -72,18 +77,66 @@ bool		CWVDecoder::SetState(unsigned long State)
 
 bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	//WavpackGetBitsPerSample (wpc)
 	*NumSamples =0;
 
-	float * pDataBuffer = m_Buffer;
-	for(unsigned long x=0; x<WavpackGetNumSamples(wpc)*WavpackGetNumChannels(wpc); x++)
+	unsigned status = WavpackUnpackSamples(wpc, (int32_t *)pRawData, NUM_SAMPLES_UNPACK);
+    if (!status)
+        return false;
+
+	if(ulBytesPerSample == 2)  //16bit
 	{
-		//*pDataBuffer = (float)frame.buffer[x] / 32767.0f;
-		pDataBuffer++;
+		short * pData = (short *)pRawData;
+		float * pBuffer = m_Buffer;
+		
+		for(int x=0; x<status*ulChannels; x++)
+		{
+			*pBuffer = (*pData) / 32767.0f;	
+			pData ++;
+			pBuffer++;
+		}
+	}
+	else if (ulBytesPerSample == 3) //24bit
+	{
+		/*
+		char * pData = (char *)pRawData;
+		float *pBuffer = m_Buffer;
+		int sourceIndex = 0;
+		int padding = nBlockAlign - ulChannels * (ulBitsPerSample >> 3);
+		int32 workingValue;
+
+		for ( unsigned int i = 0; i < 1024; i++ ) {
+			for ( unsigned int j = 0; j < nChannels; j++ ) {
+				workingValue = 0;
+				workingValue |= ((int32)pRawData[sourceIndex++]) << 8 & 0xFF00;
+				workingValue |= ((int32)pRawData[sourceIndex++]) << 16 & 0xFF0000;
+				workingValue |= ((int32)pRawData[sourceIndex++]) << 24 & 0xFF000000;
+
+				*pBuffer = ((float)workingValue) * QUANTFACTOR;
+
+				pBuffer ++;
+				pData += 3;
+			}
+			sourceIndex += padding;
+		}
+		*/
+	}
+	else if(ulBytesPerSample == 4)  //32bit?
+	{
+		int * pData = (int *)pRawData;
+		float * pBuffer = m_Buffer;
+		
+		float divider = (float)((1<<ulBitsPerSample)-1);
+		
+		for(int x=0; x<status*ulChannels;x++)
+		{
+			*pBuffer = (*pData) / divider;	
+			pData ++;
+			pBuffer++;
+		}
 	}
 
-	*NumSamples = WavpackGetNumSamples(wpc)*WavpackGetNumChannels(wpc);
 	*ppBuffer = m_Buffer;
+	*NumSamples = status * ulChannels;
 
 	return(true);
 }
