@@ -243,7 +243,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SendMessage(m_hVolumeWnd, TBM_SETRANGE, (WPARAM)FALSE, (LPARAM)MAKELONG(0, 100));
 				UpdateVolume();
 
-				SetTimer(hWnd, 0, 250, NULL);
+				SetTimer(hWnd, 0, 500, NULL);
 
 			}
 			break;
@@ -440,6 +440,8 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				PAINTSTRUCT ps;
 				RECT		r;
 
+				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength();
+
 				GetClientRect(hWnd, &r);
 
 				HDC		hDC = BeginPaint(hWnd, &ps);
@@ -476,7 +478,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				InflateRect(&SeekRect, -3, -3);
 
 				float Width = SeekRect.right - SeekRect.left;
-				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)CCoreAudio::Instance()->GetLength();
+				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)ulSongLength;
 
 				SeekRect.right = ((Width) * Progress) + SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetSysColorBrush(COLOR_3DSHADOW));
@@ -503,7 +505,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				Time = CCoreAudio::Instance()->GetLength();
+				Time = ulSongLength;
 				if(Time != LENGTH_UNKNOWN)
 				{
 					Time /= 1000;
@@ -604,125 +606,3 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 	return(0);
 }
-
-/*
-				FillRect(hDC, &r, GetSysColorBrush(COLOR_3DFACE));				
-
-				r.left = (BUTTON_SIZE * 3) + (6*4);
-				r.right -= 18;
-				InflateRect(&r, -4, -4);
-
-				DrawEdge(hDC, &r, BDR_SUNKENOUTER, BF_RECT | BF_SOFT);
-
-				IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-				// song information
-
-				RECT SeekRect;
-				CopyRect(&SeekRect, &m_SeekRect);
-				DrawEdge(hDC, &SeekRect, EDGE_ETCHED, BF_RECT | BF_SOFT);
-
-				InflateRect(&SeekRect, -3, -3);
-
-				float Width = SeekRect.right - SeekRect.left;
-				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)CCoreAudio::Instance()->GetLength();
-
-				SeekRect.right = ((Width) * Progress) + SeekRect.left;
-				FillRect(hDC, &SeekRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
-
-				RECT TimeRect;
-
-				SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_TINY));
-				SetBkMode(hDC, TRANSPARENT);
-
-				TCHAR tstr[256];
-
-				unsigned long Time = CCoreAudio::Instance()->GetPosition() / 1000;
-				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
-
-				SetRect(&TimeRect, r.left +2, SeekRect.top, m_SeekRect.left, SeekRect.bottom);
-				DrawText(	hDC, 
-							tstr, 
-							-1, 
-							&TimeRect, 
-							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-
-				Time = CCoreAudio::Instance()->GetLength();
-				if(Time != LENGTH_UNKNOWN)
-				{
-					Time /= 1000;
-					wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
-
-					SetRect(&TimeRect, m_SeekRect.right +2, SeekRect.top, r.right, SeekRect.bottom);
-					DrawText(	hDC, 
-								tstr, 
-								-1, 
-								&TimeRect, 
-								DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-				}
-
-				RECT	SongTitleRect;
-				SetRect(&SongTitleRect, m_SeekRect.left, r.top+6, m_SeekRect.right, r.top+6+20);
-
-				RECT	ArtistTitleRect;
-				SetRect(&ArtistTitleRect, m_SeekRect.left, r.top+27, m_SeekRect.right, r.top+40);
-
-				IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
-
-				if(pEntry)
-				{
-					LPTSTR  szTitle		= (LPTSTR)pEntry->GetField(FIELD_TITLE);
-					LPTSTR	szArtist	= (LPTSTR)pEntry->GetField(FIELD_ARTIST);
-
-					if(szTitle == NULL)
-						szTitle = TEXT("No Song Loaded");
-
-					if(szArtist == NULL)
-						szArtist = TEXT("");
-
-					SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL));
-					SetBkMode(hDC, TRANSPARENT);
-					DrawText(	hDC, 
-								szTitle,
-								-1, 
-								&SongTitleRect, 
-								DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
-
-					SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL));
-					SetBkMode(hDC, TRANSPARENT);
-					DrawText(	hDC, 
-								szArtist,
-								-1, 
-								&ArtistTitleRect, 
-								DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-				}
-*/
-
-				/*
-
-				HBRUSH hbBtnFace	= CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
-				HBRUSH hbBtnShadow	= CreateSolidBrush(GetSysColor(COLOR_BTNSHADOW));
-
-				RECT rect;
-				GetClientRect(lpDrawItem->hwndItem, &rect);
-
-				bool bDown	= lpDrawItem->itemState & ODS_SELECTED;
-				
-				HICON hIcon;
-				if(lpDrawItem->hwndItem == m_hPrevWnd)
-					hIcon = tuniacApp.m_Skin.GetIcon(THEMEICON_CONTROL_PREV);
-				else if(lpDrawItem->hwndItem == m_hNextWnd)
-					hIcon = tuniacApp.m_Skin.GetIcon(THEMEICON_CONTROL_NEXT);
-				else if(lpDrawItem->hwndItem == m_hPlayWnd)
-					hIcon = tuniacApp.m_Skin.GetIcon(CCoreAudio::Instance()->GetState() == STATE_PLAYING ? THEMEICON_CONTROL_PAUSE : THEMEICON_CONTROL_PLAY);
-				else
-					return FALSE;
-
-				FillRect(lpDrawItem->hDC, &lpDrawItem->rcItem, hbBtnFace);
-				DrawIconEx(lpDrawItem->hDC, 0, bDown ? 1 : 0, hIcon, BUTTON_SIZE, BUTTON_SIZE, 0, NULL, DI_NORMAL);
-
-				if(bDown)
-					DrawEdge(lpDrawItem->hDC, &rect, BDR_SUNKENINNER, BF_RECT | BF_SOFT);
-
-				DeleteObject(hbBtnFace);
-				DeleteObject(hbBtnShadow);
-				*/

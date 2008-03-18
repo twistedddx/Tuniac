@@ -112,6 +112,8 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
 	CAutoLock t(&m_Lock);
 
+	unsigned long ulSongLength = GetLength();
+
 	while(ServiceStream())
 	{
 	}
@@ -149,13 +151,17 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			}
 
 			//check if coreaudio has not been notified yet and if we are crossfading
-			if(!m_bMixNotify)
-			{
-				//length longer then crossfade time
-				if((GetLength() - (GetPosition() + m_Output->GetAudioBufferMS())) < m_CrossfadeTimeMS)
+			if(ulSongLength != LENGTH_UNKNOWN)
+			{			
+				if(!m_bMixNotify)
 				{
-					m_bMixNotify = true;
-					tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+					//length longer then crossfade time
+
+					if((ulSongLength - (GetPosition() + m_Output->GetAudioBufferMS())) < m_CrossfadeTimeMS)
+					{
+						m_bMixNotify = true;
+						tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+					}
 				}
 			}
 
@@ -284,20 +290,3 @@ bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 
 	return m_Output->GetVisData(ToHere, ulNumSamples);
 }
-
-/*
-		//set time file was played after 1/4 is played
-		if(!m_bEntryPlayed)
-		{
-			if(GetPosition() > (GetLength() * 0.25))
-			{
-				SYSTEMTIME st;
-				GetLocalTime(&st);
-				m_pEntry->SetField(FIELD_DATELASTPLAYED, &st);
-
-				tuniacApp.m_SourceSelectorWindow->UpdateView();
-
-				m_bEntryPlayed = true;
-			}
-		}
-*/

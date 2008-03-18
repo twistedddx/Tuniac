@@ -9,7 +9,8 @@ CAudioPacketizer::CAudioPacketizer(void) :
 	m_PacketSize(0),
 	m_hReadEnd(NULL),
 	m_hWriteEnd(NULL),
-	m_bFinished(false)
+	m_bFinished(false),
+	m_ulBytesInPipe(0)
 
 {
 }
@@ -25,7 +26,10 @@ bool CAudioPacketizer::SetPacketSize(unsigned long Size)
 
 	m_PacketSize		= Size;
 	m_PacketSizeBytes	= Size*sizeof(float);
-	if(!CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, m_PacketSizeBytes*5))
+
+	m_ulPipeSize		= m_PacketSizeBytes * 5;
+
+	if(!CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, m_ulPipeSize))
 		return false;
 
 	return(true);

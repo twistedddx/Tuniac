@@ -6,6 +6,9 @@ protected:
 	unsigned long	m_PacketSize;
 	unsigned long	m_PacketSizeBytes;
 
+	unsigned long	m_ulBytesInPipe;
+	unsigned long	m_ulPipeSize;
+
 	bool			m_bFinished;
 
 
