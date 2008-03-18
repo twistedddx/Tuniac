@@ -178,6 +178,7 @@ typedef struct {
 #define CONFIG_BITRATE_KBPS     0x2000  // bitrate is kbps, not bits / sample
 #define CONFIG_SHAPE_OVERRIDE   0x8000  // shaping mode specified
 #define CONFIG_JOINT_OVERRIDE   0x10000 // joint-stereo mode specified
+#define CONFIG_DYNAMIC_SHAPING  0x20000 // dynamic noise shaping
 #define CONFIG_CREATE_EXE       0x40000 // create executable
 #define CONFIG_CREATE_WVC       0x80000 // create correction file
 #define CONFIG_OPTIMIZE_WVC     0x100000 // maximize bybrid compression
@@ -185,6 +186,7 @@ typedef struct {
 #define CONFIG_EXTRA_MODE       0x2000000 // extra processing mode
 #define CONFIG_SKIP_WVX         0x4000000 // no wvx stream w/ floats & big ints
 #define CONFIG_MD5_CHECKSUM     0x8000000 // store MD5 signature
+#define CONFIG_MERGE_BLOCKS     0x10000000 // merge blocks of equal redundancy (for lossyWAV)
 #define CONFIG_OPTIMIZE_MONO    0x80000000 // optimize for mono streams posing as stereo
 
 ////////////// Callbacks used for reading & writing WavPack streams //////////
