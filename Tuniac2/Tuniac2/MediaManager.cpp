@@ -325,19 +325,32 @@ bool CMediaManager::AddFile(String filename)
 			sqlite3_command cmd(m_DBCon, insertFilenameSQL);
 
 			String artist, title, album, year, genre, track;
-			String playbacktime, samplerate, channels, bitrate;
+			__int64 playbacktime, samplerate, channels, bitrate;
 
-			pAccessor->GetField(Artist, artist);
-			pAccessor->GetField(Title,	title);
-			pAccessor->GetField(Album,	album);
-			pAccessor->GetField(Year,	year);
-			pAccessor->GetField(Genre,	genre);
-			pAccessor->GetField(Track,	track);
+			wchar_t		TempData[1024];
 
-			pAccessor->GetField(PlaybackTime,	playbacktime);
-			pAccessor->GetField(SampleRate,		samplerate);
-			pAccessor->GetField(Channels,		channels); 
-			pAccessor->GetField(Bitrate,		bitrate);
+			pAccessor->GetTextField(Artist, TempData, 1024);
+			artist = TempData;
+
+			pAccessor->GetTextField(Title,	TempData, 1024);
+			title = TempData;
+
+			pAccessor->GetTextField(Album,	TempData, 1024);
+			album = TempData;
+
+			pAccessor->GetTextField(Year,	TempData, 1024);
+			year = TempData;
+
+			pAccessor->GetTextField(Genre,	TempData, 1024);
+			genre = TempData;
+
+			pAccessor->GetTextField(Track,	TempData, 1024);
+			track = TempData;
+
+			pAccessor->GetIntField(PlaybackTime,	&playbacktime);
+			pAccessor->GetIntField(SampleRate,		&samplerate);
+			pAccessor->GetIntField(Channels,		&channels); 
+			pAccessor->GetIntField(Bitrate,			&bitrate);
 			
 			cmd.bind(1, filename);
 			cmd.bind(2, (int)dwFilesize);
