@@ -19,11 +19,6 @@ protected:
 	mpc_int64_t			m_LengthSamples;
 
 
-
-
-	unsigned int		m_currentsection;
-
-
 public:
 	CMPCDecoder(void);
 	~CMPCDecoder(void);

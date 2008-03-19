@@ -6,7 +6,6 @@
 
 CMPCDecoder::CMPCDecoder(void)
 {
-	m_currentsection = 0;
 }
 
 CMPCDecoder::~CMPCDecoder(void)
