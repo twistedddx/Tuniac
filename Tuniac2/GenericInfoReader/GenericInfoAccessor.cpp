@@ -26,6 +26,42 @@ void	CGenericInfoAccessor::Destroy()
 
 	delete this;
 }
+
+bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHere)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 toHere)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::GetAlbumArt(void * pArtData)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::SetAlbumArt(void * pArtData)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::FreeAlbumArt(void * pArtData)
+{
+	return false;
+}
+
 /*
 bool	CGenericInfoAccessor::GetField(InfoHandlerField field, String & toHere)
 {
@@ -123,16 +159,3 @@ bool	CGenericInfoAccessor::SetField(InfoHandlerField field, String fromHere)
 	return false;
 }
 */
-bool	CGenericInfoAccessor::GetAlbumArt(void * pArtData)
-{
-	return false;
-}
-bool	CGenericInfoAccessor::FreeAlbumArt(void * pArtData)
-{
-	return false;
-}
-
-bool	CGenericInfoAccessor::SetAlbumArt(void * pArtData)
-{
-	return false;
-}
