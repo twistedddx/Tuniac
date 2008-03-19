@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,17 +17,24 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-//#include <config.h>
-
-#include <bitset>
+#ifndef HAVE_ZLIB
+#include <config.h>
+#endif
 
 #if HAVE_ZLIB
 #include <zlib.h>
 #endif
 
+#include <bitset>
+
 #include <tdebug.h>
+#include <tstringlist.h>
 
 #include "id3v2frame.h"
 #include "id3v2synchdata.h"
@@ -50,6 +57,22 @@ public:
   Frame::Header *header;
 };
 
+namespace
+{
+  bool isValidFrameID(const ByteVector &frameID)
+  {
+    if(frameID.size() != 4)
+      return false;
+
+    for(ByteVector::ConstIterator it = frameID.begin(); it != frameID.end(); it++) {
+      if( (*it < 'A' || *it > 'Z') && (*it < '1' || *it > '9') ) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // static methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +90,7 @@ TagLib::uint Frame::headerSize(uint version)
 ByteVector Frame::textDelimiter(String::Type t)
 {
   ByteVector d = char(0);
-  if(t == String::UTF16 || t == String::UTF16BE)
+  if(t == String::UTF16 || t == String::UTF16BE || t == String::UTF16LE)
     d.append(char(0));
   return d;
 }
@@ -163,12 +186,14 @@ ByteVector Frame::fieldData(const ByteVector &frameData) const
   uint frameDataLength = size();
 
   if(d->header->compression() || d->header->dataLengthIndicator()) {
-    frameDataLength = frameData.mid(headerSize, 4).toUInt();
+    frameDataLength = SynchData::toUInt(frameData.mid(headerSize, 4));
     frameDataOffset += 4;
   }
 
 #if HAVE_ZLIB
-  if(d->header->compression()) {
+  if(d->header->compression() &&
+     !d->header->encryption())
+  {
     ByteVector data(frameDataLength);
     uLongf uLongTmp = frameDataLength;
     ::uncompress((Bytef *) data.data(),
@@ -180,6 +205,42 @@ ByteVector Frame::fieldData(const ByteVector &frameData) const
   else
 #endif
     return frameData.mid(frameDataOffset, frameDataLength);
+}
+
+String Frame::readStringField(const ByteVector &data, String::Type encoding, int *position)
+{
+  int start = 0;
+
+  if(!position)
+    position = &start;
+
+  ByteVector delimiter = textDelimiter(encoding);
+
+  int end = data.find(delimiter, *position, delimiter.size());
+
+  if(end < *position)
+    return String::null;
+
+  String str = String(data.mid(*position, end - *position), encoding);
+
+  *position = end + delimiter.size();
+
+  return str;
+}
+
+String::Type Frame::checkEncoding(const StringList &fields, String::Type encoding) // static
+{
+  if(encoding != String::Latin1)
+    return encoding;
+
+  for(StringList::ConstIterator it = fields.begin(); it != fields.end(); ++it) {
+    if(!(*it).isLatin1()) {
+      debug("Frame::checkEncoding() -- Rendering using UTF8.");
+      return String::UTF8;
+    }
+  }
+
+  return String::Latin1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +259,7 @@ public:
     groupingIdentity(false),
     compression(false),
     encryption(false),
-    unsyncronisation(false),
+    unsynchronisation(false),
     dataLengthIndicator(false)
     {}
 
@@ -214,7 +275,7 @@ public:
   bool groupingIdentity;
   bool compression;
   bool encryption;
-  bool unsyncronisation;
+  bool unsynchronisation;
   bool dataLengthIndicator;
 };
 
@@ -366,6 +427,17 @@ void Frame::Header::setData(const ByteVector &data, uint version)
     // the frame header (structure 4)
 
     d->frameSize = SynchData::toUInt(data.mid(4, 4));
+#ifndef NO_ITUNES_HACKS
+    // iTunes writes v2.4 tags with v2.3-like frame sizes
+    if(d->frameSize > 127) {
+      if(!isValidFrameID(data.mid(d->frameSize + 10, 4))) {
+        unsigned int uintSize = data.mid(4, 4).toUInt();
+        if(isValidFrameID(data.mid(uintSize + 10, 4))) {
+          d->frameSize = uintSize;
+        }
+      }
+    }
+#endif
 
     { // read the first byte of flags
       std::bitset<8> flags(data[8]);
@@ -379,7 +451,7 @@ void Frame::Header::setData(const ByteVector &data, uint version)
       d->groupingIdentity    = flags[6]; // (structure 4.1.2.h)
       d->compression         = flags[3]; // (structure 4.1.2.k)
       d->encryption          = flags[2]; // (structure 4.1.2.m)
-      d->unsyncronisation    = flags[1]; // (structure 4.1.2.n)
+      d->unsynchronisation   = flags[1]; // (structure 4.1.2.n)
       d->dataLengthIndicator = flags[0]; // (structure 4.1.2.p)
     }
     break;
@@ -417,6 +489,11 @@ bool Frame::Header::tagAlterPreservation() const
   return d->tagAlterPreservation;
 }
 
+void Frame::Header::setTagAlterPreservation(bool preserve)
+{
+  d->tagAlterPreservation = preserve;
+}
+
 bool Frame::Header::fileAlterPreservation() const
 {
   return d->fileAlterPreservation;
@@ -444,7 +521,12 @@ bool Frame::Header::encryption() const
 
 bool Frame::Header::unsycronisation() const
 {
-  return d->unsyncronisation;
+  return unsynchronisation();
+}
+
+bool Frame::Header::unsynchronisation() const
+{
+  return d->unsynchronisation;
 }
 
 bool Frame::Header::dataLengthIndicator() const
@@ -461,7 +543,7 @@ ByteVector Frame::Header::render() const
   return v;
 }
 
-bool Frame::Header::frameAlterPreservation() const // deprecated
+bool Frame::Header::frameAlterPreservation() const
 {
   return fileAlterPreservation();
 }

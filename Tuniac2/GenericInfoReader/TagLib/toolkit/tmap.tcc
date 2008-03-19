@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 namespace TagLib {
@@ -26,13 +30,18 @@ namespace TagLib {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class Key, class T>
-template <class KeyP, class TP> class Map<Key, T>::MapPrivate : public RefCounter
+template <class KeyP, class TP>
+class Map<Key, T>::MapPrivate : public RefCounter
 {
 public:
   MapPrivate() : RefCounter() {}
-  MapPrivate(const std::map<KeyP, TP> &m) : RefCounter(), map(m) {}
-
+#ifdef WANT_CLASS_INSTANTIATION_OF_MAP
+  MapPrivate(const std::map<class KeyP, class TP>& m) : RefCounter(), map(m) {}
+  std::map<class KeyP, class TP> map;
+#else
+  MapPrivate(const std::map<KeyP, TP>& m) : RefCounter(), map(m) {}
   std::map<KeyP, TP> map;
+#endif
 };
 
 template <class Key, class T>
@@ -81,18 +90,19 @@ typename Map<Key, T>::ConstIterator Map<Key, T>::end() const
 }
 
 template <class Key, class T>
-void Map<Key, T>::insert(const Key &key, const T &value)
+Map<Key, T> &Map<Key, T>::insert(const Key &key, const T &value)
 {
   detach();
-  std::pair<Key, T> item(key, value);
-  d->map.insert(item);
+  d->map[key] = value;
+  return *this;
 }
 
 template <class Key, class T>
-void Map<Key, T>::clear()
+Map<Key, T> &Map<Key, T>::clear()
 {
   detach();
   d->map.clear();
+  return *this;
 }
 
 template <class Key, class T>
@@ -104,6 +114,7 @@ bool Map<Key, T>::isEmpty() const
 template <class Key, class T>
 typename Map<Key, T>::Iterator Map<Key, T>::find(const Key &key)
 {
+  detach();
   return d->map.find(key);
 }
 
@@ -120,9 +131,21 @@ bool Map<Key, T>::contains(const Key &key) const
 }
 
 template <class Key, class T>
-void Map<Key,T>::erase(Iterator it)
+Map<Key, T> &Map<Key,T>::erase(Iterator it)
 {
+  detach();
   d->map.erase(it);
+  return *this;
+}
+
+template <class Key, class T>
+Map<Key, T> &Map<Key,T>::erase(const Key &key)
+{
+  detach();
+  Iterator it = d->map.find(key);
+  if(it != d->map.end())
+    d->map.erase(it);
+  return *this;
 }
 
 template <class Key, class T>
@@ -140,7 +163,8 @@ const T &Map<Key, T>::operator[](const Key &key) const
 template <class Key, class T>
 T &Map<Key, T>::operator[](const Key &key)
 {
-    return d->map[key];
+  detach();
+  return d->map[key];
 }
 
 template <class Key, class T>

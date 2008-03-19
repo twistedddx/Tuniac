@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include "tfile.h"
@@ -24,90 +28,142 @@
 #include "tdebug.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
-#include <windows.h>
+
+#ifdef _WIN32
+# include <wchar.h>
+# include <windows.h>
+# include <io.h>
+# define ftruncate _chsize
+#else
+# include <unistd.h>
+#endif
+
+#include <stdlib.h>
+
+#ifndef R_OK
+# define R_OK 4
+#endif
+#ifndef W_OK
+# define W_OK 2
+#endif
 
 using namespace TagLib;
+
+#ifdef _WIN32
+
+typedef FileName FileNameHandle;
+
+#else
+
+struct FileNameHandle : public std::string
+{
+  FileNameHandle(FileName name) : std::string(name) {}
+  operator FileName () const { return c_str(); }
+};
+
+#endif
 
 class File::FilePrivate
 {
 public:
-  FilePrivate(const char *fileName) :
-    hFile(0),
-    name(fileName),
-    readOnly(true),
-    valid(true)
-    {}
+  FilePrivate(FileName fileName);
 
-  ~FilePrivate()
-  {
-    free((void *)name);
-  }
+  FILE *file;
 
-  HANDLE		hFile;
-  const char *name;
+  FileNameHandle name;
+
   bool readOnly;
   bool valid;
+  ulong size;
   static const uint bufferSize = 1024;
 };
+
+File::FilePrivate::FilePrivate(FileName fileName) :
+  file(0),
+  name(fileName),
+  readOnly(true),
+  valid(true),
+  size(0)
+{
+  // First try with read / write mode, if that fails, fall back to read only.
+
+#ifdef _WIN32
+
+  if(wcslen((const wchar_t *) fileName) > 0) {
+
+    file = _wfopen(name, L"rb+");
+
+    if(file)
+      readOnly = false;
+    else
+      file = _wfopen(name, L"rb");
+
+    if(file)
+      return;
+
+  }
+
+#endif
+
+  file = fopen(name, "rb+");
+
+  if(file)
+    readOnly = false;
+  else
+    file = fopen(name, "rb");
+
+  if(!file)
+    debug("Could not open file " + String((const char *) name));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-File::File(const char *file)
+File::File(FileName file)
 {
-  d = new FilePrivate(::strdup(file));
-
-  d->readOnly = !isWritable(file);
-  d->hFile = CreateFileA(	file, 
-							d->readOnly ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE, 
-							FILE_SHARE_READ,
-							NULL,
-							OPEN_EXISTING,
-							FILE_FLAG_RANDOM_ACCESS,
-							NULL);
-
-	if(d->hFile == INVALID_HANDLE_VALUE)
-	{
-		d->hFile = NULL;
-		debug("Could not open file " + String(file));
-	}
+  d = new FilePrivate(file);
 }
 
 File::~File()
 {
-	if(d->hFile)
-	{
-		CloseHandle(d->hFile);
-	}
-	delete d;
+  if(d->file)
+    fclose(d->file);
+  delete d;
 }
 
-const char *File::name() const
+FileName File::name() const
 {
   return d->name;
 }
 
 ByteVector File::readBlock(ulong length)
 {
-  if(!d->hFile) 
-  {
+  if(!d->file) {
     debug("File::readBlock() -- Invalid File");
     return ByteVector::null;
   }
 
-  ByteVector v(static_cast<uint>(length));
-  unsigned long count;// = fread(v.data(), sizeof(char), length, d->file);
+  if(length == 0)
+    return ByteVector::null;
 
-  ReadFile(d->hFile, v.data(), length, &count, NULL);
+  if(length > FilePrivate::bufferSize &&
+     length > ulong(File::length()))
+  {
+    length = File::length();
+  }
+
+  ByteVector v(static_cast<uint>(length));
+  const int count = fread(v.data(), sizeof(char), length, d->file);
   v.resize(count);
   return v;
 }
 
 void File::writeBlock(const ByteVector &data)
 {
-  if(!d->hFile) 
+  if(!d->file)
     return;
 
   if(d->readOnly) {
@@ -115,13 +171,12 @@ void File::writeBlock(const ByteVector &data)
     return;
   }
 
-  unsigned long bytesWritten;
-	WriteFile(d->hFile, data.data(), data.size(), &bytesWritten, NULL);
+  fwrite(data.data(), sizeof(char), data.size(), d->file);
 }
 
 long File::find(const ByteVector &pattern, long fromOffset, const ByteVector &before)
 {
-  if(!d->hFile || pattern.size() > d->bufferSize)
+  if(!d->file || pattern.size() > d->bufferSize)
       return -1;
 
   // The position in the file that the current buffer starts at.
@@ -217,7 +272,7 @@ long File::find(const ByteVector &pattern, long fromOffset, const ByteVector &be
 
 long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &before)
 {
-  if(!d->hFile || pattern.size() > d->bufferSize)
+  if(!d->file || pattern.size() > d->bufferSize)
       return -1;
 
   // The position in the file that the current buffer starts at.
@@ -246,7 +301,7 @@ long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &b
   }
   else {
     seek(fromOffset + -1 * int(d->bufferSize), Beginning);
-    bufferOffset = tell();    
+    bufferOffset = tell();
   }
 
   // See the notes in find() for an explanation of this algorithm.
@@ -285,7 +340,7 @@ long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &b
 
 void File::insert(const ByteVector &data, ulong start, ulong replace)
 {
-  if(!d->hFile)
+  if(!d->file)
     return;
 
   if(data.size() == replace) {
@@ -311,6 +366,7 @@ void File::insert(const ByteVector &data, ulong start, ulong replace)
   // that aren't yet in memory, so this is necessary.
 
   ulong bufferLength = bufferSize();
+
   while(data.size() - replace > bufferLength)
     bufferLength += bufferSize();
 
@@ -329,9 +385,7 @@ void File::insert(const ByteVector &data, ulong start, ulong replace)
   // That's a bit slower than using char *'s so, we're only doing it here.
 
   seek(readPosition);
-  unsigned long bytesRead;
-  ReadFile(d->hFile, aboutToOverwrite.data(), bufferLength, &bytesRead, NULL);
-
+  int bytesRead = fread(aboutToOverwrite.data(), sizeof(char), bufferLength, d->file);
   readPosition += bufferLength;
 
   seek(writePosition);
@@ -340,17 +394,20 @@ void File::insert(const ByteVector &data, ulong start, ulong replace)
 
   buffer = aboutToOverwrite;
 
+  // In case we've already reached the end of file...
+
+  buffer.resize(bytesRead);
+
   // Ok, here's the main loop.  We want to loop until the read fails, which
   // means that we hit the end of the file.
 
-  while(bytesRead != 0) {
+  while(!buffer.isEmpty()) {
 
     // Seek to the current read position and read the data that we're about
     // to overwrite.  Appropriately increment the readPosition.
 
     seek(readPosition);
-	ReadFile(d->hFile, aboutToOverwrite.data(), bufferLength, &bytesRead, NULL);
-
+    bytesRead = fread(aboutToOverwrite.data(), sizeof(char), bufferLength, d->file);
     aboutToOverwrite.resize(bytesRead);
     readPosition += bufferLength;
 
@@ -364,9 +421,8 @@ void File::insert(const ByteVector &data, ulong start, ulong replace)
     // writePosition.
 
     seek(writePosition);
-	unsigned long bytesWritten;
-	WriteFile(d->hFile, buffer.data(), bufferLength, &bytesWritten, NULL);
-    writePosition += bufferLength;
+    fwrite(buffer.data(), sizeof(char), buffer.size(), d->file);
+    writePosition += buffer.size();
 
     // Make the current buffer the data that we read in the beginning.
 
@@ -382,7 +438,7 @@ void File::insert(const ByteVector &data, ulong start, ulong replace)
 
 void File::removeBlock(ulong start, ulong length)
 {
-  if(!d->hFile)
+  if(!d->file)
     return;
 
   ulong bufferLength = bufferSize();
@@ -392,12 +448,11 @@ void File::removeBlock(ulong start, ulong length)
 
   ByteVector buffer(static_cast<uint>(bufferLength));
 
-  ulong bytesRead = true;
+  ulong bytesRead = 1;
 
   while(bytesRead != 0) {
     seek(readPosition);
-	ReadFile(d->hFile, buffer.data(), bufferLength, &bytesRead, NULL);
-    buffer.resize(bytesRead);
+    bytesRead = fread(buffer.data(), sizeof(char), bufferLength, d->file);
     readPosition += bytesRead;
 
     // Check to see if we just read the last block.  We need to call clear()
@@ -407,8 +462,7 @@ void File::removeBlock(ulong start, ulong length)
       clear();
 
     seek(writePosition);
-	unsigned long bytesWritten;
-	WriteFile(d->hFile, buffer.data(), bytesRead, &bytesWritten, NULL);
+    fwrite(buffer.data(), sizeof(char), bytesRead, d->file);
     writePosition += bytesRead;
   }
   truncate(writePosition);
@@ -421,68 +475,73 @@ bool File::readOnly() const
 
 bool File::isReadable(const char *file)
 {
-	return true;
-//  return access(file, R_OK) == 0;
+  return access(file, R_OK) == 0;
 }
 
 bool File::isOpen() const
 {
-  return d->hFile != NULL;
+  return (d->file != NULL);
 }
 
 bool File::isValid() const
 {
-  return d->hFile && d->valid;
+  return isOpen() && d->valid;
 }
 
 void File::seek(long offset, Position p)
 {
-  if(!d->hFile) {
+  if(!d->file) {
     debug("File::seek() -- trying to seek in a file that isn't opened.");
     return;
   }
 
-	unsigned long movemode;
-
-
-  switch(p) 
-  {
+  switch(p) {
   case Beginning:
-    movemode = FILE_BEGIN;
+    fseek(d->file, offset, SEEK_SET);
     break;
   case Current:
-    movemode = FILE_CURRENT;
+    fseek(d->file, offset, SEEK_CUR);
     break;
   case End:
-    movemode = FILE_END;
+    fseek(d->file, offset, SEEK_END);
     break;
   }
-
-  SetFilePointer(d->hFile, offset, NULL, movemode);
-
 }
 
 void File::clear()
 {
+  clearerr(d->file);
 }
 
 long File::tell() const
 {
-  return SetFilePointer(d->hFile, 0, NULL, FILE_CURRENT);  //ftell(d->file);
+  return ftell(d->file);
 }
 
 long File::length()
 {
-  if(!d->hFile)
-    return 0;	  
+  // Do some caching in case we do multiple calls.
 
-	long len = GetFileSize(d->hFile, NULL);
-  return len;
+  if(d->size > 0)
+    return d->size;
+
+  if(!d->file)
+    return 0;
+
+  long curpos = tell();
+
+  seek(0, End);
+  long endpos = tell();
+
+  seek(curpos, Beginning);
+
+  d->size = endpos;
+  return endpos;
 }
 
 bool File::isWritable(const char *file)
 {
-	return ((GetFileAttributesA(file) & FILE_ATTRIBUTE_READONLY) == 0);
+  return access(file, W_OK) == 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -496,10 +555,7 @@ void File::setValid(bool valid)
 
 void File::truncate(long length)
 {
-	unsigned long oldPos = SetFilePointer(d->hFile, 0, NULL, FILE_CURRENT);
-	SetFilePointer(d->hFile, length, NULL, FILE_BEGIN);
-	SetEndOfFile(d->hFile);
-	SetFilePointer(d->hFile, oldPos, NULL, FILE_BEGIN);
+  ftruncate(fileno(d->file), length);
 }
 
 TagLib::uint File::bufferSize()

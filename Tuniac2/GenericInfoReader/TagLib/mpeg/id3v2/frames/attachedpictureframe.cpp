@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2004 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,11 +17,16 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-
 #include "attachedpictureframe.h"
+
+#include <tstringlist.h>
+#include <tdebug.h>
 
 using namespace TagLib;
 using namespace ID3v2;
@@ -30,7 +35,7 @@ class AttachedPictureFrame::AttachedPictureFramePrivate
 {
 public:
   AttachedPictureFramePrivate() : textEncoding(String::Latin1),
-				  type(AttachedPictureFrame::Other) {}
+                                  type(AttachedPictureFrame::Other) {}
 
   String::Type textEncoding;
   String mimeType;
@@ -50,8 +55,8 @@ AttachedPictureFrame::AttachedPictureFrame() : Frame("APIC")
 
 AttachedPictureFrame::AttachedPictureFrame(const ByteVector &data) : Frame(data)
 {
-  setData(data);
   d = new AttachedPictureFramePrivate;
+  setData(data);
 }
 
 AttachedPictureFrame::~AttachedPictureFrame()
@@ -95,6 +100,16 @@ void AttachedPictureFrame::setType(Type t)
   d->type = t;
 }
 
+String AttachedPictureFrame::description() const
+{
+  return d->description;
+}
+
+void AttachedPictureFrame::setDescription(const String &desc)
+{
+  d->description = desc;
+}
+
 ByteVector AttachedPictureFrame::picture() const
 {
   return d->data;
@@ -116,25 +131,13 @@ void AttachedPictureFrame::parseFields(const ByteVector &data)
     return;
   }
 
-  int pos = 0;
+  d->textEncoding = String::Type(data[0]);
 
-  d->textEncoding = String::Type(data[pos]);
-  pos += 1;
+  int pos = 1;
 
-  int offset = data.find(textDelimiter(String::Latin1), pos);
-  if(offset < pos)
-    return;
-  d->mimeType = String(data.mid(pos, offset - pos), String::Latin1);
-  pos = offset + 1;
-
-  d->type = Type(data[pos]);
-  pos += 1;
-
-  offset = data.find(textDelimiter(d->textEncoding), pos);
-  if(offset < pos)
-    return;  
-  d->description = String(data.mid(pos, offset - pos), d->textEncoding);
-  pos = offset + 1;
+  d->mimeType = readStringField(data, String::Latin1, &pos);
+  d->type = (TagLib::ID3v2::AttachedPictureFrame::Type)data[pos++];
+  d->description = readStringField(data, d->textEncoding, &pos);
 
   d->data = data.mid(pos);
 }
@@ -143,12 +146,14 @@ ByteVector AttachedPictureFrame::renderFields() const
 {
   ByteVector data;
 
-  data.append(char(d->textEncoding));
+  String::Type encoding = checkEncoding(d->description, d->textEncoding);
+
+  data.append(char(encoding));
   data.append(d->mimeType.data(String::Latin1));
   data.append(textDelimiter(String::Latin1));
   data.append(char(d->type));
-  data.append(d->description.data(d->textEncoding));
-  data.append(textDelimiter(d->textEncoding));
+  data.append(d->description.data(encoding));
+  data.append(textDelimiter(encoding));
   data.append(d->data);
 
   return data;

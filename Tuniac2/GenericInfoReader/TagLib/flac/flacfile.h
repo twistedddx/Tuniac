@@ -5,7 +5,7 @@
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_FLACFILE_H
 #define TAGLIB_FLACFILE_H
 
-#include <tfile.h>
+#include "taglib_export.h"
+#include "tfile.h"
 
 #include "flacproperties.h"
 
@@ -67,7 +72,7 @@ namespace TagLib {
        * \deprecated This constructor will be dropped in favor of the one below
        * in a future version.
        */
-      File(const char *file, bool readProperties = true,
+      File(FileName file, bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
 
       /*!
@@ -79,7 +84,7 @@ namespace TagLib {
        * \a frameFactory.
        */
       // BIC: merge with the above constructor
-      File(const char *file, ID3v2::FrameFactory *frameFactory,
+      File(FileName file, ID3v2::FrameFactory *frameFactory,
            bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
 
@@ -155,7 +160,7 @@ namespace TagLib {
       /*!
        * Set the ID3v2::FrameFactory to something other than the default.  This
        * can be used to specify the way that ID3v2 frames will be interpreted
-       * when 
+       * when
        *
        * \see ID3v2FrameFactory
        */
@@ -185,7 +190,7 @@ namespace TagLib {
       void scan();
       long findID3v2();
       long findID3v1();
-      ByteVector xiphCommentData();
+      ByteVector xiphCommentData() const;
 
       class FilePrivate;
       FilePrivate *d;

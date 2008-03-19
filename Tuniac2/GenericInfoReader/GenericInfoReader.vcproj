@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac"
+				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/ape;./TagLib/asf;./TagLib/flac;./TagLib/mp4;./TagLib/mpc;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/mpeg/id3v1/frames;./TagLib/ogg;./TagLib/ogg/flac;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/toolkit;./TagLib/trueaudio;./TagLib/wavpack"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;GENERICINFOREADER_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,6 +66,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -120,7 +121,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac"
+				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/ape;./TagLib/asf;./TagLib/flac;./TagLib/mp4;./TagLib/mpc;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/mpeg/id3v1/frames;./TagLib/ogg;./TagLib/ogg/flac;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/toolkit;./TagLib/trueaudio;./TagLib/wavpack"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;GENERICINFOREADER_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -195,11 +196,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac"
+				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/ape;./TagLib/asf;./TagLib/flac;./TagLib/mp4;./TagLib/mpc;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/mpeg/id3v1/frames;./TagLib/ogg;./TagLib/ogg/flac;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/toolkit;./TagLib/trueaudio;./TagLib/wavpack"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;GENERICINFOREADER_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -214,6 +215,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -271,11 +273,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/toolkit;./TagLib\mpeg;./TagLib\mpeg\id3v1;./TagLib\mpeg\id3v2;./TagLib\ogg;./TagLib\ogg\vorbis;./TagLib\ape;./TagLib\mpc;./TagLib\flac"
+				AdditionalIncludeDirectories="../globals;./TagLib;./TagLib/ape;./TagLib/asf;./TagLib/flac;./TagLib/mp4;./TagLib/mpc;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/mpeg/id3v1/frames;./TagLib/ogg;./TagLib/ogg/flac;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/toolkit;./TagLib/trueaudio;./TagLib/wavpack"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;GENERICINFOREADER_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="1"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -407,27 +409,7 @@
 			Name="TagLib Source"
 			>
 			<File
-				RelativePath=".\TagLib\ape\apefooter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ape\apeitem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ape\apetag.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\attachedpictureframe.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\TagLib\audioproperties.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\commentsframe.cpp"
 				>
 			</File>
 			<File
@@ -435,179 +417,295 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\flac\flacfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\flac\flacproperties.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v1\id3v1genres.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v1\id3v1tag.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2extendedheader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2footer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2frame.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2framefactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2header.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2synchdata.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2tag.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpc\mpcfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpc\mpcproperties.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegheader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegproperties.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\flac\oggflacfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggpage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggpageheader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\TagLib\tag.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\toolkit\tbytevector.cpp"
+				RelativePath=".\TagLib\tagunion.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tbytevectorlist.cpp"
+			<Filter
+				Name="ape"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tdebug.cpp"
+				<File
+					RelativePath=".\TagLib\ape\apefooter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ape\apeitem.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ape\apetag.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="asf"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\textidentificationframe.cpp"
+				<File
+					RelativePath=".\TagLib\asf\asfattribute.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asffile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asfproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asftag.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="flac"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tfile.cpp"
+				<File
+					RelativePath=".\TagLib\flac\flacfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\flac\flacproperties.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mp4"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tstring.cpp"
+				<File
+					RelativePath=".\TagLib\mp4\mp4atom.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4file.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4item.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4properties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4tag.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mpc"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tstringlist.cpp"
+				<File
+					RelativePath=".\TagLib\mpc\mpcfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpc\mpcproperties.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mpeg"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\unicode.cpp"
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\attachedpictureframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\commentsframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\generalencapsulatedobjectframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v1\id3v1genres.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v1\id3v1tag.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2extendedheader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2footer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2frame.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2framefactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2header.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2synchdata.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2tag.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegheader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\textidentificationframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\uniquefileidentifierframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\unknownframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\unsynchronizedlyricsframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\urllinkframe.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\xingheader.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ogg"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\uniquefileidentifierframe.cpp"
+				<File
+					RelativePath=".\TagLib\ogg\oggfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\flac\oggflacfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\oggpage.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\oggpageheader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\vorbis\vorbisfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\vorbis\vorbisproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\xiphcomment.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="toolkit"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\unknownframe.cpp"
+				<File
+					RelativePath=".\TagLib\toolkit\tbytevector.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tbytevectorlist.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tdebug.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tstring.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tstringlist.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\unicode.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="trueaudio"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\vorbis\vorbisfile.cpp"
+				<File
+					RelativePath=".\TagLib\trueaudio\trueaudiofile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\trueaudio\trueaudioproperties.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="wavpack"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\vorbis\vorbisproperties.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\xingheader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\xiphcomment.cpp"
-				>
-			</File>
+				<File
+					RelativePath=".\TagLib\wavpack\wavpackfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\wavpack\wavpackproperties.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="TagLib Headers"
 			>
 			<File
-				RelativePath=".\TagLib\ape\apefooter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ape\apeitem.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ape\apetag.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\attachedpictureframe.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TagLib\audioproperties.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\mpc\combinedtag.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\commentsframe.h"
+				RelativePath=".\TagLib\config.h"
 				>
 			</File>
 			<File
@@ -615,165 +713,301 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\flac\flacfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\flac\flacproperties.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\flac\flactag.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v1\id3v1genres.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v1\id3v1tag.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2extendedheader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2footer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2frame.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2framefactory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2header.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2synchdata.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\id3v2tag.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpc\mpcfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpc\mpcproperties.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegheader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\mpegproperties.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\flac\oggflacfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggpage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\oggpageheader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TagLib\tag.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\toolkit\taglib.h"
+				RelativePath=".\TagLib\taglib_export.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TagLib\toolkit\tbytevector.h"
+				RelativePath=".\TagLib\tagunion.h"
 				>
 			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tbytevectorlist.h"
+			<Filter
+				Name="ape"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tdebug.h"
+				<File
+					RelativePath=".\TagLib\ape\apefooter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ape\apeitem.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ape\apetag.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="asf"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\textidentificationframe.h"
+				<File
+					RelativePath=".\TagLib\asf\asfattribute.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asffile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asfproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\asf\asftag.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="flac"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tfile.h"
+				<File
+					RelativePath=".\TagLib\flac\flacfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\flac\flacproperties.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mp4"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tlist.h"
+				<File
+					RelativePath=".\TagLib\mp4\mp4atom.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4file.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4item.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4properties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mp4\mp4tag.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mpc"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tmap.h"
+				<File
+					RelativePath=".\TagLib\mpc\mpcfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpc\mpcproperties.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mpeg"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tstring.h"
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\attachedpictureframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\commentsframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\generalencapsulatedobjectframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v1\id3v1genres.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v1\id3v1tag.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2extendedheader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2footer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2frame.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2framefactory.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2header.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2synchdata.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\id3v2tag.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegheader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\mpegproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\textidentificationframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\uniquefileidentifierframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\unknownframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\unsynchronizedlyricsframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\urllinkframe.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\mpeg\xingheader.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ogg"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\tstringlist.h"
+				<File
+					RelativePath=".\TagLib\ogg\oggfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\flac\oggflacfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\oggpage.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\oggpageheader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\speex\speexproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\vorbis\vorbisfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\vorbis\vorbisproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\ogg\xiphcomment.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="toolkit"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\toolkit\unicode.h"
+				<File
+					RelativePath=".\TagLib\toolkit\taglib.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tbytevector.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tbytevectorlist.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tdebug.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tlist.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tmap.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tstring.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\tstringlist.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\toolkit\unicode.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="trueaudio"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\uniquefileidentifierframe.h"
+				<File
+					RelativePath=".\TagLib\trueaudio\trueaudiofile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\trueaudio\trueaudioproperties.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="wavpack"
 				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\id3v2\frames\unknownframe.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\vorbis\vorbisfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\vorbis\vorbisproperties.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\mpeg\xingheader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TagLib\ogg\xiphcomment.h"
-				>
-			</File>
+				<File
+					RelativePath=".\TagLib\wavpack\wavpackfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\wavpack\wavpackproperties.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

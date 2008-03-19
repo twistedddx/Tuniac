@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,11 +17,16 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_BYTEVECTORLIST_H
 #define TAGLIB_BYTEVECTORLIST_H
 
+#include "taglib_export.h"
 #include "tbytevector.h"
 #include "tlist.h"
 
@@ -66,7 +71,16 @@ namespace TagLib {
      */
     static ByteVectorList split(const ByteVector &v, const ByteVector &pattern,
                                 int byteAlign = 1);
-
+    /*!
+     * Splits the ByteVector \a v into several strings at \a pattern.  This will
+     * not include the pattern in the returned ByteVectors.  \a max is the
+     * maximum number of entries that will be separated.  If \a max for instance
+     * is 2 then a maximum of 1 match will be found and the vector will be split
+     * on that match.
+     */
+    // BIC: merge with the function above
+    static ByteVectorList split(const ByteVector &v, const ByteVector &pattern,
+                                int byteAlign, int max);
   private:
     class ByteVectorListPrivate;
     ByteVectorListPrivate *d;

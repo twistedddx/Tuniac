@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_MPEGPROPERTIES_H
 #define TAGLIB_MPEGPROPERTIES_H
 
-#include <audioproperties.h>
+#include "taglib_export.h"
+#include "audioproperties.h"
 
 #include "mpegheader.h"
 
@@ -31,6 +36,7 @@ namespace TagLib {
   namespace MPEG {
 
     class File;
+    class XingHeader;
 
     //! An implementation of audio property reading for MP3
 
@@ -59,6 +65,13 @@ namespace TagLib {
       virtual int bitrate() const;
       virtual int sampleRate() const;
       virtual int channels() const;
+
+      /*!
+       * Returns a pointer to the XingHeader if one exists or null if no
+       * XingHeader was found.
+       */
+
+      const XingHeader *xingHeader() const;
 
       /*!
        * Returns the MPEG Version of the file.

@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,17 +17,22 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_VORBISCOMMENT_H
 #define TAGLIB_VORBISCOMMENT_H
 
-#include <tag.h>
-#include <tlist.h>
-#include <tmap.h>
-#include <tstring.h>
-#include <tstringlist.h>
-#include <tbytevector.h>
+#include "tag.h"
+#include "tlist.h"
+#include "tmap.h"
+#include "tstring.h"
+#include "tstringlist.h"
+#include "tbytevector.h"
+#include "taglib_export.h"
 
 namespace TagLib {
 
@@ -155,6 +160,13 @@ namespace TagLib {
        * \a value is null, all of the fields with the given key will be removed.
        */
       void removeField(const String &key, const String &value = String::null);
+
+      /*!
+       * Returns true if the field is contained within the comment.
+       *
+       * \note This is safer than checking for membership in the FieldListMap.
+       */
+      bool contains(const String &key) const;
 
       /*!
        * Renders the comment to a ByteVector suitable for inserting into a file.

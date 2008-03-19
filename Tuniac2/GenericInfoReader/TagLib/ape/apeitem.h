@@ -5,7 +5,7 @@
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,14 +17,18 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_APEITEM_H
 #define TAGLIB_APEITEM_H
 
-#include <tbytevector.h>
-#include <tstring.h>
-#include <tstringlist.h>
+#include "tbytevector.h"
+#include "tstring.h"
+#include "tstringlist.h"
 
 namespace TagLib {
 
@@ -57,6 +61,7 @@ namespace TagLib {
       /*!
        * Constructs an item with \a key and \a value.
        */
+      // BIC: Remove this, StringList has a constructor from a single string
       Item(const String &key, const String &value);
 
       /*!
@@ -70,6 +75,11 @@ namespace TagLib {
       Item(const Item &item);
 
       /*!
+       * Destroys the item.
+       */
+      virtual ~Item();
+
+      /*!
        * Copies the contents of \a item into this item.
        */
       Item &operator=(const Item &item);
@@ -81,8 +91,46 @@ namespace TagLib {
 
       /*!
        * Returns the binary value.
+       *
+       * \deprecated This will be removed in the next binary incompatible version
+       * as it is not kept in sync with the things that are set using setValue()
+       * and friends.
        */
       ByteVector value() const;
+
+      /*!
+       * Sets the key for the item to \a key.
+       */
+      void setKey(const String &key);
+
+      /*!
+       * Sets the value of the item to \a value and clears any previous contents.
+       *
+       * \see toString()
+       */
+      void setValue(const String &value);
+
+      /*!
+       * Sets the value of the item to the list of values in \a value and clears
+       * any previous contents.
+       *
+       * \see toStringList()
+       */
+      void setValues(const StringList &values);
+
+      /*!
+       * Appends \a value to create (or extend) the current list of values.
+       *
+       * \see toString()
+       */
+      void appendValue(const String &value);
+
+      /*!
+       * Appends \a values to extend the current list of values.
+       *
+       * \see toStringList()
+       */
+      void appendValues(const StringList &values);
 
       /*!
        * Returns the size of the full item.
@@ -96,9 +144,15 @@ namespace TagLib {
       String toString() const;
 
       /*!
-       * Returns the value as a string list.
+       * \deprecated
+       * \see values
        */
       StringList toStringList() const;
+
+      /*!
+       * Returns the list of values.
+       */
+      StringList values() const;
 
       /*!
        * Render the item to a ByteVector.

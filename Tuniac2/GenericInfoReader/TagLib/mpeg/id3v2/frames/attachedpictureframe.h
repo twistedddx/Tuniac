@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2004 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_ATTACHEDPICTUREFRAME_H
@@ -24,6 +28,7 @@
 
 #include <id3v2frame.h>
 #include <id3v2header.h>
+#include "taglib_export.h"
 
 namespace TagLib {
 
@@ -155,6 +160,26 @@ namespace TagLib {
        * \see type()
        */
       void setType(Type t);
+
+      /*!
+       * Returns a text description of the image.
+       *
+       * \see setDescription()
+       * \see textEncoding()
+       * \see setTextEncoding()
+       */
+
+      String description() const;
+
+      /*!
+       * Sets a textual description of the image to \a desc.
+       *
+       * \see description()
+       * \see textEncoding()
+       * \see setTextEncoding()
+       */
+
+      void setDescription(const String &desc);
 
       /*!
        * Returns the image data as a ByteVector.

@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_COMMENTSFRAME_H
 #define TAGLIB_COMMENTSFRAME_H
 
 #include <id3v2frame.h>
+#include "taglib_export.h"
 
 namespace TagLib {
 
@@ -130,6 +135,15 @@ namespace TagLib {
        * \see render()
        */
       void setTextEncoding(String::Type encoding);
+
+      /*!
+       * Comments each have a unique description.  This searches for a comment
+       * frame with the decription \a d and returns a pointer to it.  If no
+       * frame is found that matches the given description null is returned.
+       *
+       * \see description()
+       */
+      static CommentsFrame *findByDescription(const Tag *tag, const String &d);
 
     protected:
       // Reimplementations.

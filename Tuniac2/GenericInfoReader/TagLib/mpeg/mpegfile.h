@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_MPEGFILE_H
 #define TAGLIB_MPEGFILE_H
 
-#include <tfile.h>
+#include "taglib_export.h"
+#include "tfile.h"
 
 #include "mpegproperties.h"
 
@@ -72,7 +77,7 @@ namespace TagLib {
        * \deprecated This constructor will be dropped in favor of the one below
        * in a future version.
        */
-      File(const char *file, bool readProperties = true,
+      File(FileName file, bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
 
       /*!
@@ -82,7 +87,7 @@ namespace TagLib {
        * \a frameFactory.
        */
       // BIC: merge with the above constructor
-      File(const char *file, ID3v2::FrameFactory *frameFactory,
+      File(FileName file, ID3v2::FrameFactory *frameFactory,
            bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
 
@@ -143,6 +148,18 @@ namespace TagLib {
        * remain valid.  This also strips empty tags.
        */
       bool save(int tags);
+
+      /*!
+       * Save the file.  This will attempt to save all of the tag types that are
+       * specified by OR-ing together TagTypes values.  The save() method above
+       * uses AllTags.  This returns true if saving was successful.
+       *
+       * If \a stripOthers is true this strips all tags not included in the mask,
+       * but does not modify them in memory, so later calls to save() which make
+       * use of these tags will remain valid.  This also strips empty tags.
+       */
+      // BIC: combine with the above method
+      bool save(int tags, bool stripOthers);
 
       /*!
        * Returns a pointer to the ID3v2 tag of the file.
@@ -242,7 +259,7 @@ namespace TagLib {
       void read(bool readProperties, Properties::ReadStyle propertiesStyle);
       long findID3v2();
       long findID3v1();
-      long findAPE();
+      void findAPE();
 
       /*!
        * MPEG frames can be recognized by the bit pattern 11111111 111, so the

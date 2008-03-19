@@ -5,7 +5,7 @@
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <tbytevector.h>
@@ -41,7 +45,7 @@ public:
   bool valid;
 };
 
-MPEG::XingHeader::XingHeader(const ByteVector &data) 
+MPEG::XingHeader::XingHeader(const ByteVector &data)
 {
   d = new XingHeaderPrivate;
   parse(data);
@@ -88,18 +92,18 @@ void MPEG::XingHeader::parse(const ByteVector &data)
 {
   // Check to see if a valid Xing header is available.
 
-  if(data.mid(0, 4) != "Xing")
+  if(!data.startsWith("Xing") && !data.startsWith("Info"))
     return;
 
   // If the XingHeader doesn't contain the number of frames and the total stream
   // info it's invalid.
 
-  if(!(data[7] & 0x02)) {
+  if(!(data[7] & 0x01)) {
     debug("MPEG::XingHeader::parse() -- Xing header doesn't contain the total number of frames.");
     return;
   }
 
-  if(!(data[7] & 0x04)) {
+  if(!(data[7] & 0x02)) {
     debug("MPEG::XingHeader::parse() -- Xing header doesn't contain the total stream size.");
     return;
   }
