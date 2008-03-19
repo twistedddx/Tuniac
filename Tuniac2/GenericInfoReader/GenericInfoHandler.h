@@ -23,8 +23,8 @@ public:
 	void			SetHelper(ITuniacPluginHelper * pHelper);
 
 public:
-	bool	CanHandle(String filename, unsigned long * Ability, unsigned long * Merit);
+	bool	CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit);
 
-	ITuniacInfoAccessor	*	CreateAccessor(String filename);
+	ITuniacInfoAccessor	*	CreateAccessor(wchar_t * filename);
 
 };

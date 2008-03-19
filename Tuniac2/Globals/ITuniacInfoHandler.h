@@ -30,20 +30,25 @@ class ITuniacInfoAccessor
 {
 public:
 	virtual void	Destroy() = 0;
-	virtual bool	GetField(InfoHandlerField field, String & toHere) = 0;
-	virtual bool	SetField(InfoHandlerField field, String fromHere) = 0;
+
+	virtual bool	GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize) = 0;
+	virtual bool	SetTextField(InfoHandlerField field, wchar_t * fromHere) = 0;
+
+	virtual bool	GetIntField(InfoHandlerField field, __int64 * toHere) = 0;
+	virtual bool	SetIntField(InfoHandlerField field, __int64 toHere) = 0;
 
 	virtual bool	GetAlbumArt(void * pArtData) = 0;
+	virtual bool	SetAlbumArt(void * pArtData) = 0;
+
 	virtual bool	FreeAlbumArt(void * pArtData) = 0;
 
-	virtual bool	SetAlbumArt(void * pArtData) = 0;
 };
 
 class ITuniacInfoHandler : public ITuniacPlugin
 {
 public:
-	virtual bool					CanHandle(String filename, unsigned long * Ability, unsigned long * Merit) = 0;
+	virtual bool					CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit) = 0;
 
-	virtual ITuniacInfoAccessor	*	CreateAccessor(String filename) = 0;
+	virtual ITuniacInfoAccessor	*	CreateAccessor(wchar_t * filename) = 0;
 
 };

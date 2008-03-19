@@ -287,7 +287,7 @@ bool CMediaManager::AddFile(String filename)
 				if(pHandler)
 				{
 					unsigned long t1, t2;
-					if(pHandler->CanHandle(filename, &t1, &t2))
+					if(pHandler->CanHandle((wchar_t*)filename.c_str(), &t1, &t2))
 					{
 						break;
 					}
@@ -297,7 +297,7 @@ bool CMediaManager::AddFile(String filename)
 			if(!pHandler)
 				return false;
 
-			ITuniacInfoAccessor * pAccessor = pHandler->CreateAccessor(filename);
+			ITuniacInfoAccessor * pAccessor = pHandler->CreateAccessor((wchar_t*)filename.c_str());
 			if(!pAccessor)
 				return false;
 

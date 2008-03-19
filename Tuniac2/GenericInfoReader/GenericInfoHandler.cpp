@@ -49,14 +49,14 @@ void			CGenericInfoHandler::SetHelper(ITuniacPluginHelper * pHelper)
 {
 }
 
-bool	CGenericInfoHandler::CanHandle(String filename, unsigned long * Ability, unsigned long * Merit)
+bool	CGenericInfoHandler::CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit)
 {
 	*Ability	= 100;
 	*Merit		= 0;
 	return true;
 }
 
-ITuniacInfoAccessor	*	CGenericInfoHandler::CreateAccessor(String filename)
+ITuniacInfoAccessor	*	CGenericInfoHandler::CreateAccessor(wchar_t * filename)
 {
 	CGenericInfoAccessor * t = new CGenericInfoAccessor;
 

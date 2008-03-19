@@ -7,12 +7,6 @@
 #include <vector>
 using namespace std;
 
-#include "StdString.h"
-
-typedef CStdString				String;	
-typedef std::vector<String>		StringArray;
-typedef std::vector<int>		IntArray;
-
 #include "ITuniacLog.h"
 
 class ITuniacPluginHelper
@@ -29,7 +23,7 @@ class ITuniacPlugin
 public:
 	virtual void			Destroy(void)								= 0;
 
-	virtual bool			GetName(WCHAR ** ppName)					= 0;		// should be null terminated
+	virtual bool			GetName(wchar_t ** ppName)					= 0;		// should be null terminated
 	virtual GUID			GetPluginID(void)							= 0;		// use guidgen to make a custom guid to return
 
 	virtual unsigned long	GetFlags(void)								= 0;
