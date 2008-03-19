@@ -35,10 +35,40 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 	{
 		case Title:
 			{
-				wcsncpy(toHere, 
-						m_File->tag()->title().toWString().c_str(), 
-						ulBufferSize);
+				wcsncpy(toHere, m_File->tag()->title().toWString().c_str(), ulBufferSize);
 			}
+			break;
+
+		case Artist:
+			{
+				wcsncpy(toHere, m_File->tag()->artist().toWString().c_str(), ulBufferSize);
+			}
+			break;
+
+		case DiscTitle:
+		case Composer:
+			break;
+
+		case Album:
+			{
+				wcsncpy(toHere, m_File->tag()->album().toWString().c_str(), ulBufferSize);
+			}
+			break;
+
+
+		case Genre:
+			{
+				wcsncpy(toHere, m_File->tag()->genre().toWString().c_str(), ulBufferSize);
+			}
+			break;
+
+		case Comment:
+			{
+				wcsncpy(toHere, m_File->tag()->comment().toWString().c_str(), ulBufferSize);
+			}
+			break;
+
+		case Rating:
 			break;
 
 		default:
@@ -57,9 +87,26 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 {
 	switch(field)
 	{
+		case Year:
+			{
+				*toHere = m_File->tag()->year();
+			}
+			break;
+
+		case Track:
+			{
+				*toHere = m_File->tag()->track();
+			}
+			break;
+
+		case MaxTrack:
+		case Disc:
+		case MaxDisc:
+			break;
+
 		case PlaybackTime:
 			{
-				*toHere = m_File->audioProperties()->length();
+				*toHere = m_File->audioProperties()->length() * 1000;
 			}
 			break;
 
@@ -77,13 +124,14 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 
 		case Bitrate:
 			{
-				*toHere = m_File->audioProperties()->bitrate();
+				*toHere = m_File->audioProperties()->bitrate() * 1024;
 			}
 			break;
 
 		default:
 			return false;
 	}
+
 	return true;
 }
 
@@ -106,76 +154,3 @@ bool	CGenericInfoAccessor::FreeAlbumArt(void * pArtData)
 {
 	return false;
 }
-
-/*
-bool	CGenericInfoAccessor::GetField(InfoHandlerField field, String & toHere)
-{
-	switch(field)
-	{
-		case Title:
-			{
-				toHere = m_File->tag()->title().toCString();
-			}
-			break;
-
-		case Artist:
-			{
-				toHere = m_File->tag()->artist().toCString();
-			}
-			break;
-
-		case DiscTitle:
-		case Composer:
-			break;
-
-		case Album:
-			{
-				toHere = m_File->tag()->album().toCString();
-			}
-			break;
-
-		case Year:
-			{
-				toHere = TagLib::String::number(m_File->tag()->year()).toCString();
-			}
-			break;
-
-		case Genre:
-			{
-				toHere = m_File->tag()->genre().toCString();
-			}
-			break;
-
-		case Track:
-			{
-				toHere = TagLib::String::number(m_File->tag()->track()).toCString();
-			}
-			break;
-
-		case MaxTrack:
-		case Disc:
-		case MaxDisc:
-			break;
-
-		case Comment:
-			{
-				toHere = m_File->tag()->comment().toCString();
-			}
-			break;
-
-		case Rating:
-			break;
-
-
-
-		default:
-			return false;
-	}
-
-	return true;
-}
-bool	CGenericInfoAccessor::SetField(InfoHandlerField field, String fromHere)
-{
-	return false;
-}
-*/
