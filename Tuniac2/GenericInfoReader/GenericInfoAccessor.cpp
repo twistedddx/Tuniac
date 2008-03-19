@@ -80,7 +80,51 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 
 bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHere)
 {
-	return false;
+	switch(field)
+	{
+		case Title:
+			{
+				m_File->tag()->setTitle(fromHere);
+			}
+			break;
+
+		case Artist:
+			{
+				m_File->tag()->setArtist(fromHere);
+			}
+			break;
+
+		case DiscTitle:
+		case Composer:
+			break;
+
+		case Album:
+			{
+				m_File->tag()->setAlbum(fromHere);
+			}
+			break;
+
+
+		case Genre:
+			{
+				m_File->tag()->setGenre(fromHere);
+			}
+			break;
+
+		case Comment:
+			{
+				m_File->tag()->setComment(fromHere);
+			}
+			break;
+
+		case Rating:
+			break;
+
+		default:
+			return false;
+	}
+
+	return true;
 }
 
 bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
@@ -135,9 +179,32 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 	return true;
 }
 
-bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 toHere)
+bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 {
-	return false;
+	switch(field)
+	{
+		case Year:
+			{
+				m_File->tag()->setYear(fromHere);
+			}
+			break;
+
+		case Track:
+			{
+				m_File->tag()->setTrack(fromHere);
+			}
+			break;
+
+		case MaxTrack:
+		case Disc:
+		case MaxDisc:
+			break;
+
+		default:
+			return false;
+	}
+
+	return true;
 }
 
 bool	CGenericInfoAccessor::GetAlbumArt(void * pArtData)
