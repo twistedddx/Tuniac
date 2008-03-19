@@ -29,7 +29,23 @@ void	CGenericInfoAccessor::Destroy()
 
 bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize)
 {
-	return false;
+	wcsncpy(toHere, TEXT(""), ulBufferSize);
+
+	switch(field)
+	{
+		case Title:
+			{
+				wcsncpy(toHere, 
+						m_File->tag()->title().toWString().c_str(), 
+						ulBufferSize);
+			}
+			break;
+
+		default:
+			return false;
+	}
+
+	return true;
 }
 
 bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHere)
@@ -39,7 +55,36 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 
 bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 {
-	return false;
+	switch(field)
+	{
+		case PlaybackTime:
+			{
+				*toHere = m_File->audioProperties()->length();
+			}
+			break;
+
+		case SampleRate:
+			{
+				*toHere = m_File->audioProperties()->sampleRate();
+			}
+			break;
+
+		case Channels:
+			{
+				*toHere = m_File->audioProperties()->channels();
+			}
+			break;
+
+		case Bitrate:
+			{
+				*toHere = m_File->audioProperties()->bitrate();
+			}
+			break;
+
+		default:
+			return false;
+	}
+	return true;
 }
 
 bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 toHere)
@@ -121,31 +166,6 @@ bool	CGenericInfoAccessor::GetField(InfoHandlerField field, String & toHere)
 		case Rating:
 			break;
 
-		case PlaybackTime:
-			{
-				//toHere = m_File->audioProperties()->length();
-				toHere = TagLib::String::number(m_File->audioProperties()->length()).toCString();
-			}
-			break;
-
-		case SampleRate:
-			{
-				//toHere = m_File->audioProperties()->sampleRate();
-				toHere = TagLib::String::number(m_File->audioProperties()->sampleRate()).toCString();
-			}
-			break;
-
-		case Channels:
-			{
-				toHere = TagLib::String::number(m_File->audioProperties()->channels()).toCString();
-			}
-			break;
-
-		case Bitrate:
-			{
-				toHere = TagLib::String::number(m_File->audioProperties()->bitrate()).toCString();
-			}
-			break;
 
 
 		default:
