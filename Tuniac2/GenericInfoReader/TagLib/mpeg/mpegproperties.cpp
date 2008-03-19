@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <tdebug.h>
@@ -33,21 +37,35 @@ class MPEG::Properties::PropertiesPrivate
 public:
   PropertiesPrivate(File *f, ReadStyle s) :
     file(f),
+    xingHeader(0),
     style(s),
     length(0),
     bitrate(0),
     sampleRate(0),
-    channels(0) {}
+    channels(0),
+    layer(0),
+    version(Header::Version1),
+    channelMode(Header::Stereo),
+    protectionEnabled(false),
+    isCopyrighted(false),
+    isOriginal(false) {}
+
+  ~PropertiesPrivate()
+  {
+    delete xingHeader;
+  }
 
   File *file;
+  XingHeader *xingHeader;
   ReadStyle style;
   int length;
   int bitrate;
   int sampleRate;
   int channels;
-  Header::Version version;
   int layer;
+  Header::Version version;
   Header::ChannelMode channelMode;
+  bool protectionEnabled;
   bool isCopyrighted;
   bool isOriginal;
 };
@@ -89,6 +107,11 @@ int MPEG::Properties::channels() const
   return d->channels;
 }
 
+const MPEG::XingHeader *MPEG::Properties::xingHeader() const
+{
+  return d->xingHeader;
+}
+
 MPEG::Header::Version MPEG::Properties::version() const
 {
   return d->version;
@@ -97,6 +120,11 @@ MPEG::Header::Version MPEG::Properties::version() const
 int MPEG::Properties::layer() const
 {
   return d->layer;
+}
+
+bool MPEG::Properties::protectionEnabled() const
+{
+  return d->protectionEnabled;
 }
 
 MPEG::Header::ChannelMode MPEG::Properties::channelMode() const
@@ -176,37 +204,40 @@ void MPEG::Properties::read()
   // VBR stream.
 
   int xingHeaderOffset = MPEG::XingHeader::xingHeaderOffset(firstHeader.version(),
-							    firstHeader.channelMode());
+                                                            firstHeader.channelMode());
 
   d->file->seek(first + xingHeaderOffset);
-  XingHeader xingHeader(d->file->readBlock(16));
+  d->xingHeader = new XingHeader(d->file->readBlock(16));
 
   // Read the length and the bitrate from the Xing header.
 
-  if(xingHeader.isValid() &&
+  if(d->xingHeader->isValid() &&
      firstHeader.sampleRate() > 0 &&
-     xingHeader.totalFrames() > 0)
+     d->xingHeader->totalFrames() > 0)
   {
-      static const int blockSize[] = { 0, 384, 1152, 1152 };
+      double timePerFrame =
+        double(firstHeader.samplesPerFrame()) / firstHeader.sampleRate();
 
-      double timePerFrame = blockSize[firstHeader.layer()];
-      timePerFrame = firstHeader.sampleRate() > 0 ? timePerFrame / firstHeader.sampleRate() : 0;
-      d->length = int(timePerFrame * xingHeader.totalFrames());
-      d->bitrate = d->length > 0 ? xingHeader.totalSize() * 8 / d->length / 1000 : 0;
+      d->length = int(timePerFrame * d->xingHeader->totalFrames());
+      d->bitrate = d->length > 0 ? d->xingHeader->totalSize() * 8 / d->length / 1000 : 0;
   }
+  else {
+    // Since there was no valid Xing header found, we hope that we're in a constant
+    // bitrate file.
 
-  // Since there was no valid Xing header found, we hope that we're in a constant
-  // bitrate file.
+    delete d->xingHeader;
+    d->xingHeader = 0;
 
-  // TODO: Make this more robust with audio property detection for VBR without a
-  // Xing header.
+    // TODO: Make this more robust with audio property detection for VBR without a
+    // Xing header.
 
-  else if(firstHeader.frameLength() > 0 && firstHeader.bitrate() > 0) {
-    int frames = (last - first) / firstHeader.frameLength() + 1;
+    if(firstHeader.frameLength() > 0 && firstHeader.bitrate() > 0) {
+      int frames = (last - first) / firstHeader.frameLength() + 1;
 
-    d->length = int(float(firstHeader.frameLength() * frames) /
-                    float(firstHeader.bitrate() * 125) + 0.5);
-    d->bitrate = firstHeader.bitrate();
+      d->length = int(float(firstHeader.frameLength() * frames) /
+                      float(firstHeader.bitrate() * 125) + 0.5);
+      d->bitrate = firstHeader.bitrate();
+    }
   }
 
 
@@ -214,6 +245,7 @@ void MPEG::Properties::read()
   d->channels = firstHeader.channelMode() == Header::SingleChannel ? 1 : 2;
   d->version = firstHeader.version();
   d->layer = firstHeader.layer();
+  d->protectionEnabled = firstHeader.protectionEnabled();
   d->channelMode = firstHeader.channelMode();
   d->isCopyrighted = firstHeader.isCopyrighted();
   d->isOriginal = firstHeader.isOriginal();

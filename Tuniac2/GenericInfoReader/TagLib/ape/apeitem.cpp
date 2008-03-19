@@ -5,7 +5,7 @@
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,9 +17,14 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <tbytevectorlist.h>
+#include <tdebug.h>
 
 #include "apeitem.h"
 
@@ -62,6 +67,11 @@ APE::Item::Item(const Item &item)
   d = new ItemPrivate(*item.d);
 }
 
+APE::Item::~Item()
+{
+  delete d;
+}
+
 Item &APE::Item::operator=(const Item &item)
 {
   delete d;
@@ -96,7 +106,35 @@ String APE::Item::key() const
 
 ByteVector APE::Item::value() const
 {
+  // This seems incorrect as it won't be actually rendering the value to keep it
+  // up to date.
+
   return d->value;
+}
+
+void APE::Item::setKey(const String &key)
+{
+    d->key = key;
+}
+
+void APE::Item::setValue(const String &value)
+{
+    d->text = value;
+}
+
+void APE::Item::setValues(const StringList &value)
+{
+    d->text = value;
+}
+
+void APE::Item::appendValue(const String &value)
+{
+    d->text.append(value);
+}
+
+void APE::Item::appendValues(const StringList &values)
+{
+    d->text.append(values);
 }
 
 int APE::Item::size() const
@@ -109,9 +147,14 @@ StringList APE::Item::toStringList() const
   return d->text;
 }
 
+StringList APE::Item::values() const
+{
+  return d->text;
+}
+
 String APE::Item::toString() const
 {
-  return d->text.front();
+  return isEmpty() ? String::null : d->text.front();
 }
 
 bool APE::Item::isEmpty() const
@@ -121,7 +164,7 @@ bool APE::Item::isEmpty() const
     case 1:
       if(d->text.isEmpty())
         return true;
-      if(d->text.size() == 1 && d->text.front() == "")
+      if(d->text.size() == 1 && d->text.front().isEmpty())
         return true;
       return false;
     case 2:

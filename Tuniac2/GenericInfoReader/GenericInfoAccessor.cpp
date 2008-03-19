@@ -11,8 +11,7 @@ CGenericInfoAccessor::~CGenericInfoAccessor(void)
 
 bool	CGenericInfoAccessor::Open(wchar_t * filename)
 {
-	TagLib::String t(filename);
-	m_File = TagLib::FileRef::create(t.toCString(), true, TagLib::AudioProperties::Accurate);
+	m_File = TagLib::FileRef::create(filename, true, TagLib::AudioProperties::Accurate);
 
 	if(m_File)
 		return true;

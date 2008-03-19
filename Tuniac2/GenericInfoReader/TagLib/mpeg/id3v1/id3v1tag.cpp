@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <tdebug.h>
@@ -55,11 +59,16 @@ const ID3v1::StringHandler *ID3v1::Tag::TagPrivate::stringHandler = new StringHa
 
 String ID3v1::StringHandler::parse(const ByteVector &data) const
 {
-  return String(data, String::Latin1);
+  return String(data, String::Latin1).stripWhiteSpace();
 }
 
 ByteVector ID3v1::StringHandler::render(const String &s) const
 {
+  if(!s.isLatin1())
+  {
+    return ByteVector();
+  }
+
   return s.data(String::Latin1);
 }
 
@@ -170,7 +179,7 @@ void ID3v1::Tag::setGenre(const String &s)
 
 void ID3v1::Tag::setYear(uint i)
 {
-  d->year = String::number(i);
+  d->year = i > 0 ? String::number(i) : String::null;
 }
 
 void ID3v1::Tag::setTrack(uint i)
@@ -196,7 +205,7 @@ void ID3v1::Tag::read()
     ByteVector data = d->file->readBlock(128);
 
     // some initial sanity checking
-    if(data.size() == 128 && data.mid(0, 3) == "TAG")
+    if(data.size() == 128 && data.startsWith("TAG"))
       parse(data);
     else
       debug("ID3v1 tag is not valid or could not be read at the specified offset.");

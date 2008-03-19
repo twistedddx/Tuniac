@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002 - 2004 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,14 +17,20 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_BYTEVECTOR_H
 #define TAGLIB_BYTEVECTOR_H
 
 #include "taglib.h"
+#include "taglib_export.h"
 
 #include <vector>
+#include <ostream>
 
 namespace TagLib {
 
@@ -86,13 +92,13 @@ namespace TagLib {
     /*!
      * Sets the data for the byte array using the first \a length bytes of \a data
      */
-    void setData(const char *data, uint length);
+    ByteVector &setData(const char *data, uint length);
 
     /*!
      * Sets the data for the byte array copies \a data up to the first null
      * byte.  The behavior is undefined if \a data is not null terminated.
      */
-    void setData(const char *data);
+    ByteVector &setData(const char *data);
 
     /*!
      * Returns a pointer to the internal data structure.
@@ -124,8 +130,8 @@ namespace TagLib {
     /*!
      * Searches the ByteVector for \a pattern starting at \a offset and returns
      * the offset.  Returns -1 if the pattern was not found.  If \a byteAlign is
-     * specified the pattern will only be matched if it starts on a byteDivisible
-     * by \a byteAlign.
+     * specified the pattern will only be matched if it starts on a byte divisible
+     * by \a byteAlign (starting from \a offset).
      */
     int find(const ByteVector &pattern, uint offset = 0, int byteAlign = 1) const;
 
@@ -133,7 +139,7 @@ namespace TagLib {
      * Searches the ByteVector for \a pattern starting from either the end of the
      * vector or \a offset and returns the offset.  Returns -1 if the pattern was
      * not found.  If \a byteAlign is specified the pattern will only be matched
-     * if it starts on a byteDivisible by \a byteAlign.
+     * if it starts on a byte divisible by \a byteAlign (starting from \a offset).
      */
     int rfind(const ByteVector &pattern, uint offset = 0, int byteAlign = 1) const;
 
@@ -157,6 +163,12 @@ namespace TagLib {
     bool endsWith(const ByteVector &pattern) const;
 
     /*!
+     * Replaces \a pattern with \a with and returns a reference to the ByteVector
+     * after the operation.  This \e does modify the vector.
+     */
+    ByteVector &replace(const ByteVector &pattern, const ByteVector &with);
+
+    /*!
      * Checks for a partial match of \a pattern at the end of the vector.  It
      * returns the offset of the partial match within the vector, or -1 if the
      * pattern is not found.  This method is particularly useful when searching for
@@ -171,12 +183,12 @@ namespace TagLib {
     /*!
      * Appends \a v to the end of the ByteVector.
      */
-    void append(const ByteVector &v);
+    ByteVector &append(const ByteVector &v);
 
     /*!
      * Clears the data.
      */
-    void clear();
+    ByteVector &clear();
 
     /*!
      * Returns the size of the array.

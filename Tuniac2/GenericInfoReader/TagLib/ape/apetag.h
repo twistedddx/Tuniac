@@ -5,7 +5,7 @@
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,15 +17,20 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_APETAG_H
 #define TAGLIB_APETAG_H
 
-#include <tag.h>
-#include <tbytevector.h>
-#include <tmap.h>
-#include <tstring.h>
+#include "tag.h"
+#include "tbytevector.h"
+#include "tmap.h"
+#include "tstring.h"
+#include "taglib_export.h"
 
 #include "apeitem.h"
 
@@ -61,7 +66,7 @@ namespace TagLib {
        * Create an APE tag and parse the data in \a file with APE footer at
        * \a tagOffset.
        */
-      Tag(File *file, long tagOffset);
+      Tag(File *file, long footerLocation);
 
       /*!
        * Destroys this Tag instance.

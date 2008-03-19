@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,9 +17,11 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
-
-#include <tdebug.h>
 
 #include <algorithm>
 
@@ -130,22 +132,23 @@ typename List<T>::ConstIterator List<T>::end() const
 }
 
 template <class T>
-void List<T>::insert(Iterator it, const T &item)
+typename List<T>::Iterator List<T>::insert(Iterator it, const T &item)
 {
   detach();
-  d->list.insert(it, item);
+  return d->list.insert(it, item);
 }
 
 template <class T>
-void List<T>::sortedInsert(const T &value, bool unique)
+List<T> &List<T>::sortedInsert(const T &value, bool unique)
 {
   detach();
   Iterator it = begin();
-  while(*it < value && it != end())
+  while(it != end() && *it < value)
     ++it;
   if(unique && it != end() && *it == value)
-    return;
+    return *this;
   insert(it, value);
+  return *this;
 }
 
 template <class T>
@@ -165,16 +168,33 @@ List<T> &List<T>::append(const List<T> &l)
 }
 
 template <class T>
-void List<T>::clear()
+List<T> &List<T>::prepend(const T &item)
+{
+  detach();
+  d->list.push_front(item);
+  return *this;
+}
+
+template <class T>
+List<T> &List<T>::prepend(const List<T> &l)
+{
+  detach();
+  d->list.insert(d->list.begin(), l.begin(), l.end());
+  return *this;
+}
+
+template <class T>
+List<T> &List<T>::clear()
 {
   detach();
   d->clear();
+  return *this;
 }
 
 template <class T>
 TagLib::uint List<T>::size() const
 {
-  return (uint)d->list.size();
+  return d->list.size();
 }
 
 template <class T>
@@ -202,9 +222,9 @@ bool List<T>::contains(const T &value) const
 }
 
 template <class T>
-void List<T>::erase(Iterator it)
+typename List<T>::Iterator List<T>::erase(Iterator it)
 {
-  d->list.erase(it);
+  return d->list.erase(it);
 }
 
 template <class T>

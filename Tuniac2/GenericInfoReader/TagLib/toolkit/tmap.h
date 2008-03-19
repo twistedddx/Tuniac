@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,14 +17,19 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_MAP_H
 #define TAGLIB_MAP_H
 
-#include "taglib.h"
-
 #include <map>
+using namespace std;
+
+#include "taglib.h"
 
 namespace TagLib {
 
@@ -40,8 +45,21 @@ namespace TagLib {
   {
   public:
 #ifndef DO_NOT_DOCUMENT
+#ifdef WANT_CLASS_INSTANTIATION_OF_MAP
+    // Some STL implementations get snippy over the use of the
+    // class keyword to distinguish different templates; Sun Studio
+    // in particular finds multiple specializations in certain rare
+    // cases and complains about that. GCC doesn't seem to mind,
+    // and uses the typedefs further below without the class keyword.
+    // Not all the specializations of Map can use the class keyword
+    // (when T is not actually a class type), so don't apply this
+    // generally.
+    typedef typename std::map<class Key, class T>::iterator Iterator;
+    typedef typename std::map<class Key, class T>::const_iterator ConstIterator;
+#else
     typedef typename std::map<Key, T>::iterator Iterator;
     typedef typename std::map<Key, T>::const_iterator ConstIterator;
+#endif
 #endif
 
     /*!
@@ -89,13 +107,13 @@ namespace TagLib {
      * Inserts \a value under \a key in the map.  If a value for \a key already
      * exists it will be overwritten.
      */
-    void insert(const Key &key, const T &value);
+    Map<Key, T> &insert(const Key &key, const T &value);
 
     /*!
      * Removes all of the elements from elements from the map.  This however
      * will not delete pointers if the mapped type is a pointer type.
      */
-    void clear();
+    Map<Key, T> &clear();
 
     /*!
      * The number of elements in the map.
@@ -112,12 +130,12 @@ namespace TagLib {
     bool isEmpty() const;
 
     /*!
-     * Find the first occurance of \a key.
+     * Find the first occurrence of \a key.
      */
     Iterator find(const Key &key);
 
     /*!
-     * Find the first occurance of \a key.
+     * Find the first occurrence of \a key.
      */
     ConstIterator find(const Key &key) const;
 
@@ -129,7 +147,12 @@ namespace TagLib {
     /*!
      * Erase the item at \a it from the list.
      */
-    void erase(Iterator it);
+    Map<Key, T> &erase(Iterator it);
+
+    /*!
+     * Erase the item with \a key from the list.
+     */
+    Map<Key, T> &erase(const Key &key);
 
     /*!
      * Returns a reference to the value associated with \a key.

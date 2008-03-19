@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_TAG_H
 #define TAGLIB_TAG_H
 
-#include <tstring.h>
+#include "taglib_export.h"
+#include "tstring.h"
 
 namespace TagLib {
 
@@ -32,7 +37,7 @@ namespace TagLib {
    * This is an attempt to abstract away the difference in the meta data formats
    * of various audio codecs and tagging schemes.  As such it is generally a
    * subset of what is available in the specific formats but should be suitable
-   * for most applications.  This is meant to complient the generic APIs found
+   * for most applications.  This is meant to compliment the generic APIs found
    * in TagLib::AudioProperties, TagLib::File and TagLib::FileRef.
    */
 
@@ -105,7 +110,7 @@ namespace TagLib {
     virtual void setAlbum(const String &s) = 0;
 
     /*!
-     * Sets the album to \a s.  If \a s is String::null then this value will be
+     * Sets the comment to \a s.  If \a s is String::null then this value will be
      * cleared.
      */
     virtual void setComment(const String &s) = 0;

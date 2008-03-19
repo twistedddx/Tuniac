@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002 - 2004 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,18 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <iostream>
 
 #include <tstring.h>
 #include <tdebug.h>
+
+#include <string.h>
 
 #include "tbytevector.h"
 
@@ -83,38 +89,36 @@ namespace TagLib {
   };
 
   /*!
-   * A templatized find that works both with a ByteVector and a ByteVectorMirror.
+   * A templatized KMP find that works both with a ByteVector and a ByteVectorMirror.
    */
 
   template <class Vector>
   int vectorFind(const Vector &v, const Vector &pattern, uint offset, int byteAlign)
   {
-    if(pattern.size() > v.size() || offset >= v.size() - 1)
+    if(pattern.size() > v.size() || offset > v.size() - 1)
       return -1;
 
-    // if an offset was specified, just do a recursive call on the substring
+    // Let's go ahead and special case a pattern of size one since that's common
+    // and easy to make fast.
 
-    if(offset > 0) {
-
-      // start at the next byte aligned block
-
-      Vector section = v.mid(offset + byteAlign - 1 - offset % byteAlign);
-      int match = section.find(pattern, 0, byteAlign);
-      return match >= 0 ? int(match + offset) : -1;
+    if(pattern.size() == 1) {
+      char p = pattern[0];
+      for(uint i = offset; i < v.size(); i++) {
+        if(v[i] == p && (i - offset) % byteAlign == 0)
+          return i;
+      }
+      return -1;
     }
 
-    // this is a simplified Boyer-Moore string searching algorithm
-
     uchar lastOccurrence[256];
-
 
     for(uint i = 0; i < 256; ++i)
       lastOccurrence[i] = uchar(pattern.size());
 
     for(uint i = 0; i < pattern.size() - 1; ++i)
-      lastOccurrence[unsigned(pattern[i])] = uchar(pattern.size() - i - 1);
+      lastOccurrence[uchar(pattern[i])] = uchar(pattern.size() - i - 1);
 
-    for(uint i = pattern.size() - 1; i < v.size(); i += lastOccurrence[uchar(v.at(i))]) {
+    for(uint i = pattern.size() - 1 + offset; i < v.size(); i += lastOccurrence[uchar(v.at(i))]) {
       int iBuffer = i;
       int iPattern = pattern.size() - 1;
 
@@ -123,7 +127,7 @@ namespace TagLib {
         --iPattern;
       }
 
-      if(-1 == iPattern && (iBuffer + 1) % byteAlign == 0)
+      if(-1 == iPattern && (iBuffer + 1 - offset) % byteAlign == 0)
         return iBuffer + 1;
     }
 
@@ -142,6 +146,7 @@ namespace TagLib {
   {
   public:
     ByteVectorMirror(const ByteVector &source) : v(source) {}
+
     const char operator[](int index) const
     {
       return v[v.size() - index - 1];
@@ -166,6 +171,12 @@ namespace TagLib {
     {
       ByteVectorMirror v(*this);
 
+      if(offset > 0) {
+        offset = size() - offset - pattern.size();
+        if(offset >= size())
+          offset = 0;
+      }
+
       const int pos = vectorFind<ByteVectorMirror>(v, pattern, offset, byteAlign);
 
       // If the offset is zero then we need to adjust the location in the search
@@ -180,14 +191,11 @@ namespace TagLib {
       if(pos == -1)
         return -1;
 
-      if(offset == 0)
-        return size() - pos - pattern.size();
-      else
-        return pos - offset;
+      return size() - pos - pattern.size();
     }
 
   private:
-    const ByteVector v;
+    const ByteVector &v;
   };
 
   template <class T>
@@ -316,33 +324,40 @@ ByteVector::~ByteVector()
     delete d;
 }
 
-void ByteVector::setData(const char *data, uint length)
+ByteVector &ByteVector::setData(const char *data, uint length)
 {
   detach();
 
   resize(length);
-  ::memcpy(DATA(d), data, length);
+
+  if(length > 0)
+    ::memcpy(DATA(d), data, length);
+
+  return *this;
 }
 
-void ByteVector::setData(const char *data)
+ByteVector &ByteVector::setData(const char *data)
 {
-  setData(data, ::strlen(data));
+  return setData(data, ::strlen(data));
 }
 
 char *ByteVector::data()
 {
   detach();
-  return DATA(d);
+  return size() > 0 ? DATA(d) : 0;
 }
 
 const char *ByteVector::data() const
 {
-  return DATA(d);
+  return size() > 0 ? DATA(d) : 0;
 }
 
 ByteVector ByteVector::mid(uint index, uint length) const
 {
   ByteVector v;
+
+  if(index > size())
+    return v;
 
   ConstIterator endIt;
 
@@ -409,6 +424,37 @@ bool ByteVector::endsWith(const ByteVector &pattern) const
   return containsAt(pattern, size() - pattern.size());
 }
 
+ByteVector &ByteVector::replace(const ByteVector &pattern, const ByteVector &with)
+{
+  if(pattern.size() == 0 || pattern.size() > size())
+    return *this;
+
+  const int patternSize = pattern.size();
+  const int withSize = with.size();
+
+  int offset = find(pattern);
+
+  while(offset >= 0) {
+
+    const int originalSize = size();
+
+    if(withSize > patternSize)
+      resize(originalSize + withSize - patternSize);
+
+    if(patternSize != withSize)
+      ::memcpy(data() + offset + withSize, mid(offset + patternSize).data(), originalSize - offset - patternSize);
+
+    if(withSize < patternSize)
+      resize(originalSize + withSize - patternSize);
+
+    ::memcpy(data() + offset, with.data(), withSize);
+
+    offset = find(pattern, offset + withSize);
+  }
+
+  return *this;
+}
+
 int ByteVector::endsWithPartialMatch(const ByteVector &pattern) const
 {
   if(pattern.size() > size())
@@ -427,19 +473,27 @@ int ByteVector::endsWithPartialMatch(const ByteVector &pattern) const
   return -1;
 }
 
-void ByteVector::append(const ByteVector &v)
+ByteVector &ByteVector::append(const ByteVector &v)
 {
+  if(v.d->size == 0)
+    return *this; // Simply return if appending nothing.
+
   detach();
 
   uint originalSize = d->size;
   resize(d->size + v.d->size);
   ::memcpy(DATA(d) + originalSize, DATA(v.d), v.size());
+
+  return *this;
 }
 
-void ByteVector::clear()
+ByteVector &ByteVector::clear()
 {
   detach();
   d->data.clear();
+  d->size = 0;
+
+  return *this;
 }
 
 TagLib::uint ByteVector::size() const
@@ -589,16 +643,12 @@ ByteVector &ByteVector::operator=(const ByteVector &v)
 
 ByteVector &ByteVector::operator=(char c)
 {
-  if(d->deref())
-    delete d;
   *this = ByteVector(c);
   return *this;
 }
 
 ByteVector &ByteVector::operator=(const char *data)
 {
-  if(d->deref())
-    delete d;
   *this = ByteVector(data);
   return *this;
 }

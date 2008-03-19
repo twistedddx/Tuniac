@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2004 by Allan Sandfeld Jensen
+    copyright            : (C) 2004-2005 by Allan Sandfeld Jensen
     email                : kde@carewolf.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,6 +17,10 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #include <tbytevector.h>
@@ -64,7 +68,7 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-Ogg::FLAC::File::File(const char *file, bool readProperties,
+Ogg::FLAC::File::File(FileName file, bool readProperties,
                       Properties::ReadStyle propertiesStyle) : Ogg::File(file)
 {
   d = new FilePrivate;
@@ -178,16 +182,33 @@ void Ogg::FLAC::File::scan()
   if(!isValid())
     return;
 
-  int ipacket = 1;
+  int ipacket = 0;
   long overhead = 0;
 
   ByteVector metadataHeader = packet(ipacket);
-
   if(metadataHeader.isNull())
     return;
 
-  ByteVector header = metadataHeader.mid(0,4);
+  ByteVector header;
 
+  if (!metadataHeader.startsWith("fLaC"))  {
+    // FLAC 1.1.2+
+    if (metadataHeader.mid(1,4) != "FLAC") return;
+
+    if (metadataHeader[5] != 1) return; // not version 1
+
+    metadataHeader = metadataHeader.mid(13);
+  }
+  else {
+    // FLAC 1.1.0 & 1.1.1
+    metadataHeader = packet(++ipacket);
+
+    if(metadataHeader.isNull())
+      return;
+
+  }
+
+  header = metadataHeader.mid(0,4);
   // Header format (from spec):
   // <1> Last-metadata-block flag
   // <7> BLOCK_TYPE
@@ -199,7 +220,7 @@ void Ogg::FLAC::File::scan()
   // <24> Length of metadata to follow
 
   char blockType = header[0] & 0x7f;
-  bool lastBlock = header[0] & 0x80;
+  bool lastBlock = (header[0] & 0x80) != 0;
   uint length = header.mid(1, 3).toUInt();
   overhead += length;
 
@@ -217,9 +238,12 @@ void Ogg::FLAC::File::scan()
   while(!lastBlock) {
     metadataHeader = packet(++ipacket);
 
+    if(metadataHeader.isNull())
+      return;
+
     header = metadataHeader.mid(0, 4);
     blockType = header[0] & 0x7f;
-    lastBlock = header[0] & 0x80;
+    lastBlock = (header[0] & 0x80) != 0;
     length = header.mid(1, 3).toUInt();
     overhead += length;
 

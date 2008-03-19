@@ -1,11 +1,11 @@
 /***************************************************************************
-    copyright            : (C) 2002, 2003 by Scott Wheeler
+    copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
  ***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
+ *   it under the terms of the GNU Lesser General Public License version   *
  *   2.1 as published by the Free Software Foundation.                     *
  *                                                                         *
  *   This library is distributed in the hope that it will be useful, but   *
@@ -17,12 +17,17 @@
  *   License along with this library; if not, write to the Free Software   *
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
  *   USA                                                                   *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
 #ifndef TAGLIB_TEXTIDENTIFICATIONFRAME_H
 #define TAGLIB_TEXTIDENTIFICATIONFRAME_H
 
 #include <tstringlist.h>
+#include "taglib_export.h"
 
 #include <id3v2frame.h>
 
@@ -90,6 +95,10 @@ namespace TagLib {
      * The ID3v2 Frames document gives a description of each of these formats
      * and the expected order of strings in each.  ID3v2::Header::frameID() can
      * be used to determine the frame type.
+     *
+     * \note If non-Latin1 compatible strings are used with this class, even if
+     * the text encoding is set to Latin1, the frame will be written using UTF8
+     * (with the encoding flag appropriately set in the output).
      */
 
     class TextIdentificationFrame : public Frame
@@ -103,6 +112,8 @@ namespace TagLib {
        *
        * \note In this case you must specify the text encoding as it
        * resolves the ambiguity between constructors.
+       *
+       * \note Please see the note in the class description regarding Latin1.
        */
       TextIdentificationFrame(const ByteVector &type, String::Type encoding);
 
@@ -139,6 +150,8 @@ namespace TagLib {
        * This defaults to the type that was either specified in the constructor
        * or read from the frame when parsed.
        *
+       * \note Please see the note in the class description regarding Latin1.
+       *
        * \see setTextEncoding()
        * \see render()
        */
@@ -147,6 +160,8 @@ namespace TagLib {
       /*!
        * Sets the text encoding to be used when rendering this frame to
        * \a encoding.
+       *
+       * \note Please see the note in the class description regarding Latin1.
        *
        * \see textEncoding()
        * \see render()
@@ -212,7 +227,7 @@ namespace TagLib {
 
       /*!
        * Sets the description of the frame to \a s.  \a s must be unique.  You can
-       * check for the presense of another user defined text frame of the same type
+       * check for the presence of another user defined text frame of the same type
        * using find() and testing for null.
        */
       void setDescription(const String &s);
@@ -231,6 +246,8 @@ namespace TagLib {
       UserTextIdentificationFrame(const ByteVector &data, Header *h);
       UserTextIdentificationFrame(const TextIdentificationFrame &);
       UserTextIdentificationFrame &operator=(const UserTextIdentificationFrame &);
+
+      void checkFields();
 
       class UserTextIdentificationFramePrivate;
       UserTextIdentificationFramePrivate *d;
