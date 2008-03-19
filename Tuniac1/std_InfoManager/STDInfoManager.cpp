@@ -99,7 +99,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		libEnt->iSampleRate = m_File->audioProperties()->sampleRate();
 		libEnt->iChannels = m_File->audioProperties()->channels();
-		libEnt->iBitRate = m_File->audioProperties()->bitrate() * 1024;
+		libEnt->iBitRate = m_File->audioProperties()->bitrate() * 1000;
 		libEnt->iPlaybackTime = m_File->audioProperties()->length() * 1000;
 
 		libEnt->iYear = m_File->tag()->year();

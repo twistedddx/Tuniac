@@ -79,7 +79,7 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 
 	double bitrate = MACDecompressor->GetInfo(APE_INFO_AVERAGE_BITRATE);
-	libEnt->iBitRate			= (unsigned long)(bitrate * 1024.0);
+	libEnt->iBitRate			= (unsigned long)(bitrate * 1000.0);
 	libEnt->iChannels			= MACDecompressor->GetInfo(APE_INFO_CHANNELS);
 	libEnt->iSampleRate			= MACDecompressor->GetInfo(APE_INFO_SAMPLE_RATE);
 	libEnt->iPlaybackTime		= MACDecompressor->GetInfo(APE_INFO_LENGTH_MS);
