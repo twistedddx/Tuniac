@@ -29,8 +29,6 @@ public:
 	bool	GetIntField(InfoHandlerField field, __int64 * toHere);
 	bool	SetIntField(InfoHandlerField field, __int64 toHere);
 
-	bool	GetAlbumArt(void * pArtData);
-	bool	SetAlbumArt(void * pArtData);
-
-	bool	FreeAlbumArt(void * pArtData);
+	bool	GetAlbumArt(void ** pArtData, unsigned __int64 * uqArtDataSize);
+	bool	SetAlbumArt(void * pArtData, unsigned __int64 uqArtSize);
 };

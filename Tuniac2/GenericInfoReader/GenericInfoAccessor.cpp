@@ -129,6 +129,8 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 
 bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 {
+	*toHere = 0;
+
 	switch(field)
 	{
 		case Year:
@@ -207,17 +209,12 @@ bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 	return true;
 }
 
-bool	CGenericInfoAccessor::GetAlbumArt(void * pArtData)
+bool	CGenericInfoAccessor::GetAlbumArt(void ** pArtData, unsigned __int64 * uqArtDataSize)
 {
 	return false;
 }
 
-bool	CGenericInfoAccessor::SetAlbumArt(void * pArtData)
-{
-	return false;
-}
-
-bool	CGenericInfoAccessor::FreeAlbumArt(void * pArtData)
+bool	CGenericInfoAccessor::SetAlbumArt(void * pArtData, unsigned __int64 uqArtSize)
 {
 	return false;
 }
