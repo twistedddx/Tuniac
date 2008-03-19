@@ -4,6 +4,7 @@ typedef enum LogLevel
 {
 	Unimportant,
 	Note,
+	Debug,
 	Warning,
 	Critical
 } LogLevel;
@@ -11,7 +12,6 @@ typedef enum LogLevel
 class ITuniacLog
 {
 public:
-	virtual bool	Log(String message, LogLevel Level = Note) = 0;
-	virtual bool	LogWithEOL(String message, LogLevel Level = Note) = 0;
+	virtual bool	Log(wchar_t * message, LogLevel Level = Note) = 0;
 	virtual bool	EOL() = 0;
 };

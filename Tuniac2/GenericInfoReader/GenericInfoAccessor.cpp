@@ -9,9 +9,9 @@ CGenericInfoAccessor::~CGenericInfoAccessor(void)
 {
 }
 
-bool	CGenericInfoAccessor::Open(String filename)
+bool	CGenericInfoAccessor::Open(wchar_t * filename)
 {
-	TagLib::String t(filename.c_str());
+	TagLib::String t(filename);
 	m_File = TagLib::FileRef::create(t.toCString(), true, TagLib::AudioProperties::Accurate);
 
 	if(m_File)
@@ -27,7 +27,7 @@ void	CGenericInfoAccessor::Destroy()
 
 	delete this;
 }
-
+/*
 bool	CGenericInfoAccessor::GetField(InfoHandlerField field, String & toHere)
 {
 	switch(field)
@@ -123,7 +123,7 @@ bool	CGenericInfoAccessor::SetField(InfoHandlerField field, String fromHere)
 {
 	return false;
 }
-
+*/
 bool	CGenericInfoAccessor::GetAlbumArt(void * pArtData)
 {
 	return false;

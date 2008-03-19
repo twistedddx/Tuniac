@@ -18,16 +18,19 @@ public:
 	~CGenericInfoAccessor(void);
 
 public:
-	bool	Open(String filename);
+	bool	Open(wchar_t * filename);
 
 public:
 	void	Destroy();
 
-	bool	GetField(InfoHandlerField field, String & toHere);
-	bool	SetField(InfoHandlerField field, String fromHere);
+	bool	GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize);
+	bool	SetTextField(InfoHandlerField field, wchar_t * fromHere);
+
+	bool	GetIntField(InfoHandlerField field, __int64 * toHere);
+	bool	SetIntField(InfoHandlerField field, __int64 toHere);
 
 	bool	GetAlbumArt(void * pArtData);
-	bool	FreeAlbumArt(void * pArtData);
-
 	bool	SetAlbumArt(void * pArtData);
+
+	bool	FreeAlbumArt(void * pArtData);
 };
