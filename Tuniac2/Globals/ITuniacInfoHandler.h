@@ -24,6 +24,7 @@ typedef enum InfoHandlerField
 	SampleRate,		
 	Channels,		
 	Bitrate,		
+	AlbumArtImageCount,
 } InfoHandlerField;
 
 class ITuniacInfoAccessor
@@ -37,11 +38,8 @@ public:
 	virtual bool	GetIntField(InfoHandlerField field, __int64 * toHere) = 0;
 	virtual bool	SetIntField(InfoHandlerField field, __int64 toHere) = 0;
 
-	virtual bool	GetAlbumArt(void * pArtData) = 0;
-	virtual bool	SetAlbumArt(void * pArtData) = 0;
-
-	virtual bool	FreeAlbumArt(void * pArtData) = 0;
-
+	virtual bool	GetAlbumArt(void ** pArtData, unsigned __int64 * uqArtDataSize) = 0;
+	virtual bool	SetAlbumArt(void * pArtData, unsigned __int64 uqArtSize) = 0;
 };
 
 class ITuniacInfoHandler : public ITuniacPlugin

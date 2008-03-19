@@ -51,9 +51,21 @@ void			CGenericInfoHandler::SetHelper(ITuniacPluginHelper * pHelper)
 
 bool	CGenericInfoHandler::CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit)
 {
-	*Ability	= 100;
-	*Merit		= 0;
-	return true;
+	TagLib::String sFilename = filename;
+
+	// lets only deal with formats we know about pls....
+	TagLib::StringList list =  TagLib::FileRef::defaultFileExtensions();
+	for(int x=0; x<list.size(); x++)
+	{
+		if(sFilename.find(list[x]) != -1)
+		{
+			*Ability	= 100;
+			*Merit		= 0;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 ITuniacInfoAccessor	*	CGenericInfoHandler::CreateAccessor(wchar_t * filename)
