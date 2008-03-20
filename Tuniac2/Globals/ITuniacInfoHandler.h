@@ -27,19 +27,22 @@ typedef enum InfoHandlerField
 	AlbumArtImageCount,
 } InfoHandlerField;
 
+#define NEW_ALBUMART_INDEX			(-1)
+
+
 class ITuniacInfoAccessor
 {
 public:
-	virtual void	Destroy() = 0;
+	virtual void			Destroy() = 0;
 
-	virtual bool	GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize) = 0;
-	virtual bool	SetTextField(InfoHandlerField field, wchar_t * fromHere) = 0;
+	virtual bool			GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize) = 0;
+	virtual bool			SetTextField(InfoHandlerField field, wchar_t * fromHere) = 0;
 
-	virtual bool	GetIntField(InfoHandlerField field, __int64 * toHere) = 0;
-	virtual bool	SetIntField(InfoHandlerField field, __int64 toHere) = 0;
+	virtual bool			GetIntField(InfoHandlerField field, __int64 * toHere) = 0;
+	virtual bool			SetIntField(InfoHandlerField field, __int64 toHere) = 0;
 
-	virtual bool	GetAlbumArt(void ** pArtData, unsigned __int64 * uqArtDataSize) = 0;
-	virtual bool	SetAlbumArt(void * pArtData, unsigned __int64 uqArtSize) = 0;
+	virtual bool			GetAlbumArt(unsigned long ulIndex, void ** pArtData, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize) = 0;
+	virtual bool			SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType) = 0;
 };
 
 class ITuniacInfoHandler : public ITuniacPlugin

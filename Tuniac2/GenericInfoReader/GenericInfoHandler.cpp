@@ -55,7 +55,7 @@ bool	CGenericInfoHandler::CanHandle(wchar_t * filename, unsigned long * Ability,
 
 	// lets only deal with formats we know about pls....
 	TagLib::StringList list =  TagLib::FileRef::defaultFileExtensions();
-	for(int x=0; x<list.size(); x++)
+	for(unsigned long x=0; x<list.size(); x++)
 	{
 		if(sFilename.find(list[x]) != -1)
 		{

@@ -46,29 +46,29 @@ bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool 
 	HANDLE				hFind;
 
 	String searchPath = folder;
-	if(!searchPath.Right(1).Equals(String("\\")))
-		searchPath += "\\";
+//	if(!searchPath.Right(1).Equals(String("\\")))
+//		searchPath += TEXT("\\");
 
-	searchPath += "*.*";
+	searchPath += TEXT("*.*");
 
-	hFind = FindFirstFile( searchPath, &w32fd); 
+	hFind = FindFirstFile( searchPath.c_str(), &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
 	{
 		do
 		{
 			String filename = w32fd.cFileName;
 
-			if( (filename.Equals(String("."))) || (filename.Equals(String(".."))) )
+			if( (filename.Equals(String(TEXT(".")))) || (filename.Equals(String(TEXT("..")))) )
 				continue;
 
 			String filePath = folder;
 
-			if(!filePath.Right(1).Equals(String("\\")))
-				filePath += "\\";
+			if(!filePath.Right(1).Equals(String(TEXT("\\"))))
+				filePath += TEXT("\\");
 
 			filePath += w32fd.cFileName;
 
-			if(GetFileAttributes(filePath) & FILE_ATTRIBUTE_DIRECTORY)
+			if(GetFileAttributes(filePath.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
 			{
 				if(recurse)
 					GetFolderContents(	filePath, tohere, recurse );

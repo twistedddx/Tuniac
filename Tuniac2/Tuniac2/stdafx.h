@@ -27,7 +27,7 @@ using namespace std;
 #include "StdString.h"
 
 
-typedef CStdString				String;	
+typedef CStdStringW				String;	
 typedef std::vector<String>		StringArray;
 typedef std::vector<int>		IntArray;
 

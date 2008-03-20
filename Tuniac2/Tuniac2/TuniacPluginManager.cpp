@@ -15,13 +15,13 @@ bool CTuniacPluginManager::Initialize(void)
 	StringArray		dllFileNameArray;
 
 	g_tuniacApp.getHelper().GetTuniacRunFolder(baseFolder);
-	g_tuniacApp.getHelper().GetAllFilesInFolderWithExtension(baseFolder, "dll", dllFileNameArray);
+	g_tuniacApp.getHelper().GetAllFilesInFolderWithExtension(baseFolder, TEXT("dll"), dllFileNameArray);
 
 	if(dllFileNameArray.size())
 	{
 		for(int x=0; x<dllFileNameArray.size();x++)
 		{
-			HINSTANCE hDLL = LoadLibrary(dllFileNameArray.at(x));
+			HINSTANCE hDLL = LoadLibrary(dllFileNameArray.at(x).c_str());
 			if(hDLL)
 			{
 				if(GetProcAddress(hDLL, "CreateTuniacPlugin"))

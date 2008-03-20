@@ -1,12 +1,5 @@
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <stdexcept>
-#include <map>
-#include <vector>
-using namespace std;
-
 #include "ITuniacLog.h"
 
 class ITuniacPluginHelper

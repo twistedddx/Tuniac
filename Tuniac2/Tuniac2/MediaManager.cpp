@@ -32,7 +32,7 @@ bool CMediaManager::Initialize(void)
 
 	try
 	{
-		m_DBCon.open(szURL);
+		m_DBCon.open(szURL.c_str());
 
 		int count = m_DBCon.executeint("select count(*) from sqlite_master;");
 		if(count == 0)
@@ -79,51 +79,51 @@ bool CMediaManager::Initialize(void)
 
 			String DBColumns[] =
 			{
-				"EntryID			 INTEGER PRIMARY KEY",
-				"DateAdded			 DATETIME",
-				"DirtyFlag			 INT",
-				"FileUnavailable	 INT",
+				TEXT("EntryID			 INTEGER PRIMARY KEY"),
+				TEXT("DateAdded			 DATETIME"),
+				TEXT("DirtyFlag			 INT"),
+				TEXT("FileUnavailable	 INT"),
 
-				"Filename			 TEXT",
-				"Filesize			 INT",
-				"FileModifiedTime	 DATETIME",
-				"Filehash			 BLOB",
+				TEXT("Filename			 TEXT"),
+				TEXT("Filesize			 INT"),
+				TEXT("FileModifiedTime	 DATETIME"),
+				TEXT("Filehash			 BLOB"),
 
-				"Title				 TEXT",
-				"Artist				 TEXT",
-				"DiscTitle			 TEXT",
-				"Composer			 TEXT",
-				"Album				 TEXT",
-				"AlbumArtist		 TEXT",
-				"Year				 INT",
-				"Genre				 TEXT",
-				"Track				 INT",
+				TEXT("Title				 TEXT"),
+				TEXT("Artist				 TEXT"),
+				TEXT("DiscTitle			 TEXT"),
+				TEXT("Composer			 TEXT"),
+				TEXT("Album				 TEXT"),
+				TEXT("AlbumArtist		 TEXT"),
+				TEXT("Year				 INT"),
+				TEXT("Genre				 TEXT"),
+				TEXT("Track				 INT"),
 
-				"MaxTrack			 INT",
-				"Disc				 INT",
-				"MaxDisc			 INT",
-				"Comment				TEXT",
-				"Rating					INT",
+				TEXT("MaxTrack			 INT"),
+				TEXT("Disc				 INT"),
+				TEXT("MaxDisc			 INT"),
+				TEXT("Comment				TEXT"),
+				TEXT("Rating					INT"),
 
-				"PlaybackTime			INT",
-				"PlaybackTimeAccuracy	INT",
+				TEXT("PlaybackTime			INT"),
+				TEXT("PlaybackTimeAccuracy	INT"),
 
-				"SampleRate				INT",
-				"Channels				INT",
-				"Bitrate				INT",
+				TEXT("SampleRate				INT"),
+				TEXT("Channels				INT"),
+				TEXT("Bitrate				INT"),
 
-				"BPM					INT",
+				TEXT("BPM					INT"),
 
-				"FirstPlayed			DATETIME",
-				"LastPlayed				DATETIME",
-				"Playcount				INT",
-				""
+				TEXT("FirstPlayed			DATETIME"),
+				TEXT("LastPlayed				DATETIME"),
+				TEXT("Playcount				INT"),
+				TEXT("")
 			};
 
 
 			m_DBCon.executenonquery("PRAGMA page_size=4096;");
 
-			String DBCreateBase = "CREATE TABLE MediaLibrary (";
+			String DBCreateBase = TEXT("CREATE TABLE MediaLibrary (");
 			
 			int x=0;
 			while(DBColumns[x].length())
@@ -131,11 +131,11 @@ bool CMediaManager::Initialize(void)
 				DBCreateBase += DBColumns[x];
 
 				if(DBColumns[x+1].length())
-					DBCreateBase += ", ";
+					DBCreateBase += TEXT(", ");
 
 				x++;
 			}
-			DBCreateBase += ");";
+			DBCreateBase += TEXT(");");
 
 			m_DBCon.executenonquery(DBCreateBase);
 		}
@@ -144,8 +144,8 @@ bool CMediaManager::Initialize(void)
 	}
 	catch(exception &ex) 
 	{
-		String debugstring = ex.what();
-		OutputDebugString(debugstring);
+//		String debugstring = ex.what();
+//		OutputDebugString(debugstring.c_str());
 		return false;
 	}
 
@@ -259,7 +259,7 @@ bool CMediaManager::ShowAddFiles(HWND hWndParent)
 
 bool CMediaManager::AddFile(String filename)
 {
-	String alreadyExistsSQL = "SELECT count(*) FROM MediaLibrary WHERE Filename = ?;";
+	String alreadyExistsSQL = TEXT("SELECT count(*) FROM MediaLibrary WHERE Filename = ?;");
 
 	try
 	{
@@ -303,7 +303,7 @@ bool CMediaManager::AddFile(String filename)
 
 
 			// extract generic info from the file (creation time/size)
-			HANDLE hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+			HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
 			if(hFile != INVALID_HANDLE_VALUE)
 			{
 				FILETIME		ft;
@@ -316,8 +316,8 @@ bool CMediaManager::AddFile(String filename)
 			}
 
 
-			String insertFilenameSQL = "insert into MediaLibrary (DateAdded,					Filename,	Filesize,	FileModifiedTime,	Artist, Title,	Album,	Year,	Genre,	Track,	PlaybackTime,	SampleRate,	Channels,	Bitrate) \
-														  values (DATETIME('now','localtime'),	?,			?,			?,					?,		?,		?,		?,		?,		?,		?,				?,			?,			?);";
+			String insertFilenameSQL = TEXT("insert into MediaLibrary (DateAdded,					Filename,	Filesize,	FileModifiedTime,	Artist, Title,	Album,	Year,	Genre,	Track,	PlaybackTime,	SampleRate,	Channels,	Bitrate) \
+														  values (DATETIME('now','localtime'),	?,			?,			?,					?,		?,		?,		?,		?,		?,		?,				?,			?,			?);");
 			String fileModifiedTime;
 
 			g_tuniacApp.getHelper().FormatSystemTime(fileModifiedTime, stFileModifiedTime);
@@ -379,9 +379,9 @@ bool CMediaManager::AddFile(String filename)
 	}
 	catch(exception &ex) 
 	{
-		String debugstring = ex.what();
-		OutputDebugString(TEXT("Error: "));
-		OutputDebugString(debugstring+"\n");
+//		String debugstring = ex.what();
+//		OutputDebugString(TEXT("Error: "));
+//		OutputDebugString((debugstring+TEXT("\n")).c_str());
 		return false;
 	}
 
