@@ -170,7 +170,7 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 
 		case Bitrate:
 			{
-				*toHere = m_File->audioProperties()->bitrate() * 1024;
+				*toHere = m_File->audioProperties()->bitrate() * 1000;
 			}
 			break;
 
