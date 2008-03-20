@@ -126,11 +126,43 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(mpegFile->ID3v2Tag()) 
 		{
 			// Get the list of frames for a specific frame type
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["TRCK"];
+				if(!l.isEmpty())
+				{
+					//std::cout << l.front()->toString() << std::endl;
+					TagLib::String pszData = l.front()->toString();
+					int val = pszData.find("/");
+					if(val != -1)
+					{
+						TagLib::String trackMax = pszData.substr(val+1);
+						libEnt->dwTrack[1] = trackMax.toInt();
+					}
+				}
+			}
 
-			TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["TBPM"];
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["TPOS"];
+				if(!l.isEmpty())
+				{
+					//std::cout << l.front()->toString() << std::endl;
+					TagLib::String pszData = l.front()->toString();
+					int val = pszData.find("/");
+					if(val == -1)
+					{
+						libEnt->dwDisc[0] = pszData.toInt();
+					}
+					else
+					{
+						TagLib::String disk = pszData.substr(0,val);
+						TagLib::String diskMax = pszData.substr(val+1);
+						libEnt->dwDisc[0] = disk.toInt();
+						libEnt->dwDisc[1] = diskMax.toInt();
+					}
+				}
+			}
 
-			if(!l.isEmpty())
-				std::cout << l.front()->toString() << std::endl;
+
 		}
 	}
 
