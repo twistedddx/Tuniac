@@ -36,6 +36,14 @@ public:
 	virtual bool			CanHandle(LPTSTR szSource)							= 0;
 	virtual bool			GetInfo(LibraryEntry * libEnt)						= 0;
 	virtual bool			SetInfo(LibraryEntry * libEnt)						= 0;
+
+	virtual unsigned long	GetNumberOfAlbumArts(LPTSTR	szFilename)				= 0;
+	virtual bool			GetAlbumArt(LPTSTR				szFilename, 
+										unsigned long		ulImageIndex,
+										LPVOID			*	pImageData,
+										unsigned long	*	ulImageDataSize,
+										LPTSTR			*	szMimeType,
+										unsigned long	*	ulArtType)			= 0;
 };
 
 typedef IInfoManager * (*CreateInfoManagerPluginFunc)(void);
