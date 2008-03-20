@@ -134,7 +134,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"

@@ -6,9 +6,12 @@
 
 #include "stdafx.h"
 #include "STDinfomanager.h"
+
 #include "tag.h"
 #include "tfile.h"
 #include "fileref.h"
+#include "mpeg/mpegfile.h"
+#include "id3v2tag.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -115,6 +118,23 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		swprintf(libEnt->szComment, 128, L"%s", m_File->tag()->comment().toWString().c_str());
 	}
+
+	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(libEnt->szURL)))
+	{
+		TagLib::MPEG::File * mpegFile = (TagLib::MPEG::File *)m_File;
+
+		if(mpegFile->ID3v2Tag()) 
+		{
+			// Get the list of frames for a specific frame type
+
+			TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["TBPM"];
+
+			if(!l.isEmpty())
+				std::cout << l.front()->toString() << std::endl;
+		}
+	}
+
+
 	delete m_File;
 	return true;
 }
