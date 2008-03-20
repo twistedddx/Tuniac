@@ -11,7 +11,8 @@
 #include "tfile.h"
 #include "fileref.h"
 #include "mpeg/mpegfile.h"
-#include "id3v2tag.h"
+#include "mpeg/id3v2/id3v2tag.h"
+#include "mpeg/id3v2/frames/attachedpictureframe.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -82,6 +83,21 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 	if(PathIsURL(szSource))
 		return(false);
 
+
+	TagLib::String sFilename = szSource;
+
+	// lets only deal with formats we know about pls....
+	TagLib::StringList list =  TagLib::FileRef::defaultFileExtensions();
+	for(unsigned long x=0; x<list.size(); x++)
+	{
+		if(sFilename.find(list[x]) != -1)
+		{
+			return true;
+		}
+	}
+
+	return false;
+/*
 	for(unsigned int x=0; x<GetNumExtensions(); x++)
 	{
 		if(!StrCmpI(SupportedExtension(x), PathFindExtension(szSource)))
@@ -91,6 +107,7 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 	}
 
 	return(false);
+	*/
 }
 
 bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
@@ -162,6 +179,16 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 				}
 			}
 
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["APIC"];
+				if(!l.isEmpty())
+				{
+					TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
+
+					picframe->mimeType();
+				}
+			}
+
 
 		}
 	}
@@ -173,5 +200,58 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 {
-	return true;
+
+	return false;
+}
+
+unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+{
+	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szFilename)))
+	{
+		TagLib::MPEG::File mpegFile(szFilename);
+
+		if(mpegFile.ID3v2Tag()) 
+		{
+			TagLib::ID3v2::FrameList l = mpegFile.ID3v2Tag()->frameListMap()["APIC"];
+
+			return l.size();
+		}
+	}
+
+	return 0;
+}
+
+bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
+												unsigned long		ulImageIndex,
+												LPVOID			*	pImageData,
+												unsigned long	*	ulImageDataSize,
+												LPTSTR			*	szMimeType,
+												unsigned long	*	ulArtType)
+{
+	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szFilename)))
+	{
+		TagLib::MPEG::File mpegFile(szFilename);
+
+		if(mpegFile.ID3v2Tag()) 
+		{
+			TagLib::ID3v2::FrameList l = mpegFile.ID3v2Tag()->frameListMap()["APIC"];
+
+			if(!l.isEmpty() && (ulImageIndex < l.size()))
+			{
+				TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l[ulImageIndex]);
+
+				*ulImageDataSize = picframe->picture().size();
+				*pImageData = malloc(*ulImageDataSize);
+
+				CopyMemory(*pImageData, picframe->picture().data(), *ulImageDataSize);
+				StrCpy((LPWSTR)szMimeType, (LPTSTR)picframe->mimeType().toWString().c_str());
+
+				*ulArtType = picframe->type();
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

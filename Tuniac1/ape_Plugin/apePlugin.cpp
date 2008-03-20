@@ -22,7 +22,7 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacAudioSourceVersion(void
 {
 	return ITUNIACAUDIOSOURCE_VERSION;
 }
-
+/*
 
 extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
 {
@@ -35,3 +35,4 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void
 {
 	return ITUNIACINFOMANAGER_VERSION;
 }
+*/
