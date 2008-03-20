@@ -110,10 +110,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ITuniacFileReader.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ITuniacInfoHandler.h"
 				>
 			</File>
@@ -131,10 +127,6 @@
 			</File>
 			<File
 				RelativePath=".\ITuniacPluginWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\StdString.h"
 				>
 			</File>
 		</Filter>

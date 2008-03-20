@@ -37,7 +37,7 @@ bool CTuniacApp::Initialise(HINSTANCE hInst)
 	m_wc.hbrBackground	= (HBRUSH)(COLOR_BTNFACE+1);
 	m_wc.hIconSm		= LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_TUNIAC2));
 	m_wc.lpszMenuName	= MAKEINTRESOURCE(IDR_TUNIAC_MENU);
-	m_wc.lpszClassName	= szClassName;
+	m_wc.lpszClassName	= szClassName.c_str();
 	if(!RegisterClassEx(&m_wc))
 		return(false);
 
@@ -50,7 +50,7 @@ bool CTuniacApp::Shutdown(void)
 	{
 		DestroyWindow(m_hWnd);
 		m_hWnd = NULL;
-		UnregisterClass(szClassName, m_hInstance);
+		UnregisterClass(szClassName.c_str(), m_hInstance);
 	}
 
 	m_MediaManager.Shutdown();
@@ -67,8 +67,8 @@ bool CTuniacApp::Run(void)
 	MSG	msg;
 
 	m_hWnd = CreateWindowEx(WS_EX_ACCEPTFILES | WS_EX_APPWINDOW,
-							szClassName, 
-							szWindowName, 
+							szClassName.c_str(), 
+							szWindowName.c_str(), 
 							WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
 							CW_USEDEFAULT, 
 							CW_USEDEFAULT, 
@@ -109,7 +109,7 @@ LRESULT CALLBACK CTuniacApp::WndProcStub(HWND hWnd, UINT message, WPARAM wParam,
 	}
 	else
 	{
-		pTA = (CTuniacApp *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+		pTA = (CTuniacApp *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	}
 
 	return(pTA->WndProc(hWnd, message, wParam, lParam));
@@ -232,7 +232,7 @@ bool CTuniacApp::SetWindowTitle(String NewTitle)
 	String TitleStr = TEXT("Tuniac - ");
 	TitleStr += NewTitle;
 
-	::SetWindowText(m_hWnd, TitleStr);
+	::SetWindowText(m_hWnd, TitleStr.c_str());
 
 	return true;
 }

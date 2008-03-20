@@ -187,13 +187,13 @@ bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 	{
 		case Year:
 			{
-				m_File->tag()->setYear(fromHere);
+				m_File->tag()->setYear((TagLib::uint)fromHere);
 			}
 			break;
 
 		case Track:
 			{
-				m_File->tag()->setTrack(fromHere);
+				m_File->tag()->setTrack((TagLib::uint)fromHere);
 			}
 			break;
 
@@ -209,12 +209,12 @@ bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 	return true;
 }
 
-bool	CGenericInfoAccessor::GetAlbumArt(void ** pArtData, unsigned __int64 * uqArtDataSize)
+bool	CGenericInfoAccessor::GetAlbumArt(unsigned long ulIndex, void ** pArtData, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize)
 {
 	return false;
 }
 
-bool	CGenericInfoAccessor::SetAlbumArt(void * pArtData, unsigned __int64 uqArtSize)
+bool	CGenericInfoAccessor::SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType)
 {
 	return false;
 }
