@@ -840,6 +840,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
+
+							m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
 						}
 						break;
 

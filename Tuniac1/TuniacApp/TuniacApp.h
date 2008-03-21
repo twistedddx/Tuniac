@@ -42,6 +42,8 @@
 
 #include "PluginManager.h"
 
+#include "AlbumArt.h"
+
 #define FONT_SIZE_LARGE				0
 #define FONT_SIZE_MEDIUM			1
 #define FONT_SIZE_SMALL_MEDIUM		2
@@ -110,6 +112,7 @@ protected:
 	bool						RegisterHotkeys(void);
 
 
+
 public:
 	CMediaLibrary				m_MediaLibrary;
 	CPlaylistManager			m_PlaylistManager;
@@ -132,6 +135,9 @@ public:
 	CCurrentlyPlaying			m_CurrentlyPlaying;
 
 	CTuniacSkin					m_Skin;
+
+	CAlbumArt					m_TestArt;
+
 
 	struct
 	{

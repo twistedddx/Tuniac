@@ -521,6 +521,14 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				DrawText(hDC, TEXT("Source"), -1, &r, DT_SINGLELINE | DT_VCENTER);
 
 				doubleBuffer.End(hDC);
+
+				GetClientRect(hDlg, &r);
+				tuniacApp.m_TestArt.Draw(	hDC, 
+											0, 
+											r.bottom - m_ulSeparatorX,
+											m_ulSeparatorX,
+											m_ulSeparatorX);
+
 				EndPaint(hDlg, &ps);
 
 			}
@@ -531,23 +539,25 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
+				unsigned long slSrcHeight = Height - m_ulSeparatorX;
+
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCESELECTOR),	
 							2,
 							28, 
 							m_ulSeparatorX-2,
-							Height - 64, 
+							slSrcHeight - 64, 
 							TRUE);
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCE_ADDPLAYLIST),
 							0,
-							Height - 29,
+							slSrcHeight - 29,
 							(m_ulSeparatorX/2)-2,
 							25,
 							TRUE);
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCE_DELPLAYLIST),
 							(m_ulSeparatorX/2)+2,
-							Height - 29,
+							slSrcHeight - 29,
 							(m_ulSeparatorX/2)-2,
 							25,
 							TRUE);
