@@ -848,3 +848,16 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 	return bOK;
 }
 
+IInfoManager	*		CMediaLibrary::GetInfoManagerForFilename(LPTSTR szItemToAdd)
+{
+	// let the info manager get the format specific stuff here!
+	for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
+	{
+		if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szItemToAdd))
+		{
+			return m_InfoManagerArray[plugin].pInfoManager;
+		}
+	}
+
+	return NULL;
+}

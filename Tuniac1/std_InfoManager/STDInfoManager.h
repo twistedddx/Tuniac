@@ -24,6 +24,8 @@ public:
 								unsigned long		ulImageIndex,
 								LPVOID			*	pImageData,
 								unsigned long	*	ulImageDataSize,
-								LPTSTR			*	szMimeType,
+								LPTSTR				szMimeType,
 								unsigned long	*	ulArtType);
+
+	bool			FreeAlbumArt(LPVOID				pImageData);
 };
