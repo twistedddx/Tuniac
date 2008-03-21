@@ -846,6 +846,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 							if(pIPE)
 							{
+								bool bArtFailed = false;
+
 								LPTSTR szSource = (LPTSTR)pIPE->GetField(FIELD_URL);
 
 								IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szSource);
@@ -874,14 +876,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										PathAppend(szPath, TEXT("folder.jpg"));
 										if(!m_TestArt.SetSource(szPath))
 										{
-											// TODO: Set to default no art picture pls
+											bArtFailed = true;
 										}
 									}
 								}
 								else
 								{
-									// TODO: Set to default no art picture pls
-									m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
+									bArtFailed = true;
+								}
+
+								if(bArtFailed)
+								{
+									TCHAR szURL[_MAX_PATH];
+									GetModuleFileName(NULL, szURL, _MAX_PATH);
+									PathRemoveFileSpec(szURL);
+									PathAddBackslash(szURL);
+									StrCat(szURL, TEXT("folder.jpg"));
+									m_TestArt.SetSource(szURL);
 								}
 
 								m_SourceSelectorWindow->Refresh();
