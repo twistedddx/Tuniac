@@ -42,8 +42,10 @@ public:
 										unsigned long		ulImageIndex,
 										LPVOID			*	pImageData,
 										unsigned long	*	ulImageDataSize,
-										LPTSTR			*	szMimeType,
+										LPTSTR				szMimeType,
 										unsigned long	*	ulArtType)			= 0;
+	virtual bool			FreeAlbumArt(LPVOID				pImageData)			= 0;
+
 };
 
 typedef IInfoManager * (*CreateInfoManagerPluginFunc)(void);

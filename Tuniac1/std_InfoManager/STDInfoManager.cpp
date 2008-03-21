@@ -225,7 +225,7 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 												unsigned long		ulImageIndex,
 												LPVOID			*	pImageData,
 												unsigned long	*	ulImageDataSize,
-												LPTSTR			*	szMimeType,
+												LPTSTR				szMimeType,
 												unsigned long	*	ulArtType)
 {
 	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szFilename)))
@@ -251,6 +251,17 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 				return true;
 			}
 		}
+	}
+
+	return false;
+}
+
+bool			CSTDInfoManager::FreeAlbumArt(LPVOID				pImageData)
+{
+	if(pImageData)
+	{
+		free(pImageData);
+		return true;
 	}
 
 	return false;

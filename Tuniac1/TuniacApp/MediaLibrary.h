@@ -78,4 +78,6 @@ public:
 	CMediaLibraryPlaylistEntry *	GetItemByIndex(unsigned long	ulIndex);
 	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);
 	CMediaLibraryPlaylistEntry *	GetItemByURL(LPTSTR		szURL);
+
+	IInfoManager	*		GetInfoManagerForFilename(LPTSTR szItemToAdd);
 };

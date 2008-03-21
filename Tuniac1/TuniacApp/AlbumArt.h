@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../jpegdecoder/jpegdecoder.h"
+
 class CAlbumArt
 {
 protected:
@@ -11,7 +13,7 @@ protected:
 	unsigned long			m_ulBytesPerPixel;
 	unsigned long			m_ulComponents;
 
-	//bool	LoadJpegData(
+	bool	LoadJpegData(jpeg_decoder_stream & input_stream);
 
 public:
 	CAlbumArt(void);

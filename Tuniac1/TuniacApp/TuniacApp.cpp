@@ -841,8 +841,42 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
 
-							m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
-							m_SourceSelectorWindow->Refresh();
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+							IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+							if(pIPE)
+							{
+								LPTSTR szSource = (LPTSTR)pIPE->GetField(FIELD_URL);
+
+								IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szSource);
+								if(pManager)
+								{
+									LPVOID art;
+									unsigned long ulSize;
+									TCHAR	szMimeType[128];
+									unsigned long artType;
+									if(pManager->GetAlbumArt(	szSource,
+																0,
+																&art,
+																&ulSize,
+																szMimeType,
+																&artType))
+									{
+										m_TestArt.SetSource(art, ulSize, szMimeType);
+										pManager->FreeAlbumArt(art);
+									}
+									else
+									{
+										m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
+									}
+								}
+								else
+								{
+									m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
+								}
+
+								m_SourceSelectorWindow->Refresh();
+							}
 						}
 						break;
 

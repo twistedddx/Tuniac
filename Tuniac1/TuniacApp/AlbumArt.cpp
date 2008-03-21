@@ -1,9 +1,55 @@
 #include "stdafx.h"
 
-#include "../jpegdecoder/jpegdecoder.h"
 
 #include "AlbumArt.h"
 
+class jpeg_decoder_memory_stream : public jpeg_decoder_stream
+{
+  LPVOID			m_jPegData;
+  unsigned long		m_Size;
+  unsigned long		m_Offset;
+  bool eof_flag, error_flag;
+
+public:
+
+  jpeg_decoder_memory_stream(LPVOID pMemory, unsigned long ulSize)
+  {
+    m_jPegData	= pMemory;
+	m_Size		= ulSize;
+	m_Offset	= 0;
+    eof_flag	= false;
+    error_flag	= false;
+  }
+
+  virtual ~jpeg_decoder_memory_stream()
+  {
+  }
+ 
+  virtual int read(uchar *Pbuf, int max_bytes_to_read, bool *Peof_flag)
+  {
+		if (eof_flag)
+		{
+		  *Peof_flag = true;
+		  return (0);
+		}
+
+		if (error_flag)
+			return (-1);
+
+		unsigned long bytesthistime = min(max_bytes_to_read, m_Size - m_Offset);
+
+		CopyMemory(Pbuf, ((unsigned char*)m_jPegData)+m_Offset, bytesthistime);
+		m_Offset += bytesthistime;
+
+		if(m_Offset >= m_Size)
+		{
+			eof_flag = true;
+			*Peof_flag = true;
+		}
+
+		return (bytesthistime);
+	}
+};
 
 CAlbumArt::CAlbumArt(void) :
 	m_pBitmapData(NULL)
@@ -27,23 +73,8 @@ CAlbumArt::~CAlbumArt(void)
 
 }
 
-bool CAlbumArt::SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMimeType)
+bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 {
-	CAutoLock lock(&m_ArtLock);
-	return false;
-}
-
-bool CAlbumArt::SetSource(LPTSTR szFilename)
-{
-	CAutoLock lock(&m_ArtLock);
-
-	jpeg_decoder_file_stream input_stream;
-	if (input_stream.open(szFilename))
-	{
-		return (false);
-	}
-
-
 	jpeg_decoder d(&input_stream, false);
 	if(d.get_error_code() != 0)
 	{
@@ -96,6 +127,32 @@ bool CAlbumArt::SetSource(LPTSTR szFilename)
 		pData += m_ulBitmapWidth * m_ulBytesPerPixel;
 		int x=0;
 	}
+}
+
+
+bool CAlbumArt::SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMimeType)
+{
+	CAutoLock lock(&m_ArtLock);
+
+	jpeg_decoder_memory_stream	input_stream(pData, ulDataLength);
+
+	LoadJpegData(input_stream);
+
+	return true;
+}
+
+bool CAlbumArt::SetSource(LPTSTR szFilename)
+{
+	CAutoLock lock(&m_ArtLock);
+
+	jpeg_decoder_file_stream input_stream;
+	if (input_stream.open(szFilename))
+	{
+		return (false);
+	}
+
+	LoadJpegData(input_stream);
+
 
 	input_stream.close();
 
