@@ -54,7 +54,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x502"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -152,7 +152,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x600"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
@@ -236,7 +236,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				PreprocessorDefinitions="_WIN32_WINNT=0x502"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
 				CompileAs="2"
@@ -324,7 +324,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="_WIN32_WINNT=0x600"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="2"
 				TreatWChar_tAsBuiltInType="true"
@@ -404,6 +404,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AlbumArt.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AudioCDPlaylist.cpp"
 				>
 			</File>
@@ -444,11 +448,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\jpegdecoder\H2v2.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\History.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\jpegdecoder\idct.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ImportExportManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\jpegdecoder\jidctfst.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\jpegdecoder\jpegdecoder.cpp"
 				>
 			</File>
 			<File
@@ -550,6 +570,10 @@
 			>
 			<File
 				RelativePath=".\AboutWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AlbumArt.h"
 				>
 			</File>
 			<File
@@ -661,6 +685,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\jpegdecoder\jpegdecoder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\jpegdecoder\jpegdecoder.inl"
+				>
+			</File>
+			<File
 				RelativePath=".\LibraryEntry.h"
 				>
 			</File>
@@ -670,6 +702,10 @@
 			</File>
 			<File
 				RelativePath=".\LogWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\jpegdecoder\main.h"
 				>
 			</File>
 			<File
