@@ -867,11 +867,20 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									}
 									else
 									{
-										m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
+										TCHAR		szPath[4096];
+										StrCpy(szPath, szSource);
+
+										PathRemoveFileSpec(szPath);
+										PathAppend(szPath, TEXT("folder.jpg"));
+										if(!m_TestArt.SetSource(szPath))
+										{
+											// TODO: Set to default no art picture pls
+										}
 									}
 								}
 								else
 								{
+									// TODO: Set to default no art picture pls
 									m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
 								}
 
