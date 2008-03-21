@@ -65,7 +65,7 @@ bool			Cm4aAudioSourceSupplier::CanHandle(LPTSTR szSource)
 
 unsigned long	Cm4aAudioSourceSupplier::GetNumCommonExts(void)
 {
-	return 2;
+	return 3;
 }
 
 LPTSTR			Cm4aAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
@@ -73,7 +73,8 @@ LPTSTR			Cm4aAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 	static LPTSTR exts[] = 
 	{
 		TEXT(".m4a"),
-		TEXT(".mp4")
+		TEXT(".mp4"),
+		TEXT(".3gp")
 	};
 
 	return exts[ulIndex];
