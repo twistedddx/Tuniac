@@ -842,6 +842,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							tuniacApp.DoSoftPause();
 
 							m_TestArt.SetSource(TEXT("C:\\folder.jpg"));
+							m_SourceSelectorWindow->Refresh();
 						}
 						break;
 

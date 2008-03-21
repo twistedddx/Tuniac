@@ -74,6 +74,8 @@ public:
 
 public:
 
+	bool			Refresh();
+
 	bool			UpdateList();
 	bool			UpdateView();
 

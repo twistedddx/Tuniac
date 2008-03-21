@@ -524,10 +524,10 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				GetClientRect(hDlg, &r);
 				tuniacApp.m_TestArt.Draw(	hDC, 
-											0, 
-											r.bottom - m_ulSeparatorX,
-											m_ulSeparatorX,
-											m_ulSeparatorX);
+											2, 
+											r.bottom - m_ulSeparatorX-2,
+											m_ulSeparatorX-2,
+											m_ulSeparatorX-2);
 
 				EndPaint(hDlg, &ps);
 
@@ -1154,4 +1154,14 @@ void CSourceSelectorWindow::ShowCurrentlyPlaying(void)
 			break;
 		}
 	}
+}
+
+bool			CSourceSelectorWindow::Refresh()
+{
+	RECT r;
+
+	GetClientRect(m_hSourceWnd, &r);
+	InvalidateRect(m_hSourceWnd, &r, TRUE);
+	UpdateWindow(m_hSourceWnd);
+	return true;
 }
