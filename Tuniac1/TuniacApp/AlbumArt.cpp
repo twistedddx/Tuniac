@@ -1,7 +1,18 @@
 #include "stdafx.h"
 
+#include <vector>
+#include <iostream>
+#include <fstream>
+
 
 #include "AlbumArt.h"
+
+extern unsigned decodePNG(	std::vector<unsigned char>& out_image_32bit, 
+							unsigned& image_width, 
+							unsigned& image_height, 
+							const unsigned char* in_png, 
+							unsigned in_size);
+
 
 class jpeg_decoder_memory_stream : public jpeg_decoder_stream
 {
@@ -114,8 +125,6 @@ bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 		if(d.decode((void**)&Pscan_line_ofs, &scan_line_len))
 			break;
 
-//		CopyMemory(pData, Pscan_line_ofs, m_ulBitmapWidth * m_ulBytesPerPixel);
-
 		for(int x=0; x<scan_line_len; x+= src_bpp)
 		{
 			pData[x+0]	= Pscan_line_ofs[x+2];
@@ -127,6 +136,8 @@ bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 		pData += m_ulBitmapWidth * m_ulBytesPerPixel;
 		int x=0;
 	}
+
+	return true;
 }
 
 
@@ -134,40 +145,122 @@ bool CAlbumArt::SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMim
 {
 	CAutoLock lock(&m_ArtLock);
 
-	jpeg_decoder_memory_stream	input_stream(pData, ulDataLength);
+	if( StrStrI(szMimeType, TEXT("image/jpeg")) )
+	{
+		jpeg_decoder_memory_stream	input_stream(pData, ulDataLength);
 
-	LoadJpegData(input_stream);
+		if(!LoadJpegData(input_stream))
+			return false;
 
-	return true;
+		return true;
+	}
+
+	if( StrStrI(szMimeType, TEXT("image/png")) )
+	{
+		//TODO: PNG HERE PLSKTHX
+		std::vector<unsigned char> imageData;
+
+		// fills out our std::vector as a 32bit ARGB data stream
+		unsigned int w, h;
+		if(decodePNG(	imageData,
+					w,
+					h,
+					(const unsigned char *)pData,
+					ulDataLength) == 0)
+		{
+			m_ulBitmapWidth		= w;
+			m_ulBitmapHeight	= h;
+			m_ulBytesPerPixel	= 4;
+			m_ulComponents		= 4;
+
+			if(m_pBitmapData)
+			{
+				free(m_pBitmapData);
+				m_pBitmapData = NULL;
+			}
+
+			m_pBitmapData = malloc(m_ulBitmapWidth * m_ulBitmapHeight * m_ulBytesPerPixel);
+			if(!m_pBitmapData)
+				return false;
+
+			//CopyMemory(m_pBitmapData, &imageData[0], imageData.size());
+			unsigned char * pData	= (unsigned char *)m_pBitmapData;
+			unsigned char * pSrc	= (unsigned char *)&imageData[0];
+			for(int x=0; x<imageData.size(); x+= m_ulBytesPerPixel)
+			{
+				pData[x+0]	= pSrc[x+2];
+				pData[x+1]	= pSrc[x+1];
+				pData[x+2]	= pSrc[x+0];
+				pData[x+3]	= pSrc[x+3];
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	return false;
 }
 
 bool CAlbumArt::SetSource(LPTSTR szFilename)
 {
 	CAutoLock lock(&m_ArtLock);
 
-	jpeg_decoder_file_stream input_stream;
-	if (input_stream.open(szFilename))
+	if(StrStrI(szFilename, TEXT(".jpeg")) || StrStrI(szFilename, TEXT(".jpg")) || StrStrI(szFilename, TEXT(".jpe")))
 	{
-		return (false);
+		bool bRet = false;
+
+		jpeg_decoder_file_stream input_stream;
+		if (input_stream.open(szFilename))
+		{
+			return (false);
+		}
+
+		bRet = LoadJpegData(input_stream);
+
+		input_stream.close();
+
+		return bRet;
 	}
 
-	LoadJpegData(input_stream);
+	if( StrStrI(szFilename, TEXT(".png")) )
+	{
+		//TODO: PNG HERE PLSKTHX
+		std::vector<unsigned char> buffer;
+		std::ifstream file(szFilename, std::ios::in|std::ios::binary|std::ios::ate);
 
+		//get filesize
+		std::streamsize size = 0;
+		if(file.seekg(0, std::ios::end).good()) 
+			size = file.tellg();
+		if(file.seekg(0, std::ios::beg).good()) 
+			size -= file.tellg();
 
-	input_stream.close();
+		//read contents of the file into the vector
+		buffer.resize(size_t(size));
+		if(size > 0) 
+			file.read((char*)(&buffer[0]), size);
 
-	return true;
+		return SetSource(&buffer[0], size, TEXT("image/png"));
+	}
+
+	return false;
 }
 
 bool CAlbumArt::Draw(HDC hDC, long x, long y, long lWidth, long lHeight)
 {
 	CAutoLock lock(&m_ArtLock);
 
+	if(!m_pBitmapData)
+		return false;
+
+
 	BITMAPINFO		bmi = {0,};
 
 	bmi.bmiHeader.biSize		= sizeof(BITMAPINFOHEADER);
 	bmi.bmiHeader.biWidth		= m_ulBitmapWidth;
-	bmi.bmiHeader.biHeight		= -m_ulBitmapHeight;
+	bmi.bmiHeader.biHeight		= -((long)m_ulBitmapHeight);
 	bmi.bmiHeader.biPlanes		= 1;
 	bmi.bmiHeader.biBitCount	= 32;
 	bmi.bmiHeader.biCompression	= BI_RGB;

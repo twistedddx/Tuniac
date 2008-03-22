@@ -488,6 +488,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\picopng.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PlayControls.cpp"
 				>
 			</File>

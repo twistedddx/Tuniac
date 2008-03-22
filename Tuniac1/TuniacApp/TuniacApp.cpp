@@ -864,7 +864,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 																szMimeType,
 																&artType))
 									{
-										m_TestArt.SetSource(art, ulSize, szMimeType);
+										if(!m_TestArt.SetSource(art, ulSize, szMimeType))
+										{
+											bArtFailed = true;
+										}
+
 										pManager->FreeAlbumArt(art);
 									}
 									else
