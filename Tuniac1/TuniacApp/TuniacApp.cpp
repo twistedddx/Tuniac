@@ -873,14 +873,20 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									}
 									else
 									{
-										TCHAR		szPath[4096];
-										StrCpy(szPath, szSource);
+										TCHAR		szJPGPath[_MAX_PATH];
+										TCHAR		szPNGPath[_MAX_PATH];
+										StrCpy(szJPGPath, szSource);
 
-										PathRemoveFileSpec(szPath);
-										PathAppend(szPath, TEXT("folder.jpg"));
-										if(!m_TestArt.SetSource(szPath))
+										PathRemoveFileSpec(szJPGPath);
+										StrCpy(szPNGPath, szJPGPath);
+										PathAppend(szJPGPath, TEXT("folder.jpg"));
+										if(!m_TestArt.SetSource(szJPGPath))
 										{
-											bArtFailed = true;
+											PathAppend(szPNGPath, TEXT("folder.png"));
+											if(!m_TestArt.SetSource(szPNGPath))
+											{
+												bArtFailed = true;
+											}
 										}
 									}
 								}
