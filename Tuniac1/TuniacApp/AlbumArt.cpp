@@ -229,6 +229,8 @@ bool CAlbumArt::SetSource(LPTSTR szFilename)
 		//TODO: PNG HERE PLSKTHX
 		std::vector<unsigned char> buffer;
 		std::ifstream file(szFilename, std::ios::in|std::ios::binary|std::ios::ate);
+		if(!file.is_open())
+			return false;
 
 		//get filesize
 		std::streamsize size = 0;
@@ -238,6 +240,7 @@ bool CAlbumArt::SetSource(LPTSTR szFilename)
 			size -= file.tellg();
 
 		//read contents of the file into the vector
+
 		buffer.resize(size_t(size));
 		if(size > 0) 
 			file.read((char*)(&buffer[0]), size);
