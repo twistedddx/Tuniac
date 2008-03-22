@@ -8,8 +8,8 @@ protected:
 	CCriticalSection		m_ArtLock;
 
 	LPVOID					m_pBitmapData;
-	long					m_ulBitmapWidth;
-	long					m_ulBitmapHeight;
+	unsigned long			m_ulBitmapWidth;
+	unsigned long			m_ulBitmapHeight;
 	unsigned long			m_ulBytesPerPixel;
 	unsigned long			m_ulComponents;
 
