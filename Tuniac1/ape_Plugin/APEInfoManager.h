@@ -23,4 +23,13 @@ public:
 	bool			CanHandle(LPTSTR szSource);
 	bool			GetInfo(LibraryEntry * libEnt);
 	bool			SetInfo(LibraryEntry * libEnt);
+	unsigned long	GetNumberOfAlbumArts(LPTSTR		szFilename);
+	bool			GetAlbumArt(LPTSTR				szFilename, 
+								unsigned long		ulImageIndex,
+								LPVOID			*	pImageData,
+								unsigned long	*	ulImageDataSize,
+								LPTSTR				szMimeType,
+								unsigned long	*	ulArtType);
+
+	bool			FreeAlbumArt(LPVOID				pImageData);
 };
