@@ -93,3 +93,23 @@ bool			CAPEInfoManager::SetInfo(LibraryEntry * libEnt)
 {
 	return true;
 }
+
+unsigned long	CAPEInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+{
+	return 0;
+}
+
+bool			CAPEInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
+												unsigned long		ulImageIndex,
+												LPVOID			*	pImageData,
+												unsigned long	*	ulImageDataSize,
+												LPTSTR				szMimeType,
+												unsigned long	*	ulArtType)
+{
+	return false;
+}
+
+bool			CAPEInfoManager::FreeAlbumArt(LPVOID				pImageData)
+{
+	return false;
+}
