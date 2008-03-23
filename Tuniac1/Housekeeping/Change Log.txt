@@ -1,3 +1,16 @@
+Mar 24, 2008
+------------
+-Album Art (mp3 id3v2 apic tag, folder.jpg folder.png)
+-reenable ape tag reader
+
+
+Mar 18, 2008
+------------
+-Musepack
+-Wavpack
+-Minor
+
+
 Mar 14, 2008
 ------------
 -Fix 100% CPU usage
