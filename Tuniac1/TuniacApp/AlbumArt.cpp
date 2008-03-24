@@ -86,7 +86,8 @@ CAlbumArt::~CAlbumArt(void)
 
 bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 {
-	jpeg_decoder d(&input_stream, false);
+	//even with use_mmx set to true, under x64 it will be ignored and set to false due to asm requirement
+	jpeg_decoder d(&input_stream, true);
 	if(d.get_error_code() != 0)
 	{
 		// Always be sure to delete the input stream object _after_
