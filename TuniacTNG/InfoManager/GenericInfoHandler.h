@@ -1,8 +1,8 @@
 #pragma once
-#include "ituniacinfohandler.h"
+#include "iinfohandler.h"
 
 class CGenericInfoHandler :
-	public ITuniacInfoHandler
+	public IInfoHandler
 {
 public:
 	CGenericInfoHandler(void);
@@ -14,6 +14,6 @@ public:
 
 	bool					CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit);
 
-	ITuniacInfoAccessor	*	CreateAccessor(wchar_t * filename);
+	IInfoAccessor		*	CreateAccessor(wchar_t * filename);
 
 };

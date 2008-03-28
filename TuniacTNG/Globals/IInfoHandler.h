@@ -25,7 +25,7 @@ typedef enum InfoHandlerField
 #define NEW_ALBUMART_INDEX			(-1)
 
 
-class ITuniacInfoAccessor
+class IInfoAccessor
 {
 public:
 	virtual void			Destroy() = 0;
@@ -40,11 +40,11 @@ public:
 	virtual bool			SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType) = 0;
 };
 
-class ITuniacInfoHandler
+class IInfoHandler
 {
 public:
 	virtual void					Destroy(void) = 0;
 	virtual bool					CanHandle(wchar_t * filename, unsigned long * Ability, unsigned long * Merit) = 0;
-	virtual ITuniacInfoAccessor	*	CreateAccessor(wchar_t * filename) = 0;
-
+	virtual IInfoAccessor	*		CreateAccessor(wchar_t * filename) = 0;
 };
+

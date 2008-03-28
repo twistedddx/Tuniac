@@ -34,7 +34,7 @@ bool	CGenericInfoHandler::CanHandle(wchar_t * filename, unsigned long * Ability,
 	return false;
 }
 
-ITuniacInfoAccessor	*	CGenericInfoHandler::CreateAccessor(wchar_t * filename)
+IInfoAccessor	*	CGenericInfoHandler::CreateAccessor(wchar_t * filename)
 {
 	CGenericInfoAccessor * t = new CGenericInfoAccessor;
 
