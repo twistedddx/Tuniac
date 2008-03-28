@@ -1,33 +1,36 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include "wavpack.h"
+#include <stdio.h>
 
-class CWVDecoder :
+#include ".\alac_decoder\demux.h"
+#include ".\alac_decoder\decomp.h"
+#include ".\alac_decoder\stream.h"
+
+class CALACDecoder :
 	public IAudioSource
 {
 protected:
-
-	long				m_RawData[4096];
+	FILE			*	m_file;
 	float				m_Buffer[4096];
-
 	float				m_divider;
 
-	bool				m_bFloatMode;
 
-	WavpackContext *wpc;
-	unsigned long ulSampleRate;
-	unsigned long ulChannels;
-	unsigned long ulSamples;
-	unsigned long ulBitsPerSample;
-	unsigned long ulBytesPerSample;
-	unsigned long ulDecodeSamples;
-
+	/* all things for alac decoder */
+	int decoded_frames, outputBytes;
+	unsigned long song_length;
+	alac_file *alac;
+	demux_res_t demux;
+	FILE *file;
+	stream_t *stream;
+	unsigned char *buffer;
+	unsigned char *stream_buffer;
 
 public:
-	CWVDecoder(void);
-	~CWVDecoder(void);
+	CALACDecoder(void);
+	~CALACDecoder(void);
 
+;
 	bool Open(LPTSTR szSource);
 	bool Close();
 
