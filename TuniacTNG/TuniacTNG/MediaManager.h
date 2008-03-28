@@ -1,8 +1,9 @@
 #pragma once
 
 #include <IInfoHandler.h>
+#include <Singleton.h>
 
-class CMediaManager
+class CMediaManager : public CSingleton<CMediaManager>
 {
 protected:
 	typedef struct
