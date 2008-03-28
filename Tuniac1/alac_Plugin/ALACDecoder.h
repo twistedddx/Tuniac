@@ -3,10 +3,13 @@
 #include "iaudiosource.h"
 #include <stdio.h>
 
+extern "C" {
+
 #include ".\alac_decoder\demux.h"
 #include ".\alac_decoder\decomp.h"
 #include ".\alac_decoder\stream.h"
 
+}
 class CALACDecoder :
 	public IAudioSource
 {

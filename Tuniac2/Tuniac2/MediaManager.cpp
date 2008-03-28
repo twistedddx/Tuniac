@@ -79,44 +79,46 @@ bool CMediaManager::Initialize(void)
 
 			String DBColumns[] =
 			{
-				TEXT("EntryID			 INTEGER PRIMARY KEY"),
-				TEXT("DateAdded			 DATETIME"),
-				TEXT("DirtyFlag			 INT"),
-				TEXT("FileUnavailable	 INT"),
+				TEXT("EntryID				 INTEGER PRIMARY KEY"),
+				TEXT("DateAdded				 DATETIME"),
+				TEXT("DirtyFlag				 INT"),
+				TEXT("FileUnavailable		 INT"),
 
-				TEXT("Filename			 TEXT"),
-				TEXT("Filesize			 INT"),
-				TEXT("FileModifiedTime	 DATETIME"),
-				TEXT("Filehash			 BLOB"),
+				TEXT("Filename				 TEXT"),
+				TEXT("Filesize				 INT"),
+				TEXT("FileModifiedTime		 DATETIME"),
+				TEXT("Filehash				 BLOB"),
 
-				TEXT("Title				 TEXT"),
+				TEXT("Title					 TEXT"),
 				TEXT("Artist				 TEXT"),
-				TEXT("DiscTitle			 TEXT"),
-				TEXT("Composer			 TEXT"),
-				TEXT("Album				 TEXT"),
-				TEXT("AlbumArtist		 TEXT"),
-				TEXT("Year				 INT"),
-				TEXT("Genre				 TEXT"),
-				TEXT("Track				 INT"),
+				TEXT("DiscTitle				 TEXT"),
+				TEXT("Composer				 TEXT"),
+				TEXT("Album					 TEXT"),
+				TEXT("AlbumArtist			 TEXT"),
+				TEXT("Year					 INT"),
+				TEXT("Genre					 TEXT"),
 
-				TEXT("MaxTrack			 INT"),
-				TEXT("Disc				 INT"),
-				TEXT("MaxDisc			 INT"),
-				TEXT("Comment				TEXT"),
-				TEXT("Rating					INT"),
+				TEXT("Track					 INT"),
+				TEXT("MaxTrack				 INT"),
 
-				TEXT("PlaybackTime			INT"),
-				TEXT("PlaybackTimeAccuracy	INT"),
+				TEXT("Disc					 INT"),
+				TEXT("MaxDisc				 INT"),
 
-				TEXT("SampleRate				INT"),
-				TEXT("Channels				INT"),
-				TEXT("Bitrate				INT"),
+				TEXT("Comment				 TEXT"),
+				TEXT("Rating				 INT"),
 
-				TEXT("BPM					INT"),
+				TEXT("PlaybackTime			 INT"),
+				TEXT("PlaybackTimeAccuracy	 INT"),
 
-				TEXT("FirstPlayed			DATETIME"),
-				TEXT("LastPlayed				DATETIME"),
-				TEXT("Playcount				INT"),
+				TEXT("SampleRate			 INT"),
+				TEXT("Channels				 INT"),
+				TEXT("Bitrate				 INT"),
+
+				TEXT("BPM					 INT"),
+
+				TEXT("FirstPlayed			 DATETIME"),
+				TEXT("LastPlayed			 DATETIME"),
+				TEXT("Playcount				 INT"),
 				TEXT("")
 			};
 

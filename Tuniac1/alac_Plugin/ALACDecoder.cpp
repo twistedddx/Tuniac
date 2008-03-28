@@ -2,6 +2,8 @@
 
 #include "alacdecoder.h"
 
+extern "C" int host_bigendian = 0;
+
 CALACDecoder::CALACDecoder(void)
 {
 }
