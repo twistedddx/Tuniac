@@ -41,6 +41,7 @@
 typedef CStdStringW						String;	
 
 typedef std::vector<String>				StringArray;
+typedef std::vector<String>::iterator	StringIterator;
 
 typedef std::vector<long>				IntArray;
 typedef std::vector<__int64>			Int64Array;
