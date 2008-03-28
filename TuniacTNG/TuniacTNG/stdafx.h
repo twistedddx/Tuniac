@@ -20,8 +20,15 @@
 
 // TODO: reference additional headers your program requires here
 #include <commctrl.h>
+#include <Commdlg.h>
+
 #include <shlobj.h>
 #include <shellapi.h>
+#include <shlwapi.h>
+#include <shobjidl.h>
+
+
+
 
 #include <map>
 #include <vector>

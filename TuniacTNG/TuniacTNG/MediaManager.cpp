@@ -3,6 +3,8 @@
 
 #include <sqlite3x.hpp>
 
+#include "TuniacHelper.h"
+
 CMediaManager::CMediaManager(void)
 {
 }
@@ -92,6 +94,42 @@ bool CMediaManager::Initialize(void)
 		return false;
 	}
 
+	String runFolder;
+	CTuniacHelper::Instance()->GetTuniacRunFolder(runFolder);
+
+	StringArray		dllFileArray;
+	CTuniacHelper::Instance()->GetAllFilesInFolderWithExtension(runFolder, TEXT(".DLL"), dllFileArray);
+
+	while(dllFileArray.size())
+	{
+		InfoHandler		ih;
+
+		ih.hDLL = LoadLibrary(dllFileArray.back());
+
+		if(ih.hDLL)
+		{
+			CreateInfoHandlerFunc pFunc = (CreateInfoHandlerFunc)GetProcAddress(ih.hDLL, "CreateInfoHandler");
+
+			if(pFunc)
+			{
+				ih.pInfoHandler = pFunc();
+				if(ih.pInfoHandler)
+				{
+					m_vInfoHandlers.push_back(ih);
+				}
+				else
+				{
+					FreeLibrary(ih.hDLL);
+				}
+			}
+			else
+			{
+				FreeLibrary(ih.hDLL);
+			}
+		}
+
+		dllFileArray.pop_back();
+	}
 	return true;
 }
 

@@ -48,3 +48,6 @@ public:
 	virtual IInfoAccessor	*		CreateAccessor(wchar_t * filename) = 0;
 };
 
+
+typedef IInfoHandler * (*CreateInfoHandlerFunc)(void);
+extern "C" __declspec(dllexport) IInfoHandler * CreateInfoHandler(void);

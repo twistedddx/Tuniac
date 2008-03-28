@@ -124,6 +124,18 @@
 				RelativePath=".\IInfoHandler.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Signal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Singleton.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

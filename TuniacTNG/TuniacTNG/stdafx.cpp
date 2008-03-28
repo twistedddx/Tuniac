@@ -6,3 +6,11 @@
 
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file
+
+#pragma comment( lib, "shlwapi.lib" )
+#pragma comment( lib, "comctl32.lib" )
+
+#pragma comment( lib, "SQLite.lib" )
+#pragma comment( lib, "sqlite3x.lib" )
+
+  
