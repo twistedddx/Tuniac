@@ -9,7 +9,6 @@
 
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' " "version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-CMediaManager			mediaManager;
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
@@ -48,7 +47,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadString(hInstance, IDC_TUNIACTNG, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	mediaManager.Initialize();
+	CMediaManager::Instance()->Initialize();
 
 	// Perform application initialization:
 	if (!InitInstance (hInstance, nCmdShow))
@@ -68,7 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 	}
 
-	mediaManager.Shutdown();
+	CMediaManager::Instance()->Shutdown();
 
 	return (int) msg.wParam;
 }
@@ -207,7 +206,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				lvC.pszText	= TEXT("Comment");
 				ListView_InsertColumn(hListView, 3, &lvC);
 
-				ListView_SetItemCountEx(hListView, mediaManager.GetNumEntries(), 0);
+				ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
 			}
 			break;
 
@@ -301,7 +300,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					for(UINT file = 0; file<uNumFiles; file++)
 					{
 						DragQueryFile(hDrop, file, szURL, MAX_PATH);
-						mediaManager.AddFile(szURL);
+						CMediaManager::Instance()->AddFile(szURL);
 					}
 
 //					m_MediaLibrary.EndAdd();
@@ -309,7 +308,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				DragFinish(hDrop);
 
-				ListView_SetItemCountEx(hListView, mediaManager.GetNumEntries(), 0);
+				ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
 
 			}
 			break;
