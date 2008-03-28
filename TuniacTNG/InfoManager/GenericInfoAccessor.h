@@ -1,12 +1,12 @@
 #pragma once
-#include "ituniacinfohandler.h"
+#include "iinfohandler.h"
 
 #include "tag.h"
 #include "tfile.h"
 #include "fileref.h"
 
 class CGenericInfoAccessor :
-	public ITuniacInfoAccessor
+	public IInfoAccessor
 {
 protected:
 
