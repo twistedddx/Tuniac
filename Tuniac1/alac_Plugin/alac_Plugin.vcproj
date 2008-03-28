@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="wv_Plugin"
-	ProjectGUID="{1FBA3217-FF74-4CDD-96E5-E2294CCF6365}"
-	RootNamespace="wv_Plugin"
+	Name="alac_Plugin"
+	ProjectGUID="{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}"
+	RootNamespace="alac_Plugin"
 	Keyword="ManagedCProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".\wv;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -76,6 +76,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -137,7 +138,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".\wv;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -145,7 +146,7 @@
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -163,6 +164,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -221,7 +223,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="./wv;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
@@ -238,6 +240,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
+				AdditionalLibraryDirectories="libs"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -301,7 +304,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="./wv;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="2"
@@ -325,6 +328,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
+				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -364,30 +368,38 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{D26737F1-C725-4376-A056-2A32D751A2FF}"
+			UniqueIdentifier="{D26737F1-C7E2-4376-A346-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ALACDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ALACDecoderPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\alacPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WVDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WVDecoderPlugin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\wvPlugin.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93455380-89BD-4b04-88EB-625EDE5264FB}"
+			UniqueIdentifier="{93952380-89ED-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\ALACDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ALACDecoderPlugin.h"
+				>
+			</File>
 			<File
 				RelativePath=".\resource.h"
 				>
@@ -396,34 +408,32 @@
 				RelativePath=".\stdafx.h"
 				>
 			</File>
-			<File
-				RelativePath=".\wv\wavpack.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WVDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WVDecoderPlugin.h"
-				>
-			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{69BA6AB6-F800-4c08-8B3A-83CA125AAD01}"
-			>
-		</Filter>
-		<Filter
-			Name="libs"
+			Name="alac_decoder"
 			>
 			<File
-				RelativePath=".\wv\libwavpack.lib"
+				RelativePath=".\alac_decoder\alac.c"
 				>
 			</File>
 			<File
-				RelativePath=".\wv\libwavpack64.lib"
+				RelativePath=".\alac_decoder\decomp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\alac_decoder\demux.c"
+				>
+			</File>
+			<File
+				RelativePath=".\alac_decoder\demux.h"
+				>
+			</File>
+			<File
+				RelativePath=".\alac_decoder\stream.c"
+				>
+			</File>
+			<File
+				RelativePath=".\alac_decoder\stream.h"
 				>
 			</File>
 		</Filter>
