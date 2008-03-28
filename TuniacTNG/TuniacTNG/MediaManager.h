@@ -1,7 +1,18 @@
 #pragma once
 
+#include <IInfoHandler.h>
+
 class CMediaManager
 {
+protected:
+	typedef struct
+	{
+		IInfoHandler *	pInfoHandler;
+		HINSTANCE		hDLL;
+	} InfoHandler;
+
+	std::vector<InfoHandler>		m_vInfoHandlers;
+
 public:
 	CMediaManager(void);
 	~CMediaManager(void);

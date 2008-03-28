@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../SQLite;../sqlite3x"
+				AdditionalIncludeDirectories="../SQLite;../sqlite3x;../Globals"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../SQLite;../sqlite3x"
+				AdditionalIncludeDirectories="../SQLite;../sqlite3x;../Globals"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -206,6 +206,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TuniacHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacTNG.cpp"
 				>
 			</File>
@@ -229,6 +233,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TuniacHelper.h"
 				>
 			</File>
 			<File
