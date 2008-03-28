@@ -181,8 +181,47 @@ unsigned __int64 CMediaManager::GetNumEntries(void)
 
 bool CMediaManager::AddFile(String filename)
 {
+	bool bret = false;
+
 	String szDBName;
 	GetMediaDBLocation(szDBName);
+
+	try
+	{
+		String alreadyExistsSQL = TEXT("SELECT count(*) FROM MediaLibrary WHERE Filename = ?;");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command existscmd(con, alreadyExistsSQL);
+
+		existscmd.bind(1, filename);
+
+		if(existscmd.executeint() > 0)
+			return true;
+	}
+	catch(...)
+	{
+		return false;
+	}
+
+
+	// first lets see if we have an infohandler capable of using this
+	IInfoHandler		* pHandler = NULL;
+
+	for(unsigned int x=0; x<m_vInfoHandlers.size(); x++)
+	{
+		unsigned long Ability, Merit;
+		if(m_vInfoHandlers[x].pInfoHandler->CanHandle((wchar_t *)filename.c_str(), &Ability, &Merit))
+		{
+			pHandler = m_vInfoHandlers[x].pInfoHandler;
+			break;
+		}
+	}
+	
+	// dont bother if we can't get the info for it!
+	if(pHandler == NULL)
+		return false;
+
+	IInfoAccessor * pAccessor = pHandler->CreateAccessor((wchar_t *)filename.c_str());
 
 	try
 	{
@@ -194,11 +233,16 @@ bool CMediaManager::AddFile(String filename)
 		cmd.bind(1, filename);
 
 		cmd.executenonquery();
+
+		bret = true;
 	}
 	catch(...)
 	{
-		return false;
+		bret = false;
 	}
 
-	return true;
+	if(pAccessor)
+		pAccessor->Destroy();
+
+	return bret;
 }
