@@ -194,10 +194,12 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	decoded_frames++;
 
+	unsigned long numSamples = ((outputBytes / *demux.sample_byte_size) / demux.num_channels);
+
 	short	* pData		= (short *)buffer;
 	float	* pBuffer	= m_Buffer;
 	
-	for(int x=0; x<outputBytes;x++)
+	for(unsigned long x=0; x<numSamples;x++)
 	{
 		*pBuffer = (*pData) / 32767.0f;
 		pData++;
@@ -206,7 +208,7 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	*ppBuffer = m_Buffer;
 
 
-	*NumSamples = outputBytes;
+	*NumSamples = numSamples;
 
 	return true;
 }
