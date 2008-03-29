@@ -33,7 +33,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <stdint.h>
+#if defined(_WIN32) && !defined(__MINGW32__)
+typedef unsigned __int64 uint64_t;
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int8 uint8_t;
+typedef __int64 int64_t;
+typedef __int32 int32_t;
+typedef __int16 int16_t;
+typedef __int8  int8_t;
+typedef float float32_t;
+#else
+#include <inttypes.h>
+#endif
 
 #include "decomp.h"
 
@@ -62,25 +74,25 @@ struct alac_file
 
 
     /* buffers */
-    int *predicterror_buffer_a;
-    int *predicterror_buffer_b;
+    int32_t *predicterror_buffer_a;
+    int32_t *predicterror_buffer_b;
 
-    int *outputsamples_buffer_a;
-    int *outputsamples_buffer_b;
+    int32_t *outputsamples_buffer_a;
+    int32_t *outputsamples_buffer_b;
 
 
   /* stuff from setinfo */
-  unsigned int setinfo_max_samples_per_frame; /* 0x1000 = 4096 */    /* max samples per frame? */
-  unsigned char setinfo_7a; /* 0x00 */
-  unsigned char setinfo_sample_size; /* 0x10 */
-  unsigned char setinfo_rice_historymult; /* 0x28 */
-  unsigned char setinfo_rice_initialhistory; /* 0x0a */
-  unsigned char setinfo_rice_kmodifier; /* 0x0e */
-  unsigned char setinfo_7f; /* 0x02 */
-  unsigned short setinfo_80; /* 0x00ff */
-  unsigned int setinfo_82; /* 0x000020e7 */
-  unsigned int setinfo_86; /* 0x00069fe4 */
-  unsigned int setinfo_8a_rate; /* 0x0000ac44 */
+  uint32_t setinfo_max_samples_per_frame; /* 0x1000 = 4096 */    /* max samples per frame? */
+  uint8_t setinfo_7a; /* 0x00 */
+  uint8_t setinfo_sample_size; /* 0x10 */
+  uint8_t setinfo_rice_historymult; /* 0x28 */
+  uint8_t setinfo_rice_initialhistory; /* 0x0a */
+  uint8_t setinfo_rice_kmodifier; /* 0x0e */
+  uint8_t setinfo_7f; /* 0x02 */
+  uint16_t setinfo_80; /* 0x00ff */
+  uint32_t setinfo_82; /* 0x000020e7 */ /* max sample size?? */
+  uint32_t setinfo_86; /* 0x00069fe4 */ /* bit rate (avarge)?? */
+  uint32_t setinfo_8a_rate; /* 0x0000ac44 */
   /* end setinfo stuff */
 
 };
@@ -106,35 +118,35 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
 
   ptr += 4; /* 0 ? */
 
-  alac->setinfo_max_samples_per_frame = *(unsigned int*)ptr; /* buffer size / 2 ? */
+  alac->setinfo_max_samples_per_frame = *(uint32_t*)ptr; /* buffer size / 2 ? */
   if (!host_bigendian)
       _Swap32(alac->setinfo_max_samples_per_frame);
   ptr += 4;
-  alac->setinfo_7a = *(unsigned char*)ptr;
+  alac->setinfo_7a = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_sample_size = *(unsigned char*)ptr;
+  alac->setinfo_sample_size = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_rice_historymult = *(unsigned char*)ptr;
+  alac->setinfo_rice_historymult = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_rice_initialhistory = *(unsigned char*)ptr;
+  alac->setinfo_rice_initialhistory = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_rice_kmodifier = *(unsigned char*)ptr;
+  alac->setinfo_rice_kmodifier = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_7f = *(unsigned char*)ptr;
+  alac->setinfo_7f = *(uint8_t*)ptr;
   ptr += 1;
-  alac->setinfo_80 = *(unsigned short*)ptr;
+  alac->setinfo_80 = *(uint16_t*)ptr;
   if (!host_bigendian)
       _Swap16(alac->setinfo_80);
   ptr += 2;
-  alac->setinfo_82 = *(unsigned int*)ptr;
+  alac->setinfo_82 = *(uint32_t*)ptr;
   if (!host_bigendian)
       _Swap32(alac->setinfo_82);
   ptr += 4;
-  alac->setinfo_86 = *(unsigned int*)ptr;
+  alac->setinfo_86 = *(uint32_t*)ptr;
   if (!host_bigendian)
       _Swap32(alac->setinfo_86);
   ptr += 4;
-  alac->setinfo_8a_rate = *(unsigned int*)ptr;
+  alac->setinfo_8a_rate = *(uint32_t*)ptr;
   if (!host_bigendian)
       _Swap32(alac->setinfo_8a_rate);
   ptr += 4;
@@ -146,9 +158,9 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
 /* stream reading */
 
 /* supports reading 1 to 16 bits, in big endian format */
-static unsigned int readbits_16(alac_file *alac, int bits)
+static uint32_t readbits_16(alac_file *alac, int bits)
 {
-    unsigned int result;
+    uint32_t result;
     int new_accumulator;
 
     result = (alac->input_buffer[0] << 16) |
@@ -178,9 +190,9 @@ static unsigned int readbits_16(alac_file *alac, int bits)
 }
 
 /* supports reading 1 to 32 bits, in big endian format */
-static unsigned int readbits(alac_file *alac, int bits)
+static uint32_t readbits(alac_file *alac, int bits)
 {
-    int result = 0;
+    int32_t result = 0;
 
     if (bits > 16)
     {
@@ -225,10 +237,18 @@ static void unreadbits(alac_file *alac, int bits)
         alac->input_buffer_bitaccumulator *= -1;
 }
 
+/* various implementations of count_leading_zero:
+ * the first one is the original one, the simplest and most
+ * obvious for what it's doing. never use this.
+ * then there are the asm ones. fill in as necessary
+ * and finally an unrolled and optimised c version
+ * to fall back to
+ */
+#if 0
 /* hideously inefficient. could use a bitmask search,
  * alternatively bsr on x86,
  */
-static int count_leading_zeros(int input)
+static int count_leading_zeros(int32_t input)
 {
     int i = 0;
     while (!(0x80000000 & input) && i < 32)
@@ -238,9 +258,83 @@ static int count_leading_zeros(int input)
     }
     return i;
 }
+#elif defined(__GNUC__) && (defined(_X86) || defined(__i386) || defined(i386))
+/* for some reason the unrolled version (below) is
+ * actually faster than this. yay intel!
+ */
+static int count_leading_zeros(int input)
+{
+    int output = 0;
+    if (!input) return 32;
+    asm("bsr %1, %0\n"
+        : "=r" (output)
+        : "r" (input));
+    return (0x1f - output);
+}
+#elif defined(_MSC_VER) && defined(_M_IX86)
+static int count_leading_zeros(int input)
+{
+    int output = 0;
+    if (!input) return 32;
+    __asm
+    {
+        mov eax, input;
+        mov edx, 0x1f;
+        bsr ecx, eax;
+        sub edx, ecx;
+        mov output, edx;
+    }
+    return output;
+}
+#else
+#warning using generic count leading zeroes. You may wish to write one for your CPU / compiler
+static int count_leading_zeros(int input)
+{
+    int output = 0;
+    int curbyte = 0;
+
+    curbyte = input >> 24;
+    if (curbyte) goto found;
+    output += 8;
+
+    curbyte = input >> 16;
+    if (curbyte & 0xff) goto found;
+    output += 8;
+
+    curbyte = input >> 8;
+    if (curbyte & 0xff) goto found;
+    output += 8;
+
+    curbyte = input;
+    if (curbyte & 0xff) goto found;
+    output += 8;
+
+    return output;
+
+found:
+    if (!(curbyte & 0xf0))
+    {
+        output += 4;
+    }
+    else
+        curbyte >>= 4;
+
+    if (curbyte & 0x8)
+        return output;
+    if (curbyte & 0x4)
+        return output + 1;
+    if (curbyte & 0x2)
+        return output + 2;
+    if (curbyte & 0x1)
+        return output + 3;
+
+    /* shouldn't get here: */
+    return output + 4;
+}
+#endif
 
 void basterdised_rice_decompress(alac_file *alac,
-                                 int *output_buffer,
+                                 int32_t *output_buffer,
                                  int output_size,
                                  int readsamplesize, /* arg_10 */
                                  int rice_initialhistory, /* arg424->b */
@@ -255,9 +349,9 @@ void basterdised_rice_decompress(alac_file *alac,
 
     for (output_count = 0; output_count < output_size; output_count++)
     {
-        int x = 0;
-        int x_modified;
-        int final_val;
+        int32_t x = 0;
+        int32_t x_modified;
+        int32_t final_val;
 
         /* read x - number of 1s before 0 represent the rice */
         while (x <= 8 && readbit(alac))
@@ -268,7 +362,7 @@ void basterdised_rice_decompress(alac_file *alac,
 
         if (x > 8) /* RICE THRESHOLD */
         { /* use alternative encoding */
-            int value;
+            int32_t value;
 
             value = readbits(alac, readsamplesize);
 
@@ -379,11 +473,11 @@ void basterdised_rice_decompress(alac_file *alac,
                                 ((v > 0) ? (1) : \
                                            (0)))
 
-static void predictor_decompress_fir_adapt(int *error_buffer,
-                                           int *buffer_out,
+static void predictor_decompress_fir_adapt(int32_t *error_buffer,
+                                           int32_t *buffer_out,
                                            int output_size,
                                            int readsamplesize,
-                                           short *predictor_coef_table,
+                                           int16_t *predictor_coef_table,
                                            int predictor_coef_num,
                                            int predictor_quantitization)
 {
@@ -406,8 +500,8 @@ static void predictor_decompress_fir_adapt(int *error_buffer,
         if (output_size <= 1) return;
         for (i = 0; i < output_size - 1; i++)
         {
-            int prev_value;
-            int error_value;
+            int32_t prev_value;
+            int32_t error_value;
 
             prev_value = buffer_out[i];
             error_value = error_buffer[i+1];
@@ -422,7 +516,7 @@ static void predictor_decompress_fir_adapt(int *error_buffer,
         int i;
         for (i = 0; i < predictor_coef_num; i++)
         {
-            int val;
+            int32_t val;
 
             val = buffer_out[i] + error_buffer[i+1];
 
@@ -519,11 +613,11 @@ static void predictor_decompress_fir_adapt(int *error_buffer,
     }
 }
 
-void deinterlace_16(int *buffer_a, int *buffer_b,
-                    short *buffer_out,
+void deinterlace_16(int32_t *buffer_a, int32_t *buffer_b,
+                    int16_t *buffer_out,
                     int numchannels, int numsamples,
-                    unsigned char interlacing_shift,
-                    unsigned char interlacing_leftweight)
+                    uint8_t interlacing_shift,
+                    uint8_t interlacing_leftweight)
 {
     int i;
     if (numsamples <= 0) return;
@@ -533,17 +627,16 @@ void deinterlace_16(int *buffer_a, int *buffer_b,
     {
         for (i = 0; i < numsamples; i++)
         {
-            int difference, midright;
-            short left;
-            short right;
+            int32_t difference, midright;
+            int16_t left;
+            int16_t right;
 
             midright = buffer_a[i];
             difference = buffer_b[i];
 
 
             right = midright - ((difference * interlacing_leftweight) >> interlacing_shift);
-            left = (midright - ((difference * interlacing_leftweight) >> interlacing_shift))
-                 + difference;
+            left = right + difference;
 
             /* output is always little endian */
             if (host_bigendian)
@@ -562,7 +655,7 @@ void deinterlace_16(int *buffer_a, int *buffer_b,
     /* otherwise basic interlacing took place */
     for (i = 0; i < numsamples; i++)
     {
-        short left, right;
+        int16_t left, right;
 
         left = buffer_a[i];
         right = buffer_b[i];
@@ -584,7 +677,7 @@ void decode_frame(alac_file *alac,
                   void *outbuffer, int *outputsize)
 {
     int channels;
-    int outputsamples = alac->setinfo_max_samples_per_frame;
+    int32_t outputsamples = alac->setinfo_max_samples_per_frame;
 
     /* setup the stream */
     alac->input_buffer = inbuffer;
@@ -631,7 +724,7 @@ void decode_frame(alac_file *alac,
 
         if (!isnotcompressed)
         { /* so it is compressed */
-            short predictor_coef_table[32];
+            int16_t predictor_coef_table[32];
             int predictor_coef_num;
             int prediction_type;
             int prediction_quantitization;
@@ -651,7 +744,7 @@ void decode_frame(alac_file *alac,
             /* read the predictor table */
             for (i = 0; i < predictor_coef_num; i++)
             {
-                predictor_coef_table[i] = (short)readbits(alac, 16);
+                predictor_coef_table[i] = (int16_t)readbits(alac, 16);
             }
 
             if (wasted_bytes)
@@ -700,7 +793,7 @@ void decode_frame(alac_file *alac,
                 int i;
                 for (i = 0; i < outputsamples; i++)
                 {
-                    int audiobits = readbits(alac, readsamplesize);
+                    int32_t audiobits = readbits(alac, readsamplesize);
 
                     audiobits = SIGN_EXTENDED32(audiobits, readsamplesize);
 
@@ -712,7 +805,7 @@ void decode_frame(alac_file *alac,
                 int i;
                 for (i = 0; i < outputsamples; i++)
                 {
-                    int audiobits;
+                    int32_t audiobits;
 
                     audiobits = readbits(alac, 16);
                     /* special case of sign extension..
@@ -735,10 +828,10 @@ void decode_frame(alac_file *alac,
             int i;
             for (i = 0; i < outputsamples; i++)
             {
-                short sample = alac->outputsamples_buffer_a[i];
+                int16_t sample = alac->outputsamples_buffer_a[i];
                 if (host_bigendian)
                     _Swap16(sample);
-                ((short*)outbuffer)[i * alac->numchannels] = sample;
+                ((int16_t*)outbuffer)[i * alac->numchannels] = sample;
             }
             break;
         }
@@ -760,8 +853,8 @@ void decode_frame(alac_file *alac,
 
         int wasted_bytes;
 
-        unsigned char interlacing_shift;
-        unsigned char interlacing_leftweight;
+        uint8_t interlacing_shift;
+        uint8_t interlacing_leftweight;
 
         /* 2^result = something to do with output waiting.
          * perhaps matters if we read > 1 frame in a pass?
@@ -788,13 +881,13 @@ void decode_frame(alac_file *alac,
 
         if (!isnotcompressed)
         { /* compressed */
-            short predictor_coef_table_a[32];
+            int16_t predictor_coef_table_a[32];
             int predictor_coef_num_a;
             int prediction_type_a;
             int prediction_quantitization_a;
             int ricemodifier_a;
 
-            short predictor_coef_table_b[32];
+            int16_t predictor_coef_table_b[32];
             int predictor_coef_num_b;
             int prediction_type_b;
             int prediction_quantitization_b;
@@ -815,7 +908,7 @@ void decode_frame(alac_file *alac,
             /* read the predictor table */
             for (i = 0; i < predictor_coef_num_a; i++)
             {
-                predictor_coef_table_a[i] = (short)readbits(alac, 16);
+                predictor_coef_table_a[i] = (int16_t)readbits(alac, 16);
             }
 
             /******** channel 2 *********/
@@ -828,7 +921,7 @@ void decode_frame(alac_file *alac,
             /* read the predictor table */
             for (i = 0; i < predictor_coef_num_b; i++)
             {
-                predictor_coef_table_b[i] = (short)readbits(alac, 16);
+                predictor_coef_table_b[i] = (int16_t)readbits(alac, 16);
             }
 
             /*********************/
@@ -894,7 +987,7 @@ void decode_frame(alac_file *alac,
                 int i;
                 for (i = 0; i < outputsamples; i++)
                 {
-                    int audiobits_a, audiobits_b;
+                    int32_t audiobits_a, audiobits_b;
 
                     audiobits_a = readbits(alac, alac->setinfo_sample_size);
                     audiobits_b = readbits(alac, alac->setinfo_sample_size);
@@ -911,7 +1004,7 @@ void decode_frame(alac_file *alac,
                 int i;
                 for (i = 0; i < outputsamples; i++)
                 {
-                    int audiobits_a, audiobits_b;
+                    int32_t audiobits_a, audiobits_b;
 
                     audiobits_a = readbits(alac, 16);
                     audiobits_a = audiobits_a << 16;
@@ -938,7 +1031,7 @@ void decode_frame(alac_file *alac,
         {
             deinterlace_16(alac->outputsamples_buffer_a,
                            alac->outputsamples_buffer_b,
-                           (short*)outbuffer,
+                           (int16_t*)outbuffer,
                            alac->numchannels,
                            outputsamples,
                            interlacing_shift,

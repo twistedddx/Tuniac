@@ -48,7 +48,7 @@ bool			CALACDecoderPlugin::Configure(HWND hParent)
 
 bool			CALACDecoderPlugin::CanHandle(LPTSTR szSource)
 {
-	LPTSTR	t = &szSource[lstrlen(szSource)-4];
+	LPTSTR	t = &szSource[lstrlen(szSource)-5];
 	if(!lstrcmpi(TEXT(".alac"), t))
 	{
 		return(true);
