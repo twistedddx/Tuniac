@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE 4096*4
 
-extern "C" int host_bigendian = 1;
+extern "C" int host_bigendian = 0;
 extern void set_endian();
 
 void set_endian()
