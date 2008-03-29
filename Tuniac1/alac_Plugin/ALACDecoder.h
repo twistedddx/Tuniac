@@ -14,7 +14,7 @@ class CALACDecoder :
 {
 protected:
 	FILE			*	m_file;
-	float				m_Buffer[4096*4*4];
+	float				m_Buffer[4096*4];
 	float				m_divider;
 
 
