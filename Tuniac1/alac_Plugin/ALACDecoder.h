@@ -14,7 +14,7 @@ class CALACDecoder :
 {
 protected:
 	FILE			*	m_file;
-	float				m_Buffer[4096];
+	float				m_Buffer[4096*4*4];
 	float				m_divider;
 
 
@@ -25,8 +25,8 @@ protected:
 	demux_res_t demux;
 	FILE *file;
 	stream_t *stream;
-	unsigned char *buffer;
-	unsigned char *stream_buffer;
+	unsigned char buffer[4096*4];
+	unsigned char stream_buffer[4096*4*4];
 
 public:
 	CALACDecoder(void);

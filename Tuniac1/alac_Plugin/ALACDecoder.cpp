@@ -2,27 +2,18 @@
 
 #include "alacdecoder.h"
 
-extern "C" int host_bigendian = 0;
+#define BUFFER_SIZE 4096*4
+
+extern "C" int host_bigendian = 1;
 extern void set_endian();
 
 void set_endian()
 {
-
-/* what the hell is this?!? */
-	
-/*    uint32_t integer = 0x000000aa;
+    uint32_t integer = 0x000000aa;
     unsigned char *p = (unsigned char*)&integer;
 
     if (p[0] == 0xaa) host_bigendian = 0;
-    else host_bigendian = 1; */
-
-/* Ok... we are doing it like that: */
-	
-	#if __BYTE_ORDER == __LITTLE_ENDIAN
-	host_bigendian = 0;
-	#elif __BYTE_ORDER == __BIG_ENDIAN
-	host_bigendian = 1;
-	#endif
+    else host_bigendian = 1;
 }
 
 CALACDecoder::CALACDecoder(void)
@@ -101,12 +92,89 @@ bool		CALACDecoder::GetLength(unsigned long * MS)
 	song_length = (output_time / demux.sample_rate) * 1000;
 	*MS = song_length;
 
-	return(true);
+	return true;
 }
 
 bool		CALACDecoder::SetPosition(unsigned long * MS)
 {
-	return(true);
+	/* Seek to the sample containing sound_sample_loc. Return 1 on success 
+ * (and modify sound_samples_done and current_sample), 0 if failed.
+ *
+ * Seeking uses the following arrays:
+ *
+ * 1) the time_to_sample array contains the duration (in sound samples) 
+ *    of each sample of data.
+ *
+ * 2) the sample_byte_size array contains the length in bytes of each
+ *    sample.
+ *
+ * 3) the sample_to_chunk array contains information about which chunk
+ *    of samples each sample belongs to.
+ *
+ * 4) the chunk_offset array contains the file offset of each chunk.
+ *
+ * So find the sample number we are going to seek to (using time_to_sample)
+ * and then find the offset in the file (using sample_to_chunk, 
+ * chunk_offset sample_byte_size, in that order.).
+ *
+ */
+
+    uint32_t i;
+    uint32_t j;
+    uint32_t new_sample;
+    uint32_t new_sound_sample;
+    uint32_t new_pos;
+
+	//wrong
+	uint32_t sound_sample_loc;
+
+    /* First check we have the appropriate metadata - we should always
+     * have it.
+     */
+       
+    if ((demux.num_time_to_samples==0) ||
+       (demux.num_sample_byte_sizes==0))
+    { 
+        return 0; 
+    }
+
+    /* Find the destination block from time_to_sample array */
+    
+    i = 0;
+    new_sample = 0;
+    new_sound_sample = 0;
+
+    while ((i < demux.num_time_to_samples) &&
+        (new_sound_sample < sound_sample_loc)) 
+    {
+        j = (sound_sample_loc - new_sound_sample) /
+            demux.time_to_sample[i].sample_duration;
+    
+        if (j <= demux.time_to_sample[i].sample_count)
+        {
+            new_sample += j;
+            new_sound_sample += j * 
+                demux.time_to_sample[i].sample_duration;
+            break;
+        } 
+        else 
+        {
+            new_sound_sample += (demux.time_to_sample[i].sample_duration
+                * demux.time_to_sample[i].sample_count);
+            new_sample += demux.time_to_sample[i].sample_count;
+            i++;
+        }
+    }
+
+    /* We know the new block, now calculate the file position. */
+  
+    //new_pos = get_sample_offset(demux, new_sample);
+
+    /* We know the new file position, so let's try to seek to it */
+  
+	//*MS = (unsigned long)(new_pos);
+    
+    return false;
 }
 
 bool		CALACDecoder::SetState(unsigned long State)
@@ -131,7 +199,7 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	
 	for(int x=0; x<outputBytes;x++)
 	{
-		*pBuffer = (float) ((double)(*pData) / m_divider);	
+		*pBuffer = (float) ((double)(*pData) / 32767.0f);	
 
 		pData ++;
 		pBuffer++;
@@ -141,5 +209,5 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	*NumSamples = outputBytes;
 
-	return(true);
+	return true;
 }
