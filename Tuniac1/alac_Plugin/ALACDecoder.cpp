@@ -194,14 +194,13 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	decoded_frames++;
 
-	int		* pData		= (int *)stream_buffer;
+	short	* pData		= (short *)buffer;
 	float	* pBuffer	= m_Buffer;
 	
 	for(int x=0; x<outputBytes;x++)
 	{
-		*pBuffer = (float) ((double)(*pData) / 32767.0f);	
-
-		pData ++;
+		*pBuffer = (*pData) / 32767.0f;
+		pData++;
 		pBuffer++;
 	}
 	*ppBuffer = m_Buffer;
