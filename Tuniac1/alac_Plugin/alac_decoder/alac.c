@@ -244,7 +244,7 @@ static void unreadbits(alac_file *alac, int bits)
  * and finally an unrolled and optimised c version
  * to fall back to
  */
-#if 0
+#if 1
 /* hideously inefficient. could use a bitmask search,
  * alternatively bsr on x86,
  */
