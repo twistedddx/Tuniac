@@ -3,6 +3,27 @@
 #include "alacdecoder.h"
 
 extern "C" int host_bigendian = 0;
+extern void set_endian();
+
+void set_endian()
+{
+
+/* what the hell is this?!? */
+	
+/*    uint32_t integer = 0x000000aa;
+    unsigned char *p = (unsigned char*)&integer;
+
+    if (p[0] == 0xaa) host_bigendian = 0;
+    else host_bigendian = 1; */
+
+/* Ok... we are doing it like that: */
+	
+	#if __BYTE_ORDER == __LITTLE_ENDIAN
+	host_bigendian = 0;
+	#elif __BYTE_ORDER == __BIG_ENDIAN
+	host_bigendian = 1;
+	#endif
+}
 
 CALACDecoder::CALACDecoder(void)
 {
@@ -14,11 +35,12 @@ CALACDecoder::~CALACDecoder(void)
 
 bool CALACDecoder::Open(LPTSTR szSource)
 {
-    _wfopen_s(&m_file, szSource,TEXT("rbS"));
-    if (!m_file)
+    m_file = _wfopen(szSource, TEXT("rbS"));
+    if(m_file == NULL)
 		return false;
 
-	stream = stream_create_file(file, 1);
+	set_endian();
+	stream = stream_create_file(m_file, 1);
 
 	if(!qtmovie_read(stream, &demux)) {
 		//ALAC: alac_decode: failed to load the QuickTime movie headers!

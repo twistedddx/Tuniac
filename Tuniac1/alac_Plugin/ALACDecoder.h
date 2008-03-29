@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include <stdio.h>
 
 extern "C" {
 

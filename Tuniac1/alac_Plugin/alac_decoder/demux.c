@@ -32,7 +32,19 @@
 
 #include <string.h>
 #include <stdio.h>
-//#include <stdint.h>
+#if defined(_WIN32) && !defined(__MINGW32__)
+typedef unsigned __int64 uint64_t;
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int8 uint8_t;
+typedef __int64 int64_t;
+typedef __int32 int32_t;
+typedef __int16 int16_t;
+typedef __int8  int8_t;
+typedef float float32_t;
+#else
+#include <inttypes.h>
+#endif
 #include <stdlib.h>
 
 #include "stream.h"
@@ -42,288 +54,685 @@ typedef struct
 {
     stream_t *stream;
     demux_res_t *res;
+    long saved_mdat_pos;
 } qtmovie_t;
 
-static	int	g_IsM4AFile;
-static	int g_IsAppleLossless;
-static	int	g_FoundMdatAtom;
-static	int g_StopParsing;
 
-// -------------------------------------------------------------------------------------------------
-// Private data & functions purely to satisfy MP4 tag processing code...
-
-#define	MAKE_ATOM_NAME( a, b, c, d )	( ( (a) << 24 ) | ( (b) << 16 ) | ( (c) << 8 ) | (d) )
-
-static const unsigned int	g_FtypAtomName			=	MAKE_ATOM_NAME(	 'f', 't', 'y', 'p' );	// 'ftyp'
-static const unsigned int	g_StsdAtomName			=	MAKE_ATOM_NAME(	 's', 't', 's', 'd' );	// 'stsd'
-static const unsigned int	g_SttsAtomName			=	MAKE_ATOM_NAME(	 's', 't', 't', 's' );	// 'stts'
-static const unsigned int	g_StszAtomName			=	MAKE_ATOM_NAME(	 's', 't', 's', 'z' );	// 'stsz'
-static const unsigned int	g_MdatAtomName			=	MAKE_ATOM_NAME(	 'm', 'd', 'a', 't' );	// 'mdat'
-
-// These atoms contain other atoms.. so when we find them, we have to recurse..
-
-static unsigned int	g_ContainerAtoms[] =
+/* chunk handlers */
+static void read_chunk_ftyp(qtmovie_t *qtmovie, size_t chunk_len)
 {
-    MAKE_ATOM_NAME( 'm', 'o', 'o', 'v' ),
-    MAKE_ATOM_NAME( 't', 'r', 'a', 'k' ),
-    MAKE_ATOM_NAME( 'u', 'd', 't', 'a' ),
-    MAKE_ATOM_NAME( 't', 'r', 'e', 'f' ),
-    MAKE_ATOM_NAME( 'i', 'm', 'a', 'p' ),
-    MAKE_ATOM_NAME( 'm', 'd', 'i', 'a' ),
-    MAKE_ATOM_NAME( 'm', 'i', 'n', 'f' ),
-    MAKE_ATOM_NAME( 's', 't', 'b', 'l' ),
-    MAKE_ATOM_NAME( 'e', 'd', 't', 's' ),
-    MAKE_ATOM_NAME( 'm', 'd', 'r', 'a' ),
-    MAKE_ATOM_NAME( 'r', 'm', 'r', 'a' ),
-    MAKE_ATOM_NAME( 'i', 'm', 'a', 'g' ),
-    MAKE_ATOM_NAME( 'v', 'n', 'r', 'p' ),
-    MAKE_ATOM_NAME( 'd', 'i', 'n', 'f' ),
-};
+    fourcc_t type;
+    uint32_t minor_ver;
+    size_t size_remaining = chunk_len - 8; /* FIXME: can't hardcode 8, size may be 64bit */
 
-
-
-// Read a 32-bit unsigned integer from an unaligned buffer address.
-
-static unsigned int ReadUnsignedInt( const char* pData )
-{
-  unsigned int result;
-
-  result =  ((unsigned int)pData[0] & 0xff) << 24;
-  result |= ((unsigned int)pData[1] & 0xff) << 16;
-  result |= ((unsigned int)pData[2] & 0xff) << 8;
-  result |= ((unsigned int)pData[3] & 0xff) << 0;
-  return result;
-}
-
-// Read a 16-bit unsigned short from an unaligned buffer address.
-
-static unsigned short ReadUnsignedShort( const char* pData )
-{
-  unsigned int result;
-
-  result =  ((unsigned int)pData[0] & 0xff) << 8;
-  result |= ((unsigned int)pData[1] & 0xff) << 0;
-  return result;
-}
-
-static void	ProcessFtypAtom( char* atomData, qtmovie_t* qtmovie )
-{
-	unsigned int	type = ReadUnsignedInt( atomData );
-
-	if ( type == MAKE_ATOM_NAME( 'M', '4', 'A', ' ' ) )
-		g_IsM4AFile = 1;
-	else
-	{
-		// Not an M4A file, so time to stop.. 
-		g_StopParsing = 1;
-	}
-}
-
-static void	ProcessStsdAtom( char* atomData, qtmovie_t* qtmovie )
-{	
-	unsigned int entrySize;
-	unsigned int numEntries = ReadUnsignedInt( &atomData[ 4 ] );
-
-	// According to original source, we only expect one entry in sample description atom
-	if ( numEntries != 1 )
-		return;
-	
-	// The size of the entry is...?
-	entrySize = ReadUnsignedInt( &atomData[ 8 ] );
-	qtmovie->res->format = ReadUnsignedInt( &atomData[ 12 ] );
-
-	if ( qtmovie->res->format == MAKE_ATOM_NAME( 'a', 'l', 'a', 'c' ) )
-	{
-		g_IsAppleLossless = 1;
-
-		qtmovie->res->num_channels	= ReadUnsignedShort( &atomData[ 32 ] );
-		qtmovie->res->sample_size	= ReadUnsignedShort( &atomData[ 34 ] );
-		qtmovie->res->sample_rate	= ReadUnsignedShort( &atomData[ 40 ] );
-
-		// 36 is the bytes for prior to codec data for this entry.
-		// 12 is the additional size of our atom header (the 3 uint writes)
-		// 8 is for padding, as the original code is a bit paranoid..
-		qtmovie->res->codecdata_len = ( entrySize - 36 ) + 12 + 8;
-		qtmovie->res->codecdata = malloc( qtmovie->res->codecdata_len );
-		memset( qtmovie->res->codecdata, 0, qtmovie->res->codecdata_len );
-		
-		( ( unsigned int* )qtmovie->res->codecdata )[0] = 0x0c000000;
-		( ( unsigned int* )qtmovie->res->codecdata )[1] = MAKE_ATOM_NAME( 'a', 'm', 'r', 'f' );
-		( ( unsigned int* )qtmovie->res->codecdata )[2] = MAKE_ATOM_NAME( 'c', 'a', 'l', 'a' );
-		memcpy( ( ( char* )qtmovie->res->codecdata ) + 12, &atomData[ 44 ], qtmovie->res->codecdata_len - 8 );
-	}
-	else
-	{
-		// Not an apple lossless file.. not interested.
-		g_StopParsing = 1;
-	}
-}
-
-static void	ProcessSttsAtom( char* atomData, qtmovie_t* qtmovie )
-{
-	unsigned int loop;
-	unsigned int numEntries = ReadUnsignedInt( &atomData[ 4 ] );
-	qtmovie->res->num_time_to_samples = numEntries;
-	qtmovie->res->time_to_sample = (struct time_to_sample *)malloc( numEntries * sizeof( *qtmovie->res->time_to_sample ) );
-
-	for ( loop = 0; loop < numEntries; loop++ )
-	{	
-		qtmovie->res->time_to_sample[ loop ].sample_count		= ReadUnsignedInt( &atomData[ 8 + ( 8 * loop ) + 0 ] );
-		qtmovie->res->time_to_sample[ loop ].sample_duration	= ReadUnsignedInt( &atomData[ 8 + ( 8 * loop ) + 4 ] );
-	}
-}
-
-static void ProcessStszAtom( char* atomData, qtmovie_t* qtmovie )
-{
-	unsigned int loop;
-	unsigned int numEntries;
-	if ( ReadUnsignedInt( &atomData[ 4 ] ) == 0 )
-	{
-		numEntries = ReadUnsignedInt( &atomData[ 8 ] );
-		qtmovie->res->num_sample_byte_sizes = numEntries;	
-		qtmovie->res->sample_byte_size = (unsigned int *)malloc( numEntries * sizeof( *qtmovie->res->sample_byte_size ) );
-	
-		for ( loop = 0; loop < numEntries; loop++ )
-		{
-			qtmovie->res->sample_byte_size[ loop ] = ReadUnsignedInt( &atomData[ 12 + ( 4 * loop ) ] );
-		}
-	}
-}
-
-static char*	GetAtomData( qtmovie_t* qtmovie, int atomSize )
-{
-	char* pMemory = (char*)malloc( atomSize );
-	stream_read( qtmovie->stream, atomSize, pMemory );
-	return pMemory;
-}
-
-static void		FreeAtomData( char* atomData )
-{
-	free( atomData );
-}
-
-static void ParseAtom( int startOffset, int stopOffset, qtmovie_t* qtmovie )
-{
-  long			currentOffset;
-
-  int			containerAtom;
-  int			atomSize;
-  unsigned int	atomName;
-  char			atomHeader[ 10 ];
-
-  if ( g_StopParsing )
-	return;
-
-  currentOffset = startOffset;
-  while ( currentOffset < stopOffset)
-  {
-    // Seek to the atom header
-    stream_seek( qtmovie->stream, currentOffset, SEEK_SET );
-
-	memset( atomHeader, 0, 10 );
-
-    // Read it in.. we only want the atom name & size..	they're always there..
-    stream_read( qtmovie->stream, 8, atomHeader );
-
-    // Now pull out the bits we need..
-    atomSize = ReadUnsignedInt( &atomHeader[ 0 ] );
-    atomName = ReadUnsignedInt( &atomHeader[ 4 ] );
-
-    // See if it's a container atom.. if it is, then recursively call ParseAtom on it...
-    for ( containerAtom = 0; containerAtom < ( sizeof( g_ContainerAtoms ) / sizeof( unsigned int ) ); containerAtom++ )
+    type = stream_read_uint32(qtmovie->stream);
+    size_remaining-=4;
+    if (type != MAKEFOURCC('M','4','A',' '))
     {
-      if ( atomName == g_ContainerAtoms[ containerAtom ] )
-      {
-        ParseAtom( stream_tell( qtmovie->stream ), currentOffset + atomSize, qtmovie );
-        break;
-      }
+        fprintf(stderr, "not M4A file\n");
+        return;
+    }
+    minor_ver = stream_read_uint32(qtmovie->stream);
+    size_remaining-=4;
+
+    /* compatible brands */
+    while (size_remaining)
+    {
+        /* unused */
+        /*fourcc_t cbrand =*/ stream_read_uint32(qtmovie->stream);
+        size_remaining-=4;
+    }
+}
+
+static void read_chunk_tkhd(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+static void read_chunk_mdhd(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+static void read_chunk_edts(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+static void read_chunk_elst(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+/* media handler inside mdia */
+static void read_chunk_hdlr(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    fourcc_t comptype, compsubtype;
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    int strlen;
+    char str[256] = {0};
+
+    /* version */
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 1;
+    /* flags */
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 3;
+
+    /* component type */
+    comptype = stream_read_uint32(qtmovie->stream);
+    compsubtype = stream_read_uint32(qtmovie->stream);
+    size_remaining -= 8;
+
+    /* component manufacturer */
+    stream_read_uint32(qtmovie->stream);
+    size_remaining -= 4;
+
+    /* flags */
+    stream_read_uint32(qtmovie->stream);
+    stream_read_uint32(qtmovie->stream);
+    size_remaining -= 8;
+
+    /* name */
+    strlen = stream_read_uint8(qtmovie->stream);
+    stream_read(qtmovie->stream, strlen, str);
+    size_remaining -= 1 + strlen;
+
+    if (size_remaining)
+    {
+        stream_skip(qtmovie->stream, size_remaining);
     }
 
-	if ( atomName == g_FtypAtomName )
-	{
-		char* pAtomData = GetAtomData( qtmovie, atomSize );
-		ProcessFtypAtom( pAtomData, qtmovie );
-		FreeAtomData( pAtomData );
-	}
-	else
-	if ( atomName == g_StsdAtomName )
-	{
-		char* pAtomData = GetAtomData( qtmovie, atomSize );
-		ProcessStsdAtom( pAtomData, qtmovie );
-		FreeAtomData( pAtomData );
-	}
-	else
-	if ( atomName == g_SttsAtomName )
-	{
-		char* pAtomData = GetAtomData( qtmovie, atomSize );
-		ProcessSttsAtom( pAtomData, qtmovie );
-		FreeAtomData( pAtomData );
-	}
-	else
-	if ( atomName == g_StszAtomName )
-	{
-		char* pAtomData = GetAtomData( qtmovie, atomSize );
-		ProcessStszAtom( pAtomData, qtmovie );
-		FreeAtomData( pAtomData );
-	}
-	else
-	if ( atomName == g_MdatAtomName )
-	{
-		g_FoundMdatAtom = 1;
-		g_StopParsing = 1;
-	}
-
-    // If we've got a zero sized atom, then it's all over.. force the offset to trigger a stop.
-    if ( atomSize == 0 )
-      currentOffset = stopOffset;
-    else
-      currentOffset += atomSize;	
-  }
-
-  // Everything seems to have gone ok...
-  return;
 }
 
-// I kept the same interface, because.. well.. it seemed to make sense at the time.
+static int read_chunk_stsd(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    unsigned int i;
+    uint32_t numentries;
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    /* version */
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 1;
+    /* flags */
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 3;
+
+    numentries = stream_read_uint32(qtmovie->stream);
+    size_remaining -= 4;
+
+    if (numentries != 1)
+    {
+        fprintf(stderr, "only expecting one entry in sample description atom!\n");
+        return 0;
+    }
+
+    for (i = 0; i < numentries; i++)
+    {
+        uint32_t entry_size;
+        uint16_t version;
+
+        uint32_t entry_remaining;
+
+        entry_size = stream_read_uint32(qtmovie->stream);
+        qtmovie->res->format = stream_read_uint32(qtmovie->stream);
+        entry_remaining = entry_size;
+        entry_remaining -= 8;
+
+        /* sound info: */
+
+        stream_skip(qtmovie->stream, 6); /* reserved */
+        entry_remaining -= 6;
+
+        version = stream_read_uint16(qtmovie->stream);
+        if (version != 1)
+            fprintf(stderr, "unknown version??\n");
+        entry_remaining -= 2;
+
+        /* revision level */
+        stream_read_uint16(qtmovie->stream);
+        /* vendor */
+        stream_read_uint32(qtmovie->stream);
+        entry_remaining -= 6;
+
+        /* EH?? spec doesn't say theres an extra 16 bits here.. but there is! */
+        stream_read_uint16(qtmovie->stream);
+        entry_remaining -= 2;
+
+        qtmovie->res->num_channels = stream_read_uint16(qtmovie->stream);
+
+        qtmovie->res->sample_size = stream_read_uint16(qtmovie->stream);
+        entry_remaining -= 4;
+
+        /* compression id */
+        stream_read_uint16(qtmovie->stream);
+        /* packet size */
+        stream_read_uint16(qtmovie->stream);
+        entry_remaining -= 4;
+
+        /* sample rate - 32bit fixed point = 16bit?? */
+        qtmovie->res->sample_rate = stream_read_uint16(qtmovie->stream);
+        entry_remaining -= 2;
+
+        /* skip 2 */
+        stream_skip(qtmovie->stream, 2);
+        entry_remaining -= 2;
+
+        /* remaining is codec data */
+
+#if 0
+        qtmovie->res->codecdata_len = stream_read_uint32(qtmovie->stream);
+        if (qtmovie->res->codecdata_len != entry_remaining)
+            fprintf(stderr, "perhaps not? %i vs %i\n",
+                    qtmovie->res->codecdata_len, entry_remaining);
+        entry_remaining -= 4;
+        stream_read_uint32(qtmovie->stream); /* 'alac' */
+        entry_remaining -= 4;
+
+        qtmovie->res->codecdata = malloc(qtmovie->res->codecdata_len - 8);
+
+        stream_read(qtmovie->stream,
+                entry_remaining,
+                qtmovie->res->codecdata);
+        entry_remaining = 0;
+
+#else
+        /* 12 = audio format atom, 8 = padding */
+        qtmovie->res->codecdata_len = entry_remaining + 12 + 8;
+        qtmovie->res->codecdata = malloc(qtmovie->res->codecdata_len);
+        memset(qtmovie->res->codecdata, 0, qtmovie->res->codecdata_len);
+        /* audio format atom */
+        ((unsigned int*)qtmovie->res->codecdata)[0] = 0x0c000000;
+        ((unsigned int*)qtmovie->res->codecdata)[1] = MAKEFOURCC('a','m','r','f');
+        ((unsigned int*)qtmovie->res->codecdata)[2] = MAKEFOURCC('c','a','l','a');
+
+        stream_read(qtmovie->stream,
+                entry_remaining,
+                ((char*)qtmovie->res->codecdata) + 12);
+        entry_remaining -= entry_remaining;
+
+#endif
+        if (entry_remaining)
+            stream_skip(qtmovie->stream, entry_remaining);
+
+        qtmovie->res->format_read = 1;
+        if (qtmovie->res->format != MAKEFOURCC('a','l','a','c'))
+        {
+            /*fprintf(stderr, "expecting 'alac' data format, got %c%c%c%c\n",
+                    SPLITFOURCC(qtmovie->res->format));*/
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static void read_chunk_stts(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    unsigned int i;
+    uint32_t numentries;
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    /* version */
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 1;
+    /* flags */
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 3;
+
+    numentries = stream_read_uint32(qtmovie->stream);
+    size_remaining -= 4;
+
+    qtmovie->res->num_time_to_samples = numentries;
+    qtmovie->res->time_to_sample = malloc(numentries * sizeof(*qtmovie->res->time_to_sample));
+
+    for (i = 0; i < numentries; i++)
+    {
+        qtmovie->res->time_to_sample[i].sample_count = stream_read_uint32(qtmovie->stream);
+        qtmovie->res->time_to_sample[i].sample_duration = stream_read_uint32(qtmovie->stream);
+        size_remaining -= 8;
+    }
+
+    if (size_remaining)
+    {
+        fprintf(stderr, "ehm, size remianing?\n");
+        stream_skip(qtmovie->stream, size_remaining);
+    }
+}
+
+static void read_chunk_stsz(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    unsigned int i;
+    uint32_t numentries;
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    /* version */
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 1;
+    /* flags */
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    stream_read_uint8(qtmovie->stream);
+    size_remaining -= 3;
+
+    /* default sample size */
+    if (stream_read_uint32(qtmovie->stream) != 0)
+    {
+        fprintf(stderr, "i was expecting variable samples sizes\n");
+        stream_read_uint32(qtmovie->stream);
+        size_remaining -= 4;
+        return;
+    }
+    size_remaining -= 4;
+
+    numentries = stream_read_uint32(qtmovie->stream);
+    size_remaining -= 4;
+
+    qtmovie->res->num_sample_byte_sizes = numentries;
+    qtmovie->res->sample_byte_size = malloc(numentries * sizeof(*qtmovie->res->sample_byte_size));
+
+    for (i = 0; i < numentries; i++)
+    {
+        qtmovie->res->sample_byte_size[i] = stream_read_uint32(qtmovie->stream);
+        size_remaining -= 4;
+    }
+
+    if (size_remaining)
+    {
+        fprintf(stderr, "ehm, size remianing?\n");
+        stream_skip(qtmovie->stream, size_remaining);
+    }
+}
+
+static int read_chunk_stbl(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    while (size_remaining)
+    {
+        size_t sub_chunk_len;
+        fourcc_t sub_chunk_id;
+
+        sub_chunk_len = stream_read_uint32(qtmovie->stream);
+        if (sub_chunk_len <= 1 || sub_chunk_len > size_remaining)
+        {
+            fprintf(stderr, "strange size for chunk inside stbl (%lu) (remaining: %lu)\n",
+                    sub_chunk_len, size_remaining);
+            return 0;
+        }
+
+        sub_chunk_id = stream_read_uint32(qtmovie->stream);
+
+        switch (sub_chunk_id)
+        {
+        case MAKEFOURCC('s','t','s','d'):
+            if (read_chunk_stsd(qtmovie, sub_chunk_len) == 0)
+                return 0;
+            break;
+        case MAKEFOURCC('s','t','t','s'):
+            read_chunk_stts(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('s','t','s','z'):
+            read_chunk_stsz(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('s','t','s','c'):
+        case MAKEFOURCC('s','t','c','o'):
+            /* skip these, no indexing for us! */
+            stream_skip(qtmovie->stream, sub_chunk_len - 8);
+            break;
+        default:
+            fprintf(stderr, "(stbl) unknown chunk id: %c%c%c%c\n",
+                    SPLITFOURCC(sub_chunk_id));
+            return 0;
+        }
+
+        size_remaining -= sub_chunk_len;
+    }
+
+    return 1;
+}
+
+static int read_chunk_minf(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    size_t dinf_size, stbl_size;
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+  /**** SOUND HEADER CHUNK ****/
+    if (stream_read_uint32(qtmovie->stream) != 16)
+    {
+        fprintf(stderr, "unexpected size in media info\n");
+        return 0;
+    }
+    if (stream_read_uint32(qtmovie->stream) != MAKEFOURCC('s','m','h','d'))
+    {
+        fprintf(stderr, "not a sound header! can't handle this.\n");
+        return 0;
+    }
+    /* now skip the rest */
+    stream_skip(qtmovie->stream, 16 - 8);
+    size_remaining -= 16;
+  /****/
+
+  /**** DINF CHUNK ****/
+    dinf_size = stream_read_uint32(qtmovie->stream);
+    if (stream_read_uint32(qtmovie->stream) != MAKEFOURCC('d','i','n','f'))
+    {
+        fprintf(stderr, "expected dinf, didn't get it.\n");
+        return 0;
+    }
+    /* skip it */
+    stream_skip(qtmovie->stream, dinf_size - 8);
+    size_remaining -= dinf_size;
+  /****/
+
+
+  /**** SAMPLE TABLE ****/
+    stbl_size = stream_read_uint32(qtmovie->stream);
+    if (stream_read_uint32(qtmovie->stream) != MAKEFOURCC('s','t','b','l'))
+    {
+        fprintf(stderr, "expected stbl, didn't get it.\n");
+        return 0;
+    }
+    if (read_chunk_stbl(qtmovie, stbl_size) == 0)
+        return 0;
+    size_remaining -= stbl_size;
+
+    if (size_remaining)
+    {
+        fprintf(stderr, "oops\n");
+        stream_skip(qtmovie->stream, size_remaining);
+    }
+
+    return 1;
+}
+
+static int read_chunk_mdia(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    while (size_remaining)
+    {
+        size_t sub_chunk_len;
+        fourcc_t sub_chunk_id;
+
+        sub_chunk_len = stream_read_uint32(qtmovie->stream);
+        if (sub_chunk_len <= 1 || sub_chunk_len > size_remaining)
+        {
+            fprintf(stderr, "strange size for chunk inside mdia\n");
+            return 0;
+        }
+
+        sub_chunk_id = stream_read_uint32(qtmovie->stream);
+
+        switch (sub_chunk_id)
+        {
+        case MAKEFOURCC('m','d','h','d'):
+            read_chunk_mdhd(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('h','d','l','r'):
+            read_chunk_hdlr(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('m','i','n','f'):
+            if (read_chunk_minf(qtmovie, sub_chunk_len) == 0)
+                return 0;
+            break;
+        default:
+            fprintf(stderr, "(mdia) unknown chunk id: %c%c%c%c\n",
+                    SPLITFOURCC(sub_chunk_id));
+            return 0;
+        }
+
+        size_remaining -= sub_chunk_len;
+    }
+
+    return 1;
+}
+
+/* 'trak' - a movie track - contains other atoms */
+static int read_chunk_trak(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    while (size_remaining)
+    {
+        size_t sub_chunk_len;
+        fourcc_t sub_chunk_id;
+
+        sub_chunk_len = stream_read_uint32(qtmovie->stream);
+        if (sub_chunk_len <= 1 || sub_chunk_len > size_remaining)
+        {
+            fprintf(stderr, "strange size for chunk inside trak\n");
+            return 0;
+        }
+
+        sub_chunk_id = stream_read_uint32(qtmovie->stream);
+
+        switch (sub_chunk_id)
+        {
+        case MAKEFOURCC('t','k','h','d'):
+            read_chunk_tkhd(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('m','d','i','a'):
+            if (read_chunk_mdia(qtmovie, sub_chunk_len) == 0)
+                return 0;
+            break;
+        case MAKEFOURCC('e','d','t','s'):
+            read_chunk_edts(qtmovie, sub_chunk_len);
+            break;
+        default:
+            fprintf(stderr, "(trak) unknown chunk id: %c%c%c%c\n",
+                    SPLITFOURCC(sub_chunk_id));
+            return 0;
+        }
+
+        size_remaining -= sub_chunk_len;
+    }
+
+    return 1;
+}
+
+/* 'mvhd' movie header atom */
+static void read_chunk_mvhd(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+/* 'udta' user data.. contains tag info */
+static void read_chunk_udta(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+/* 'iods' */
+static void read_chunk_iods(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    /* don't need anything from here atm, skip */
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    stream_skip(qtmovie->stream, size_remaining);
+}
+
+/* 'moov' movie atom - contains other atoms */
+static int read_chunk_moov(qtmovie_t *qtmovie, size_t chunk_len)
+{
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    while (size_remaining)
+    {
+        size_t sub_chunk_len;
+        fourcc_t sub_chunk_id;
+
+        sub_chunk_len = stream_read_uint32(qtmovie->stream);
+        if (sub_chunk_len <= 1 || sub_chunk_len > size_remaining)
+        {
+            fprintf(stderr, "strange size for chunk inside moov\n");
+            return 0;
+        }
+
+        sub_chunk_id = stream_read_uint32(qtmovie->stream);
+
+        switch (sub_chunk_id)
+        {
+        case MAKEFOURCC('m','v','h','d'):
+            read_chunk_mvhd(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('t','r','a','k'):
+            if (read_chunk_trak(qtmovie, sub_chunk_len) == 0)
+                return 0;
+            break;
+        case MAKEFOURCC('u','d','t','a'):
+            read_chunk_udta(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('e','l','s','t'):
+            read_chunk_elst(qtmovie, sub_chunk_len);
+            break;
+        case MAKEFOURCC('i','o','d','s'):
+            read_chunk_iods(qtmovie, sub_chunk_len);
+            break;
+        default:
+            fprintf(stderr, "(moov) unknown chunk id: %c%c%c%c\n",
+                    SPLITFOURCC(sub_chunk_id));
+            return 0;
+        }
+
+        size_remaining -= sub_chunk_len;
+    }
+
+    return 1;
+}
+
+static void read_chunk_mdat(qtmovie_t *qtmovie, size_t chunk_len, int skip_mdat)
+{
+    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+
+    if (size_remaining == 0) return;
+
+    qtmovie->res->mdat_len = (uint32_t)size_remaining;
+    if (skip_mdat)
+    {
+        qtmovie->saved_mdat_pos = stream_tell(qtmovie->stream);
+        stream_skip(qtmovie->stream, size_remaining);
+    }
+#if 0
+    qtmovie->res->mdat = malloc(size_remaining);
+
+    stream_read(qtmovie->stream, size_remaining, qtmovie->res->mdat);
+#endif
+}
+
+static int set_saved_mdat(qtmovie_t *qtmovie)
+{
+    if (qtmovie->saved_mdat_pos == -1)
+    {
+        fprintf(stderr, "stream contains mdat before moov but is not seekable\n");
+        return 0;
+    }
+
+    if (stream_setpos(qtmovie->stream, qtmovie->saved_mdat_pos))
+    {
+        fprintf(stderr, "error while seeking stream to mdat pos\n");
+        return 0;
+    }
+
+    return 1;
+}
+
 int qtmovie_read(stream_t *file, demux_res_t *demux_res)
 {
-	// Our parameter object..
-	qtmovie_t	qtmovie;
+    int found_moov = 0;
+    int found_mdat = 0;
+    qtmovie_t *qtmovie;
 
-	// Our filesize
-	long		fileSize;
+    qtmovie = (qtmovie_t*)malloc(sizeof(qtmovie_t));
 
-	// We haven't found the mdat chunk yet..
-	g_FoundMdatAtom		= 0;
-	g_IsM4AFile			= 0;
-	g_IsAppleLossless	= 0;
-	g_StopParsing		= 0;
-	
-    // construct the stream;
-    qtmovie.stream	= file;
-    qtmovie.res		= demux_res;
+    /* construct the stream */
+    qtmovie->stream = file;
 
-	// Find the file length..
-	stream_seek( file, 0, SEEK_END );
-	fileSize = stream_tell( file );
-	stream_seek( file, 0, SEEK_SET );
-	
-	// find the goo inside..
-	ParseAtom( 0, fileSize, &qtmovie );
-		
-	// Return our state to the caller..
-	if ( g_FoundMdatAtom && g_IsM4AFile && g_IsAppleLossless )
-		return 1;
-	else
-	{
-		// Something didn't go right, so we attempt to clear the allocations that were made during
-		// the failed call, before returning that it failed to the caller.
-		free( demux_res->codecdata );
-		free( demux_res->time_to_sample );
-		free( demux_res->sample_byte_size );
-		return 0;
-	}
+    qtmovie->res = demux_res;
+
+    memset(demux_res, 0, sizeof(demux_res_t));
+
+    /* read the chunks */
+    while (1)
+    {
+        size_t chunk_len;
+        fourcc_t chunk_id;
+
+        chunk_len = stream_read_uint32(qtmovie->stream);
+        if (stream_eof(qtmovie->stream))
+        {
+            return 0;
+        }
+
+        if (chunk_len == 1)
+        {
+            fprintf(stderr, "need 64bit support\n");
+            return 0;
+        }
+        chunk_id = stream_read_uint32(qtmovie->stream);
+
+        switch (chunk_id)
+        {
+        case MAKEFOURCC('f','t','y','p'):
+            read_chunk_ftyp(qtmovie, chunk_len);
+            break;
+        case MAKEFOURCC('m','o','o','v'):
+            if (read_chunk_moov(qtmovie, chunk_len) == 0)
+                return 0; /* failed to read moov, can't do anything */
+            if (found_mdat)
+            {
+                return set_saved_mdat(qtmovie);
+            }
+            found_moov = 1;
+            break;
+            /* if we hit mdat before we've found moov, record the position
+             * and move on. We can then come back to mdat later.
+             * This presumes the stream supports seeking backwards.
+             */
+        case MAKEFOURCC('m','d','a','t'):
+            read_chunk_mdat(qtmovie, chunk_len, !found_moov);
+            if (found_moov)
+                return 1;
+            found_mdat = 1;
+            break;
+
+            /*  these following atoms can be skipped !!!! */
+        case MAKEFOURCC('f','r','e','e'):
+            stream_skip(qtmovie->stream, chunk_len - 8); /* FIXME not 8 */
+            break;
+        default:
+            fprintf(stderr, "(top) unknown chunk id: %c%c%c%c\n",
+                    SPLITFOURCC(chunk_id));
+            return 0;
+        }
+
+    }
+    return 0;
 }
-
 
 
