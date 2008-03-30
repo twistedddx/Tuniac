@@ -18,12 +18,12 @@ bool COFRDecoder::Open(LPTSTR szSource)
 	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
 
     decoderInstance = OptimFROG_createInstance();
-    if (decoderInstance == C_NULL)
+    if (decoderInstance == NULL)
         return 0;
     if (!OptimFROG_open(decoderInstance, tempname))
     {
         OptimFROG_destroyInstance(decoderInstance);
-        decoderInstance = C_NULL;
+        decoderInstance = NULL;
         return 0;
     }
 
@@ -62,6 +62,8 @@ bool COFRDecoder::Open(LPTSTR szSource)
 
 bool COFRDecoder::Close()
 {
+	if (decoderInstance != NULL)
+		OptimFROG_destroyInstance(decoderInstance);
 	delete [] buffer;
 	buffer = NULL;
 	return(true);

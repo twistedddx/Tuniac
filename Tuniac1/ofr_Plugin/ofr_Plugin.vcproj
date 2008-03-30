@@ -379,6 +379,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OFRInfoManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ofrPlugin.cpp"
 				>
 			</File>
@@ -398,6 +402,10 @@
 			</File>
 			<File
 				RelativePath=".\OFRDecoderPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OFRInfoManager.h"
 				>
 			</File>
 			<File
