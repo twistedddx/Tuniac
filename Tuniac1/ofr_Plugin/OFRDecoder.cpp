@@ -2,8 +2,6 @@
 
 #include "ofrdecoder.h"
 
-extern "C" int host_bigendian = 0;
-
 COFRDecoder::COFRDecoder(void)
 {
 }
