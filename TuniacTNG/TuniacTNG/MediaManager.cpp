@@ -30,8 +30,9 @@ bool CMediaManager::Initialize(void)
 			String DBColumns[] =
 			{
 				TEXT("EntryID				 INTEGER PRIMARY KEY"),
-				TEXT("DateAdded				 DATETIME"),
 				TEXT("DirtyFlag				 INT"),
+
+				TEXT("DateAdded				 DATETIME"),
 				TEXT("FileUnavailable		 INT"),
 
 				TEXT("Filename				 TEXT"),
@@ -42,11 +43,12 @@ bool CMediaManager::Initialize(void)
 				TEXT("Title					 TEXT"),
 				TEXT("Artist				 TEXT"),
 				TEXT("DiscTitle				 TEXT"),
-				TEXT("Composer				 TEXT"),
 				TEXT("Album					 TEXT"),
 				TEXT("AlbumArtist			 TEXT"),
+				TEXT("Composer				 TEXT"),
 				TEXT("Year					 INT"),
 				TEXT("Genre					 TEXT"),
+				TEXT("Comment				 TEXT"),
 
 				TEXT("Track					 INT"),
 				TEXT("MaxTrack				 INT"),
@@ -54,8 +56,8 @@ bool CMediaManager::Initialize(void)
 				TEXT("Disc					 INT"),
 				TEXT("MaxDisc				 INT"),
 
-				TEXT("Comment				 TEXT"),
 				TEXT("Rating				 INT"),
+				TEXT("BPM					 INT"),
 
 				TEXT("PlaybackTime			 INT"),
 				TEXT("PlaybackTimeAccuracy	 INT"),
@@ -63,8 +65,6 @@ bool CMediaManager::Initialize(void)
 				TEXT("SampleRate			 INT"),
 				TEXT("Channels				 INT"),
 				TEXT("Bitrate				 INT"),
-
-				TEXT("BPM					 INT"),
 
 				TEXT("FirstPlayed			 DATETIME"),
 				TEXT("LastPlayed			 DATETIME"),
@@ -227,6 +227,11 @@ bool CMediaManager::AddFile(String filename)
 	{
 		String insertFilenameSQL = TEXT("insert into MediaLibrary (DateAdded, Filename) values (DATETIME('now','localtime'), ?)");
 
+
+		MediaItem	newItem;
+		PopulateMediaItemFromAccessor(newItem, pAccessor);
+
+
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command cmd(con, insertFilenameSQL);
 
@@ -245,4 +250,66 @@ bool CMediaManager::AddFile(String filename)
 		pAccessor->Destroy();
 
 	return bret;
+}
+
+
+bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAccessor * pAccessor)
+{
+	TCHAR			temp[1024];
+	__int64			tempint;
+
+
+	//mediaItem.filename			= filename;
+	//mediaItem.ulFilesize		= 1024;
+
+	pAccessor->GetTextField(Title, temp, 1024);
+	mediaItem.title				= temp;	
+
+	pAccessor->GetTextField(Artist, temp, 1024);
+	mediaItem.artist			= temp;	
+
+	pAccessor->GetTextField(Album, temp, 1024);
+	mediaItem.album				= temp;	
+
+	pAccessor->GetTextField(Composer, temp, 1024);
+	mediaItem.composer			= temp;	
+
+	pAccessor->GetTextField(Genre, temp, 1024);
+	mediaItem.genre				= temp;	
+
+	pAccessor->GetTextField(Comment, temp, 1024);
+	mediaItem.comment			= temp;	
+
+
+
+	pAccessor->GetIntField(Track, &tempint);
+	mediaItem.ulTrack			= tempint;
+
+	pAccessor->GetIntField(MaxTrack, &tempint);
+	mediaItem.ulMaxTrack		= tempint;
+
+
+
+	pAccessor->GetIntField(Disc, &tempint);
+	mediaItem.ulDisk			= tempint;
+	pAccessor->GetIntField(MaxDisc, &tempint);
+	mediaItem.ulMaxDisk			= tempint;
+
+
+	tempint = 0;
+	mediaItem.ulRating			= tempint;
+	mediaItem.ulBPM				= tempint;
+
+	
+	pAccessor->GetIntField(PlaybackTime, &tempint);
+	mediaItem.ulPlayTimeMS		= tempint;
+
+	pAccessor->GetIntField(SampleRate, &tempint);
+	mediaItem.ulSampleRate		= tempint;
+
+	pAccessor->GetIntField(Channels, &tempint);
+	mediaItem.ulChannelCount	= tempint;
+
+	pAccessor->GetIntField(Bitrate, &tempint);
+	mediaItem.ulBitRate			= tempint;
 }
