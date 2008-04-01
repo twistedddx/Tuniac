@@ -346,3 +346,37 @@ bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAc
 
 	return true;
 }
+
+bool CMediaManager::GetAlbums(StringArray & albumList)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	albumList.clear();
+
+	try
+	{
+		String sGetAlbumSQL = TEXT("SELECT DISTINCT Album FROM MediaLibrary;");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
+
+		sqlite3x::sqlite3_reader reader = albumcmd.executereader();
+
+		while(reader.read())
+		{
+			//existscmd.
+			String temp = reader.getstring(0);
+
+			albumList.push_back(temp);
+		}
+
+		reader.close();
+	}
+	catch(std::exception &ex) 
+	{
+		//LOGDEBUG("Exception Occured: " << ex.what());
+	}
+
+	return true;
+}

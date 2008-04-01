@@ -1,8 +1,11 @@
 #include "StdAfx.h"
 #include "GenericInfoAccessor.h"
 
+
+
 CGenericInfoAccessor::CGenericInfoAccessor(void)
 {
+	m_mpegFile = NULL;
 }
 
 CGenericInfoAccessor::~CGenericInfoAccessor(void)
@@ -14,7 +17,14 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 	m_File = TagLib::FileRef::create(filename, true, TagLib::AudioProperties::Accurate);
 
 	if(m_File)
+	{
+		if(!StrCmpI(TEXT(".mp3"), PathFindExtension(m_File->name())) )
+		{
+			m_mpegFile = (TagLib::MPEG::File *)m_File;
+		}
+
 		return true;
+	}
 
 	return false;
 }
@@ -127,6 +137,27 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 	return true;
 }
 
+
+/*
+			{
+
+			}
+
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["APIC"];
+				if(!l.isEmpty())
+				{
+					TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
+
+					picframe->mimeType();
+				}
+			}
+
+
+		}
+	}
+	*/
+
 bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 {
 	*toHere = 0;
@@ -146,8 +177,72 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 			break;
 
 		case MaxTrack:
-		case Disc:
+			{
+				if(m_mpegFile)
+				{
+					if(m_mpegFile->ID3v2Tag()) 
+					{
+						// Get the list of frames for a specific frame type
+						{
+							TagLib::ID3v2::FrameList l = m_mpegFile->ID3v2Tag()->frameListMap()["TRCK"];
+							if(!l.isEmpty())
+							{
+								//std::cout << l.front()->toString() << std::endl;
+								TagLib::String pszData = l.front()->toString();
+								int val = pszData.find("/");
+								if(val != -1)
+								{
+									TagLib::String trackMax = pszData.substr(val+1);
+									*toHere = trackMax.toInt();
+								}
+							}
+						}
+					}
+				}
+
+				// check other special accessors!
+			}
+			break;
+
 		case MaxDisc:
+		case Disc:
+			{
+				if(m_mpegFile)
+				{
+					if(m_mpegFile->ID3v2Tag()) 
+					{
+						// Get the list of frames for a specific frame type
+						{
+
+							TagLib::ID3v2::FrameList l = m_mpegFile->ID3v2Tag()->frameListMap()["TPOS"];
+							if(!l.isEmpty())
+							{
+								//std::cout << l.front()->toString() << std::endl;
+								TagLib::String pszData = l.front()->toString();
+								int val = pszData.find("/");
+								if(val == -1)
+								{
+									if(field == Disc)
+										*toHere = pszData.toInt();
+									else
+										*toHere = 0;
+								}
+								else
+								{
+									TagLib::String disk = pszData.substr(0,val);
+									TagLib::String diskMax = pszData.substr(val+1);
+
+									if(field == Disc)
+										*toHere = disk.toInt();
+									else
+										*toHere = diskMax.toInt();
+								}
+							}
+
+						}
+					}
+				}
+			}
 			break;
 
 		case PlaybackTime:
