@@ -8,10 +8,11 @@ typedef struct _MEDIAITEM_
 	unsigned __int64		ulItemID;
 
 	SYSTEMTIME				dateAdded;
-	unsigned long			fileOnline;
+	__int64					fileOnline;
 
 	String					filename;
-	unsigned long			ulFilesize;
+	__int64					ulFilesize;
+	SYSTEMTIME				fileModifiedTime;
 
 	String					title;	
 	String					artist;
@@ -21,20 +22,22 @@ typedef struct _MEDIAITEM_
 	String					genre;
 	String					comment;
 
-	unsigned long			ulTrack;
-	unsigned long			ulMaxTrack;
+	__int64					ulYear;
 
-	unsigned long			ulDisk;
-	unsigned long			ulMaxDisk;
+	__int64					ulTrack;
+	__int64					ulMaxTrack;
 
-	unsigned long			ulRating;
-	unsigned __int64		ulBPM;
+	__int64					ulDisk;
+	__int64					ulMaxDisk;
 
-	unsigned long			ulPlayTimeMS;
+	__int64					ulRating;
+	__int64					ulBPM;
 
-	unsigned long			ulSampleRate;
-	unsigned long			ulChannelCount;
-	unsigned long			ulBitRate;
+	__int64					ulPlayTimeMS;
+
+	__int64					ulSampleRate;
+	__int64					ulChannelCount;
+	__int64					ulBitRate;
 } MediaItem;
 
 class CMediaManager : public CSingleton<CMediaManager>

@@ -381,9 +381,9 @@ bool CMediaManager::AddFile(String filename)
 	}
 	catch(exception &ex) 
 	{
-//		String debugstring = ex.what();
-//		OutputDebugString(TEXT("Error: "));
-//		OutputDebugString((debugstring+TEXT("\n")).c_str());
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
 		return false;
 	}
 
