@@ -9,16 +9,21 @@ typedef enum InfoHandlerField
 	Album,			
 	Year,			
 	Genre,			
+	Comment,		
+
 	Track,			
 	MaxTrack,		
 	Disc,			
 	MaxDisc,		
-	Comment,		
+
 	Rating,			
+	BPM,
+
 	PlaybackTime,	
 	SampleRate,		
 	Channels,		
 	Bitrate,		
+	
 	AlbumArtImageCount,
 } InfoHandlerField;
 
