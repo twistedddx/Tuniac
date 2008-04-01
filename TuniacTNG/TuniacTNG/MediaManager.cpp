@@ -308,10 +308,6 @@ bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAc
 	TCHAR			temp[1024];
 	__int64			tempint;
 
-
-	//mediaItem.filename			= filename;
-	//mediaItem.ulFilesize		= 1024;
-
 	pAccessor->GetTextField(Title, temp, 1024);
 	mediaItem.title				= temp;	
 
@@ -330,38 +326,23 @@ bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAc
 	pAccessor->GetTextField(Comment, temp, 1024);
 	mediaItem.comment			= temp;	
 
+	pAccessor->GetIntField(Year,			&mediaItem.ulYear);
 
+	pAccessor->GetIntField(Track,			&mediaItem.ulTrack);
+	pAccessor->GetIntField(MaxTrack,		&mediaItem.ulMaxTrack);
 
-	pAccessor->GetIntField(Track, &tempint);
-	mediaItem.ulTrack			= tempint;
-
-	pAccessor->GetIntField(MaxTrack, &tempint);
-	mediaItem.ulMaxTrack		= tempint;
-
-
-
-	pAccessor->GetIntField(Disc, &tempint);
-	mediaItem.ulDisk			= tempint;
-	pAccessor->GetIntField(MaxDisc, &tempint);
-	mediaItem.ulMaxDisk			= tempint;
-
+	pAccessor->GetIntField(Disc,			&mediaItem.ulDisk);
+	pAccessor->GetIntField(MaxDisc,			&mediaItem.ulMaxDisk);
 
 	tempint = 0;
 	mediaItem.ulRating			= tempint;
 	mediaItem.ulBPM				= tempint;
 
-	
-	pAccessor->GetIntField(PlaybackTime, &tempint);
-	mediaItem.ulPlayTimeMS		= tempint;
+	pAccessor->GetIntField(PlaybackTime,	&mediaItem.ulPlayTimeMS);
 
-	pAccessor->GetIntField(SampleRate, &tempint);
-	mediaItem.ulSampleRate		= tempint;
-
-	pAccessor->GetIntField(Channels, &tempint);
-	mediaItem.ulChannelCount	= tempint;
-
-	pAccessor->GetIntField(Bitrate, &tempint);
-	mediaItem.ulBitRate			= tempint;
+	pAccessor->GetIntField(SampleRate,		&mediaItem.ulSampleRate);
+	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
+	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
 
 	return true;
 }
