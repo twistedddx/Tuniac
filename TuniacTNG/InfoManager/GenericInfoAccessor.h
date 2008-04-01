@@ -5,12 +5,18 @@
 #include "tfile.h"
 #include "fileref.h"
 
+#include "mpeg/mpegfile.h"
+#include "mpeg/id3v2/id3v2tag.h"
+#include "mpeg/id3v2/frames/attachedpictureframe.h"
+
 class CGenericInfoAccessor :
 	public IInfoAccessor
 {
 protected:
 
 	TagLib::File		*		m_File;
+
+	TagLib::MPEG::File	*		m_mpegFile;
 
 public:
 	CGenericInfoAccessor(void);

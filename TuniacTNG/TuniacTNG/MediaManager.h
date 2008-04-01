@@ -66,4 +66,7 @@ public:
 
 	unsigned __int64 GetNumEntries(void);
 	bool AddFile(String filename);
+
+	bool GetAlbums(StringArray & albumList);
+
 };
