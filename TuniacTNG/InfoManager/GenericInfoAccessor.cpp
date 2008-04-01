@@ -220,6 +220,7 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 								//std::cout << l.front()->toString() << std::endl;
 								TagLib::String pszData = l.front()->toString();
 								int val = pszData.find("/");
+
 								if(val == -1)
 								{
 									if(field == Disc)
