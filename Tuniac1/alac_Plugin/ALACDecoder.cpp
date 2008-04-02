@@ -2,8 +2,6 @@
 
 #include "alacdecoder.h"
 
-#define BUFFER_SIZE 4096*4
-
 extern "C" int host_bigendian = 0;
 
 CALACDecoder::CALACDecoder(void)
@@ -29,6 +27,8 @@ bool CALACDecoder::Open(LPTSTR szSource)
 
 	alac = create_alac(demux.sample_size, demux.num_channels);
 	alac_set_info(alac, (char *)demux.codecdata);
+
+	outputBytes = 4096*4;
 
 	decoded_frames = 0;
 
@@ -78,8 +78,7 @@ bool		CALACDecoder::GetLength(unsigned long * MS)
 	    output_time += thissample_duration;
         }
 	// ( Sample_count / sample_rate ) * 1000 ---> to get time in milliseconds
-	song_length = (output_time / demux.sample_rate) * 1000;
-	*MS = song_length;
+	*MS = (output_time / demux.sample_rate) * 1000;
 
 	return true;
 }
@@ -106,7 +105,7 @@ bool		CALACDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	decoded_frames++;
 
-	unsigned long numSamples = ((outputBytes / (demux.sample_size/8)) / demux.num_channels);
+	unsigned long numSamples = ((outputBytes / (demux.sample_size/8)));
 
 	short	* pData		= (short *)buffer;
 	float	* pBuffer	= m_Buffer;

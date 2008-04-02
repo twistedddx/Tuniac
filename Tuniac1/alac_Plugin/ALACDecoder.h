@@ -16,17 +16,17 @@ protected:
 	FILE			*	m_file;
 	float				m_Buffer[4096*4];
 	float				m_divider;
-
+	unsigned char		buffer[4096*4];
+	unsigned char		stream_buffer[4096*4*4];
 
 	/* all things for alac decoder */
-	int decoded_frames, outputBytes;
-	unsigned long song_length;
+	int decoded_frames;
+	int outputBytes;
 	alac_file *alac;
 	demux_res_t demux;
 	FILE *file;
 	stream_t *stream;
-	unsigned char buffer[4096*4];
-	unsigned char stream_buffer[4096*4*4];
+
 
 public:
 	CALACDecoder(void);
