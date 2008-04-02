@@ -15,6 +15,14 @@ protected:
 	IAPEDecompress	*	MACDecompressor;
 
 	char			*	pRawData;
+	int nChannels;
+	int nBitsPerSample;
+	int nBytesPerSample;
+	int nSampleRate;
+	int nBlockAlign;
+	int nBlocksRetrieved;
+	int result;
+
 public:
 	CAPEDecoder(void);
 	~CAPEDecoder(void);
