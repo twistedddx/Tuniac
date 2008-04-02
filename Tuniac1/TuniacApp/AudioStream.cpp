@@ -192,16 +192,18 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			return true;
 		}
 	}
-
-	if(m_Packetizer.IsFinished())
+	else
 	{
-		if(!m_Packetizer.AnyMoreBuffer())
+		if(m_Packetizer.IsFinished())
 		{
-			if(!m_bFinishNotify)
+			if(m_Output->StreamFinished())
 			{
-				m_bFinishNotify = true;
-				m_bIsFinished = true;
-				tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+				if(!m_bFinishNotify)
+				{
+					m_bFinishNotify = true;
+					m_bIsFinished = true;
+					tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+				}
 			}
 		}
 	}

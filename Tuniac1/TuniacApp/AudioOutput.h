@@ -61,6 +61,8 @@ protected:
 	unsigned long						m_dwThreadID;
 	bool								m_bThreadRun;
 
+	bool								m_bStreamFinished;
+
 	static unsigned long __stdcall		ThreadStub(void * in);
 	unsigned long						ThreadProc(void);
 
@@ -78,7 +80,10 @@ protected:
 public:
 	STDMETHOD_(void, OnVoiceProcessingPassStart) () {}
     STDMETHOD_(void, OnVoiceProcessingPassEnd) () {}
-    STDMETHOD_(void,OnStreamEnd) () {}
+    STDMETHOD_(void,OnStreamEnd) () 
+	{
+		m_bStreamFinished = true;
+	}
 
     STDMETHOD_(void,OnBufferStart) ( void* context) 
 	{
@@ -149,5 +154,10 @@ public:
 	__int64 GetSamplesOut(void);
 
 	bool GetVisData(float * ToHere, unsigned long ulNumSamples);
+
+	bool StreamFinished(void)
+	{
+		return m_bStreamFinished;
+	}
 
 };

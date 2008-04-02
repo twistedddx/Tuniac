@@ -188,6 +188,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 bool CAudioOutput::Initialize(void)
 {
+	m_bStreamFinished = false;
 
 	HRESULT chr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
 												(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
