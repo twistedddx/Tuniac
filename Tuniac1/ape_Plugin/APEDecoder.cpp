@@ -19,6 +19,17 @@ bool CAPEDecoder::Open(LPTSTR szSource)
 	{
 		return false;
 	}
+	nChannels		= MACDecompressor->GetInfo(APE_INFO_CHANNELS);
+	nBitsPerSample	= MACDecompressor->GetInfo(APE_INFO_BITS_PER_SAMPLE);
+	nBytesPerSample	= MACDecompressor->GetInfo(APE_INFO_BYTES_PER_SAMPLE);
+	nSampleRate		= MACDecompressor->GetInfo(APE_INFO_SAMPLE_RATE);
+	nBlockAlign		= MACDecompressor->GetInfo(APE_INFO_BLOCK_ALIGN);
+	
+	if(!pRawData)
+	{
+		pRawData = new char [1024 * nBlockAlign];
+	}
+	
 	return true;
 }
 
@@ -43,15 +54,15 @@ void		CAPEDecoder::Destroy(void)
 
 bool		CAPEDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channels)
 {
-	*SampleRate = (unsigned long)MACDecompressor->GetInfo(APE_INFO_SAMPLE_RATE);
-	*Channels	= (unsigned long)MACDecompressor->GetInfo(APE_INFO_CHANNELS);
+	*SampleRate = (unsigned long)nSampleRate;
+	*Channels	= (unsigned long)nChannels;
 
 	return true;
 }
 
 bool		CAPEDecoder::GetLength(unsigned long * MS)
 {
-	*MS = (unsigned long)MACDecompressor->GetInfo(APE_INFO_LENGTH_MS);
+	*MS = (unsigned long)MACDecompressor->GetInfo(APE_DECOMPRESS_LENGTH_MS);
 	return true;
 }
 
@@ -59,18 +70,18 @@ bool		CAPEDecoder::SetPosition(unsigned long * MS)
 {
 	int seekBlocks, totalBlocks, result;
 
-	seekBlocks = ((unsigned long)*MS/1000) * MACDecompressor->GetInfo(APE_INFO_SAMPLE_RATE);
+	seekBlocks = ((unsigned long)*MS/1000) * nSampleRate;
 	totalBlocks = MACDecompressor->GetInfo(APE_DECOMPRESS_TOTAL_BLOCKS) - 1024;
-	if (seekBlocks > totalBlocks) {
+
+	if (seekBlocks > totalBlocks)
 		seekBlocks = totalBlocks;
-	}
-	else if (seekBlocks <= 0) {
+	else if (seekBlocks <= 0)
 		seekBlocks = 0;
-	}
+
 	result = MACDecompressor->Seek(seekBlocks);
-	if( result != ERROR_SUCCESS ) {
+	if( result != ERROR_SUCCESS )
 		return false;
-	}
+
 
 	return true;
 }
@@ -82,18 +93,6 @@ bool		CAPEDecoder::SetState(unsigned long State)
 
 bool		CAPEDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	int result;
-	int nChannels		= MACDecompressor->GetInfo(APE_INFO_CHANNELS);
-	int nBlockAlign		= MACDecompressor->GetInfo(APE_INFO_BLOCK_ALIGN);
-	int nBitsPerSample	= MACDecompressor->GetInfo(APE_INFO_BITS_PER_SAMPLE);
-	int nBytesPerSample	= MACDecompressor->GetInfo(APE_INFO_BYTES_PER_SAMPLE);
-	
-	if(!pRawData)
-	{
-		pRawData = new char [1024 * nBlockAlign];
-	}
-	
-	int nBlocksRetrieved;
 	result = MACDecompressor->GetData (pRawData, 1024, &nBlocksRetrieved);
 	if((nBlocksRetrieved == 0) || (result != ERROR_SUCCESS))
 		return false;
