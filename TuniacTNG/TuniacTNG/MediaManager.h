@@ -40,6 +40,8 @@ typedef struct _MEDIAITEM_
 	__int64					ulBitRate;
 } MediaItem;
 
+typedef std::vector<MediaItem>			MediaItemList;
+
 class CMediaManager : public CSingleton<CMediaManager>
 {
 protected:
@@ -68,5 +70,7 @@ public:
 	bool AddFile(String filename);
 
 	bool GetAlbums(StringArray & albumList);
+
+	bool GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList);
 
 };

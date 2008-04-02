@@ -380,3 +380,39 @@ bool CMediaManager::GetAlbums(StringArray & albumList)
 
 	return true;
 }
+
+bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	itemList.clear();
+
+	try
+	{
+		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary LIMIT (?, ?);");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command existscmd(con, sGetRangeSQL);
+
+		existscmd.bind(1, (int)ulStart);
+		existscmd.bind(2, (int)ulCount);
+
+		sqlite3x::sqlite3_reader reader = existscmd.executereader();
+
+		while(reader.read())
+		{
+			//existscmd.
+			MediaItem tempItem;
+			itemList.push_back(tempItem);
+		}
+
+		reader.close();
+	}
+	catch(...)
+	{
+		return false;
+	}
+
+	return true;
+}
