@@ -390,20 +390,47 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 
 	try
 	{
-		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary LIMIT (?, ?);");
+		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary LIMIT ?, ?;");
 
 		sqlite3x::sqlite3_connection con(szDBName);
-		sqlite3x::sqlite3_command existscmd(con, sGetRangeSQL);
+		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
 
-		existscmd.bind(1, (int)ulStart);
-		existscmd.bind(2, (int)ulCount);
+		rangecmd.bind(1, (int)ulStart);
+		rangecmd.bind(2, (int)ulCount);
 
-		sqlite3x::sqlite3_reader reader = existscmd.executereader();
+		sqlite3x::sqlite3_reader reader = rangecmd.executereader();
 
 		while(reader.read())
 		{
 			//existscmd.
-			MediaItem tempItem;
+			MediaItem tempItem = {0};
+
+			tempItem.ulItemID		= reader.getint64(0);
+
+			tempItem.filename		= reader.getstring16(4);
+			tempItem.ulFilesize		= reader.getint64(5);
+
+			tempItem.title			= reader.getstring16(7);
+			tempItem.artist			= reader.getstring16(8);
+
+			tempItem.album			= reader.getstring16(10);
+
+			tempItem.ulYear			= reader.getint64(13);
+			tempItem.genre			= reader.getstring16(14);
+			tempItem.comment		= reader.getstring16(15);
+
+			tempItem.ulTrack		= reader.getint64(16);
+			tempItem.ulMaxTrack		= reader.getint64(17);
+
+			tempItem.ulDisk			= reader.getint64(18);
+			tempItem.ulMaxDisk		= reader.getint64(19);
+
+			tempItem.ulPlayTimeMS	= reader.getint64(22);
+
+			tempItem.ulSampleRate	= reader.getint64(24);
+			tempItem.ulChannelCount	= reader.getint64(25);
+			tempItem.ulBitRate		= reader.getint64(26);
+
 			itemList.push_back(tempItem);
 		}
 

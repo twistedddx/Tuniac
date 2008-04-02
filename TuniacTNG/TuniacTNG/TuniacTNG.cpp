@@ -17,6 +17,10 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 HWND		hListView;
 
+MediaItemList		cacheList;
+unsigned long		cacheStart;
+unsigned long		cacheSize;
+
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
@@ -262,10 +266,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							NMLVCACHEHINT * pCacheHint = (NMLVCACHEHINT*)lParam;
 
 							TCHAR		szBuffer[1024];
-
 							wsprintf(szBuffer, TEXT("From: %d, To: %d\n"), pCacheHint->iFrom, pCacheHint->iTo);
-
 							OutputDebugString(szBuffer);
+
+							cacheStart	= (int)pCacheHint->iFrom - 1;
+							if((int)cacheStart < 0)
+								cacheStart = 0;
+
+							cacheSize	= (pCacheHint->iTo - cacheStart) + 1;
+
+							CMediaManager::Instance()->GetRange(cacheStart, cacheSize, cacheList);
 						}
 						break;
 
@@ -274,9 +284,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
 							if(pDispInfo->item.iItem != -1)
 							{
-								static LPTSTR	szThing = TEXT("Test");
-								pDispInfo->item.pszText = szThing;
-	/*
+								if( (pDispInfo->item.iItem < cacheStart) || (pDispInfo->item.iItem > cacheStart+cacheSize))
+								{
+									String error;
+									error.Format(TEXT("Request Out Of Range: %d"), pDispInfo->item.iItem);
+									OutputDebugString(error.c_str());
+									return FALSE;
+								}
+
+								int index = pDispInfo->item.iItem - cacheStart;
+								if(index >= cacheSize)
+									return FALSE;
+
+								switch(pDispInfo->item.iSubItem)
+								{
+									case 0:
+										pDispInfo->item.pszText = (LPWSTR)cacheList[index].title.c_str();
+										break;
+
+									case 1:
+										pDispInfo->item.pszText = (LPWSTR)cacheList[index].artist.c_str();
+										break;
+
+									case 2:
+										pDispInfo->item.pszText = (LPWSTR)cacheList[index].album.c_str();
+										break;
+
+									case 3:
+										pDispInfo->item.pszText = (LPWSTR)cacheList[index].filename.c_str();
+										break;
+								}
+
+/*
 								TCHAR		szBuffer[1024];
 								wsprintf(szBuffer, TEXT("Item: %d, "), pDispInfo->item.iItem);
 								OutputDebugString(szBuffer);*/
