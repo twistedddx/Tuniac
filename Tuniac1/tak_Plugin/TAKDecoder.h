@@ -8,9 +8,9 @@ class CTAKDecoder :
 	public IAudioSource
 {
 protected:
-	unsigned char		*	buffer;
-	float					m_Buffer[4096];
-	float					m_divider;
+	char			buffer[4096*4*4];
+	float			m_Buffer[4096*4*4];
+	float			m_divider;
 
 	TtakSSDOptions				Options;
 	TtakSeekableStreamDecoder	Decoder;
