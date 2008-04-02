@@ -15,6 +15,13 @@
 #pragma warning(disable: 4514) // unreferenced inline function has been removed
 #pragma warning(disable: 4127) // conditional expression is constant
 
+#elif defined(_MSC_VER) && defined(_WIN32) && defined(_M_X64)
+
+#define CFG_MSCVER_WIN32_MIX86
+#define CFG_LITTLE_ENDIAN
+#pragma warning(disable: 4514) // unreferenced inline function has been removed
+#pragma warning(disable: 4127) // conditional expression is constant
+
 #elif defined(__BORLANDC__) && defined(_WIN32) && defined(_M_IX86)
 
 #define CFG_BORLANDC_WIN32_MIX86
