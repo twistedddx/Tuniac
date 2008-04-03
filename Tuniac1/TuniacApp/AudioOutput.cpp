@@ -63,8 +63,11 @@ CAudioOutput::~CAudioOutput(void)
 
 void CAudioOutput::Destroy()
 {
-	SetCallback(NULL);
+	Stop();
+
 	Shutdown();
+
+	SetCallback(NULL);
 	delete this;
 }
 
