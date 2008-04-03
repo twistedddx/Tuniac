@@ -2,6 +2,7 @@
 
 #include <IInfoHandler.h>
 #include <Singleton.h>
+#include <sqlite3x.hpp>
 
 typedef struct _MEDIAITEM_
 {
@@ -53,7 +54,9 @@ protected:
 
 	std::vector<InfoHandler>		m_vInfoHandlers;
 
-	bool PopulateMediaItemFromAccessor(MediaItem & pItem, IInfoAccessor * pAccessor);
+	bool PopulateMediaItemFromAccessor(String filename, MediaItem & pItem);
+	bool InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_connection & con, MediaItem & pItem);
+	bool IsFileInLibrary(sqlite3x::sqlite3_connection & con, String filename);
 
 public:
 	CMediaManager(void);
@@ -67,10 +70,10 @@ public:
 	bool GetMediaDBLocation(String & strPath);
 
 	unsigned __int64 GetNumEntries(void);
-	bool AddFile(String filename);
 
 	bool GetAlbums(StringArray & albumList);
-
 	bool GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList);
 
+	bool AddFile(String filename);
+	bool AddFileArray(StringArray filenameArray);
 };
