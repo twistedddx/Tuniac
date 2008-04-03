@@ -9,7 +9,7 @@ class COFRDecoder :
 {
 protected:
 	char		*	buffer;
-	float			m_Buffer[4096];
+	float		*	m_Buffer;
     void* decoderInstance;
     OptimFROG_Info iInfo;
 

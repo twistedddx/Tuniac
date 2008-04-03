@@ -54,6 +54,7 @@ bool COFRDecoder::Open(LPTSTR szSource)
 	}
 
 	buffer = new char [1024*(iInfo.bitspersample/8)*iInfo.channels];
+	m_Buffer = new float [1024*(iInfo.bitspersample/8)*iInfo.channels];
 
 	return(true);
 }
@@ -64,6 +65,8 @@ bool COFRDecoder::Close()
 		OptimFROG_destroyInstance(decoderInstance);
 	delete [] buffer;
 	buffer = NULL;
+	delete [] m_Buffer;
+	m_Buffer = NULL;
 	return(true);
 }
 

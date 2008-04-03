@@ -77,6 +77,11 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szGenre, 128);
 			continue;
 		}
+		if(strcmp(iTags.keys[x], "Comment") == 0)
+		{
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szComment, 128);
+			continue;
+		}
 		if(strcmp(iTags.keys[x], "Year") == 0)
 		{
 			libEnt->iYear = atoi(iTags.values[x]);
