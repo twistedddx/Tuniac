@@ -16,6 +16,7 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
 
 	Options.Cpu   = tak_Cpu_Any;
+	Options.Flags = NULL;
 
 	Decoder = tak_SSD_Create_FromFile (tempname, &Options, NULL, NULL);
 	if (Decoder == NULL)
@@ -87,7 +88,8 @@ bool		CTAKDecoder::GetLength(unsigned long * MS)
 
 bool		CTAKDecoder::SetPosition(unsigned long * MS)
 {
-	tak_SSD_Seek(Decoder, (*MS / 1000) * StreamInfo.Audio.SampleRate);
+	unsigned long sample = (*MS * StreamInfo.Audio.SampleRate)/1000;
+	tak_SSD_Seek(Decoder, sample);
     return true;
 }
 
@@ -101,8 +103,12 @@ bool		CTAKDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	*NumSamples =0;
 
 	OpResult = tak_SSD_ReadAudio (Decoder, buffer, SamplesPerBuf, &ReadNum);
-	if ((OpResult != tak_res_Ok) && (OpResult != tak_res_ssd_FrameDamaged)) 
+	if ((OpResult != tak_res_Ok) && (OpResult != tak_res_ssd_FrameDamaged))
+	{
+		//char ErrorMsg[tak_ErrorStringSizeMax];
+		//tak_SSD_GetErrorString (tak_SSD_State (Decoder), ErrorMsg, tak_ErrorStringSizeMax);
 		return false;
+	}
 
     if (ReadNum > 0)
 	{
