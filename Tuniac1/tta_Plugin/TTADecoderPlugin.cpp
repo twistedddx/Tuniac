@@ -37,7 +37,7 @@ unsigned long	CTTADecoderPlugin::GetFlags(void)
 
 bool			CTTADecoderPlugin::About(HWND hParent)
 {
-	MessageBox(hParent, TEXT("TTA Decoder Plugin for Tuniac."), GetName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hParent, TEXT("TTA Decoder Plugin for Tuniac. Copyright (c) 2004 True Audio Software"), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
