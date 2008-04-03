@@ -1,6 +1,7 @@
 #pragma once
 
 #include <IAudioStream.h>
+#include <IAudioSource.h>
 
 class IAudioCoreCallback
 {
@@ -29,15 +30,26 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////////////
 	// Remove all streams, reset everything back to it would be at startup
-	//
+	// Source plugins are not unloaded!!!!
 	virtual bool				Reset(void)															= 0;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	// Audio Source functions 
+	// this will load a dll which exports the CreateAudioSourceSupplier function, and 
+	// add the created IAudioSourceSupplier to an internal list!
+	virtual bool				LoadAudioSource(wchar_t		*	wcsPluginName)						= 0;
+	// Releases all resourcs (including DLLS and such from the audio engine)
+	// NOTE: THIS INHERENTLY IMPLIES A Reset() - since there can be no audio sources
+	// except perhaps user supplied ones, but too bad....
+	virtual bool				FreeAudioSources(void)												= 0;
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	// Stream creation, render stream will find an input plugin to play the stream
 	// CreateAudioStream allows you to pass in your own audio sample provider to do
 	// your own special stream playback along side everything else
 	virtual AUDIOSTREAMID		RenderAudioStream(wchar_t	*	pwsFileName)						= 0;
-	virtual AUDIOSTREAMID		CreateAudioStream(void * pVoid)										= 0;		// for future expansion A.T.M.
+	virtual AUDIOSTREAMID		CreateAudioStream(IAudioSource	* pSource)							= 0;		// Supply your own audio source!
 
 	///////////////////////////////////////////////////////////////////////
 	// Destroy an audio stream based on the ID, may return false if the stream is locked

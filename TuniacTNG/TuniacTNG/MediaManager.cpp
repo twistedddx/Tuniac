@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "MediaManager.h"
 
-#include <sqlite3x.hpp>
-
 #include "TuniacHelper.h"
 
 CMediaManager::CMediaManager(void)
@@ -142,7 +140,6 @@ bool CMediaManager::Shutdown(void)
 
 bool CMediaManager::GetMediaDBLocation(String & strPath)
 {
-
 	TCHAR szSpecialPath[MAX_PATH];
 
 	SHGetFolderPath(NULL,
@@ -183,33 +180,12 @@ unsigned __int64 CMediaManager::GetNumEntries(void)
 	return retval;
 }
 
-
-bool CMediaManager::AddFile(String filename)
+bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & mediaItem)
 {
-	bool bret = false;
+	TCHAR			temp[1024];
+	__int64			tempint;
 
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
-	try
-	{
-		String alreadyExistsSQL = TEXT("SELECT count(*) FROM MediaLibrary WHERE Filename = ?;");
-
-		sqlite3x::sqlite3_connection con(szDBName);
-		sqlite3x::sqlite3_command existscmd(con, alreadyExistsSQL);
-
-		existscmd.bind(1, filename);
-
-		if(existscmd.executeint() > 0)
-			return true;
-	}
-	catch(std::exception &ex)
-	{
-		String debugstring = ex.what();
-		OutputDebugString(TEXT("Error: "));
-		OutputDebugString((debugstring+TEXT("\n")).c_str());
-		return false;
-	}
+	mediaItem.filename = filename;
 
 
 	// first lets see if we have an infohandler capable of using this
@@ -232,81 +208,6 @@ bool CMediaManager::AddFile(String filename)
 	IInfoAccessor * pAccessor = pHandler->CreateAccessor((wchar_t *)filename.c_str());
 	if(!pAccessor)
 		return false;
-
-	try
-	{
-		MediaItem	newItem = {0,};
-		PopulateMediaItemFromAccessor(newItem, pAccessor);
-		if(pAccessor)
-			pAccessor->Destroy();
-		
-		newItem.filename = filename;
-
-		// extract generic info from the file (creation time/size)
-		HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-		if(hFile != INVALID_HANDLE_VALUE)
-		{
-			FILETIME		ft;
-			GetFileTime(hFile, NULL, NULL, &ft);
-			FileTimeToSystemTime(&ft, &newItem.fileModifiedTime);
-
-			newItem.ulFilesize = GetFileSize(hFile, NULL);
-
-			CloseHandle(hFile);
-		}
-
-
-		
-		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary (DateAdded,						Filename,	Filesize,	FileModifiedTime,	Title,	Artist,	Composer,	Album,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	PlaybackTime,	SampleRate, Channels,	Bitrate) \
-															VALUES (datetime('now','localtime'),	?,			?,			?,					?,		?,		?,			?,		?,		?,		?,			?,		?,			?,		?,			?,				?,			?,			?)");
-
-		sqlite3x::sqlite3_connection con(szDBName);
-		sqlite3x::sqlite3_command cmd(con, insertFilenameSQL);
-
-		int bind=1;
-		cmd.bind(bind++,	newItem.filename);
-		cmd.bind(bind++,	(long long)newItem.ulFilesize);
-
-		String modifiedtime;
-		CTuniacHelper::Instance()->FormatSystemTime(modifiedtime, newItem.fileModifiedTime);
-		cmd.bind(bind++,	modifiedtime);
-
-		cmd.bind(bind++,	newItem.title);
-		cmd.bind(bind++,	newItem.artist);
-		cmd.bind(bind++,	newItem.composer);
-		cmd.bind(bind++,	newItem.album);
-		cmd.bind(bind++,	newItem.ulYear);
-		cmd.bind(bind++,	newItem.genre);
-		cmd.bind(bind++,	newItem.comment);
-		cmd.bind(bind++,	newItem.ulTrack);
-		cmd.bind(bind++,	newItem.ulMaxTrack);
-		cmd.bind(bind++,	newItem.ulDisk);
-		cmd.bind(bind++,	newItem.ulMaxDisk);
-		cmd.bind(bind++,	newItem.ulPlayTimeMS);
-		cmd.bind(bind++,	newItem.ulSampleRate);
-		cmd.bind(bind++,	newItem.ulChannelCount);
-		cmd.bind(bind++,	newItem.ulBitRate);
-
-		cmd.executenonquery();
-
-		bret = true;
-	}
-	catch(std::exception &ex)
-	{
-		String debugstring = ex.what();
-		OutputDebugString(TEXT("Error: "));
-		OutputDebugString((debugstring+TEXT("\n")).c_str());
-		bret = false;
-	}
-
-	return bret;
-}
-
-
-bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAccessor * pAccessor)
-{
-	TCHAR			temp[1024];
-	__int64			tempint;
 
 	pAccessor->GetTextField(Title, temp, 1024);
 	mediaItem.title				= temp;	
@@ -344,6 +245,21 @@ bool CMediaManager::PopulateMediaItemFromAccessor(MediaItem & mediaItem, IInfoAc
 	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
 	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
 
+	if(pAccessor)
+		pAccessor->Destroy();
+
+	// extract generic info from the file (creation time/size)
+	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+	if(hFile != INVALID_HANDLE_VALUE)
+	{
+		FILETIME		ft;
+		GetFileTime(hFile, NULL, NULL, &ft);
+		FileTimeToSystemTime(&ft, &mediaItem.fileModifiedTime);
+		mediaItem.ulFilesize = GetFileSize(hFile, NULL);
+
+		CloseHandle(hFile);
+	}
+	
 	return true;
 }
 
@@ -442,4 +358,128 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 	}
 
 	return true;
+}
+
+bool CMediaManager::InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_connection & con, MediaItem & newItem)
+{
+	try
+	{
+		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary (DateAdded,						Filename,	Filesize,	FileModifiedTime,	Title,	Artist,	Composer,	Album,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	PlaybackTime,	SampleRate, Channels,	Bitrate) \
+															VALUES (datetime('now','localtime'),	?,			?,			?,					?,		?,		?,			?,		?,		?,		?,			?,		?,			?,		?,			?,				?,			?,			?)");
+
+		sqlite3x::sqlite3_command cmd(con, insertFilenameSQL);
+
+		int bind=1;
+		cmd.bind(bind++,	newItem.filename);
+		cmd.bind(bind++,	(long long)newItem.ulFilesize);
+
+		String modifiedtime;
+		CTuniacHelper::Instance()->FormatSystemTime(modifiedtime, newItem.fileModifiedTime);
+		cmd.bind(bind++,	modifiedtime);
+
+		cmd.bind(bind++,	newItem.title);
+		cmd.bind(bind++,	newItem.artist);
+		cmd.bind(bind++,	newItem.composer);
+		cmd.bind(bind++,	newItem.album);
+		cmd.bind(bind++,	newItem.ulYear);
+		cmd.bind(bind++,	newItem.genre);
+		cmd.bind(bind++,	newItem.comment);
+		cmd.bind(bind++,	newItem.ulTrack);
+		cmd.bind(bind++,	newItem.ulMaxTrack);
+		cmd.bind(bind++,	newItem.ulDisk);
+		cmd.bind(bind++,	newItem.ulMaxDisk);
+		cmd.bind(bind++,	newItem.ulPlayTimeMS);
+		cmd.bind(bind++,	newItem.ulSampleRate);
+		cmd.bind(bind++,	newItem.ulChannelCount);
+		cmd.bind(bind++,	newItem.ulBitRate);
+
+		cmd.executenonquery();
+
+		return true;
+	}
+	catch(std::exception &ex)
+	{
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
+		return false;
+	}
+}
+
+bool CMediaManager::IsFileInLibrary(sqlite3x::sqlite3_connection & con, String filename)
+{
+	try
+	{
+		String alreadyExistsSQL = TEXT("SELECT count(*) FROM MediaLibrary WHERE Filename = ?;");
+
+		sqlite3x::sqlite3_command existscmd(con, alreadyExistsSQL);
+		existscmd.bind(1, filename);
+		if(existscmd.executeint() > 0)
+			return true;
+	}
+	catch(std::exception &ex)
+	{
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
+		return false;
+	}
+
+	return false;
+}
+
+bool CMediaManager::AddFile(String filename)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+
+	sqlite3x::sqlite3_connection con(szDBName);
+	if(IsFileInLibrary(con, filename))
+		return true;
+
+
+	MediaItem	newItem = {0,};
+	if(!PopulateMediaItemFromAccessor(filename, newItem))
+		return false;
+
+	if(InsertItemToMediaLibraryUsingConnection(con, newItem))
+		return true;
+
+	return false;
+}
+
+bool CMediaManager::AddFileArray(StringArray filenameArray)
+{
+	if(filenameArray.size())
+	{
+		String szDBName;
+		GetMediaDBLocation(szDBName);
+
+		sqlite3x::sqlite3_connection con(szDBName);
+
+		for(unsigned int i=0; i<filenameArray.size(); i++)
+		{
+			if(IsFileInLibrary(con, filenameArray[i]))
+			{
+				filenameArray.erase(filenameArray.begin()+i);
+				i--;
+			}
+		}
+
+		sqlite3x::sqlite3_transaction trans(con);
+		for(unsigned int i=0; i<filenameArray.size(); i++)
+		{
+			MediaItem	newItem = {0,};
+			if(PopulateMediaItemFromAccessor(filenameArray[i], newItem))
+			{
+				InsertItemToMediaLibraryUsingConnection(con, newItem);
+			}
+		}
+		trans.commit();
+
+		return true;
+	}
+
+	return false;
 }

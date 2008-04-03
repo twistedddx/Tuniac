@@ -3,11 +3,23 @@
 #include "IAudioCore.h"
 #include "XAudioOutputProducer.h"
 
+#include <IAudioSource.h>
+#include <vector>
+
 class CAudioCore :
 	public IAudioCore
 {
 protected:
-	CXAudioOutputProducer	m_AudioProducer;
+
+	typedef struct _AudioSource_
+	{
+		IAudioSourceSupplier		*			pSupplier;
+		HINSTANCE								hDLL;
+		std::wstring							filename;
+	} AudioSource;
+
+	std::vector<AudioSource>					m_vAudioSources;
+	CXAudioOutputProducer						m_AudioProducer;
 
 public:
 	CAudioCore(void);
@@ -21,8 +33,11 @@ public:
 
 	bool				Reset(void);
 
+	bool				LoadAudioSource(wchar_t		*	wcsPluginName);
+	bool				FreeAudioSources(void);
+
 	AUDIOSTREAMID		RenderAudioStream(wchar_t	*	pwsFileName);
-	AUDIOSTREAMID		CreateAudioStream(void * pVoid);
+	AUDIOSTREAMID		CreateAudioStream(IAudioSource * pSource);
 
 	bool				DestroyAudioStream(AUDIOSTREAMID	streamID);
 

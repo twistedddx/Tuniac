@@ -80,6 +80,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IAudioSource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IAudioStream.h"
 				>
 			</File>

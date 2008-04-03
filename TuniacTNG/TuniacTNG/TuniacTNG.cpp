@@ -265,9 +265,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						{
 							NMLVCACHEHINT * pCacheHint = (NMLVCACHEHINT*)lParam;
 
-							TCHAR		szBuffer[1024];
-							wsprintf(szBuffer, TEXT("From: %d, To: %d\n"), pCacheHint->iFrom, pCacheHint->iTo);
-							OutputDebugString(szBuffer);
+//							TCHAR		szBuffer[1024];
+//							wsprintf(szBuffer, TEXT("From: %d, To: %d\n"), pCacheHint->iFrom, pCacheHint->iTo);
+//							OutputDebugString(szBuffer);
 
 							cacheStart	= (int)pCacheHint->iFrom - 1;
 							if((int)cacheStart < 0)
@@ -286,9 +286,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							{
 								if( (pDispInfo->item.iItem < cacheStart) || (pDispInfo->item.iItem > cacheStart+cacheSize))
 								{
-									String error;
-									error.Format(TEXT("Request Out Of Range: %d"), pDispInfo->item.iItem);
-									OutputDebugString(error.c_str());
+//									String error;
+//									error.Format(TEXT("Request Out Of Range: %d\n"), pDispInfo->item.iItem);
+//									OutputDebugString(error.c_str());
 									return FALSE;
 								}
 
@@ -334,18 +334,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
 
-//				if(m_MediaLibrary.BeginAdd(uNumFiles))
+				if(uNumFiles > 1)
 				{
+					StringArray		filesToAdd;
+
 					for(UINT file = 0; file<uNumFiles; file++)
 					{
 						DragQueryFile(hDrop, file, szURL, MAX_PATH);
-						CMediaManager::Instance()->AddFile(szURL);
+						filesToAdd.push_back(szURL);
 					}
-
-//					m_MediaLibrary.EndAdd();
+					CMediaManager::Instance()->AddFileArray(filesToAdd);
 				}
-
+				else
+				{
+					DragQueryFile(hDrop, 0, szURL, MAX_PATH);
+					CMediaManager::Instance()->AddFile(szURL);
+				}
 				DragFinish(hDrop);
+
 
 				ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
 
