@@ -16,7 +16,6 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
 
 	Options.Cpu   = tak_Cpu_Any;
-	Options.Flags = tak_ssd_opt_SequentialRead;
 
 	Decoder = tak_SSD_Create_FromFile (tempname, &Options, NULL, NULL);
 	if (Decoder == NULL)
@@ -28,6 +27,14 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 		return false;
 
 	SamplesPerBuf = StreamInfo.Sizes.FrameSizeInSamples;
+	SampleSize    = StreamInfo.Audio.BlockSize;
+	/* Frame / Sample size.
+	*/
+	BufSize = SamplesPerBuf * SampleSize;
+	/* Enough space to hold a decoded frame.
+	*/
+	buffer = new char [BufSize];
+	m_Buffer = new float [BufSize];
 
 	if(StreamInfo.Audio.SampleBits == 8)
 	{
@@ -51,6 +58,10 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 bool CTAKDecoder::Close()
 {
 	tak_SSD_Destroy (Decoder);
+	delete [] buffer;
+	buffer = NULL;
+	delete [] m_Buffer;
+	m_Buffer = NULL;
 	return(true);
 }
 
@@ -76,8 +87,8 @@ bool		CTAKDecoder::GetLength(unsigned long * MS)
 
 bool		CTAKDecoder::SetPosition(unsigned long * MS)
 {
-	//tak_SSD_Seek(Decoder, SamplePos);
-    return false;
+	tak_SSD_Seek(Decoder, (*MS / 1000) * StreamInfo.Audio.SampleRate);
+    return true;
 }
 
 bool		CTAKDecoder::SetState(unsigned long State)
@@ -98,7 +109,7 @@ bool		CTAKDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
      	short * pData = (short*)buffer;
 		float * pBuffer = m_Buffer;
 
-		for(int x=0; x<ReadNum; x++)
+		for(int x=0; x<ReadNum * StreamInfo.Audio.ChannelNum; x++)
 		{
 			*pBuffer = (*pData) / m_divider;	
 			pData ++;
@@ -106,10 +117,11 @@ bool		CTAKDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		}
 		*ppBuffer = m_Buffer;
 
-		*NumSamples = ReadNum;
+
 	}
 	else
 		return false;
 
+	*NumSamples = ReadNum * StreamInfo.Audio.ChannelNum;
 	return true;
 }
