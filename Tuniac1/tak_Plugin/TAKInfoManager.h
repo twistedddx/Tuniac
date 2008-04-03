@@ -1,18 +1,15 @@
 #pragma once
 #include "iinfomanager.h"
-#include <stdio.h>
-extern "C" {
-#include ".\TrueAudio\ttalib.h"
-}
+#include "./TAK/tak_deco_lib.h"
 
-class CTTAInfoManager :
+class CTAKInfoManager :
 	public IInfoManager
 {
 protected:
 
 public:
-	CTTAInfoManager(void);
-	~CTTAInfoManager(void);
+	CTAKInfoManager(void);
+	~CTAKInfoManager(void);
 
 public:
 	void			Destroy(void);

@@ -37,7 +37,7 @@ unsigned long	CTAKDecoderPlugin::GetFlags(void)
 
 bool			CTAKDecoderPlugin::About(HWND hParent)
 {
-	MessageBox(hParent, TEXT("TAK Decoder Plugin for Tuniac."), GetName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hParent, TEXT("TAK Decoder Plugin for Tuniac. Copyright 2007 by Thomas Becker"), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
