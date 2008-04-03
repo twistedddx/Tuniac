@@ -3,7 +3,7 @@
 #include <IAudioOutput.h>
 #include <XAudio2.h>
 
-class CXAudioOutputProducer
+class CXAudioOutputProducer : public IAudioOutputProducer
 {
 protected:
 	IXAudio2				*			m_pXAudio;

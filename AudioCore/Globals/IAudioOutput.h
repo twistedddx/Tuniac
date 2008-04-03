@@ -19,3 +19,12 @@ public:
 	virtual bool BufferAvailable(void)											= 0;
 	virtual bool WriteBuffer(float * pfBuffer, unsigned long ulNumSamples)		= 0;
 };
+
+class IAudioOutputProducer
+{
+public:
+	bool Initialize(void);
+	bool Shutdown(void);
+
+	IAudioOutput * CreateAudioOutput(void);
+};
