@@ -8,8 +8,8 @@ class CTAKDecoder :
 	public IAudioSource
 {
 protected:
-	char			buffer[4096*4*4];
-	float			m_Buffer[4096*4*4];
+	char			*buffer;
+	float			*m_Buffer;
 	float			m_divider;
 
 	TtakSSDOptions				Options;
@@ -18,6 +18,9 @@ protected:
 	TtakInt32					ReadNum;
 	TtakResult					OpResult;
 	TtakInt32					SamplesPerBuf;
+	TtakInt32					SampleSize;
+	TtakInt32					BufSize;
+
 
 public:
 	CTAKDecoder(void);
