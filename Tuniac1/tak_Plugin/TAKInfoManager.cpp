@@ -73,12 +73,12 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 		int size =0;
 		if(tak_APE_GetIndexOfKey(TagInfo, "Track", &idx) != tak_res_ape_NotAvail)
 		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
+			tak_APE_GetItemValue(TagInfo, idx, buffer, 2, &size);
 			libEnt->dwTrack[0] = atoi(buffer);
 		}
 		if(tak_APE_GetIndexOfKey(TagInfo, "Year", &idx) != tak_res_ape_NotAvail)
 		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
+			tak_APE_GetItemValue(TagInfo, idx, buffer, 4, &size);
 			libEnt->iYear = atoi(buffer);
 		}
 		if(tak_APE_GetIndexOfKey(TagInfo, "Artist", &idx) != tak_res_ape_NotAvail)
@@ -122,6 +122,7 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 	libEnt->iSampleRate			= StreamInfo.Audio.SampleRate;
 	libEnt->iPlaybackTime		= time*1000;
 
+	tak_SSD_Destroy (Decoder);
 
 	return true;
 }
