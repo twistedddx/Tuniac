@@ -35,6 +35,9 @@ public:
 	bool	GetIntField(InfoHandlerField field, __int64 * toHere);
 	bool	SetIntField(InfoHandlerField field, __int64 toHere);
 
-	bool	GetAlbumArt(unsigned long ulIndex, void ** pArtData, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize);
+	bool	GetAlbumArtCount(__int64 * pullCount);
+	bool	GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize);
+	bool	GetAlbumArtData(unsigned long ulIndex, void * pArtData, unsigned long ullArtDataSize);
+
 	bool	SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType);
 };
