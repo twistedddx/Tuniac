@@ -237,6 +237,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	cds.lpData = szCommandLine;
 	SendMessage(m_hWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
 
+	SetArt();
 
 	return true;
 }
@@ -841,72 +842,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
 
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							SetArt();
 
-							IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-							if(pIPE)
-							{
-								bool bArtFailed = false;
-
-								LPTSTR szSource = (LPTSTR)pIPE->GetField(FIELD_URL);
-
-								IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szSource);
-								if(pManager)
-								{
-									LPVOID art;
-									unsigned long ulSize;
-									TCHAR	szMimeType[128];
-									unsigned long artType;
-									if(pManager->GetAlbumArt(	szSource,
-																0,
-																&art,
-																&ulSize,
-																szMimeType,
-																&artType))
-									{
-										if(!m_TestArt.SetSource(art, ulSize, szMimeType))
-										{
-											bArtFailed = true;
-										}
-
-										pManager->FreeAlbumArt(art);
-									}
-									else
-									{
-										TCHAR		szJPGPath[_MAX_PATH];
-										TCHAR		szPNGPath[_MAX_PATH];
-										StrCpy(szJPGPath, szSource);
-
-										PathRemoveFileSpec(szJPGPath);
-										StrCpy(szPNGPath, szJPGPath);
-										PathAppend(szJPGPath, TEXT("folder.jpg"));
-										if(!m_TestArt.SetSource(szJPGPath))
-										{
-											PathAppend(szPNGPath, TEXT("folder.png"));
-											if(!m_TestArt.SetSource(szPNGPath))
-											{
-												bArtFailed = true;
-											}
-										}
-									}
-								}
-								else
-								{
-									bArtFailed = true;
-								}
-
-								if(bArtFailed)
-								{
-									TCHAR szURL[_MAX_PATH];
-									GetModuleFileName(NULL, szURL, _MAX_PATH);
-									PathRemoveFileSpec(szURL);
-									PathAddBackslash(szURL);
-									StrCat(szURL, TEXT("folder.jpg"));
-									m_TestArt.SetSource(szURL);
-								}
-
-								m_SourceSelectorWindow->Refresh();
-							}
 						}
 						break;
 
@@ -2283,4 +2220,70 @@ void	CTuniacApp::UpdateQueues(void)
 			}
 		}
 	}
+}
+
+
+
+bool	CTuniacApp::SetArt(void)
+{
+	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+	if(pIPE)
+	{
+		bool bArtSuccess = false;
+
+		LPTSTR szSource = (LPTSTR)pIPE->GetField(FIELD_URL);
+
+		IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szSource);
+		//Attempt art from infomanager(embedded art)
+		if(pManager)
+		{
+			LPVOID art;
+			unsigned long ulSize;
+			TCHAR	szMimeType[128];
+			unsigned long artType;
+			if(pManager->GetAlbumArt(szSource, 0, &art, &ulSize, szMimeType, &artType))
+			{
+				if(m_TestArt.SetSource(art, ulSize, szMimeType))
+					bArtSuccess = true;
+
+				pManager->FreeAlbumArt(art);
+			}
+		}
+		//No art from infomanager. Try external file(folder.jpg/png)
+		if(!bArtSuccess)
+		{
+			TCHAR		szJPGPath[_MAX_PATH];
+			TCHAR		szPNGPath[_MAX_PATH];
+			StrCpy(szJPGPath, szSource);
+
+			PathRemoveFileSpec(szJPGPath);
+			StrCpy(szPNGPath, szJPGPath);
+
+			PathAppend(szJPGPath, TEXT("folder.jpg"));
+			PathAppend(szPNGPath, TEXT("folder.png"));
+
+			if(m_TestArt.SetSource(szJPGPath))
+				bArtSuccess = true;
+			else if(m_TestArt.SetSource(szPNGPath))
+				bArtSuccess = true;
+			
+		}
+		//No art found embedded or external. Load default art in tuniac base dir
+		if(!bArtSuccess)
+		{
+			TCHAR szURL[_MAX_PATH];
+			GetModuleFileName(NULL, szURL, _MAX_PATH);
+			PathRemoveFileSpec(szURL);
+			PathAddBackslash(szURL);
+			StrCat(szURL, TEXT("folder.jpg"));
+			m_TestArt.SetSource(szURL);
+		}
+
+		m_SourceSelectorWindow->Refresh();
+
+		return bArtSuccess;
+	}
+	return false;
 }
