@@ -297,6 +297,40 @@ bool CMediaManager::GetAlbums(StringArray & albumList)
 	return true;
 }
 
+bool CMediaManager::GetArtists(StringArray & artistList)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	artistList.clear();
+
+	try
+	{
+		String sGetAlbumSQL = TEXT("SELECT DISTINCT Artist FROM MediaLibrary;");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
+
+		sqlite3x::sqlite3_reader reader = albumcmd.executereader();
+
+		while(reader.read())
+		{
+			//existscmd.
+			String temp = reader.getstring(0);
+
+			artistList.push_back(temp);
+		}
+
+		reader.close();
+	}
+	catch(std::exception &ex) 
+	{
+		//LOGDEBUG("Exception Occured: " << ex.what());
+	}
+
+	return true;
+}
+
 bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList)
 {
 	String szDBName;

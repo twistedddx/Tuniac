@@ -72,6 +72,7 @@ public:
 	unsigned __int64 GetNumEntries(void);
 
 	bool GetAlbums(StringArray & albumList);
+	bool GetArtists(StringArray & artistList);
 	bool GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList);
 
 	bool AddFile(String filename);
