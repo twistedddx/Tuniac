@@ -23,7 +23,7 @@ bool	CGenericInfoHandler::CanHandle(wchar_t * filename, unsigned long * Ability,
 	TagLib::StringList list =  TagLib::FileRef::defaultFileExtensions();
 	for(unsigned long x=0; x<list.size(); x++)
 	{
-		if(sFilename.find(list[x]) != -1)
+		if(sFilename.upper().find(list[x].upper()) != -1)
 		{
 			*Ability	= 100;
 			*Merit		= 0;
