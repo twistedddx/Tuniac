@@ -305,7 +305,17 @@ bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 	return true;
 }
 
-bool	CGenericInfoAccessor::GetAlbumArt(unsigned long ulIndex, void ** pArtData, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize)
+bool	CGenericInfoAccessor::GetAlbumArtCount(__int64 * pullCount)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize)
+{
+	return false;
+}
+
+bool	CGenericInfoAccessor::GetAlbumArtData(unsigned long ulIndex, void * pArtData, unsigned long ullArtDataSize)
 {
 	return false;
 }
