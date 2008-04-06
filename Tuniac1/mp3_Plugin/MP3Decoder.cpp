@@ -32,6 +32,10 @@ unsigned long CMP3Decoder::GetID3HeaderLength(unsigned char * buffer)
 		Length = (buffer[6] << 21) | (buffer[7] << 14) | (buffer[8] << 7) | buffer[9];
 		Length += 10; // the header
 
+		int sum=0;
+		for(int i = 0; i <= 3; i++)
+			sum |= (buffer[6+i] & 0x7f) << ((3 - i) * 7);
+
 		return(Length);
 	}
 
