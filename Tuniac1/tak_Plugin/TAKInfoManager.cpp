@@ -68,43 +68,49 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 	TagInfo = tak_SSD_GetAPEv2Tag(Decoder);
 	if(tak_APE_Valid(TagInfo))
 	{
-		char buffer[256];
-		int idx = 0;
-		int size =0;
-		if(tak_APE_GetIndexOfKey(TagInfo, "Track", &idx) != tak_res_ape_NotAvail)
+		int keycount = tak_APE_GetItemNum(TagInfo);
+		char field_name[256];
+		char field_value[256];
+		int field_size;
+
+		for(unsigned int x=0; x<keycount; x++)
 		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 2, &size);
-			libEnt->dwTrack[0] = atoi(buffer);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Year", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 4, &size);
-			libEnt->iYear = atoi(buffer);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Artist", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
-			MultiByteToWideChar(CP_UTF8, 0, buffer, size, libEnt->szArtist, 128);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Title", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
-			MultiByteToWideChar(CP_UTF8, 0, buffer, size, libEnt->szTitle, 128);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Album", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
-			MultiByteToWideChar(CP_UTF8, 0, buffer, size, libEnt->szAlbum, 128);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Genre", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
-			MultiByteToWideChar(CP_UTF8, 0, buffer, size, libEnt->szGenre, 128);
-		}
-		if(tak_APE_GetIndexOfKey(TagInfo, "Comment", &idx) != tak_res_ape_NotAvail)
-		{
-			tak_APE_GetItemValue(TagInfo, idx, buffer, 256, &size);
-			MultiByteToWideChar(CP_UTF8, 0, buffer, size, libEnt->szGenre, 128);
+			tak_APE_GetItemKey(TagInfo, x, field_name, 256, &field_size);
+			if(strcmp(field_name, "Album") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szAlbum, 128);
+			}
+			if(strcmp(field_name, "Artist") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szArtist, 128);
+			}
+			if(strcmp(field_name, "Title") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szTitle, 128);
+			}
+			if(strcmp(field_name, "Genre") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szGenre, 128);
+			}
+			if(strcmp(field_name, "Comment") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szComment, 128);
+			}
+			if(strcmp(field_name, "Track") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->dwTrack[0] = atoi(field_value);
+			}
+			if(strcmp(field_name, "Year") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->iYear = atoi(field_value);
+			}
 		}
 	}
 
