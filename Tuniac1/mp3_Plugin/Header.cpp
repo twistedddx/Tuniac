@@ -133,11 +133,13 @@ bool Header::Load(unsigned char *FromHere)
 			break;
 
 		case 2:
-			Layer = LAYER2;
+			return false;
+			//Layer = LAYER2;
 			break;
 
 		case 3:
-			Layer = LAYER1;
+			return false;
+			//Layer = LAYER1;
 			break;
 	}
 	if(OldLayer != -1)
