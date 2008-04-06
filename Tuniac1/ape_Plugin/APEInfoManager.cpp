@@ -3,6 +3,13 @@
 #include "MACLib.h"
 #include "apetag.h"
 #include "apeinfomanager.h"
+/*
+#define APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN	L"replaygain_track_gain"
+#define APE_TAG_FIELD_REPLAYGAIN_TRACK_PEAK	L"replaygain_track_peak"
+#define APE_TAG_FIELD_REPLAYGAIN_ALBUM_GAIN	L"replaygain_album_gain"
+#define APE_TAG_FIELD_REPLAYGAIN_ALBUM_PEAK	L"replaygain_album_peak"
+*/
+
 
 // actual class definition here
 
@@ -53,29 +60,92 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if (bHasID3Tag || bHasAPETag)
 	{
-			wchar_t buffer[256];
-			int chars = 256;
+		CAPETagField *field;
+		int idx = 0;
 
-			if (MACTag->GetFieldString(APE_TAG_FIELD_TITLE, buffer, &chars) == 0)
-				swprintf(libEnt->szTitle, 256, L"%s", buffer);
+		while((field = MACTag->GetTagField(idx)) != NULL) {
+			idx++;
 
-			if (MACTag->GetFieldString(APE_TAG_FIELD_ALBUM, buffer, &chars) == 0)
-				swprintf(libEnt->szAlbum, 256, L"%s", buffer);
+			const wchar_t *field_name;
+			const char *field_value;
+			int field_size;
 
-			if (MACTag->GetFieldString(APE_TAG_FIELD_ARTIST, buffer, &chars) == 0)
-				swprintf(libEnt->szArtist, 256, L"%s", buffer);
+			field_name = field->GetFieldName();
 
-			if (MACTag->GetFieldString(APE_TAG_FIELD_COMMENT, buffer, &chars) == 0)
-				swprintf(libEnt->szComment, 256, L"%s", buffer);
-
-			if (MACTag->GetFieldString(APE_TAG_FIELD_GENRE, buffer, &chars) == 0)
-				swprintf(libEnt->szGenre, 256, L"%s", buffer);
-
-			if (MACTag->GetFieldString(APE_TAG_FIELD_YEAR, buffer, &chars) == 0)
-				libEnt->iYear = _wtoi(buffer);
-
-			if (MACTag->GetFieldString(APE_TAG_FIELD_TRACK, buffer, &chars) == 0)
-				libEnt->dwTrack[0] = _wtoi(buffer);
+			if(wcscmp(field_name, APE_TAG_FIELD_TITLE) == 0)
+			{
+				field_value = field->GetFieldValue();
+				field_size = field->GetFieldSize();
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szTitle, 128);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_ALBUM) == 0)
+			{
+				field_value = field->GetFieldValue();
+				field_size = field->GetFieldSize();
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szAlbum, 128);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_ARTIST) == 0)
+			{
+				field_value = field->GetFieldValue();
+				field_size = field->GetFieldSize();
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szArtist, 128);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_COMMENT) == 0)
+			{
+				field_value = field->GetFieldValue();
+				field_size = field->GetFieldSize();
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szComment, 128);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_GENRE) == 0)
+			{
+				field_value = field->GetFieldValue();
+				field_size = field->GetFieldSize();
+				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szGenre, 128);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_YEAR) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->iYear = atoi(field_value);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_TRACK) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->dwTrack[0] = atoi(field_value);
+				continue;
+			}
+			/*
+			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->fRPTG = _wtof(field_value);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_PEAK) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->fRPTP = _wtof(field_value);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_GAIN) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->fRPAG = _wtof(field_value);
+				continue;
+			}
+			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_PEAK) == 0)
+			{
+				field_value = field->GetFieldValue();
+				libEnt->fRPAP = _wtof(field_value);
+				continue;
+			}
+			*/
+		}
 	}
 
 	double bitrate = MACDecompressor->GetInfo(APE_INFO_AVERAGE_BITRATE);
