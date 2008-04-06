@@ -80,37 +80,70 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szAlbum, 128);
+				continue;
 			}
 			if(strcmp(field_name, "Artist") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szArtist, 128);
+				continue;
 			}
 			if(strcmp(field_name, "Title") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szTitle, 128);
+				continue;
 			}
 			if(strcmp(field_name, "Genre") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szGenre, 128);
+				continue;
 			}
 			if(strcmp(field_name, "Comment") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				MultiByteToWideChar(CP_UTF8, 0, field_value, field_size, libEnt->szComment, 128);
+				continue;
 			}
 			if(strcmp(field_name, "Track") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				libEnt->dwTrack[0] = atoi(field_value);
+				continue;
 			}
 			if(strcmp(field_name, "Year") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
 				libEnt->iYear = atoi(field_value);
+				continue;
 			}
+			/*
+			if(strcmp(field_name, "replaygain_track_gain") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->fRPTG = _wtof(field_value);
+				continue;
+			}
+			if(strcmp(field_name, "replaygain_track_peak") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->fRPTP = _wtof(field_value);
+				continue;
+			}
+			if(strcmp(field_name, "replaygain_album_gain") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->fRPAG = _wtof(field_value);
+				continue;
+			}
+			if(strcmp(field_name, "replaygain_album_peak") == 0)
+			{
+				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
+				libEnt->fRPAP = _wtof(field_value);
+				continue;
+			}
+			*/
 		}
 	}
 
