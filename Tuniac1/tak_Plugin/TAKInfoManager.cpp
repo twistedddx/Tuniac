@@ -156,7 +156,7 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 	CloseHandle(hFile);
 	unsigned long time = StreamInfo.Sizes.SampleNum/StreamInfo.Audio.SampleRate;
 
-	libEnt->iBitRate			= ((filesize / time) / 128) * 1000.0;
+	libEnt->iBitRate			= ((filesize * 1000.0) / time) / 128;
 	libEnt->iChannels			= StreamInfo.Audio.ChannelNum;
 	libEnt->iSampleRate			= StreamInfo.Audio.SampleRate;
 	libEnt->iPlaybackTime		= time*1000;
