@@ -69,8 +69,8 @@ bool		CALACDecoder::GetLength(unsigned long * MS)
 			accum += demux.time_to_sample[index].sample_count;
         		index++;
 			if(index >= demux.num_time_to_samples) {
-				fprintf(stderr, "ALAC: get_song_length: sample %i does not have a duration\n", i);
-				return 0;
+				//ALAC: get_song_length: sample %i does not have a duration
+				return false;
 			}
 		}
 	    

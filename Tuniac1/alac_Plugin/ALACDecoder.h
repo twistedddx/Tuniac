@@ -24,7 +24,6 @@ protected:
 	int outputBytes;
 	alac_file *alac;
 	demux_res_t demux;
-	FILE *file;
 	stream_t *stream;
 
 

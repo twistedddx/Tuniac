@@ -76,7 +76,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -164,7 +164,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -240,7 +240,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -328,7 +328,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -379,6 +379,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ALACInfoManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\alacPlugin.cpp"
 				>
 			</File>
@@ -398,6 +402,10 @@
 			</File>
 			<File
 				RelativePath=".\ALACDecoderPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ALACInfoManager.h"
 				>
 			</File>
 			<File
