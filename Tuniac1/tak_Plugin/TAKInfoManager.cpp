@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <wchar.h>
 #include "takinfomanager.h"
 // actual class definition here
 
