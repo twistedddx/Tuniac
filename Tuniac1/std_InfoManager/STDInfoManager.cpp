@@ -13,6 +13,10 @@
 #include "mpeg/mpegfile.h"
 #include "mpeg/id3v2/id3v2tag.h"
 #include "mpeg/id3v2/frames/attachedpictureframe.h"
+#include "ape/apetag.h"
+
+
+
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -136,10 +140,24 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		swprintf(libEnt->szComment, 128, L"%s", m_File->tag()->comment().toWString().c_str());
 	}
 
+//mpc,wv,tta? generic ape tagged? ape, ofr, tak
+
 	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(libEnt->szURL)))
 	{
 		TagLib::MPEG::File * mpegFile = (TagLib::MPEG::File *)m_File;
-
+		if(mpegFile->APETag())
+		{
+			TagLib::APE::ItemListMap apemap = mpegFile->APETag()->itemListMap();
+			if(!apemap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+			{
+				//libEnt->fRPTG = atof(apemap["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+			}
+			if(!apemap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+			{
+			
+				//libEnt->fRPAG = atof(apemap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());
+			}
+		}
 		if(mpegFile->ID3v2Tag()) 
 		{
 			// Get the list of frames for a specific frame type
