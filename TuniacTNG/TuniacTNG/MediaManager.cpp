@@ -66,6 +66,15 @@ bool CMediaManager::Initialize(void)
 				TEXT("FirstPlayed			 DATETIME"),
 				TEXT("LastPlayed			 DATETIME"),
 				TEXT("Playcount				 INT"),
+
+				TEXT("ReplayGainTrack		 INT"),
+				TEXT("ReplayPeakTrack		 REAL"),
+				TEXT("ReplayGainAlbum		 INT"),
+				TEXT("ReplayPeakalbum		 REAL"),
+
+				TEXT("EncoderDelay			 INT"),
+				TEXT("EncoderPadding		 INT"),
+
 				TEXT("")
 			};
 
@@ -516,4 +525,54 @@ bool CMediaManager::AddFileArray(StringArray filenameArray)
 	}
 
 	return false;
+}
+
+bool	CMediaManager::DeleteByID(__int64 ullID)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	try
+	{
+		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE EntryID = ?;");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command deletecmd(con, sDeleteEntrySQL);
+
+		deletecmd.bind(1, ullID);
+
+		deletecmd.executenonquery();
+	}
+	catch(std::exception &ex) 
+	{
+		//LOGDEBUG("Exception Occured: " << ex.what());
+		return false;
+	}
+
+	return true;
+}
+
+bool	CMediaManager::DeleteByFilename(CStdString filename)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	try
+	{
+		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE Filename = ?;");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command deletecmd(con, sDeleteEntrySQL);
+
+		deletecmd.bind(1, filename);
+
+		deletecmd.executenonquery();
+	}
+	catch(std::exception &ex) 
+	{
+		//LOGDEBUG("Exception Occured: " << ex.what());
+		return false;
+	}
+
+	return true;
 }

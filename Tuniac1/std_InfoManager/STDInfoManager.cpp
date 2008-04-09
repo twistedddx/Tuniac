@@ -13,6 +13,7 @@
 #include "mpeg/mpegfile.h"
 #include "mpeg/id3v2/id3v2tag.h"
 #include "mpeg/id3v2/frames/attachedpictureframe.h"
+#include "mpeg/id3v2/frames/relativevolumeframe.h"
 #include "ape/apetag.h"
 
 
@@ -150,16 +151,27 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			TagLib::APE::ItemListMap apemap = mpegFile->APETag()->itemListMap();
 			if(!apemap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
+				int x=0;
 				//libEnt->fRPTG = atof(apemap["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!apemap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-			
+				int y=0;
 				//libEnt->fRPAG = atof(apemap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());
 			}
 		}
 		if(mpegFile->ID3v2Tag()) 
 		{
+			/*
+			TagLib::ID3v2::FrameListMap::Iterator it;
+			
+			it = mpegFile->ID3v2Tag()->frameListMap().begin();
+			while(it != mpegFile->ID3v2Tag()->frameListMap().end())
+			{
+				it++;
+			}
+			*/
+
 			// Get the list of frames for a specific frame type
 			{
 				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["TRCK"];
@@ -206,6 +218,39 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 					picframe->mimeType();
 				}
 			}
+
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["RGAD"];
+				if(!l.isEmpty())
+				{
+					_ASSERT(0);
+				}			
+			}
+			{
+				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["RVA2"];
+				if(!l.isEmpty())
+				{
+					TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
+//					_ASSERT(0);
+
+					int x=0;
+				}			
+			}
+
+		/*
+			    <Header for 'Replay Gain Adjustment', ID: "RGAD">
+        Peak Amplitude                          $xx $xx $xx $xx
+        Radio Replay Gain Adjustment            $xx $xx
+        Audiophile Replay Gain Adjustment       $xx $xx
+
+        Header consists of:
+        Frame ID                $52 $47 $41 $44 = "RGAD"
+        Size                    $00 $00 $00 $08
+        Flags                   $40 $00         (%01000000 %00000000)
+
+        In the RGAD frame, the flags state that the frame should be preserved if the ID3v2 
+        tag is altered, but discarded if the audio data is altered.
+		*/
 
 
 		}
