@@ -219,6 +219,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\XAudioOutput.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\XAudioOutputProducer.cpp"
 				>
 			</File>
@@ -238,6 +242,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XAudioOutput.h"
 				>
 			</File>
 			<File

@@ -19,7 +19,7 @@ protected:
 	} AudioSource;
 
 	std::vector<AudioSource>					m_vAudioSources;
-	CXAudioOutputProducer						m_AudioProducer;
+	IAudioOutputProducer		*				m_AudioProducer;
 
 public:
 	CAudioCore(void);

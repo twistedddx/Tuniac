@@ -77,4 +77,7 @@ public:
 
 	bool AddFile(String filename);
 	bool AddFileArray(StringArray filenameArray);
+
+	bool DeleteByID(__int64 ullID);
+	bool DeleteByFilename(CStdString filename);
 };

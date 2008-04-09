@@ -19,7 +19,8 @@ void				CAudioCore::Destroy(void)
 
 bool				CAudioCore::Startup(void)
 {
-	if(!m_AudioProducer.Initialize())
+	m_AudioProducer = new CXAudioOutputProducer();
+	if(!m_AudioProducer->Initialize())
 		return false;
 
 	return true;
@@ -28,7 +29,8 @@ bool				CAudioCore::Startup(void)
 bool				CAudioCore::Shutdown(void)
 {
 	FreeAudioSources();
-	m_AudioProducer.Shutdown();
+	m_AudioProducer->Shutdown();
+	m_AudioProducer->Destroy();
 	return true;
 }
 
@@ -92,7 +94,7 @@ bool				CAudioCore::FreeAudioSources(void)
 
 AUDIOSTREAMID		CAudioCore::RenderAudioStream(wchar_t	*	pwsFileName)
 {
-	IAudioOutput * pOutput = m_AudioProducer.CreateAudioOutput();
+	IAudioOutput * pOutput = m_AudioProducer->CreateAudioOutput(44100, 2);
 	return 0;
 }
 

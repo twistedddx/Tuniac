@@ -14,6 +14,12 @@ CXAudioOutputProducer::~CXAudioOutputProducer(void)
 {
 }
 
+void CXAudioOutputProducer::Destroy(void)
+{
+	this->Shutdown();
+	delete this;
+}
+
 bool CXAudioOutputProducer::Initialize(void)
 {
 	//////////////////////////////////////////////////////////////////////////
@@ -65,7 +71,16 @@ bool CXAudioOutputProducer::Shutdown(void)
 	return true;
 }
 
-IAudioOutput * CXAudioOutputProducer::CreateAudioOutput(void)
+IAudioOutput * CXAudioOutputProducer::CreateAudioOutput(unsigned long ulSampleRate, unsigned long ulChannels)
 {
+	CXAudioOutput * pOutput = new CXAudioOutput(m_pXAudio);
+
+	if(pOutput->Initialize(ulSampleRate, ulChannels))
+	{
+		// yay
+		return pOutput;
+	}
+
+	pOutput->Destroy();
 	return NULL;
 }
