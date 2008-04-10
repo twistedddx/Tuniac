@@ -3,12 +3,12 @@
 #include "MACLib.h"
 #include "apetag.h"
 #include "apeinfomanager.h"
-/*
+
 #define APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN	L"replaygain_track_gain"
 #define APE_TAG_FIELD_REPLAYGAIN_TRACK_PEAK	L"replaygain_track_peak"
 #define APE_TAG_FIELD_REPLAYGAIN_ALBUM_GAIN	L"replaygain_album_gain"
 #define APE_TAG_FIELD_REPLAYGAIN_ALBUM_PEAK	L"replaygain_album_peak"
-*/
+
 
 
 // actual class definition here
@@ -119,32 +119,32 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 				libEnt->dwTrack[0] = atoi(field_value);
 				continue;
 			}
-			/*
+			
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN) == 0)
 			{
 				field_value = field->GetFieldValue();
-				libEnt->fRPTG = _wtof(field_value);
+				double x = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_PEAK) == 0)
 			{
 				field_value = field->GetFieldValue();
-				libEnt->fRPTP = _wtof(field_value);
+				double a = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_GAIN) == 0)
 			{
 				field_value = field->GetFieldValue();
-				libEnt->fRPAG = _wtof(field_value);
+				double y = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_PEAK) == 0)
 			{
 				field_value = field->GetFieldValue();
-				libEnt->fRPAP = _wtof(field_value);
+				double b = atof(field_value);
 				continue;
 			}
-			*/
+			
 		}
 	}
 

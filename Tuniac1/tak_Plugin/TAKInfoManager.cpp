@@ -67,7 +67,7 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 	TagInfo = tak_SSD_GetAPEv2Tag(Decoder);
 	if(tak_APE_Valid(TagInfo))
 	{
-		int keycount = tak_APE_GetItemNum(TagInfo);
+		unsigned int keycount = tak_APE_GetItemNum(TagInfo);
 		char field_name[256];
 		char field_value[256];
 		int field_size;
@@ -117,32 +117,32 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 				libEnt->iYear = atoi(field_value);
 				continue;
 			}
-			/*
+			
 			if(strcmp(field_name, "replaygain_track_gain") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				libEnt->fRPTG = _wtof(field_value);
+				double x = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_track_peak") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				libEnt->fRPTP = _wtof(field_value);
+				double a = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_album_gain") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				libEnt->fRPAG = _wtof(field_value);
+				double y = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_album_peak") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				libEnt->fRPAP = _wtof(field_value);
+				double b = atof(field_value);
 				continue;
 			}
-			*/
+			
 		}
 	}
 
