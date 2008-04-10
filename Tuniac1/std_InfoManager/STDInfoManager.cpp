@@ -617,7 +617,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 				TagLib::ID3v2::FrameList l = tagFile->ID3v2Tag()->frameListMap()["RGAD"];
 				if(!l.isEmpty())
 				{
-					_ASSERT(0);
+					//_ASSERT(0);
+
+					// we dont actually support this yet and need to decode the data
 				}			
 			}
 			{
@@ -625,9 +627,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 				if(!l.isEmpty())
 				{
 					TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
-	//					_ASSERT(0);
 
-					int x=0;
+					libEnt->fReplayGain_Album_Gain	= relVol->volumeAdjustment();
+					//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
 				}			
 			}
 
