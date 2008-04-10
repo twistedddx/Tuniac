@@ -322,7 +322,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		}
 		if(!vorbisTag["TOTALTRACKS"].isEmpty())
 		{
-			libEnt->dwTrack[1] = vorbisTag["DISCNUMBER"].toString().toInt();
+			libEnt->dwTrack[1] = vorbisTag["TOTALTRACKS"].toString().toInt();
 		}
 		if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 		{
