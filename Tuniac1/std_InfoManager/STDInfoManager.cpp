@@ -16,15 +16,16 @@
 #include "wavpack/wavpackfile.h"
 #include "flac/flacfile.h"
 #include "ogg/vorbis/vorbisfile.h"
-//#include "mp4/mp4file.h"
+#include "mp4/mp4file.h"
 
 #include "mpeg/id3v2/id3v2tag.h"
 #include "mpeg/id3v2/frames/attachedpictureframe.h"
 #include "mpeg/id3v2/frames/relativevolumeframe.h"
 #include "ape/apetag.h"
-#include "xiphcomment.h"
-//#include "mp4tag.h"
-
+#include "ogg/xiphcomment.h"
+#include "mp4/mp4tag.h"
+#include "mp4/mp4item.h"
+#include "mp4/mp4atom.h"
 
 
 
@@ -153,6 +154,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	TagLib::Ogg::FieldListMap vorbisTag;
 	TagLib::APE::ItemListMap apeTag;
 	TagLib::ID3v2::FrameListMap id3Tag;
+	TagLib::MP4::ItemListMap mp4Tag;
 
 	//vorbis comment, id3v2
 	if(!StrCmpI(TEXT(".flac"), PathFindExtension(libEnt->szURL)))
@@ -165,17 +167,14 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			id3Tag = tagFile->ID3v2Tag()->frameListMap();
 	}
 
-/*
+	//mp4 tag
 	else if(!StrCmpI(TEXT(".mp4"), PathFindExtension(libEnt->szURL)))
 	{
-		TagLib::MP4::Tag * tagFile = (TagLib::MP4::File *)m_File;
-		if(tagFile)
-		{
-
-		}
-
+		TagLib::MP4::File * tagFile = (TagLib::MP4::File *)m_File;
+		if(tagFile->tag())
+			mp4Tag = tagFile->tag()->itemListMap();
 	}
-*/
+
 
 	//vorbis comment
 	else if(!StrCmpI(TEXT(".ogg"), PathFindExtension(libEnt->szURL)))
@@ -312,6 +311,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		In the RGAD frame, the flags state that the frame should be preserved if the ID3v2 
 		tag is altered, but discarded if the audio data is altered.
 		*/
+	}
+
+	if(!mp4Tag.isEmpty())
+	{
+		if(mp4Tag["disc"].isValid())
+		{
+			libEnt->dwDisc[0] = mp4Tag["disc"].toInt();
+		}
+		if(mp4Tag["trkn"].isValid())
+		{
+			libEnt->dwTrack[0] = mp4Tag["trkn"].toIntPair().first;
+			libEnt->dwTrack[1] = mp4Tag["trkn"].toIntPair().second;
+		}
 	}
 
 	if(!vorbisTag.isEmpty())
