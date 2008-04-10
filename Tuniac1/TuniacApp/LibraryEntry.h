@@ -66,4 +66,8 @@ public:
 	int					iBitRate;
 	int					iSampleRate;
 	int					iChannels;
+	float				fReplayGain_Track_Gain;
+	float				fReplayGain_Track_Peak;
+	float				fReplayGain_Album_Gain;
+	float				fReplayGain_Album_Peak;
 } LibraryEntry;

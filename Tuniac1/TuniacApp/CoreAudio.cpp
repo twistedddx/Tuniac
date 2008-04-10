@@ -445,6 +445,16 @@ float CCoreAudio::GetVolumePercent()
 	return m_fVolume;
 }
 
+void CCoreAudio::SetReplayGain(float fReplayGain)
+{
+	bool bReplayGain = false;
+	if(fReplayGain != 1.0f)
+		bReplayGain = true;
+
+	float fReplayGainScale = pow(10, fReplayGain / 20);
+
+	m_Streams[m_Streams.GetCount()-1]->SetReplayGainScale(fReplayGainScale, bReplayGain);
+}
 
 void CCoreAudio::SetVolumePercent(float fVolume)
 {

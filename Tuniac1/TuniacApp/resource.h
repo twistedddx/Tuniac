@@ -201,6 +201,7 @@
 #define ID_PLAYBACK_TOGGLE_REPEAT       40056
 #define ID_PLAY                         40059
 #define ID_REMOVE                       40062
+#define ID_UPDATE                       40063
 #define ID_TONEWPLAYLIST                40066
 #define ID_FILTERBYFIELD                40067
 #define ID_PLAYPLAYLIST                 40069

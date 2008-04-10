@@ -123,25 +123,25 @@ bool			CAPEInfoManager::GetInfo(LibraryEntry * libEnt)
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN) == 0)
 			{
 				field_value = field->GetFieldValue();
-				double x = atof(field_value);
+				libEnt->fReplayGain_Track_Gain = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_TRACK_PEAK) == 0)
 			{
 				field_value = field->GetFieldValue();
-				double a = atof(field_value);
+				libEnt->fReplayGain_Track_Peak = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_GAIN) == 0)
 			{
 				field_value = field->GetFieldValue();
-				double y = atof(field_value);
+				libEnt->fReplayGain_Album_Gain = atof(field_value);
 				continue;
 			}
 			if(wcscmp(field_name, APE_TAG_FIELD_REPLAYGAIN_ALBUM_PEAK) == 0)
 			{
 				field_value = field->GetFieldValue();
-				double b = atof(field_value);
+				libEnt->fReplayGain_Album_Peak = atof(field_value);
 				continue;
 			}
 			

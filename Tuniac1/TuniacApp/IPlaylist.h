@@ -45,10 +45,14 @@
 #define FIELD_NUMCHANNELS					19
 #define FIELD_FILEEXTENSION					20
 #define FIELD_PLAYORDER						21
-//#define FIELD_STATIONNAME					22
+#define FIELD_REPLAYGAIN_TRACK_GAIN			22
+#define FIELD_REPLAYGAIN_TRACK_PEAK			23
+#define FIELD_REPLAYGAIN_ALBUM_GAIN			24
+#define FIELD_REPLAYGAIN_ALBUM_PEAK			25
+//#define FIELD_STATIONNAME					26
 
 
-#define FIELD_MAXFIELD						22
+#define FIELD_MAXFIELD						26
 
 
 #define PLAYLIST_TYPE_UNKNOWN				0
@@ -103,6 +107,12 @@ public:
 class IPlaylistEX : public IPlaylist
 {
 public:
+	virtual unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		RealIndexToRandomFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
+
+
 	virtual unsigned long		GetNumItems(void)													= 0;
 
 	virtual bool				ApplyFilter(void)													= 0;

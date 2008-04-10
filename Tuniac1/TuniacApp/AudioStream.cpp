@@ -31,7 +31,7 @@ CAudioStream::CAudioStream()
 	m_PlayState		= STATE_UNKNOWN;
 	m_FadeState		= FADE_NONE;
 
-
+	fReplayGain		= 1.0f;
 	fVolume			= 1.0f;
 	m_bMixNotify	= false;
 	m_bFinishNotify	= false;
@@ -68,6 +68,8 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput)
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
 
+	fAmpGain = 1.99526231496888f;
+
 	return true;
 }
 
@@ -95,6 +97,12 @@ void CAudioStream::Destroy()
 	delete this;
 }
 
+bool			CAudioStream::SetReplayGainScale(float scale, bool set)
+{
+	bReplayGain = set;
+	fReplayGain = scale;
+	return true;
+}
 
 bool			CAudioStream::SetVolumeScale(float scale)
 {
@@ -149,6 +157,16 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				{
 					for(unsigned long chan=0; chan<m_Channels; chan++)
 					{
+						// is replaygain set?
+						if(bReplayGain)
+						{
+							// +6db replaygain files
+							pAudioBuffer[x+chan]		*= fAmpGain;
+
+							// replaygain
+							pAudioBuffer[x+chan]		*= fReplayGain;
+						}
+
 						// apply the crossfade
 						pAudioBuffer[x+chan]		*= fVolume;
 
@@ -165,6 +183,16 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				{
 					for(unsigned long chan=0; chan<m_Channels; chan++)
 					{
+						// is replaygain set?
+						if(bReplayGain)
+						{
+							// +6db replaygain files
+							pAudioBuffer[x+chan]		*= fAmpGain;
+
+							// replaygain
+							pAudioBuffer[x+chan]		*= fReplayGain;
+						}
+
 						// and apply the volume
 						pAudioBuffer[x+chan]		*= fVolumeScale;
 					}
