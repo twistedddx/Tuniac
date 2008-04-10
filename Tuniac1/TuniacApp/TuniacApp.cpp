@@ -747,7 +747,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				// lets just keep core Audio up to date anyway!!!
 				CCoreAudio::Instance()->SetCrossfadeTime(m_Preferences.GetCrossfadeTime() * 1000);
 				CCoreAudio::Instance()->SetAudioBufferSize(m_Preferences.GetAudioBuffering());
-
 				switch (wParam)
 				{
 					case NOTIFY_COREAUDIORESET:
@@ -811,7 +810,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										if(pIPE)
 										{
 											if(CCoreAudio::Instance()->SetSource(pIPE))
+											{
+												SetupReplayGain(pIPE);
 												CCoreAudio::Instance()->Play();
+											}
 											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 										}
 									}
@@ -1035,7 +1037,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											IPlaylistEX * pPlaylist = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 											pPlaylist->SetActiveFilteredIndex(ulMLOldCount);
-											CCoreAudio::Instance()->SetSource(pPlaylist->GetActiveItem());
+											IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+											CCoreAudio::Instance()->SetSource(pEntry);
+											SetupReplayGain(pEntry);
 										}
 
 									}
@@ -1127,6 +1131,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 					if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
 					{
+						SetupReplayGain(pEntry);
 						CCoreAudio::Instance()->Play();
 						pPlaylistEX->SetActiveFilteredIndex(ulIndex);
 						m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
@@ -1452,7 +1457,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(pIPE)
 								{
 									if(CCoreAudio::Instance()->SetSource(pIPE))
+									{
+										SetupReplayGain(pIPE);
 										CCoreAudio::Instance()->Play();
+									}
 
 									//notify plugins of change of state
 									if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
@@ -1487,6 +1495,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulState = CCoreAudio::Instance()->GetState();
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
+										SetupReplayGain(pIPE);
 										if(ulState == STATE_PLAYING)
 											CCoreAudio::Instance()->Play();
 
@@ -1527,6 +1536,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										unsigned long ulState = CCoreAudio::Instance()->GetState();
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
+											SetupReplayGain(pIPE);
 											if(ulState == STATE_PLAYING)
 												CCoreAudio::Instance()->Play();
 
@@ -2286,4 +2296,19 @@ bool	CTuniacApp::SetArt(void)
 		return bArtSuccess;
 	}
 	return false;
+}
+
+void	CTuniacApp::SetupReplayGain(IPlaylistEntry * pIPE)
+{
+	if(pIPE != NULL)
+	{
+		//get from prefs if we want to use track or album replaygain
+		bool bReplayGainTrack = false;
+
+		float *fReplayGain = (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
+		if(bReplayGainTrack)
+			fReplayGain = (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
+
+		CCoreAudio::Instance()->SetReplayGain(*fReplayGain);
+	}
 }

@@ -234,7 +234,11 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				pPlaylist->RebuildPlaylistArrays();
 				pPlaylist->SetActiveFilteredIndex(PLDH.ActiveIndex);
 				if(pPlaylist->GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX)
-					CCoreAudio::Instance()->SetSource(pPlaylist->GetActiveItem());
+				{
+					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+					CCoreAudio::Instance()->SetSource(pEntry);
+					tuniacApp.SetupReplayGain(pEntry);
+				}
 			}
 		}
 		if(PLDH.ActivePlaylist == 0)
@@ -242,7 +246,11 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			SetActivePlaylist(0);
 			m_LibraryPlaylist.SetActiveFilteredIndex(PLDH.ActiveIndex);
 			if(m_LibraryPlaylist.GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
-				CCoreAudio::Instance()->SetSource(m_LibraryPlaylist.GetActiveItem());
+			{
+				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
+				CCoreAudio::Instance()->SetSource(pEntry);
+				tuniacApp.SetupReplayGain(pEntry);
+			}
 			
 		}
 	}

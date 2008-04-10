@@ -178,6 +178,22 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 				return (void *)PathFindExtension(m_LibraryEntry.szURL);
 			}
 			break;
+		case FIELD_REPLAYGAIN_TRACK_GAIN:
+			{
+				return & m_LibraryEntry.fReplayGain_Track_Gain;
+			}
+		case FIELD_REPLAYGAIN_TRACK_PEAK:
+			{
+				return & m_LibraryEntry.fReplayGain_Track_Peak;
+			}
+		case FIELD_REPLAYGAIN_ALBUM_GAIN:
+			{
+				return & m_LibraryEntry.fReplayGain_Album_Gain;
+			}
+		case FIELD_REPLAYGAIN_ALBUM_PEAK:
+			{
+				return & m_LibraryEntry.fReplayGain_Album_Peak;
+			}
 	}
 
 	return NULL;
@@ -479,6 +495,26 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			}
 			break;
 
+		case FIELD_REPLAYGAIN_TRACK_GAIN:
+			{
+				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Gain);
+			}
+			break;
+		case FIELD_REPLAYGAIN_TRACK_PEAK:
+			{
+				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Peak);
+			}
+			break;
+		case FIELD_REPLAYGAIN_ALBUM_GAIN:
+			{
+				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Gain);
+			}
+			break;
+		case FIELD_REPLAYGAIN_ALBUM_PEAK:
+			{
+				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Peak);
+			}
+			break;
 		default:
 			return false;
 	}

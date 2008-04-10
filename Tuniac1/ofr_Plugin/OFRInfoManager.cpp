@@ -94,22 +94,22 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 		}
 		if(strcmp(iTags.keys[i], "replaygain_track_gain") == 0)
 		{
-			double x = atof(iTags.values[i]);
+			libEnt->fReplayGain_Track_Gain = atof(iTags.values[i]);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "replaygain_track_peak") == 0)
 		{
-			double a = atof(iTags.values[i]);
+			libEnt->fReplayGain_Track_Peak = atof(iTags.values[i]);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "replaygain_album_gain") == 0)
 		{
-			double y = atof(iTags.values[i]);
+			libEnt->fReplayGain_Album_Gain = atof(iTags.values[i]);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "replaygain_album_peak") == 0)
 		{
-			double b = atof(iTags.values[i]);
+			libEnt->fReplayGain_Album_Peak = atof(iTags.values[i]);
 			continue;
 		}
 	}

@@ -121,25 +121,25 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 			if(strcmp(field_name, "replaygain_track_gain") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				double x = atof(field_value);
+				libEnt->fReplayGain_Track_Gain = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_track_peak") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				double a = atof(field_value);
+				libEnt->fReplayGain_Track_Peak = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_album_gain") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				double y = atof(field_value);
+				libEnt->fReplayGain_Album_Gain = atof(field_value);
 				continue;
 			}
 			if(strcmp(field_name, "replaygain_album_peak") == 0)
 			{
 				tak_APE_GetItemValue(TagInfo, x, field_value, 256, &field_size);
-				double b = atof(field_value);
+				libEnt->fReplayGain_Album_Peak = atof(field_value);
 				continue;
 			}
 			

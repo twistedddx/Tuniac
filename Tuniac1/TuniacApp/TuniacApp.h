@@ -178,4 +178,7 @@ public:
 	void				RebuildFutureMenu(void);
 	void				UpdateQueues(void);
 	bool				SetArt(void);
+	void				SetupReplayGain(IPlaylistEntry * pIPE);
+
+
 };

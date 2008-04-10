@@ -94,6 +94,8 @@ public:
 	float				GetVolumePercent();
 	void				SetVolumePercent(float fPercent);
 
+	void				SetReplayGain(float fReplayGain);
+
 	void				SetCrossfadeTime(unsigned long ulMS);
 	void				SetAudioBufferSize(unsigned long ulMS) { m_BufferSizeMS = ulMS; }
 	

@@ -168,19 +168,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 			if(!tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
-				double x = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+				libEnt->fReplayGain_Track_Gain = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			{
-				double a = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+				libEnt->fReplayGain_Track_Peak = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 			}
 			if(!tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-				double y = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+				libEnt->fReplayGain_Album_Gain = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 			}
 			if(!tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			{
-				double b = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+				libEnt->fReplayGain_Album_Peak = atof(tagFile->xiphComment()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 			}
 		}
 		if(tagFile->ID3v2Tag()) 
@@ -305,19 +305,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 			if(!tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
-				double x = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+				libEnt->fReplayGain_Track_Gain = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			{
-				double a = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+				libEnt->fReplayGain_Track_Peak = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 			}
 			if(!tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-				double y = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+				libEnt->fReplayGain_Album_Gain = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 			}
 			if(!tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			{
-				double b = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+				libEnt->fReplayGain_Album_Peak = atof(tagFile->tag()->fieldListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 			}
 		}
 	}
@@ -350,19 +350,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
-				double x = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+				libEnt->fReplayGain_Track_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			{
-				double a = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+				libEnt->fReplayGain_Track_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-				double y = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+				libEnt->fReplayGain_Album_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			{
-				double b = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+				libEnt->fReplayGain_Album_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 			}
 		}
 	}
@@ -395,19 +395,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
-				double x = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+				libEnt->fReplayGain_Track_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			{
-				double a = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+				libEnt->fReplayGain_Track_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-				double y = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+				libEnt->fReplayGain_Album_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			{
-				double b = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+				libEnt->fReplayGain_Album_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 			}
 		}
 		if(tagFile->ID3v2Tag()) 
@@ -533,19 +533,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].isEmpty())
 			{
-				double x = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+				libEnt->fReplayGain_Track_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			{
-				double a = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+				libEnt->fReplayGain_Track_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
 			{
-				double y = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+				libEnt->fReplayGain_Album_Gain = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 			}
 			if(!tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			{
-				double b = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+				libEnt->fReplayGain_Album_Peak = atof(tagFile->APETag()->itemListMap()["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 			}
 		}
 	}

@@ -729,6 +729,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Remove",                     ID_REMOVE
         MENUITEM SEPARATOR
+		MENUITEM "&Update",                     ID_UPDATE
         MENUITEM "Show File...",                ID_SHOWFILE
     END
 END
