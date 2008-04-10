@@ -55,41 +55,61 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	OptimFROG_infoFile(tempname, &iInfo, &iTags);
 
-	for(unsigned int x=0; x<iTags.keyCount; x++)
+	for(unsigned int i=0; i<iTags.keyCount; i++)
 	{
-		if(strcmp(iTags.keys[x], "Album") == 0)
+		if(strcmp(iTags.keys[i], "Album") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szAlbum, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szAlbum, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Title") == 0)
+		if(strcmp(iTags.keys[i], "Title") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szTitle, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szTitle, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Artist") == 0)
+		if(strcmp(iTags.keys[i], "Artist") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szArtist, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szArtist, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Genre") == 0)
+		if(strcmp(iTags.keys[i], "Genre") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szGenre, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szGenre, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Comment") == 0)
+		if(strcmp(iTags.keys[i], "Comment") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[x], strlen(iTags.values[x]), libEnt->szComment, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szComment, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Year") == 0)
+		if(strcmp(iTags.keys[i], "Year") == 0)
 		{
-			libEnt->iYear = atoi(iTags.values[x]);
+			libEnt->iYear = atoi(iTags.values[i]);
 			continue;
 		}
-		if(strcmp(iTags.keys[x], "Track") == 0)
+		if(strcmp(iTags.keys[i], "Track") == 0)
 		{
-			libEnt->dwTrack[0] = atoi(iTags.values[x]);
+			libEnt->dwTrack[0] = atoi(iTags.values[i]);
+			continue;
+		}
+		if(strcmp(iTags.keys[i], "replaygain_track_gain") == 0)
+		{
+			double x = atof(iTags.values[i]);
+			continue;
+		}
+		if(strcmp(iTags.keys[i], "replaygain_track_peak") == 0)
+		{
+			double a = atof(iTags.values[i]);
+			continue;
+		}
+		if(strcmp(iTags.keys[i], "replaygain_album_gain") == 0)
+		{
+			double y = atof(iTags.values[i]);
+			continue;
+		}
+		if(strcmp(iTags.keys[i], "replaygain_album_peak") == 0)
+		{
+			double b = atof(iTags.values[i]);
 			continue;
 		}
 	}

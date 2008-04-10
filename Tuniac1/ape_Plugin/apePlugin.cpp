@@ -29,7 +29,7 @@ extern "C" __declspec(dllexport) IInfoManager * CreateInfoManagerPlugin(void)
 	IInfoManager * pInfo = new CAPEInfoManager;
 
 	return(pInfo);
-};
+}
 
 extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void)
 {

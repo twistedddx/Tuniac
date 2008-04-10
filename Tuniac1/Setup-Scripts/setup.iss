@@ -191,14 +191,14 @@ begin
   Label1Caption :=
     'Tuniac comes in 2 flavours, 32bit and 64bit.' + #13#10 +
     'We have detected your system is 64bit capable.' + #13#10#13#10 +
-    'Note: Under 64bit the SVP visual plugin is unsupported.'
-  Label2Caption := 'Check if you still want Tuniac 32bit, then click Next.';
+    'Note: Under 64bit the TAK, OptimFROG and SVP plugins are not available.'
+  Label2Caption := 'Select below which Tuniac you want, then click Next.';
   CheckCaption := '&Install Tuniac 32bit instead of Tuniac 64bit';
 
   InstallLegacyPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, InstallLegacyCheckBox);
 
   Caption := 'DirectX March 2008 Redist download';
-  SubCaption1 := 'Would you like to download DirectX 9.0c March 2008 Redist?';
+  SubCaption1 := 'DirectX 9.0c March 2008 is currently not installed.';
   IconFileName := 'directx.ico';
   Label1Caption :=
     'Tuniac uses XAudio for audio output. XAudio is included in DirectX 9.0c March 2008 Redist. This is required for Tuniac to play files.'
