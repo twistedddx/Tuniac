@@ -53,8 +53,15 @@ public:
 	unsigned long						m_ulLastSeekMS;
 
 	float								fAmpGain;
-	float								fReplayGain;
+
+	float								fReplayGainTrack;
+	float								fReplayGainAlbum;
+
+	bool								bTrackHasGain;
+
 	bool								bReplayGain;
+	bool								bUseAlbumGain;
+
 	float								fVolumeScale;			//0.0 - 1.0 affects total volume output!
 	float								fVolume;
 	float								fVolumeChange;
@@ -93,7 +100,10 @@ public:
 	unsigned long	GetFadeState(void);
 
 	bool			SetVolumeScale(float scale);
-	bool			SetReplayGainScale(float scale, bool set);
+
+	void			EnableReplayGain(bool bEnable = true);
+	bool			SetReplayGainScale(float trackscale, float albumscale);
+	void			UseAlbumGain(bool bUse);
 
 	bool			IsFinished(void);
 

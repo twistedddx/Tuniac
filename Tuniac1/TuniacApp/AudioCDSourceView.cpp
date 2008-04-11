@@ -201,7 +201,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 									IPlaylistEntry * pIPE = m_pCDPlaylist->GetActiveItem();
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
-										tuniacApp.SetupReplayGain(pIPE);
+//										tuniacApp.SetupReplayGain(pIPE);
 										CCoreAudio::Instance()->Play();
 										tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 

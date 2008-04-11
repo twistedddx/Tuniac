@@ -38,7 +38,9 @@ CCoreAudio::CCoreAudio(void) :
 	m_BufferSizeMS(250),
 	m_fVolume(100.0f),
 	m_pXAudio(NULL),
-	m_pMasteringVoice(NULL)
+	m_pMasteringVoice(NULL),
+	m_bReplayGainEnabled(true),
+	m_bUseAlbumGain(false)
 
 {
 }
@@ -173,6 +175,13 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 	
 	LPTSTR szSource = (LPTSTR)pEntry->GetField(FIELD_URL);
 
+	// BITS YOU STUPID COCKFACE
+	// REPLAY GAIN STUFF GOES HERE!!!!!!!!!!!!!!!!!!
+	
+	float *fReplayGainAlbum = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
+	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
+	
+
 	for(unsigned long x=0; x<m_AudioSources.GetCount(); x++)
 	{
 
@@ -205,6 +214,11 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 					pStream->SetVolumeScale(scale);
 					pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
+
+					pStream->EnableReplayGain(m_bReplayGainEnabled);
+					pStream->UseAlbumGain(m_bUseAlbumGain);
+					pStream->SetReplayGainScale(*fReplayGainTrack, *fReplayGainAlbum);
+
 					m_Streams.AddTail(pStream);
 
 					if(bShoudStart)
@@ -444,18 +458,18 @@ float CCoreAudio::GetVolumePercent()
 {
 	return m_fVolume;
 }
-
+/*
 void CCoreAudio::SetReplayGain(float fReplayGain)
 {
 	bool bReplayGain = false;
 	if(fReplayGain != 0.0f)
 		bReplayGain = true;
 
-	float fReplayGainScale = pow(10, fReplayGain / 20);
 
 	if(m_Streams.GetCount())
 		m_Streams[m_Streams.GetCount()-1]->SetReplayGainScale(fReplayGainScale, bReplayGain);
 }
+*/
 
 void CCoreAudio::SetVolumePercent(float fVolume)
 {
@@ -475,6 +489,26 @@ void CCoreAudio::SetVolumePercent(float fVolume)
 		m_Streams[x]->SetVolumeScale(m_fVolume / 100.0f);
 	}
 }
+
+void CCoreAudio::EnableReplayGain(bool bEnable)
+{
+	m_bReplayGainEnabled = bEnable;
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->EnableReplayGain(m_bReplayGainEnabled);
+	}
+}
+
+void CCoreAudio::ReplayGainUseAlbumGain(bool bAlbumGain)
+{
+	m_bUseAlbumGain = bAlbumGain;
+
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->UseAlbumGain(m_bUseAlbumGain);
+	}
+}
+
 
 void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID)
 {

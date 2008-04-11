@@ -388,7 +388,7 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 		if(!CCoreAudio::Instance()->SetSource(pEntry))
 			return false;
 
-		tuniacApp.SetupReplayGain(pEntry);
+//		tuniacApp.SetupReplayGain(pEntry);
 
 		if(ulState == STATE_PLAYING)
 		{

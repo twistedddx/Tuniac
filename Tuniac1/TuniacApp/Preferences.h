@@ -65,6 +65,8 @@ protected:
 	int			m_CrossfadeTime;
 
 	int			m_AudioBuffering;
+	BOOL		m_bReplayGain;
+	BOOL		m_bReplayGainAlbum;
 
 	float		m_Volume;
 
@@ -158,6 +160,8 @@ public:
 	void	SetCrossfadeTime(int time);
 
 	int		GetAudioBuffering(void);
+	bool	ReplayGainEnabled(void);
+	bool	ReplayGainUseAlbumGain(void);
 
 	float	GetVolumePercent(void);
 	void	SetVolumePercent(float percent);
