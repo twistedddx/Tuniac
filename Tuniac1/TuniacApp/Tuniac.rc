@@ -51,14 +51,17 @@ IDD_PREFERENCES_AUDIO DIALOGEX 0, 0, 236, 176
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "      Crossfade Playback",IDC_STATIC,7,7,222,48
+    GROUPBOX        "      Crossfade Playback",IDC_STATIC,7,7,222,45
     CONTROL         "",IDC_CROSSFADE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,7,10,10
-    CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,20,209,20
-    CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,41,209,8
-    GROUPBOX        "Audio Buffering",IDC_STATIC,7,63,222,74
-    CONTROL         "",IDC_BUFFER_TIME_SLIDER,"msctls_trackbar32",WS_TABSTOP,13,77,209,20
-    CTEXT           "%d Milliseconds",IDC_BUFFER_TIME_TEXT,20,100,209,8
-    LTEXT           "A larger buffer will help prevent audio skips but will increase delay in audio effects.",IDC_STATIC,13,113,209,17
+    CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,18,209,20
+    CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,39,209,8
+    GROUPBOX        "Audio Buffering",IDC_STATIC,7,56,222,68
+    CONTROL         "",IDC_BUFFER_TIME_SLIDER,"msctls_trackbar32",WS_TABSTOP,13,67,209,20
+    CTEXT           "%d Milliseconds",IDC_BUFFER_TIME_TEXT,20,90,209,8
+    LTEXT           "A larger buffer will help prevent audio skips but will increase delay in audio effects.",IDC_STATIC,13,103,209,17
+    GROUPBOX        "      Use ReplayGain",IDC_STATIC,7,129,222,32
+    CONTROL         "",IDC_REPLAYGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,129,10,10
+    CONTROL         "Use Album Gain Over Track",IDC_REPLAYGAINALBUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,145,115,10
 END
 
 IDD_PREFERENCES_MEDIALIBRARY DIALOGEX 0, 0, 235, 176
@@ -729,7 +732,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Remove",                     ID_REMOVE
         MENUITEM SEPARATOR
-		MENUITEM "&Update",                     ID_UPDATE
+        MENUITEM "&Update",                     ID_UPDATE
         MENUITEM "Show File...",                ID_SHOWFILE
     END
 END

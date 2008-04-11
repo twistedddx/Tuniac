@@ -767,7 +767,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
 								if(CCoreAudio::Instance()->SetSource(pIPE))
 								{
-									tuniacApp.SetupReplayGain(pIPE);
+//									tuniacApp.SetupReplayGain(pIPE);
 									CCoreAudio::Instance()->Play();
 									tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 								}
@@ -1507,7 +1507,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
-										tuniacApp.SetupReplayGain(pIPE);
+//										tuniacApp.SetupReplayGain(pIPE);
 										CCoreAudio::Instance()->Play();
 										tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 

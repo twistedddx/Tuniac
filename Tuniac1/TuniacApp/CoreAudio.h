@@ -58,6 +58,8 @@ protected:
 	unsigned long						m_BufferSizeMS;
 
 	float								m_fVolume;
+	bool								m_bReplayGainEnabled;
+	bool								m_bUseAlbumGain;
 
 public:
 	CCoreAudio(void);
@@ -94,7 +96,8 @@ public:
 	float				GetVolumePercent();
 	void				SetVolumePercent(float fPercent);
 
-	void				SetReplayGain(float fReplayGain);
+	void				EnableReplayGain(bool bEnable);
+	void				ReplayGainUseAlbumGain(bool bAlbumGain);
 
 	void				SetCrossfadeTime(unsigned long ulMS);
 	void				SetAudioBufferSize(unsigned long ulMS) { m_BufferSizeMS = ulMS; }

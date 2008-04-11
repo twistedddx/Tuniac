@@ -46,6 +46,8 @@
 #define CROSSFADEENABLED		TEXT("CrossFadeEnabled")
 
 #define AUDIOBUFFERING			TEXT("AudioBuffering")
+#define AUDIOGAIN				TEXT("AudioReplayGain")
+#define AUDIOGAINALBUM			TEXT("AudioReplayGainAlbum")
 
 #define VOLUME 					TEXT("Volume")
 
@@ -546,6 +548,28 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(250, 5000));
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETPOS,	TRUE, pPrefs->m_AudioBuffering);
+
+
+				if(pPrefs->ReplayGainEnabled())
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_CHECKED, 0);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_UNCHECKED, 0);
+				}
+
+				if(pPrefs->ReplayGainUseAlbumGain())
+				{
+					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_CHECKED, 0);
+				}
+				else
+				{
+					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
+				}
+
 			}
 			break;
 
@@ -571,6 +595,44 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 								EnableWindow(GetDlgItem(hDlg, IDC_CROSSFADE_TIME_SLIDER), TRUE);
 								pPrefs->m_CrossfadeEnabled = 1;
 							}
+						}
+						break;
+
+					case IDC_REPLAYGAIN:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_GETCHECK, 0, 0);
+			
+							if(State == BST_UNCHECKED)
+							{
+								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+								pPrefs->m_bReplayGain = FALSE;
+							}
+							else
+							{
+								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+								pPrefs->m_bReplayGain = TRUE;
+							}
+
+							CCoreAudio::Instance()->EnableReplayGain(pPrefs->ReplayGainEnabled());
+							CCoreAudio::Instance()->ReplayGainUseAlbumGain(pPrefs->ReplayGainUseAlbumGain());
+						}
+						break;
+
+					case IDC_REPLAYGAINALBUM:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_GETCHECK, 0, 0);
+			
+							if(State == BST_UNCHECKED)
+							{
+								pPrefs->m_bReplayGainAlbum = FALSE;
+							}
+							else
+							{
+								pPrefs->m_bReplayGainAlbum = TRUE;
+							}
+
+							CCoreAudio::Instance()->EnableReplayGain(pPrefs->ReplayGainEnabled());
+							CCoreAudio::Instance()->ReplayGainUseAlbumGain(pPrefs->ReplayGainUseAlbumGain());
 						}
 						break;
 				}
@@ -1079,6 +1141,10 @@ bool CPreferences::DefaultPreferences(void)
 	m_CrossfadeTime				= 6;
 
 	m_AudioBuffering			= 500;
+	m_bReplayGain				= true;
+	m_bReplayGainAlbum			= false;
+
+
 
 	m_Volume					= 100.0;
 
@@ -1291,6 +1357,25 @@ bool CPreferences::LoadPreferences(void)
 			m_AudioBuffering = 5000;
 		if(m_AudioBuffering < 250)
 			m_AudioBuffering = 250;
+
+		// LOAD REPLAYGAIN PREFERENCES!!!!
+		Size = sizeof(BOOL);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							AUDIOGAIN,
+							NULL,
+							&Type,
+							(LPBYTE)&m_bReplayGain,
+							&Size);
+
+		Size = sizeof(BOOL);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							AUDIOGAINALBUM,
+							NULL,
+							&Type,
+							(LPBYTE)&m_bReplayGainAlbum,
+							&Size);
 
 		Size = sizeof(int);
 		Type = REG_DWORD;
@@ -1554,6 +1639,26 @@ bool CPreferences::SavePreferences(void)
 						Type,
 						(LPBYTE)&m_AudioBuffering, 
 						Size);
+
+
+		Size = sizeof(BOOL);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey, 
+						AUDIOGAIN, 
+						0,
+						Type,
+						(LPBYTE)&m_bReplayGain, 
+						Size);
+
+		Size = sizeof(BOOL);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey, 
+						AUDIOGAINALBUM, 
+						0,
+						Type,
+						(LPBYTE)&m_bReplayGainAlbum, 
+						Size);
+
 
 		Size = sizeof(int);
 		Type = REG_DWORD;
@@ -1998,7 +2103,16 @@ void CPreferences::SetCrossfadeTime(int time)
 int CPreferences::GetAudioBuffering(void)
 {
 	return m_AudioBuffering;
+}
 
+bool CPreferences::ReplayGainEnabled(void)
+{
+	return (bool)m_bReplayGain;
+}
+
+bool CPreferences::ReplayGainUseAlbumGain(void)
+{
+	return (bool)m_bReplayGainAlbum;
 }
 
 float	CPreferences::GetVolumePercent(void)
