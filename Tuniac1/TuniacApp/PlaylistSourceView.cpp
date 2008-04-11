@@ -198,28 +198,28 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		false
 	},
 	{
-		TEXT("ReplayGain Track Gain"),
+		TEXT("Track Gain"),
 		80,
 		LVCFMT_CENTER,
 		false,
 		false
 	},
 	{
-		TEXT("ReplayGain Track Peak"),
+		TEXT("Track Peak"),
 		80,
 		LVCFMT_CENTER,
 		false,
 		false
 	},
 	{
-		TEXT("ReplayGain Album Gain"),
+		TEXT("Album Gain"),
 		80,
 		LVCFMT_CENTER,
 		false,
 		false
 	},
 	{
-		TEXT("ReplayGain Album Peak"),
+		TEXT("Album Peak"),
 		80,
 		LVCFMT_CENTER,
 		false,
