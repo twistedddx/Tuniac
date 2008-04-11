@@ -222,16 +222,6 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if(!id3Tag.isEmpty())
 	{
-		/*
-		TagLib::ID3v2::FrameListMap::Iterator it;
-		
-		it = mpegFile->ID3v2Tag()->frameListMap().begin();
-		while(it != mpegFile->ID3v2Tag()->frameListMap().end())
-		{
-			it++;
-		}
-		*/
-
 		// Get the list of frames for a specific frame type
 		{
 			TagLib::ID3v2::FrameList l = id3Tag["TRCK"];
@@ -406,34 +396,30 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 
 unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
 {
-	TagLib::ID3v2::FrameList id3Tag;
+	int count = 0;
+
 	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szFilename)))
 	{
 		TagLib::MPEG::File tagFile(szFilename);
 		if(tagFile.ID3v2Tag()) 
-			id3Tag = tagFile.ID3v2Tag()->frameListMap()["APIC"];
+			count = tagFile.ID3v2Tag()->frameListMap()["APIC"].size();
 	}
 
 	else if(!StrCmpI(TEXT(".tta"), PathFindExtension(szFilename)))
 	{
 		TagLib::TrueAudio::File tagFile(szFilename);
 		if(tagFile.ID3v2Tag()) 
-			id3Tag = tagFile.ID3v2Tag()->frameListMap()["APIC"];
+			count = tagFile.ID3v2Tag()->frameListMap()["APIC"].size();
 	}
 
 	else if(!StrCmpI(TEXT(".flac"), PathFindExtension(szFilename)))
 	{
 		TagLib::FLAC::File tagFile(szFilename);
 		if(tagFile.ID3v2Tag()) 
-			id3Tag = tagFile.ID3v2Tag()->frameListMap()["APIC"];
+			count = tagFile.ID3v2Tag()->frameListMap()["APIC"].size();
 	}
 
-	if(!id3Tag.isEmpty())
-	{
-		return id3Tag.size();
-	}
-
-	return 0;
+	return count;
 }
 
 bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
@@ -443,27 +429,32 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 												LPTSTR				szMimeType,
 												unsigned long	*	ulArtType)
 {
+	TagLib::String				szSource = szFilename;
+	TagLib::File		*		m_File;
+	m_File = TagLib::FileRef::create(szFilename, 1, TagLib::AudioProperties::Fast);
+
 	TagLib::ID3v2::FrameList id3Tag;
+
 	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szFilename)))
 	{
-		TagLib::MPEG::File mpegFile(szFilename);
-		if(mpegFile.ID3v2Tag()) 
-			id3Tag = mpegFile.ID3v2Tag()->frameListMap()["APIC"];
+		TagLib::MPEG::File  * mpegFile = static_cast<TagLib::MPEG::File *>(m_File);
+		if(mpegFile->ID3v2Tag()) 
+			id3Tag = mpegFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
-
 	else if(!StrCmpI(TEXT(".tta"), PathFindExtension(szFilename)))
 	{
-		TagLib::TrueAudio::File tagFile(szFilename);
-		if(tagFile.ID3v2Tag()) 
-			id3Tag = tagFile.ID3v2Tag()->frameListMap()["APIC"];
+		TagLib::TrueAudio::File * tagFile = static_cast<TagLib::TrueAudio::File *>(m_File);
+		if(tagFile->ID3v2Tag()) 
+			id3Tag = tagFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
-
 	else if(!StrCmpI(TEXT(".flac"), PathFindExtension(szFilename)))
 	{
-		TagLib::FLAC::File tagFile(szFilename);
-		if(tagFile.ID3v2Tag()) 
-			id3Tag = tagFile.ID3v2Tag()->frameListMap()["APIC"];
+		TagLib::FLAC::File * flacFile = static_cast<TagLib::FLAC::File *>(m_File);
+		if(flacFile->ID3v2Tag()) 
+			id3Tag = flacFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
+
+	bool bRet = false;
 
 	if(!id3Tag.isEmpty())
 	{
@@ -479,11 +470,13 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 
 			*ulArtType = picframe->type();
 
-			return true;
+			bRet = true;
 		}
 	}
 
-	return false;
+	delete m_File;
+
+	return bRet;
 }
 
 bool			CSTDInfoManager::FreeAlbumArt(LPVOID				pImageData)

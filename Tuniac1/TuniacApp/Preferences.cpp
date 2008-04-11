@@ -1084,15 +1084,17 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_ShuffleState				= FALSE;
 
-	m_PlaylistViewNumColumns		= 4;
+	m_PlaylistViewNumColumns		= 5;
 	m_PlaylistViewColumnIDs[0]		= FIELD_TITLE;
 	m_PlaylistViewColumnWidths[0]	= 300;
 	m_PlaylistViewColumnIDs[1]		= FIELD_ARTIST;
 	m_PlaylistViewColumnWidths[1]	= 200;
 	m_PlaylistViewColumnIDs[2]		= FIELD_ALBUM;
 	m_PlaylistViewColumnWidths[2]	= 200;
-	m_PlaylistViewColumnIDs[3]		= FIELD_PLAYBACKTIME;
+	m_PlaylistViewColumnIDs[3]		= FIELD_TRACKNUM;
 	m_PlaylistViewColumnWidths[3]	= 70;
+	m_PlaylistViewColumnIDs[4]		= FIELD_PLAYBACKTIME;
+	m_PlaylistViewColumnWidths[4]	= 70;
 
 	m_Theme[0] = L'\0';
 

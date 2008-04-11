@@ -88,8 +88,8 @@ protected:
 	BOOL		m_ShuffleState;
 
 	int			m_PlaylistViewNumColumns;
-	int			m_PlaylistViewColumnIDs[15];
-	int			m_PlaylistViewColumnWidths[15];
+	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
+	int			m_PlaylistViewColumnWidths[FIELD_MAXFIELD];
 
 	RepeatMode	m_RepeatMode;
 
