@@ -28,7 +28,7 @@
 #include "resource.h"
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 4)
+#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 5)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
