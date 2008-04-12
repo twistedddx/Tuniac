@@ -22,6 +22,9 @@
 #include "stdafx.h"
 #include ".\audiostream.h"
 
+#include <intrin.h>
+
+
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
 CAudioStream::CAudioStream()
@@ -187,8 +190,44 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		{
 
 			// WE NEED TO APPLY VOLUME AND REPLAYGAIN NO MATTER WHAT ANYWAY SO DO THEM HERE!!!
-			for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+			__m128 XMM0;
+			__m128 XMM1 = _mm_load1_ps(&fVolumeScale);
+			__m128 XMM2 = _mm_load1_ps(&fAmpGain);
+
+			__m128 XMM3;
+
+			if(bUseAlbumGain && bAlbumHasGain)
 			{
+				XMM3 = _mm_load1_ps(&fReplayGainAlbum);
+			}
+			else //if(bTrackHasGain && !bUseAlbumGain)
+			{
+				XMM3 = _mm_load1_ps(&fReplayGainTrack);
+			}
+			
+
+			for(unsigned long x=0; x<NumSamples; x+=4)
+			{
+				// load XMM0 with 4 samples from the audio buffer
+				XMM0 = _mm_load_ps(&pAudioBuffer[x]);
+
+				// apply volume
+				XMM0 = _mm_mul_ps(XMM0, XMM1);
+				
+				// if enabled
+				if(bReplayGain)
+				{
+					// apply +6db gain
+					XMM0 = _mm_mul_ps(XMM0, XMM2);
+
+					// apply whichever value we loaded into XMM3 (track or album)
+					XMM0 = _mm_mul_ps(XMM0, XMM3);
+				}
+
+				// store XMM0 back to where we loaded it from thanks!
+				_mm_store_ps(&pAudioBuffer[x], XMM0);
+			}
+/*
 				for(unsigned long chan=0; chan<m_Channels; chan++)
 				{
 					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
@@ -214,9 +253,8 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					// and apply the volume
 					pAudioBuffer[x+chan]		*= fVolumeScale;
 				}
-			}
 
-
+				*/
 			if(m_FadeState != FADE_NONE)
 			{
 				// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
@@ -229,6 +267,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 						// TODO: SSE THIS PLEASE
 						pAudioBuffer[x+chan]		*= fVolume;
 					}
+
 					fVolume += fVolumeChange;
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
