@@ -38,7 +38,7 @@ Source: "isxdl.dll"; Flags: dontcopy
 Source: "directx.ico"; Flags: dontcopy
 Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
-Source: ..\TuniacApp\images\folder.jpg; DestDir: {app}\; Flags: ignoreversion
+Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs createallsubdirs
 
