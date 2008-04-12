@@ -179,7 +179,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 	// REPLAY GAIN STUFF GOES HERE!!!!!!!!!!!!!!!!!!
 	
 	float *fReplayGainAlbum = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
-	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
+	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_TRACK_GAIN);
 	
 
 	for(unsigned long x=0; x<m_AudioSources.GetCount(); x++)

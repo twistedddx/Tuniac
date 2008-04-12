@@ -31,15 +31,21 @@ CAudioStream::CAudioStream()
 	m_PlayState		= STATE_UNKNOWN;
 	m_FadeState		= FADE_NONE;
 
-	fReplayGainTrack	= 1.0f;
-	fReplayGainAlbum	= 1.0f;
+
 
 	fVolume			= 1.0f;
 	m_bMixNotify	= false;
 	m_bFinishNotify	= false;
 	m_bIsFinished	= false;
 
+
+
+	fReplayGainTrack	= 1.0f;
+	fReplayGainAlbum	= 1.0f;
+
 	bTrackHasGain	= false;
+
+	bUseAlbumGain	= false;
 
 
 	m_ulLastSeekMS	= 0;
@@ -109,6 +115,12 @@ bool			CAudioStream::SetReplayGainScale(float trackscale, float albumscale)
 		bTrackHasGain = false;
 	else
 		bTrackHasGain = true;
+
+	if(albumscale == 0.0 )
+		bAlbumHasGain = false;
+	else
+		bAlbumHasGain = true;
+	
 
 	fReplayGainTrack = pow(10, trackscale / 20);;
 	fReplayGainAlbum = pow(10, albumscale / 20);;
@@ -180,16 +192,21 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					for(unsigned long chan=0; chan<m_Channels; chan++)
 					{
 						// is replaygain set?
-						if(bReplayGain && bTrackHasGain)
+						if(bReplayGain)
 						{
-							// +6db replaygain files
-							pAudioBuffer[x+chan]		*= fAmpGain;
-
 							// replaygain
-							if(bUseAlbumGain)
+							if(bUseAlbumGain && bAlbumHasGain)
+							{
+								// +6db replaygain files
+								pAudioBuffer[x+chan]		*= fAmpGain;
 								pAudioBuffer[x+chan]		*= fReplayGainAlbum;
-							else
+							}
+							else if(bTrackHasGain && !bUseAlbumGain)
+							{
+								// +6db replaygain files
+								pAudioBuffer[x+chan]		*= fAmpGain;
 								pAudioBuffer[x+chan]		*= fReplayGainTrack;
+							}
 						}
 
 						// apply the crossfade
@@ -209,16 +226,21 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					for(unsigned long chan=0; chan<m_Channels; chan++)
 					{
 						// is replaygain set?
-						if(bReplayGain && bTrackHasGain)
+						if(bReplayGain)
 						{
-							// +6db replaygain files
-							pAudioBuffer[x+chan]		*= fAmpGain;
-
 							// replaygain
-							if(bUseAlbumGain)
+							if(bUseAlbumGain && bAlbumHasGain)
+							{
+								// +6db replaygain files
+								pAudioBuffer[x+chan]		*= fAmpGain;
 								pAudioBuffer[x+chan]		*= fReplayGainAlbum;
-							else
+							}
+							else if(bTrackHasGain && !bUseAlbumGain)
+							{
+								// +6db replaygain files
+								pAudioBuffer[x+chan]		*= fAmpGain;
 								pAudioBuffer[x+chan]		*= fReplayGainTrack;
+							}
 						}
 
 						// and apply the volume
