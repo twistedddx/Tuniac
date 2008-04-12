@@ -120,6 +120,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		return false;
 
 	CCoreAudio::Instance()->SetVolumePercent(m_Preferences.GetVolumePercent());
+	CCoreAudio::Instance()->EnableReplayGain(m_Preferences.ReplayGainEnabled());
+	CCoreAudio::Instance()->ReplayGainUseAlbumGain(m_Preferences.ReplayGainUseAlbumGain());
 
 	if (!m_History.Initialize())
 		return false;

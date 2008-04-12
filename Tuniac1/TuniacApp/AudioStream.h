@@ -58,6 +58,7 @@ public:
 	float								fReplayGainAlbum;
 
 	bool								bTrackHasGain;
+	bool								bAlbumHasGain;
 
 	bool								bReplayGain;
 	bool								bUseAlbumGain;
