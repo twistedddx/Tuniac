@@ -185,69 +185,55 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
+
+			// WE NEED TO APPLY VOLUME AND REPLAYGAIN NO MATTER WHAT ANYWAY SO DO THEM HERE!!!
+			for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+			{
+				for(unsigned long chan=0; chan<m_Channels; chan++)
+				{
+					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
+					// TO DO SSEIFY THIS PLSKTHANKX
+					// is replaygain set?
+					if(bReplayGain)
+					{
+						// replaygain
+						if(bUseAlbumGain && bAlbumHasGain)
+						{
+							// +6db replaygain files
+							pAudioBuffer[x+chan]		*= fAmpGain;
+							pAudioBuffer[x+chan]		*= fReplayGainAlbum;
+						}
+						else if(bTrackHasGain && !bUseAlbumGain)
+						{
+							// +6db replaygain files
+							pAudioBuffer[x+chan]		*= fAmpGain;
+							pAudioBuffer[x+chan]		*= fReplayGainTrack;
+						}
+					}
+
+					// and apply the volume
+					pAudioBuffer[x+chan]		*= fVolumeScale;
+				}
+			}
+
+
 			if(m_FadeState != FADE_NONE)
 			{
+				// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
 				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
 				{
 					for(unsigned long chan=0; chan<m_Channels; chan++)
 					{
-						// is replaygain set?
-						if(bReplayGain)
-						{
-							// replaygain
-							if(bUseAlbumGain && bAlbumHasGain)
-							{
-								// +6db replaygain files
-								pAudioBuffer[x+chan]		*= fAmpGain;
-								pAudioBuffer[x+chan]		*= fReplayGainAlbum;
-							}
-							else if(bTrackHasGain && !bUseAlbumGain)
-							{
-								// +6db replaygain files
-								pAudioBuffer[x+chan]		*= fAmpGain;
-								pAudioBuffer[x+chan]		*= fReplayGainTrack;
-							}
-						}
-
 						// apply the crossfade
+						// we REALLY should SSE THIS HERE!!!
+						// TODO: SSE THIS PLEASE
 						pAudioBuffer[x+chan]		*= fVolume;
-
-						// and apply the volume
-						pAudioBuffer[x+chan]		*= fVolumeScale;
 					}
 					fVolume += fVolumeChange;
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
 			}
-			else
-			{
-				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
-				{
-					for(unsigned long chan=0; chan<m_Channels; chan++)
-					{
-						// is replaygain set?
-						if(bReplayGain)
-						{
-							// replaygain
-							if(bUseAlbumGain && bAlbumHasGain)
-							{
-								// +6db replaygain files
-								pAudioBuffer[x+chan]		*= fAmpGain;
-								pAudioBuffer[x+chan]		*= fReplayGainAlbum;
-							}
-							else if(bTrackHasGain && !bUseAlbumGain)
-							{
-								// +6db replaygain files
-								pAudioBuffer[x+chan]		*= fAmpGain;
-								pAudioBuffer[x+chan]		*= fReplayGainTrack;
-							}
-						}
 
-						// and apply the volume
-						pAudioBuffer[x+chan]		*= fVolumeScale;
-					}
-				}
-			}
 
 			//check if coreaudio has not been notified yet and if we are crossfading
 			if(ulSongLength != LENGTH_UNKNOWN)
