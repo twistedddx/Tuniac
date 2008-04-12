@@ -2296,7 +2296,7 @@ bool	CTuniacApp::SetArt(void)
 			GetModuleFileName(NULL, szURL, _MAX_PATH);
 			PathRemoveFileSpec(szURL);
 			PathAddBackslash(szURL);
-			StrCat(szURL, TEXT("folder.jpg"));
+			StrCat(szURL, TEXT("NoAlbumArt.jpg"));
 			m_TestArt.SetSource(szURL);
 		}
 
