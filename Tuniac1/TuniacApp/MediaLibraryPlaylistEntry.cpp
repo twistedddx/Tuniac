@@ -497,22 +497,34 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_REPLAYGAIN_TRACK_GAIN:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Gain);
+				if(m_LibraryEntry.fReplayGain_Track_Gain)
+					_snwprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Gain);
+				else
+					StrCpyN(szString, TEXT("Not set"), ulNumChars);
 			}
 			break;
 		case FIELD_REPLAYGAIN_TRACK_PEAK:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Peak);
+				if(m_LibraryEntry.fReplayGain_Track_Peak)
+					_snwprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Track_Peak);
+				else
+					StrCpyN(szString, TEXT("Not set"), ulNumChars);
 			}
 			break;
 		case FIELD_REPLAYGAIN_ALBUM_GAIN:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Gain);
+				if(m_LibraryEntry.fReplayGain_Album_Gain)
+					_snwprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Gain);
+				else
+					StrCpyN(szString, TEXT("Not set"), ulNumChars);
 			}
 			break;
 		case FIELD_REPLAYGAIN_ALBUM_PEAK:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Peak);
+				if(m_LibraryEntry.fReplayGain_Album_Peak)
+					_snwprintf(szString, ulNumChars, TEXT("%f"), m_LibraryEntry.fReplayGain_Album_Peak);
+				else
+					StrCpyN(szString, TEXT("Not set"), ulNumChars);
 			}
 			break;
 		default:
