@@ -21,7 +21,7 @@ void			CFLACAudioSourceSupplier::SetHelper(IAudioSourceHelper * pHelper)
 
 LPTSTR			CFLACAudioSourceSupplier::GetName(void)
 {
-	return TEXT("FLAC Audio Decoder");
+	return TEXT("FLAC Decoder");
 }
 
 GUID			CFLACAudioSourceSupplier::GetPluginID(void)
@@ -65,7 +65,7 @@ unsigned long	CFLACAudioSourceSupplier::GetNumCommonExts(void)
 
 LPTSTR			CFLACAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 {
-	return TEXT("FLAC");
+	return TEXT(".flac");
 }
 
 IAudioSource *	CFLACAudioSourceSupplier::CreateAudioSource(LPTSTR szSource)
