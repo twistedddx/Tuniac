@@ -40,11 +40,13 @@ IDC_TUNIACTNG MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "E&xit",                IDM_EXIT
+        MENUITEM "Import File",          IDM_FILE_IMPORTFILE
+        MENUITEM "Import Directory",     IDM_FILE_IMPORTDIR
+		MENUITEM "E&xit",                IDM_FILE_EXIT
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "&About ...",           IDM_ABOUT
+        MENUITEM "&About ...",           IDM_HELP_ABOUT
     END
 END
 
@@ -56,8 +58,8 @@ END
 
 IDC_TUNIACTNG ACCELERATORS
 BEGIN
-    "?",            IDM_ABOUT,              ASCII,  ALT
-    "/",            IDM_ABOUT,              ASCII,  ALT
+    "?",            IDM_HELP_ABOUT,              ASCII,  ALT
+    "/",            IDM_HELP_ABOUT,              ASCII,  ALT
 END
 
 

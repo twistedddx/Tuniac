@@ -46,8 +46,8 @@ bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool 
 	HANDLE				hFind;
 
 	String searchPath = folder;
-//	if(!searchPath.Right(1).Equals(String("\\")))
-//		searchPath += TEXT("\\");
+	if(!searchPath.Right(1).Equals(String("\\")))
+		searchPath += TEXT("\\");
 
 	searchPath += TEXT("*.*");
 
