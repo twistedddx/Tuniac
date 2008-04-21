@@ -221,12 +221,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				// Parse the menu selections:
 				switch (wmId)
 				{
-					case IDM_ABOUT:
+					case IDM_HELP_ABOUT:
 						DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 						break;
-					case IDM_EXIT:
+					case IDM_FILE_EXIT:
 						DestroyWindow(hWnd);
 						break;
+					case IDM_FILE_IMPORTFILE:
+						{
+							CMediaManager::Instance()->ShowAddFiles(hWnd);
+							ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
+						}
+						break;
+					case IDM_FILE_IMPORTDIR:
+						{
+							CMediaManager::Instance()->ShowAddFolderSelector(hWnd);
+							ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
+						}
+						break;
+
+
+
 					default:
 						return DefWindowProc(hWnd, message, wParam, lParam);
 				}

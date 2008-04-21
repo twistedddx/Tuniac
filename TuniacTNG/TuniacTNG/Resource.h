@@ -8,11 +8,13 @@
 #define IDR_MAINFRAME			128
 #define IDD_TUNIACTNG_DIALOG	102
 #define IDD_ABOUTBOX			103
-#define IDM_ABOUT				104
-#define IDM_EXIT				105
-#define IDI_TUNIACTNG			107
-#define IDI_SMALL				108
-#define IDC_TUNIACTNG			109
+#define IDM_HELP_ABOUT			104
+#define IDM_FILE_EXIT			105
+#define IDM_FILE_IMPORTFILE		106
+#define IDM_FILE_IMPORTDIR		107
+#define IDI_TUNIACTNG			108
+#define IDI_SMALL				109
+#define IDC_TUNIACTNG			110
 #define IDC_MYICON				2
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
