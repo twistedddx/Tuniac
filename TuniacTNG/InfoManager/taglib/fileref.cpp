@@ -35,6 +35,8 @@
 #include "wavpackfile.h"
 #include "speexfile.h"
 #include "trueaudiofile.h"
+#include "mp4file.h"
+#include "asffile.h"
 
 using namespace TagLib;
 
@@ -121,6 +123,12 @@ StringList FileRef::defaultFileExtensions()
   l.append("wv");
   l.append("spx");
   l.append("tta");
+  l.append("m4a");
+  l.append("m4b");
+  l.append("m4p");
+  l.append("mp4");
+  l.append("3g2");
+  l.append("wma");
 
   return l;
 }
@@ -196,7 +204,15 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
     if(s.substr(s.size() - 4, 4).upper() == ".SPX")
       return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".TTA")
-      return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
+		return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(s.substr(s.size() - 4, 4).upper() == ".M4A" ||
+       s.substr(s.size() - 4, 4).upper() == ".M4B" ||
+       s.substr(s.size() - 4, 4).upper() == ".M4P" ||
+	   s.substr(s.size() - 4, 4).upper() == ".MP4" ||
+       s.substr(s.size() - 4, 4).upper() == ".3G2")
+	   return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(s.substr(s.size() - 4, 4).upper() == ".WMA")
+      return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
   }
 
   return 0;
