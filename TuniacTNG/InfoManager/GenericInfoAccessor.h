@@ -6,17 +6,41 @@
 #include "fileref.h"
 
 #include "mpeg/mpegfile.h"
+#include "mpc/mpcfile.h"
+#include "trueaudio/trueaudiofile.h"
+#include "wavpack/wavpackfile.h"
+#include "flac/flacfile.h"
+#include "ogg/vorbis/vorbisfile.h"
+#include "mp4/mp4file.h"
+
 #include "mpeg/id3v2/id3v2tag.h"
 #include "mpeg/id3v2/frames/attachedpictureframe.h"
+#include "mpeg/id3v2/frames/relativevolumeframe.h"
+#include "ape/apetag.h"
+#include "ogg/xiphcomment.h"
+#include "mp4/mp4tag.h"
+#include "mp4/mp4item.h"
+#include "mp4/mp4atom.h"
 
 class CGenericInfoAccessor :
 	public IInfoAccessor
 {
 protected:
 
-	TagLib::File		*		m_File;
+	TagLib::File			*		m_File;
 
-	TagLib::MPEG::File	*		m_mpegFile;
+	TagLib::FLAC::File		*	m_flacFile;
+	TagLib::MP4::File		*	m_mp4File;
+	TagLib::MPC::File		*	m_mpcFile;
+	TagLib::MPEG::File		*	m_mpegFile;
+	TagLib::Ogg::Vorbis::File *	m_oggFile;
+	TagLib::TrueAudio::File	*	m_ttaFile;
+	TagLib::WavPack::File	*	m_wvFile;
+
+	TagLib::Ogg::FieldListMap	vorbisTag;
+	TagLib::APE::ItemListMap	apeTag;
+	TagLib::ID3v2::FrameListMap	id3Tag;
+	TagLib::MP4::ItemListMap	mp4Tag;
 
 public:
 	CGenericInfoAccessor(void);
