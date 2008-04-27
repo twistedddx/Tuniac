@@ -23,7 +23,12 @@ typedef enum InfoHandlerField
 	SampleRate,		
 	Channels,		
 	Bitrate,		
-	
+
+	ReplayGainTrack,
+	ReplayPeakTrack,
+	ReplayGainAlbum,
+	ReplayPeakAlbum,
+
 	AlbumArtImageCount,
 } InfoHandlerField;
 
