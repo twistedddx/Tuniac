@@ -75,9 +75,6 @@ public:
 	bool GetArtists(StringArray & artistList);
 	bool GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList);
 
-	bool ShowAddFolderSelector(HWND hWndParent);
-	bool ShowAddFiles(HWND hWndParent);
-
 	bool AddFile(String filename);
 	bool AddFileArray(StringArray filenameArray);
 

@@ -102,8 +102,6 @@ void	CGenericInfoAccessor::Destroy()
 
 bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize)
 {
-	wcsncpy(toHere, TEXT(""), ulBufferSize);
-
 	switch(field)
 	{
 		case Title:
@@ -145,6 +143,7 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 			break;
 
 		default:
+			wcsncpy(toHere, TEXT(""), ulBufferSize);
 			return false;
 	}
 

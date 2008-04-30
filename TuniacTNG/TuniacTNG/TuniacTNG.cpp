@@ -4,11 +4,14 @@
 #include "stdafx.h"
 #include "TuniacTNG.h"
 #include "MediaManager.h"
+#include "TuniacHelper.h"
 
 #define MAX_LOADSTRING 100
 
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' " "version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+	bool ShowAddFolderSelector(HWND hWndParent);
+	bool ShowAddFiles(HWND hWndParent);
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
@@ -229,13 +232,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						break;
 					case IDM_FILE_IMPORTFILE:
 						{
-							CMediaManager::Instance()->ShowAddFiles(hWnd);
+							ShowAddFiles(hWnd);
 							ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
 						}
 						break;
 					case IDM_FILE_IMPORTDIR:
 						{
-							CMediaManager::Instance()->ShowAddFolderSelector(hWnd);
+							ShowAddFolderSelector(hWnd);
 							ListView_SetItemCountEx(hListView, CMediaManager::Instance()->GetNumEntries(), 0);
 						}
 						break;
@@ -398,3 +401,102 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return (INT_PTR)FALSE;
 }
+
+bool ShowAddFolderSelector(HWND hWndParent)
+{
+	LPMALLOC lpMalloc;  // pointer to IMalloc
+
+	if(::SHGetMalloc(&lpMalloc) == NOERROR)
+	{
+		TCHAR szBuffer[1024];
+
+		BROWSEINFO browseInfo;
+		LPITEMIDLIST lpItemIDList;
+
+		browseInfo.hwndOwner		= hWndParent;
+		browseInfo.pidlRoot			= NULL; 
+		browseInfo.pszDisplayName	= NULL;
+		browseInfo.lpszTitle		= TEXT("Select a directory...");   // passed in
+		browseInfo.ulFlags			= BIF_RETURNONLYFSDIRS | BIF_USENEWUI;   // also passed in
+		browseInfo.lpfn				= NULL;      // not used
+		browseInfo.lParam			= 0;      // not used   
+
+		if((lpItemIDList = ::SHBrowseForFolder(&browseInfo)) != NULL)
+		{
+			if(::SHGetPathFromIDList(lpItemIDList, szBuffer))
+			{
+				StringArray		tempArray;
+
+				// TODO: here we should build a fully recursed array of all the files we're going to add!
+				CTuniacHelper::Instance()->GetFolderContents(szBuffer, tempArray, true);
+
+				// TODO: then add it!
+				CMediaManager::Instance()->AddFileArray(tempArray);
+			}
+
+			lpMalloc->Free(lpItemIDList);
+		}
+
+		lpMalloc->Release();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool ShowAddFiles(HWND hWndParent)
+{
+#define OFNBUFFERSIZE		(32*1024)
+	OPENFILENAME		ofn;
+	TCHAR				szURLBuffer[OFNBUFFERSIZE];
+
+	ZeroMemory(&ofn, sizeof(OPENFILENAME));
+	ZeroMemory(szURLBuffer, OFNBUFFERSIZE * sizeof TCHAR);
+
+	ofn.lStructSize			= sizeof(OPENFILENAME);
+	ofn.hwndOwner			= hWndParent;
+	ofn.hInstance			= (HINSTANCE)CTuniacHelper::Instance();
+	ofn.lpstrFilter			= TEXT("All Files\0*.*\0");
+	ofn.lpstrCustomFilter	= NULL;
+	ofn.nMaxCustFilter		= 0;
+	ofn.nFilterIndex		= 0;
+	ofn.lpstrFile			= szURLBuffer;
+	ofn.nMaxFile			= OFNBUFFERSIZE;
+	ofn.lpstrFileTitle		= NULL;
+	ofn.nMaxFileTitle		= 0;
+	ofn.lpstrInitialDir		= NULL;
+	ofn.lpstrTitle			= NULL;
+	ofn.Flags				= OFN_ALLOWMULTISELECT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+
+	if(GetOpenFileName(&ofn))
+	{
+		if(ofn.nFileOffset < lstrlen(szURLBuffer))
+		{
+			CMediaManager::Instance()->AddFile(szURLBuffer);
+		}
+		else
+		{
+			LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
+			StringArray		nameArray;
+
+			String szFilePath = szURLBuffer;
+			while( lstrlen(szOFNName) != 0 )
+			{
+				String filename = szFilePath;
+				filename += TEXT("\\");
+				filename += szOFNName;
+
+				nameArray.push_back(filename);
+
+				szOFNName = &szOFNName[lstrlen(szOFNName) + 1];
+			}
+
+			CMediaManager::Instance()->AddFileArray(nameArray);
+		}
+		return true;
+	}
+
+	return false;
+}
+
