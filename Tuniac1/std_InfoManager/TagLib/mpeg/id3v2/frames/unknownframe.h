@@ -46,7 +46,7 @@ namespace TagLib {
      * to have your frame type supported through the standard ID3v2 mechanism.
      */
 
-    class UnknownFrame : public Frame
+    class TAGLIB_EXPORT UnknownFrame : public Frame
     {
       friend class FrameFactory;
 

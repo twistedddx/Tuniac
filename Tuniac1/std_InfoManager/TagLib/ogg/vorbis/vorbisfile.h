@@ -59,7 +59,7 @@ namespace TagLib {
      * the codec implementations, in this case Vorbis specifically.
      */
 
-    class File : public Ogg::File
+    class TAGLIB_EXPORT File : public Ogg::File
     {
     public:
       /*!

@@ -61,7 +61,7 @@ namespace TagLib {
      * information specific to FLAC files.
      */
 
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       /*!

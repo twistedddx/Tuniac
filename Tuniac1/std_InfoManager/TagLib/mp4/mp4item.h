@@ -33,7 +33,7 @@ namespace TagLib {
 
   namespace MP4 {
 
-    class Item
+    class TAGLIB_EXPORT Item
     {
     public:
       struct IntPair {

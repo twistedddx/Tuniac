@@ -43,7 +43,7 @@ namespace TagLib {
      * document as a reference.
      */
 
-    class Header
+    class TAGLIB_EXPORT Header
     {
     public:
       /*!

@@ -57,7 +57,7 @@ namespace TagLib {
      * \see ID3v1::Tag::setStringHandler()
      */
 
-    class StringHandler
+    class TAGLIB_EXPORT StringHandler
     {
     public:
       // BIC: Add virtual destructor.
@@ -100,7 +100,7 @@ namespace TagLib {
      * truncation happens automatically when the tag is rendered.
      */
 
-    class Tag : public TagLib::Tag
+    class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
       /*!

@@ -47,7 +47,7 @@ namespace TagLib {
      * uniquely identifies the GEOB frame in the tag.
      */
 
-    class GeneralEncapsulatedObjectFrame : public Frame
+    class TAGLIB_EXPORT GeneralEncapsulatedObjectFrame : public Frame
     {
       friend class FrameFactory;
 

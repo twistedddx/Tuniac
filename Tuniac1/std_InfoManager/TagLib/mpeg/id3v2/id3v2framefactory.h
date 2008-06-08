@@ -35,7 +35,7 @@ namespace TagLib {
 
   namespace ID3v2 {
 
-    class TextIdentificationFrame;
+    class TAGLIB_EXPORT TextIdentificationFrame;
 
     //! A factory for creating ID3v2 frames during parsing
 
@@ -62,7 +62,7 @@ namespace TagLib {
      * \see ID3v2::Tag::addFrame()
      */
 
-    class FrameFactory
+    class TAGLIB_EXPORT FrameFactory
     {
     public:
       static FrameFactory *instance();

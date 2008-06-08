@@ -44,7 +44,7 @@ namespace TagLib {
      * to the codecs.
      */
 
-    class PageHeader
+    class TAGLIB_EXPORT PageHeader
     {
     public:
       /*!

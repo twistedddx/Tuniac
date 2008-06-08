@@ -47,7 +47,7 @@ namespace TagLib {
      * these available (via subclassing) to the codec meta data implementations.
      */
 
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       virtual ~File();

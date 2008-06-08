@@ -60,7 +60,7 @@ namespace TagLib {
      * information specific to TrueAudio files.
      */
 
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       /*!

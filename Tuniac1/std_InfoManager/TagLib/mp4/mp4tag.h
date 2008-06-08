@@ -41,7 +41,7 @@ namespace TagLib {
 
     typedef TagLib::Map<String, Item> ItemListMap;
 
-    class Tag: public TagLib::Tag
+    class TAGLIB_EXPORT Tag: public TagLib::Tag
     {
     public:
         Tag(TagLib::File *file, Atoms *atoms);

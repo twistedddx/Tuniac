@@ -49,8 +49,8 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
 				StringPooling="false"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -134,8 +134,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -215,8 +215,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
 				StringPooling="false"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -303,8 +303,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
 				EnableEnhancedInstructionSet="2"
 				Detect64BitPortabilityProblems="true"
 			/>
@@ -543,6 +543,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\popularimeterframe.h"
+					>
+				</File>
+				<File
 					RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.h"
 					>
 				</File>
@@ -699,6 +703,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="riff"
+				>
+				<File
+					RelativePath=".\TagLib\riff\aiff\aifffile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\riff\aiff\aiffproperties.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\riff\rifffile.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Taglib Source"
@@ -847,6 +867,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TagLib\mpeg\id3v2\frames\popularimeterframe.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TagLib\mpeg\id3v2\frames\relativevolumeframe.cpp"
 					>
 				</File>
@@ -988,6 +1012,22 @@
 				</File>
 				<File
 					RelativePath=".\TagLib\asf\asftag.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="riff"
+				>
+				<File
+					RelativePath=".\TagLib\riff\aiff\aifffile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\riff\aiff\aiffproperties.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TagLib\riff\rifffile.cpp"
 					>
 				</File>
 			</Filter>

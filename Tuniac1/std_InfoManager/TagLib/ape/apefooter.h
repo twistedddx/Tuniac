@@ -42,7 +42,7 @@ namespace TagLib {
      * headers specified there.
      */
 
-    class Footer
+    class TAGLIB_EXPORT Footer
     {
     public:
       /*!

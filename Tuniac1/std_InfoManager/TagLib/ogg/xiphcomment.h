@@ -61,7 +61,7 @@ namespace TagLib {
      * \see fieldListMap()
      */
 
-    class XiphComment : public TagLib::Tag
+    class TAGLIB_EXPORT XiphComment : public TagLib::Tag
     {
     public:
       /*!

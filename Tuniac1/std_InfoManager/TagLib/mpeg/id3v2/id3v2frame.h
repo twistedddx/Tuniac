@@ -50,7 +50,7 @@ namespace TagLib {
      * specific to a given frame type is handed in one of the many subclasses.
      */
 
-    class Frame
+    class TAGLIB_EXPORT Frame
     {
       friend class Tag;
       friend class FrameFactory;
@@ -225,7 +225,7 @@ namespace TagLib {
      * the type and attaches the header.
      */
 
-    class Frame::Header
+    class TAGLIB_EXPORT Frame::Header
     {
     public:
       /*!

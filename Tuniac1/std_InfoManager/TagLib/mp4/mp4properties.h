@@ -37,7 +37,7 @@ namespace TagLib {
     class File;
 
     //! An implementation of MP4 audio properties
-    class Properties : public AudioProperties
+    class TAGLIB_EXPORT Properties : public AudioProperties
     {
     public:
       Properties(File *file, Atoms *atoms, ReadStyle style = Average);

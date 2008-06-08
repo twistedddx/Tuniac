@@ -39,7 +39,7 @@ namespace TagLib {
     typedef List<Attribute> AttributeList;
     typedef Map<String, AttributeList> AttributeListMap;
 
-    class Tag : public TagLib::Tag {
+    class TAGLIB_EXPORT Tag : public TagLib::Tag {
 
       friend class File;
 

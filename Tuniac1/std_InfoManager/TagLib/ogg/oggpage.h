@@ -49,7 +49,7 @@ namespace TagLib {
      * could potentially be useful for non-meta data purposes.
      */
 
-    class Page
+    class TAGLIB_EXPORT Page
     {
     public:
       /*!

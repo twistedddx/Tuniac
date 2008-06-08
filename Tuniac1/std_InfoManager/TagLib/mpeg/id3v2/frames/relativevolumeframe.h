@@ -46,7 +46,7 @@ namespace TagLib {
      * different channel types.
      */
 
-    class RelativeVolumeFrame : public Frame
+    class TAGLIB_EXPORT RelativeVolumeFrame : public Frame
     {
       friend class FrameFactory;
 

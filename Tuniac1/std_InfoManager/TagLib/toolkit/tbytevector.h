@@ -42,7 +42,7 @@ namespace TagLib {
    * useful for finding tag related paterns in a data array.
    */
 
-  class ByteVector
+  class TAGLIB_EXPORT ByteVector
   {
   public:
 #ifndef DO_NOT_DOCUMENT
@@ -404,6 +404,6 @@ namespace TagLib {
  * \relates TagLib::ByteVector
  * Streams the ByteVector \a v to the output stream \a s.
  */
-std::ostream &operator<<(std::ostream &s, const TagLib::ByteVector &v);
+TAGLIB_EXPORT std::ostream &operator<<(std::ostream &s, const TagLib::ByteVector &v);
 
 #endif

@@ -1,10 +1,6 @@
 /***************************************************************************
-    copyright            : (C) 2006 by Lukáš Lalinský
-    email                : lalinsky@gmail.com
-
-    copyright            : (C) 2002 - 2008 by Scott Wheeler
+    copyright            : (C) 2008 by Scott Wheeler
     email                : wheeler@kde.org
-                           (original Vorbis implementation)
 ***************************************************************************/
 
 /***************************************************************************
@@ -27,60 +23,55 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef TAGLIB_SPEEXPROPERTIES_H
-#define TAGLIB_SPEEXPROPERTIES_H
+#ifndef TAGLIB_AIFFPROPERTIES_H
+#define TAGLIB_AIFFPROPERTIES_H
 
-#include <audioproperties.h>
+#include "audioproperties.h"
 
 namespace TagLib {
 
-  namespace Ogg {
+  namespace RIFF {
 
-    namespace Speex {
+    namespace AIFF {
 
       class File;
 
-      //! An implementation of audio property reading for Ogg Speex
+      //! An implementation of audio property reading for AIFF
 
       /*!
-       * This reads the data from an Ogg Speex stream found in the AudioProperties
+       * This reads the data from an AIFF stream found in the AudioProperties
        * API.
        */
 
       class TAGLIB_EXPORT Properties : public AudioProperties
       {
       public:
-        /*!
-         * Create an instance of Speex::Properties with the data read from the
-         * Speex::File \a file.
-         */
-        Properties(File *file, ReadStyle style = Average);
+	/*!
+	 * Create an instance of AIFF::Properties with the data read from the
+	 * ByteVector \a data.
+	 */
+	Properties(const ByteVector &data, ReadStyle style);
 
-        /*!
-         * Destroys this Speex::Properties instance.
-         */
-        virtual ~Properties();
+	/*!
+	 * Destroys this AIFF::Properties instance.
+	 */
+	virtual ~Properties();
 
-        // Reimplementations.
+	// Reimplementations.
 
-        virtual int length() const;
-        virtual int bitrate() const;
-        virtual int sampleRate() const;
-        virtual int channels() const;
-
-        /*!
-         * Returns the Speex version, currently "0" (as specified by the spec).
-         */
-        int speexVersion() const;
+	virtual int length() const;
+	virtual int bitrate() const;
+	virtual int sampleRate() const;
+	virtual int channels() const;
 
       private:
-        Properties(const Properties &);
-        Properties &operator=(const Properties &);
+	Properties(const Properties &);
+	Properties &operator=(const Properties &);
 
-        void read();
+	void read(const ByteVector &data);
 
-        class PropertiesPrivate;
-        PropertiesPrivate *d;
+	class PropertiesPrivate;
+	PropertiesPrivate *d;
       };
     }
   }

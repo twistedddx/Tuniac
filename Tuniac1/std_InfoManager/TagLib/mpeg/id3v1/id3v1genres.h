@@ -39,7 +39,7 @@ namespace TagLib {
      * Returns the list of canonical ID3v1 genre names in the order that they
      * are listed in the standard.
      */
-    StringList genreList();
+    StringList TAGLIB_EXPORT genreList();
 
     /*!
      * A "reverse mapping" that goes from the canonical ID3v1 genre name to the

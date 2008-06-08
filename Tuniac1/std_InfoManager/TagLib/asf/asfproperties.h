@@ -35,7 +35,7 @@ namespace TagLib {
   namespace ASF {
 
     //! An implementation of ASF audio properties
-    class Properties : public AudioProperties
+    class TAGLIB_EXPORT Properties : public AudioProperties
     {
     public:
 

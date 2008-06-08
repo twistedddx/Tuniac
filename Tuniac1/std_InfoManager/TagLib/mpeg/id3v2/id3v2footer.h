@@ -47,7 +47,7 @@ namespace TagLib {
      * has been set in the ID3v2::Tag, TagLib will render a footer.
      */
 
-    class Footer
+    class TAGLIB_EXPORT Footer
     {
     public:
       /*!

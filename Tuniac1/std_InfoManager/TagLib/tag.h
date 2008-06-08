@@ -41,7 +41,7 @@ namespace TagLib {
    * in TagLib::AudioProperties, TagLib::File and TagLib::FileRef.
    */
 
-  class Tag
+  class TAGLIB_EXPORT Tag
   {
   public:
 

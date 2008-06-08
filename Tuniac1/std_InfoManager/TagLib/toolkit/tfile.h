@@ -37,7 +37,7 @@ namespace TagLib {
   class AudioProperties;
 
 #ifdef _WIN32
-  class FileName
+  class TAGLIB_EXPORT FileName
   {
   public:
     FileName(const wchar_t *name) : m_wname(name) {}
@@ -60,7 +60,7 @@ namespace TagLib {
    * ByteVector and a binary search method for finding patterns in a file.
    */
 
-  class File
+  class TAGLIB_EXPORT File
   {
   public:
     /*!

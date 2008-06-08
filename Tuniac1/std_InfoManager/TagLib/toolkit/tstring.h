@@ -66,7 +66,7 @@ namespace TagLib {
    * possible encodings, which are the four supported by the ID3v2 standard.
    */
 
-  class String
+  class TAGLIB_EXPORT String
   {
   public:
 
@@ -429,21 +429,21 @@ namespace TagLib {
  *
  * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
-const TagLib::String operator+(const TagLib::String &s1, const TagLib::String &s2);
+TAGLIB_EXPORT const TagLib::String operator+(const TagLib::String &s1, const TagLib::String &s2);
 
 /*!
  * \relates TagLib::String
  *
  * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
-const TagLib::String operator+(const char *s1, const TagLib::String &s2);
+TAGLIB_EXPORT const TagLib::String operator+(const char *s1, const TagLib::String &s2);
 
 /*!
  * \relates TagLib::String
  *
  * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
-const TagLib::String operator+(const TagLib::String &s1, const char *s2);
+TAGLIB_EXPORT const TagLib::String operator+(const TagLib::String &s1, const char *s2);
 
 
 /*!
@@ -451,6 +451,6 @@ const TagLib::String operator+(const TagLib::String &s1, const char *s2);
  *
  * Send the string to an output stream.
  */
-std::ostream &operator<<(std::ostream &s, const TagLib::String &str);
+TAGLIB_EXPORT std::ostream &operator<<(std::ostream &s, const TagLib::String &str);
 
 #endif
