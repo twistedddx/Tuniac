@@ -40,7 +40,7 @@ namespace TagLib {
      * a language encoding, a description and a single text field.
      */
 
-    class CommentsFrame : public Frame
+    class TAGLIB_EXPORT CommentsFrame : public Frame
     {
       friend class FrameFactory;
 

@@ -45,7 +45,7 @@ namespace TagLib {
      * (Structure, <a href="id3v2-structure.html#3.2">3.2</a>)
      */
 
-    class ExtendedHeader
+    class TAGLIB_EXPORT ExtendedHeader
     {
     public:
       /*!

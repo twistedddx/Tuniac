@@ -68,7 +68,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 13;
+	return 15;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -88,6 +88,8 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".wma"),
 		TEXT(".tta"),
 		TEXT(".spx")
+		TEXT(".aif"),
+		TEXT(".aiff")
 	};
 
 	return exts[ulExtentionNum];

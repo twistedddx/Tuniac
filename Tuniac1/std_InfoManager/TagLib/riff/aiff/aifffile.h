@@ -1,10 +1,6 @@
 /***************************************************************************
-    copyright            : (C) 2006 by Lukáš Lalinský
-    email                : lalinsky@gmail.com
-
-    copyright            : (C) 2002 - 2008 by Scott Wheeler
+    copyright            : (C) 2008 by Scott Wheeler
     email                : wheeler@kde.org
-                           (original Vorbis implementation)
 ***************************************************************************/
 
 /***************************************************************************
@@ -27,36 +23,42 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef TAGLIB_SPEEXFILE_H
-#define TAGLIB_SPEEXFILE_H
+#ifndef TAGLIB_AIFFFILE_H
+#define TAGLIB_AIFFFILE_H
 
-#include <oggfile.h>
-#include <xiphcomment.h>
-
-#include "speexproperties.h"
+#include "rifffile.h"
+#include "id3v2tag.h"
+#include "aiffproperties.h"
 
 namespace TagLib {
 
-  namespace Ogg {
+  namespace RIFF {
 
-    //! A namespace containing classes for Speex metadata
+    //! An implementation of AIFF metadata
 
-    namespace Speex {
+    /*!
+     * This is implementation of AIFF metadata.
+     *
+     * This supports an ID3v2 tag as well as reading stream from the ID3 RIFF
+     * chunk as well as properties from the file.
+     */
 
-      //! An implementation of Ogg::File with Speex specific methods
+    namespace AIFF {
+
+      //! An implementation of TagLib::File with AIFF specific methods
 
       /*!
-       * This is the central class in the Ogg Speex metadata processing collection
-       * of classes.  It's built upon Ogg::File which handles processing of the Ogg
-       * logical bitstream and breaking it down into pages which are handled by
-       * the codec implementations, in this case Speex specifically.
+       * This implements and provides an interface for AIFF files to the
+       * TagLib::Tag and TagLib::AudioProperties interfaces by way of implementing
+       * the abstract TagLib::File API as well as providing some additional
+       * information specific to AIFF files.
        */
 
-      class TAGLIB_EXPORT File : public Ogg::File
+      class TAGLIB_EXPORT File : public TagLib::RIFF::File
       {
       public:
         /*!
-         * Contructs a Speex file from \a file.  If \a readProperties is true the
+         * Contructs an AIFF file from \a file.  If \a readProperties is true the
          * file's audio properties will also be read using \a propertiesStyle.  If
          * false, \a propertiesStyle is ignored.
          */
@@ -69,18 +71,19 @@ namespace TagLib {
         virtual ~File();
 
         /*!
-         * Returns the XiphComment for this file.  XiphComment implements the tag
-         * interface, so this serves as the reimplementation of
-         * TagLib::File::tag().
+         * Returns the Tag for this file.
          */
-        virtual Ogg::XiphComment *tag() const;
+        virtual ID3v2::Tag *tag() const;
 
         /*!
-         * Returns the Speex::Properties for this file.  If no audio properties
+         * Returns the AIFF::Properties for this file.  If no audio properties
          * were read then this will return a null pointer.
          */
         virtual Properties *audioProperties() const;
 
+        /*!
+         * Saves the file.
+         */
         virtual bool save();
 
       private:

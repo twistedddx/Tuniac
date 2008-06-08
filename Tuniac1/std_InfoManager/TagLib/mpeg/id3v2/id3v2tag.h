@@ -102,7 +102,7 @@ namespace TagLib {
      * working knowledge of ID3v2 structure.  You're been warned.
      */
 
-    class Tag : public TagLib::Tag
+    class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
       /*!

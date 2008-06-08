@@ -45,7 +45,7 @@ namespace TagLib {
      * the abstract TagLib::File API as well as providing some additional
      * information specific to MP4 files.
      */
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       /*!

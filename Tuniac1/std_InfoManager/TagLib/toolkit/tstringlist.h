@@ -42,7 +42,7 @@ namespace TagLib {
    * string operations.
    */
 
-  class StringList : public List<String>
+  class TAGLIB_EXPORT StringList : public List<String>
   {
   public:
 

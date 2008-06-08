@@ -54,7 +54,7 @@ namespace TagLib {
 
     //! An APE tag implementation
 
-    class Tag : public TagLib::Tag
+    class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
       /*!

@@ -38,7 +38,7 @@ namespace TagLib {
    * A List specialization with some handy features useful for ByteVectors.
    */
 
-  class ByteVectorList : public List<ByteVector>
+  class TAGLIB_EXPORT ByteVectorList : public List<ByteVector>
   {
   public:
 

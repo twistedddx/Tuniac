@@ -27,68 +27,86 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef TAGLIB_WVPROPERTIES_H
-#define TAGLIB_WVPROPERTIES_H
+#include <tbytevector.h>
+#include <tdebug.h>
+#include <id3v2tag.h>
 
-#include "taglib_export.h"
-#include "audioproperties.h"
+#include "aifffile.h"
 
-namespace TagLib {
+using namespace TagLib;
 
-  namespace WavPack {
+class RIFF::AIFF::File::FilePrivate
+{
+public:
+  FilePrivate() :
+    properties(0),
+    tag(0)
+  {
 
-    class File;
-
-    static const uint HeaderSize = 32;
-
-    //! An implementation of audio property reading for WavPack
-
-    /*!
-     * This reads the data from an WavPack stream found in the AudioProperties
-     * API.
-     */
-
-    class TAGLIB_EXPORT Properties : public AudioProperties
-    {
-    public:
-      /*!
-       * Create an instance of WavPack::Properties with the data read from the
-       * ByteVector \a data.
-       */
-      Properties(const ByteVector &data, long streamLength, ReadStyle style = Average);
-
-      /*!
-       * Destroys this WavPack::Properties instance.
-       */
-      virtual ~Properties();
-
-      // Reimplementations.
-
-      virtual int length() const;
-      virtual int bitrate() const;
-      virtual int sampleRate() const;
-      virtual int channels() const;
-
-      /*!
-       * Returns number of bits per sample.
-       */
-      int bitsPerSample() const;
-
-      /*!
-       * Returns WavPack version.
-       */
-      int version() const;
-
-    private:
-      Properties(const Properties &);
-      Properties &operator=(const Properties &);
-
-      void read();
-
-      class PropertiesPrivate;
-      PropertiesPrivate *d;
-    };
   }
+
+  ~FilePrivate()
+  {
+    delete properties;
+    delete tag;
+  }
+
+  Properties *properties;
+  ID3v2::Tag *tag;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// public members
+////////////////////////////////////////////////////////////////////////////////
+
+RIFF::AIFF::File::File(FileName file, bool readProperties,
+                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+{
+  d = new FilePrivate;
+  if(isOpen())
+    read(readProperties, propertiesStyle);
 }
 
-#endif
+RIFF::AIFF::File::~File()
+{
+  delete d;
+}
+
+ID3v2::Tag *RIFF::AIFF::File::tag() const
+{
+  return d->tag;
+}
+
+RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
+{
+  return d->properties;
+}
+
+bool RIFF::AIFF::File::save()
+{
+  if(readOnly()) {
+    debug("RIFF::AIFF::File::save() -- File is read only.");
+    return false;
+  }
+
+  setChunkData("ID3 ", d->tag->render());
+
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// private members
+////////////////////////////////////////////////////////////////////////////////
+
+void RIFF::AIFF::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+{
+  for(uint i = 0; i < chunkCount(); i++) {
+    if(chunkName(i) == "ID3 ")
+      d->tag = new ID3v2::Tag(this, chunkOffset(i));
+    else if(chunkName(i) == "COMM" && readProperties)
+      d->properties = new Properties(chunkData(i), propertiesStyle);
+  }
+
+  if(!d->tag)
+    d->tag = new ID3v2::Tag;
+}

@@ -39,7 +39,7 @@ namespace TagLib {
    * interface that is sufficient for most applications.
    */
 
-  class AudioProperties
+  class TAGLIB_EXPORT AudioProperties
   {
   public:
 

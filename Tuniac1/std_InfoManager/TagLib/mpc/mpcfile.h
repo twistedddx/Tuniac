@@ -60,7 +60,7 @@ namespace TagLib {
      * The only invalid tag combination supported is an ID3v1 tag after an APE tag.
      */
 
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       /*!

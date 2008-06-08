@@ -47,7 +47,7 @@ namespace TagLib {
      * and the XMMS sources as references.
      */
 
-    class XingHeader
+    class TAGLIB_EXPORT XingHeader
     {
     public:
       /*!

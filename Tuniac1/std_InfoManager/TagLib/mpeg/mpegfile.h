@@ -49,7 +49,7 @@ namespace TagLib {
      * to the different ID3 tags.
      */
 
-    class File : public TagLib::File
+    class TAGLIB_EXPORT File : public TagLib::File
     {
     public:
       /*!

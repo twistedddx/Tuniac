@@ -45,7 +45,7 @@ namespace TagLib {
      * AudioProperties API.
      */
 
-    class Properties : public AudioProperties
+    class TAGLIB_EXPORT Properties : public AudioProperties
     {
     public:
       /*!

@@ -1,6 +1,6 @@
 /***************************************************************************
-    copyright            : (C) 2002 - 2008 by Scott Wheeler
-    email                : wheeler@kde.org
+    copyright            : (C) 2008 by Lukas Lalinsky
+    email                : lalinsky@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,91 +23,110 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef TAGLIB_UNIQUEFILEIDENTIFIERFRAME
-#define TAGLIB_UNIQUEFILEIDENTIFIERFRAME
+#ifndef TAGLIB_POPULARIMETERFRAME_H
+#define TAGLIB_POPULARIMETERFRAME_H
 
 #include <id3v2frame.h>
+#include "taglib_export.h"
 
 namespace TagLib {
 
   namespace ID3v2 {
 
+    //! An implementation of ID3v2 "popularimeter"
+
     /*!
-     * This is an implementation of ID3v2 unique file identifier frames.  This
-     * frame is used to identify the file in an arbitrary database identified
-     * by the owner field.
+     * This implements the ID3v2 popularimeter (POPM frame).  It concists of
+     * an email, a rating and an optional counter.
      */
 
-    //! An implementation of ID3v2 unique identifier frames
-
-    class TAGLIB_EXPORT UniqueFileIdentifierFrame : public ID3v2::Frame
+    class TAGLIB_EXPORT PopularimeterFrame : public Frame
     {
       friend class FrameFactory;
 
     public:
       /*!
-       * Creates a uniqe file identifier frame based on \a data.
+       * Construct an empty popularimeter frame.
        */
-      UniqueFileIdentifierFrame(const ByteVector &data);
+      explicit PopularimeterFrame();
 
       /*!
-       * Creates a unique file identifier frame with the owner \a owner and
-       * the identification \a id.
+       * Construct a popularimeter based on the data in \a data.
        */
-      UniqueFileIdentifierFrame(const String &owner, const ByteVector &id);
+      explicit PopularimeterFrame(const ByteVector &data);
 
       /*!
-       * Destroys the frame.
+       * Destroys this PopularimeterFrame instance.
        */
-      ~UniqueFileIdentifierFrame();
+      virtual ~PopularimeterFrame();
 
       /*!
-       * Returns the owner for the frame; essentially this is the key for
-       * determining which identification scheme this key belongs to.  This
-       * will usually either be an email address or URL for the person or tool
-       * used to create the unique identifier.
+       * Returns the text of this popularimeter.
        *
-       * \see setOwner()
+       * \see text()
        */
-      String owner() const;
-
-      /*!
-       * Returns the unique identifier.  Though sometimes this is a text string
-       * it also may be binary data and as much should be assumed when handling
-       * it.
-       */
-      ByteVector identifier() const;
-
-      /*!
-       * Sets the owner of the identification scheme to \a s.
-       *
-       * \see owner()
-       */
-      void setOwner(const String &s);
-
-      /*!
-       * Sets the unique file identifier to \a v.
-       *
-       * \see identifier()
-       */
-      void setIdentifier(const ByteVector &v);
-
       virtual String toString() const;
 
+      /*!
+       * Returns the email.
+       *
+       * \see setEmail()
+       */
+      String email() const;
+
+      /*!
+       * Set the email.
+       *
+       * \see email()
+       */
+      void setEmail(const String &email);
+
+      /*!
+       * Returns the rating.
+       *
+       * \see setRating()
+       */
+      int rating() const;
+
+      /*!
+       * Set the rating.
+       *
+       * \see rating()
+       */
+      void setRating(int rating);
+
+      /*!
+       * Returns the counter.
+       *
+       * \see setCounter()
+       */
+      uint counter() const;
+
+      /*!
+       * Set the counter.
+       *
+       * \see counter()
+       */
+      void setCounter(uint counter);
+
     protected:
+      // Reimplementations.
+
       virtual void parseFields(const ByteVector &data);
       virtual ByteVector renderFields() const;
 
     private:
-      UniqueFileIdentifierFrame(const UniqueFileIdentifierFrame &);
-      UniqueFileIdentifierFrame &operator=(UniqueFileIdentifierFrame &);
+      /*!
+       * The constructor used by the FrameFactory.
+       */
+      PopularimeterFrame(const ByteVector &data, Header *h);
+      PopularimeterFrame(const PopularimeterFrame &);
+      PopularimeterFrame &operator=(const PopularimeterFrame &);
 
-      UniqueFileIdentifierFrame(const ByteVector &data, Header *h);
-
-      class UniqueFileIdentifierFramePrivate;
-      UniqueFileIdentifierFramePrivate *d;
+      class PopularimeterFramePrivate;
+      PopularimeterFramePrivate *d;
     };
+
   }
 }
-
 #endif
