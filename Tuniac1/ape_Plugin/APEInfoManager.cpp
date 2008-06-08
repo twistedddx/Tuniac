@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "All.h"
-#include "MACLib.h"
-#include "apetag.h"
+#include "../ape_SDK/All.h"
+#include "../ape_SDK/MACLib.h"
+#include "../ape_SDK/apetag.h"
 #include "apeinfomanager.h"
 
 #define APE_TAG_FIELD_REPLAYGAIN_TRACK_GAIN	L"replaygain_track_gain"
