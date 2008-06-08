@@ -48,7 +48,7 @@ Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Fl
 Source: ..\x64\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: not InstallLegacyCheck; Flags: ignoreversion
 Source: ..\x64\Release\plugins\*.dll; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
 
-;Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
+Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\visuals\*.dll; DestDir: {app}\visuals; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: InstallLegacyCheck; Flags: ignoreversion
