@@ -109,7 +109,7 @@ public:
 
 //IXAudio2EngineCallback inherited methods
 public:
-	    // Called by XAudio2 just before an audio processing pass begins.
+	// Called by XAudio2 just before an audio processing pass begins.
 	STDMETHOD_(void, OnProcessingPassStart) (THIS) { };
 
     // Called just after an audio processing pass ends.

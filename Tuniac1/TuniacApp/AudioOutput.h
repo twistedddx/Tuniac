@@ -78,9 +78,9 @@ protected:
 /////////////////////////////////////////////////////////////
 //			XAUDIO CALLBACKS!!!!!!
 public:
-	STDMETHOD_(void, OnVoiceProcessingPassStart) () {}
+	STDMETHOD_(void, OnVoiceProcessingPassStart) (UINT32) {}
     STDMETHOD_(void, OnVoiceProcessingPassEnd) () {}
-    STDMETHOD_(void,OnStreamEnd) () 
+    STDMETHOD_(void, OnStreamEnd) () 
 	{
 		m_bStreamFinished = true;
 	}
