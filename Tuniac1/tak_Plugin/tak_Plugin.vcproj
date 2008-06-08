@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="../TuniacApp;./libtak"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -240,7 +240,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -328,7 +328,7 @@
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TAKInfoManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\takPlugin.cpp"
 				>
 			</File>
@@ -406,6 +410,10 @@
 			</File>
 			<File
 				RelativePath=".\TAKDecoderPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TAKInfoManager.h"
 				>
 			</File>
 		</Filter>

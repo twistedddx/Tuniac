@@ -49,7 +49,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -132,7 +132,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -212,7 +212,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
@@ -289,7 +289,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../ape_SDK;../TuniacApp"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
@@ -403,11 +403,27 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath="..\ape_SDK\All.h"
+				>
+			</File>
+			<File
+				RelativePath="..\ape_SDK\APETag.h"
+				>
+			</File>
+			<File
+				RelativePath="..\ape_SDK\MACLib.h"
+				>
+			</File>
+			<File
 				RelativePath="..\ape_SDK\MACLib.lib"
 				>
 			</File>
 			<File
 				RelativePath="..\ape_SDK\MACLib64.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\ape_SDK\SmartPtr.h"
 				>
 			</File>
 		</Filter>

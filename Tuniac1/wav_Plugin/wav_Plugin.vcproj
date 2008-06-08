@@ -240,7 +240,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				AdditionalLibraryDirectories="libs"
+				AdditionalLibraryDirectories=""
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -371,6 +371,10 @@
 			UniqueIdentifier="{D26737F1-C7E2-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\stdafx.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WAVDecoder.cpp"
 				>
 			</File>
@@ -382,10 +386,6 @@
 				RelativePath=".\wavPlugin.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -393,19 +393,19 @@
 			UniqueIdentifier="{93956380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\WAVDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVDecoderPlugin.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WAVDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WAVDecoderPlugin.h"
 				>
 			</File>
 		</Filter>

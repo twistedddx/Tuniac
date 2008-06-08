@@ -1,7 +1,7 @@
 #pragma once
 #include "IAudioSource.h"
-#include "All.h"
-#include "MACLib.h"
+#include "../ape_SDK/All.h"
+#include "../ape_SDK/MACLib.h"
 
 #define MACFILTERPACKETSIZE 512 // in blocks (MAClib.h defines block as (n*sample), where n = number of channels)
 #define QUANTFACTOR 4.656613428e-10F // used for 24-bit int -> 32-bit float conversion

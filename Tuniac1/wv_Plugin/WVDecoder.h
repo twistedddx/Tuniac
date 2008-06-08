@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include "wavpack.h"
+#include ".\wv\wavpack.h"
 
 class CWVDecoder :
 	public IAudioSource

@@ -1,7 +1,7 @@
 #pragma once
 #include "iinfomanager.h"
-#include "All.h"
-#include "MACLib.h"
+#include "../ape_SDK/All.h"
+#include "../ape_SDK/MACLib.h"
 
 class CAPEInfoManager :
 	public IInfoManager
