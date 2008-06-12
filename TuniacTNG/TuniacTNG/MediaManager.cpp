@@ -349,6 +349,10 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 
 	try
 	{
+		// TODO: replace this code with something a lot more efficient.....
+		// SQLite doesn't like LIMIT commands, so it may be a case of 
+
+
 		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary LIMIT ?, ?;");
 
 		sqlite3x::sqlite3_connection con(szDBName);
