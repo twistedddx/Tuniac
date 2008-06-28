@@ -62,15 +62,14 @@ bool			CTTADecoderPlugin::CanHandle(LPTSTR szSource)
 
 unsigned long	CTTADecoderPlugin::GetNumCommonExts(void)
 {
-	return 2;
+	return 1;
 }
 
 LPTSTR			CTTADecoderPlugin::GetCommonExt(unsigned long ulIndex)
 {
 	static LPTSTR exts[] = 
 	{
-		TEXT(".tta"),
-		TEXT(".ofs")
+		TEXT(".tta")
 	};
 
 	return exts[ulIndex];
