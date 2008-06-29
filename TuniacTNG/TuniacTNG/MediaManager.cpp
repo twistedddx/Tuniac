@@ -3,6 +3,80 @@
 
 #include "TuniacHelper.h"
 
+/* FILETIME utility */
+const __int64 _onesec_in100ns = (__int64)10000000;
+
+
+/* __int64 <--> FILETIME */
+static __int64 wce_FILETIME2int64(FILETIME f)
+{
+	__int64 t;
+
+	t = f.dwHighDateTime;
+	t <<= 32;
+	t |= f.dwLowDateTime;
+	return t;
+}
+
+static FILETIME wce_int642FILETIME(__int64 t)
+{
+	FILETIME f;
+
+	f.dwHighDateTime = (DWORD)((t >> 32) & 0x00000000FFFFFFFF);
+	f.dwLowDateTime  = (DWORD)( t        & 0x00000000FFFFFFFF);
+	return f;
+}
+
+static FILETIME wce_getFILETIMEFromYear(WORD year)
+{
+	SYSTEMTIME s={0};
+	FILETIME f;
+
+	s.wYear      = year;
+	s.wMonth     = 1;
+	s.wDayOfWeek = 1;
+	s.wDay       = 1;
+
+	SystemTimeToFileTime( &s, &f );
+	return f;
+}
+
+
+/* FILETIME <--> time_t */
+static time_t wce_FILETIME2time_t(const FILETIME* f)
+{
+	FILETIME f1601, f1970;
+	__int64 t, offset;
+
+	f1601 = wce_getFILETIMEFromYear(1601);
+	f1970 = wce_getFILETIMEFromYear(1970);
+
+	offset = wce_FILETIME2int64(f1970) - wce_FILETIME2int64(f1601);
+
+	t = wce_FILETIME2int64(*f);
+
+	t -= offset;
+	return (time_t)(t / _onesec_in100ns);
+}
+
+static FILETIME wce_time_t2FILETIME(const time_t t)
+{
+	FILETIME f, f1970;
+	__int64 time;
+
+	f1970 = wce_getFILETIMEFromYear(1970);
+
+	time = t;
+	time *= _onesec_in100ns;
+	time += wce_FILETIME2int64(f1970);
+
+	f = wce_int642FILETIME(time);
+
+	return f;
+}
+
+
+
 CMediaManager::CMediaManager(void)
 {
 }
@@ -23,6 +97,8 @@ bool CMediaManager::Initialize(void)
 
 		if(count == 0)
 		{
+			// all dates in TNG are stored in time_t format (either 32 r 64 bits it makes no difference)
+
 			// THERE IS NO MEDIA LIBRARY :(
 
 			String DBColumns[] =
@@ -30,12 +106,12 @@ bool CMediaManager::Initialize(void)
 				TEXT("EntryID				 INTEGER PRIMARY KEY"),
 				TEXT("DirtyFlag				 INT"),
 
-				TEXT("DateAdded				 DATETIME"),
-				TEXT("FileUnavailable		 INT"),
+				TEXT("DateAdded				 INT"),
+				TEXT("FileOnline			 INT"),
 
 				TEXT("Filename				 TEXT"),
 				TEXT("Filesize				 INT"),
-				TEXT("FileModifiedTime		 DATETIME"),
+				TEXT("FileModifiedTime		 INT"),
 
 				TEXT("Title					 TEXT"),
 				TEXT("Artist				 TEXT"),
@@ -63,14 +139,14 @@ bool CMediaManager::Initialize(void)
 				TEXT("Channels				 INT"),
 				TEXT("Bitrate				 INT"),
 
-				TEXT("FirstPlayed			 DATETIME"),
-				TEXT("LastPlayed			 DATETIME"),
+				TEXT("FirstPlayed			 INT"),
+				TEXT("LastPlayed			 INT"),
 				TEXT("Playcount				 INT"),
 
-				TEXT("ReplayGainTrack		 INT"),
+				TEXT("ReplayGainTrack		 REAL"),
 				TEXT("ReplayPeakTrack		 REAL"),
-				TEXT("ReplayGainAlbum		 INT"),
-				TEXT("ReplayPeakalbum		 REAL"),
+				TEXT("ReplayGainAlbum		 REAL"),
+				TEXT("ReplayPeakAlbum		 REAL"),
 
 				TEXT("EncoderDelay			 INT"),
 				TEXT("EncoderPadding		 INT"),
@@ -196,6 +272,21 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 
 	mediaItem.filename = filename;
 
+	// extract generic info from the file (creation time/size)
+	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+	if(hFile != INVALID_HANDLE_VALUE)
+	{
+		FILETIME		ft;
+		GetFileTime(hFile, NULL, NULL, &ft);
+		mediaItem.ullFileModifiedTime = wce_FILETIME2time_t(&ft);
+
+		LARGE_INTEGER		llFileSize;
+		GetFileSizeEx(hFile, &llFileSize);
+		mediaItem.ullFilesize = llFileSize.QuadPart;
+
+		CloseHandle(hFile);
+	}
+
 
 	// first lets see if we have an infohandler capable of using this
 	IInfoHandler		* pHandler = NULL;
@@ -254,20 +345,9 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
 	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
 
+
 	if(pAccessor)
 		pAccessor->Destroy();
-
-	// extract generic info from the file (creation time/size)
-	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-	if(hFile != INVALID_HANDLE_VALUE)
-	{
-		FILETIME		ft;
-		GetFileTime(hFile, NULL, NULL, &ft);
-		FileTimeToSystemTime(&ft, &mediaItem.fileModifiedTime);
-		mediaItem.ulFilesize = GetFileSize(hFile, NULL);
-
-		CloseHandle(hFile);
-	}
 	
 	return true;
 }
@@ -300,7 +380,9 @@ bool CMediaManager::GetAlbums(StringArray & albumList)
 	}
 	catch(std::exception &ex) 
 	{
-		//LOGDEBUG("Exception Occured: " << ex.what());
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
 	}
 
 	return true;
@@ -334,7 +416,9 @@ bool CMediaManager::GetArtists(StringArray & artistList)
 	}
 	catch(std::exception &ex) 
 	{
-		//LOGDEBUG("Exception Occured: " << ex.what());
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
 	}
 
 	return true;
@@ -368,31 +452,10 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 			//existscmd.
 			MediaItem tempItem = {0};
 
-			tempItem.ulItemID		= reader.getint64(0);
 
-			tempItem.filename		= reader.getstring16(4);
-			tempItem.ulFilesize		= reader.getint64(5);
+			ReaderMediaItem(reader, tempItem);
 
-			tempItem.title			= reader.getstring16(7);
-			tempItem.artist			= reader.getstring16(8);
 
-			tempItem.album			= reader.getstring16(10);
-
-			tempItem.ulYear			= reader.getint64(13);
-			tempItem.genre			= reader.getstring16(14);
-			tempItem.comment		= reader.getstring16(15);
-
-			tempItem.ulTrack		= reader.getint64(16);
-			tempItem.ulMaxTrack		= reader.getint64(17);
-
-			tempItem.ulDisk			= reader.getint64(18);
-			tempItem.ulMaxDisk		= reader.getint64(19);
-
-			tempItem.ulPlayTimeMS	= reader.getint64(22);
-
-			tempItem.ulSampleRate	= reader.getint64(24);
-			tempItem.ulChannelCount	= reader.getint64(25);
-			tempItem.ulBitRate		= reader.getint64(26);
 
 			itemList.push_back(tempItem);
 		}
@@ -411,23 +474,24 @@ bool CMediaManager::InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_co
 {
 	try
 	{
-		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary (DateAdded,						Filename,	Filesize,	FileModifiedTime,	Title,	Artist,	Composer,	Album,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	PlaybackTime,	SampleRate, Channels,	Bitrate) \
-															VALUES (datetime('now','localtime'),	?,			?,			?,					?,		?,		?,			?,		?,		?,		?,			?,		?,			?,		?,			?,				?,			?,			?)");
+		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary (DateAdded,	FileOnline, Filename, Filesize,FileModifiedTime,	Title,	Artist,	DiscTitle,	Album,	AlbumArtist,	Composer,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	Rating,	BPM,	PlaybackTime,	PlaybackTimeAccuracy,	SampleRate, Channels,	Bitrate,	FirstPlayed,	LastPlayed,		PlayCount,	ReplayGainTrack,	ReplayPeakTrack,	ReplayGainAlbum,	ReplayPeakalbum) VALUES (?,1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'0','0','0',?,?,?,?)");
 
 		sqlite3x::sqlite3_command cmd(con, insertFilenameSQL);
 
 		int bind=1;
-		cmd.bind(bind++,	newItem.filename);
-		cmd.bind(bind++,	(long long)newItem.ulFilesize);
 
-		String modifiedtime;
-		CTuniacHelper::Instance()->FormatSystemTime(modifiedtime, newItem.fileModifiedTime);
-		cmd.bind(bind++,	modifiedtime);
+		cmd.bind(bind++,	time(NULL));
+		cmd.bind(bind++,	newItem.filename);
+		cmd.bind(bind++,	(long long)newItem.ullFilesize);
+
+		cmd.bind(bind++,	newItem.ullFileModifiedTime);
 
 		cmd.bind(bind++,	newItem.title);
 		cmd.bind(bind++,	newItem.artist);
+		cmd.bind(bind++,	newItem.disktitle);
 		cmd.bind(bind++,	newItem.composer);
 		cmd.bind(bind++,	newItem.album);
+		cmd.bind(bind++,	newItem.albumartist);
 		cmd.bind(bind++,	newItem.ulYear);
 		cmd.bind(bind++,	newItem.genre);
 		cmd.bind(bind++,	newItem.comment);
@@ -435,10 +499,18 @@ bool CMediaManager::InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_co
 		cmd.bind(bind++,	newItem.ulMaxTrack);
 		cmd.bind(bind++,	newItem.ulDisk);
 		cmd.bind(bind++,	newItem.ulMaxDisk);
+		cmd.bind(bind++,	newItem.ulRating);
+		cmd.bind(bind++,	newItem.ulBPM);
 		cmd.bind(bind++,	newItem.ulPlayTimeMS);
+		cmd.bind(bind++,	newItem.ulPlaybackTimeAccuracy);
 		cmd.bind(bind++,	newItem.ulSampleRate);
 		cmd.bind(bind++,	newItem.ulChannelCount);
 		cmd.bind(bind++,	newItem.ulBitRate);
+
+		cmd.bind(bind++,	newItem.fReplayGainTrack);
+		cmd.bind(bind++,	newItem.fReplayPeakTrack);
+		cmd.bind(bind++,	newItem.fReplayGainAlbum);
+		cmd.bind(bind++,	newItem.fReplayPeakAlbum);
 
 		cmd.executenonquery();
 
@@ -550,7 +622,9 @@ bool	CMediaManager::DeleteByID(__int64 ullID)
 	}
 	catch(std::exception &ex) 
 	{
-		//LOGDEBUG("Exception Occured: " << ex.what());
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
 		return false;
 	}
 
@@ -575,7 +649,68 @@ bool	CMediaManager::DeleteByFilename(CStdString filename)
 	}
 	catch(std::exception &ex) 
 	{
-		//LOGDEBUG("Exception Occured: " << ex.what());
+		String debugstring = ex.what();
+		OutputDebugString(TEXT("Error: "));
+		OutputDebugString((debugstring+TEXT("\n")).c_str());
+		return false;
+	}
+
+	return true;
+}
+
+// THIS FUNCTION ONLY WORKS FOR SELECT * FROM MEDIALIBRARY!!!!1
+// this is so I only have to update it in one place!!!
+bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_reader & reader, MediaItem & item)
+{
+	try
+	{
+		item.ulItemID		= reader.getint64(0);
+
+		item.dateAdded		= reader.getint64(2);
+		item.fileOnline		= reader.getint64(3);
+
+		item.filename				= reader.getstring16(4);
+		item.ullFilesize			= reader.getint64(5);
+		item.ullFileModifiedTime	= reader.getint64(6);
+
+		item.title			= reader.getstring16(7);
+		item.artist			= reader.getstring16(8);
+
+		item.album			= reader.getstring16(10);
+		item.albumartist	= reader.getstring16(11);
+		item.composer		= reader.getstring16(12);
+		item.ulYear			= reader.getint64(13);
+		item.genre			= reader.getstring16(14);
+		item.comment		= reader.getstring16(15);
+
+		item.ulTrack		= reader.getint64(16);
+		item.ulMaxTrack		= reader.getint64(17);
+
+		item.ulDisk			= reader.getint64(18);
+		item.ulMaxDisk		= reader.getint64(19);
+
+		item.ulRating		= reader.getint64(20);
+		item.ulBPM			= reader.getint64(21);
+
+		item.ulPlayTimeMS			= reader.getint64(22);
+		item.ulPlaybackTimeAccuracy	= reader.getint64(23);
+
+		item.ulSampleRate	= reader.getint64(24);
+		item.ulChannelCount	= reader.getint64(25);
+		item.ulBitRate		= reader.getint64(26);
+
+		item.ullFirstPlayed = reader.getint64(27);
+		item.ullLastPlayed	= reader.getint64(28);
+		item.ullPlayCount	= reader.getint64(29);
+
+		item.fReplayGainTrack	= reader.getdouble(30);
+		item.fReplayPeakTrack	= reader.getdouble(31);
+
+		item.fReplayGainAlbum	= reader.getdouble(32);
+		item.fReplayPeakAlbum	= reader.getdouble(33);
+	}
+	catch (...)
+	{
 		return false;
 	}
 

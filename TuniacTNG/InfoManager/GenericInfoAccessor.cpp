@@ -6,6 +6,7 @@
 CGenericInfoAccessor::CGenericInfoAccessor(void)
 {
 	m_mpegFile = NULL;
+	m_pProperties = NULL;
 }
 
 CGenericInfoAccessor::~CGenericInfoAccessor(void)
@@ -87,6 +88,8 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 				apeTag = m_wvFile->APETag()->itemListMap();
 			return true;
 		}
+
+		m_pProperties = m_File->audioProperties();
 	}
 
 	return false;
@@ -139,9 +142,6 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 			}
 			break;
 
-		case Rating:
-			break;
-
 		default:
 			wcsncpy(toHere, TEXT(""), ulBufferSize);
 			return false;
@@ -187,9 +187,6 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 			{
 				m_File->tag()->setComment(fromHere);
 			}
-			break;
-
-		case Rating:
 			break;
 
 		default:
@@ -242,7 +239,7 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 			{
 				if(!id3Tag.isEmpty())
 				{
-					TagLib::ID3v2::FrameList l = m_mpegFile->ID3v2Tag()->frameListMap()["TRCK"];
+					TagLib::ID3v2::FrameList l = id3Tag["TRCK"];
 					if(!l.isEmpty())
 					{
 						//std::cout << l.front()->toString() << std::endl;
@@ -312,7 +309,7 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 			{
 				if(!id3Tag.isEmpty())
 				{
-					TagLib::ID3v2::FrameList l = m_mpegFile->ID3v2Tag()->frameListMap()["TPOS"];
+					TagLib::ID3v2::FrameList l = id3Tag["TPOS"];
 					if(!l.isEmpty())
 					{
 						//std::cout << l.front()->toString() << std::endl;
@@ -363,25 +360,37 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 
 		case PlaybackTime:
 			{
-				*toHere = m_File->audioProperties()->length() * 1000;
+				if(m_pProperties)
+					*toHere = m_pProperties->length() * 1000;
+				else
+					*toHere = 0;
 			}
 			break;
 
 		case SampleRate:
 			{
-				*toHere = m_File->audioProperties()->sampleRate();
+				if(m_pProperties)
+					*toHere = m_pProperties->sampleRate();
+				else
+					*toHere = 0;
 			}
 			break;
 
 		case Channels:
 			{
-				*toHere = m_File->audioProperties()->channels();
+				if(m_pProperties)
+					*toHere = m_pProperties->channels();
+				else
+					*toHere = 0;
 			}
 			break;
 
 		case Bitrate:
 			{
-				*toHere = m_File->audioProperties()->bitrate() * 1000;
+				if(m_pProperties)
+					*toHere = m_pProperties->bitrate() * 1000;
+				else
+					*toHere = 0;
 			}
 			break;
 
@@ -467,6 +476,11 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 					if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 						*toHere = atof(apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());
 				}
+			}
+			break;
+
+		case Rating:
+			{
 			}
 			break;
 
