@@ -345,10 +345,17 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
 	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
 
-	pAccessor->GetIntField(ReplayGainTrack,	(__int64*)&mediaItem.fReplayGainTrack);
-	pAccessor->GetIntField(ReplayPeakTrack, (__int64*)&mediaItem.fReplayPeakTrack);
-	pAccessor->GetIntField(ReplayGainAlbum, (__int64*)&mediaItem.fReplayGainAlbum);
-	pAccessor->GetIntField(ReplayPeakAlbum, (__int64*)&mediaItem.fReplayPeakAlbum);
+	pAccessor->GetTextField(ReplayGainTrack, temp, 1024);
+	mediaItem.fReplayGainTrack = _wtof(temp);
+
+	pAccessor->GetTextField(ReplayPeakTrack, temp, 1024);
+	mediaItem.fReplayPeakTrack = _wtof(temp);
+
+	pAccessor->GetTextField(ReplayGainAlbum, temp, 1024);
+	mediaItem.fReplayGainAlbum = _wtof(temp);
+
+	pAccessor->GetTextField(ReplayPeakAlbum, temp, 1024);
+	mediaItem.fReplayPeakAlbum = _wtof(temp);
 
 	if(pAccessor)
 		pAccessor->Destroy();
@@ -478,35 +485,45 @@ bool CMediaManager::InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_co
 {
 	try
 	{
-		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary (DateAdded,	FileOnline, Filename, Filesize,FileModifiedTime,	Title,	Artist,	DiscTitle,	Album,	AlbumArtist,	Composer,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	Rating,	BPM,	PlaybackTime,	PlaybackTimeAccuracy,	SampleRate, Channels,	Bitrate,	FirstPlayed,	LastPlayed,		PlayCount,	ReplayGainTrack,	ReplayPeakTrack,	ReplayGainAlbum,	ReplayPeakalbum) VALUES (?,1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'0','0','0',?,?,?,?)");
+		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary \
+		(DateAdded,	FileOnline, Filename,	Filesize,	FileModifiedTime,	Title,	Artist,	DiscTitle,	Album,	AlbumArtist,	Composer,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	Rating,	BPM,	PlaybackTime,	PlaybackTimeAccuracy,	SampleRate, Channels,	Bitrate,	FirstPlayed,	LastPlayed,		PlayCount,	ReplayGainTrack,	ReplayPeakTrack,	ReplayGainAlbum,	ReplayPeakalbum)\
+		VALUES\
+		(?,			1,			?,			?,			?,					?,		?,		?,			?,		?,				?,			?,		?,		?,			?,		?,			?,		?,			?,		?,		?,				0,						?,			?,			?,			0,				0,				0,			?,					?,					?,					?)");
 
 		sqlite3x::sqlite3_command cmd(con, insertFilenameSQL);
 
 		int bind=1;
 
 		cmd.bind(bind++,	time(NULL));
+
 		cmd.bind(bind++,	newItem.filename);
 		cmd.bind(bind++,	(long long)newItem.ullFilesize);
-
 		cmd.bind(bind++,	newItem.ullFileModifiedTime);
 
 		cmd.bind(bind++,	newItem.title);
 		cmd.bind(bind++,	newItem.artist);
 		cmd.bind(bind++,	newItem.disktitle);
-		cmd.bind(bind++,	newItem.composer);
+
 		cmd.bind(bind++,	newItem.album);
 		cmd.bind(bind++,	newItem.albumartist);
+
+		cmd.bind(bind++,	newItem.composer);
+
 		cmd.bind(bind++,	newItem.ulYear);
+
 		cmd.bind(bind++,	newItem.genre);
 		cmd.bind(bind++,	newItem.comment);
+
 		cmd.bind(bind++,	newItem.ulTrack);
 		cmd.bind(bind++,	newItem.ulMaxTrack);
 		cmd.bind(bind++,	newItem.ulDisk);
 		cmd.bind(bind++,	newItem.ulMaxDisk);
+
 		cmd.bind(bind++,	newItem.ulRating);
 		cmd.bind(bind++,	newItem.ulBPM);
+
 		cmd.bind(bind++,	newItem.ulPlayTimeMS);
-		cmd.bind(bind++,	newItem.ulPlaybackTimeAccuracy);
+
 		cmd.bind(bind++,	newItem.ulSampleRate);
 		cmd.bind(bind++,	newItem.ulChannelCount);
 		cmd.bind(bind++,	newItem.ulBitRate);
