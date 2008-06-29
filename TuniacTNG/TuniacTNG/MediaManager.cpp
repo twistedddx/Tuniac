@@ -345,6 +345,10 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
 	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
 
+	pAccessor->GetIntField(ReplayGainTrack,	(__int64*)&mediaItem.fReplayGainTrack);
+	pAccessor->GetIntField(ReplayPeakTrack, (__int64*)&mediaItem.fReplayPeakTrack);
+	pAccessor->GetIntField(ReplayGainAlbum, (__int64*)&mediaItem.fReplayGainAlbum);
+	pAccessor->GetIntField(ReplayPeakAlbum, (__int64*)&mediaItem.fReplayPeakAlbum);
 
 	if(pAccessor)
 		pAccessor->Destroy();
