@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TuniacTNG", "TuniacTNG\TuniacTNG.vcproj", "{7AB30C2D-AC5F-46AA-BE46-F82252B02AFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4AF1170E-96FD-4878-90F6-C883FCA8F62B} = {4AF1170E-96FD-4878-90F6-C883FCA8F62B}
+		{46EF772B-C115-4B6A-99F3-D7D3F7DEDF62} = {46EF772B-C115-4B6A-99F3-D7D3F7DEDF62}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SQLite", "SQLite\SQLite.vcproj", "{4AF1170E-96FD-4878-90F6-C883FCA8F62B}"
 EndProject

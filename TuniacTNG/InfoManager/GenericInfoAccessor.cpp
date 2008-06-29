@@ -19,6 +19,8 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 
 	if(m_File)
 	{
+		m_pProperties = m_File->audioProperties();
+
 
 		//vorbis comment, id3v2
 		if(!StrCmpI(TEXT(".flac"), PathFindExtension(m_File->name())))
@@ -89,8 +91,6 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 				apeTag = m_wvFile->APETag()->itemListMap();
 			return true;
 		}
-
-		m_pProperties = m_File->audioProperties();
 	}
 
 	return false;
@@ -140,6 +140,95 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 		case Comment:
 			{
 				wcsncpy(toHere, m_File->tag()->comment().toWString().c_str(), ulBufferSize);
+			}
+			break;
+
+		case ReplayGainTrack:
+			{
+				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
+				if(!id3Tag.isEmpty())
+				{
+					{
+						TagLib::ID3v2::FrameList l = id3Tag["RGAD"];
+						if(!l.isEmpty())
+						{
+							//_ASSERT(0);
+							// we dont actually support this yet and need to decode the data
+						}
+					}
+					{
+						TagLib::ID3v2::FrameList l = id3Tag["RVA2"];
+						if(!l.isEmpty())
+						{
+							TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
+							wsprintf(toHere, TEXT("%f"), relVol->volumeAdjustment());
+							//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
+						}
+					}
+				}
+
+				if(!vorbisTag.isEmpty())
+				{
+					if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().toWString().c_str(), ulBufferSize);
+				}
+
+				if(!apeTag.isEmpty())
+				{
+					if(!apeTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+		 				wcsncpy(toHere, apeTag["REPLAYGAIN_TRACK_GAIN"].toString().toWString().c_str(), ulBufferSize);
+				}
+			}
+			break;
+
+		case ReplayPeakTrack:
+			{
+				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
+				if(!vorbisTag.isEmpty())
+				{
+					if(!vorbisTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().toWString().c_str(), ulBufferSize);
+				}
+
+				if(!apeTag.isEmpty())
+				{
+					if(!apeTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+		 				wcsncpy(toHere, apeTag["REPLAYGAIN_TRACK_PEAK"].toString().toWString().c_str(), ulBufferSize);
+				}
+			}
+			break;
+
+		case ReplayGainAlbum:
+			{
+				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
+				if(!vorbisTag.isEmpty())
+				{
+					if(!vorbisTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().toWString().c_str(), ulBufferSize);
+				}
+
+				if(!apeTag.isEmpty())
+				{
+					if(!apeTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+		 				wcsncpy(toHere, apeTag["REPLAYGAIN_ALBUM_GAIN"].toString().toWString().c_str(), ulBufferSize);
+				}
+			}
+			break;
+
+		case ReplayPeakAlbum:
+			{
+				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
+				if(!vorbisTag.isEmpty())
+				{
+					if(!vorbisTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().toWString().c_str(), ulBufferSize);
+				}
+
+				if(!apeTag.isEmpty())
+				{
+					if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+		 				wcsncpy(toHere, apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toWString().c_str(), ulBufferSize);
+				}
 			}
 			break;
 
@@ -392,91 +481,6 @@ bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 					*toHere = m_pProperties->bitrate() * 1000;
 				else
 					*toHere = 0;
-			}
-			break;
-
-		case ReplayGainTrack:
-			{
-				if(!id3Tag.isEmpty())
-				{
-					{
-						TagLib::ID3v2::FrameList l = id3Tag["RGAD"];
-						if(!l.isEmpty())
-						{
-							//_ASSERT(0);
-							// we dont actually support this yet and need to decode the data
-						}
-					}
-					{
-						TagLib::ID3v2::FrameList l = id3Tag["RVA2"];
-						if(!l.isEmpty())
-						{
-							TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
-							*toHere = relVol->volumeAdjustment();
-							//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
-						}
-					}
-				}
-
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-						*toHere = atof(vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-						*toHere = atof(apeTag["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
-				}
-			}
-			break;
-
-		case ReplayPeakTrack:
-			{
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-						*toHere = atof(vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-						*toHere = atof(apeTag["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
-				}
-			}
-			break;
-
-		case ReplayGainAlbum:
-			{
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-						*toHere = atof(vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-						*toHere = atof(apeTag["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());
-				}
-			}
-			break;
-
-		case ReplayPeakAlbum:
-			{
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-						*toHere = atof(vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-						*toHere = atof(apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());
-				}
 			}
 			break;
 
