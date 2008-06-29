@@ -45,7 +45,8 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 		}
 
 		//mp4 tag
-		else if(!StrCmpI(TEXT(".mp4"), PathFindExtension(m_File->name())))
+		else if(	(!StrCmpI(TEXT(".mp4"), PathFindExtension(m_File->name()))) ||
+					(!StrCmpI(TEXT(".m4a"), PathFindExtension(m_File->name()))) )
 		{
 			m_mp4File = (TagLib::MP4::File *)m_File;
 			if(m_mp4File->tag())
