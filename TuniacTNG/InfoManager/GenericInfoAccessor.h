@@ -42,6 +42,10 @@ protected:
 	TagLib::ID3v2::FrameListMap	id3Tag;
 	TagLib::MP4::ItemListMap	mp4Tag;
 
+
+	TagLib::AudioProperties		*	m_pProperties;
+	
+
 public:
 	CGenericInfoAccessor(void);
 public:
