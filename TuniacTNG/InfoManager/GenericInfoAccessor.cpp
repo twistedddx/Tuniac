@@ -161,7 +161,7 @@ bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere
 						if(!l.isEmpty())
 						{
 							TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
-							wsprintf(toHere, TEXT("%f"), relVol->volumeAdjustment());
+							swprintf(toHere, TEXT("%f"), relVol->volumeAdjustment());
 							//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
 						}
 					}

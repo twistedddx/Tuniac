@@ -75,6 +75,8 @@ protected:
 	} InfoHandler;
 
 	std::vector<InfoHandler>		m_vInfoHandlers;
+	std::vector<unsigned long long>	m_vIDList;
+
 
 	bool PopulateMediaItemFromAccessor(String filename, MediaItem & pItem);
 	bool InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_connection & con, MediaItem & pItem);
@@ -82,6 +84,7 @@ protected:
 
 	bool ReaderMediaItem(sqlite3x::sqlite3_reader & reader, MediaItem & item);
 
+	bool RebuildIDList(void);
 
 public:
 	CMediaManager(void);
@@ -105,4 +108,5 @@ public:
 
 	bool DeleteByID(__int64 ullID);
 	bool DeleteByFilename(CStdString filename);
+
 };

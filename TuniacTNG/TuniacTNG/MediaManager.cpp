@@ -215,6 +215,9 @@ bool CMediaManager::Initialize(void)
 
 		dllFileArray.pop_back();
 	}
+
+	RebuildIDList();
+
 	return true;
 }
 
@@ -435,6 +438,39 @@ bool CMediaManager::GetArtists(StringArray & artistList)
 	return true;
 }
 
+bool CMediaManager::RebuildIDList(void)
+{
+	String szDBName;
+	GetMediaDBLocation(szDBName);
+
+	m_vIDList.clear();
+
+	try
+	{
+		// TODO: replace this code with something a lot more efficient.....
+		// SQLite doesn't like LIMIT commands, so it may be a case of 
+		String sGetRangeSQL = TEXT("SELECT EntryID FROM MediaLibrary");
+
+		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
+
+		sqlite3x::sqlite3_reader reader = rangecmd.executereader();
+
+		while(reader.read())
+		{
+			m_vIDList.push_back(reader.getint64(0));
+		}
+
+		reader.close();
+	}
+	catch(...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList)
 {
 	String szDBName;
@@ -448,13 +484,24 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 		// SQLite doesn't like LIMIT commands, so it may be a case of 
 
 
-		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary LIMIT ?, ?;");
+		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary WHERE EntryID IN (");
+
+		for(int x=0; x<ulCount; x++)
+		{
+			sGetRangeSQL += TEXT("?");
+			if(x<ulCount-1)
+			sGetRangeSQL += TEXT(",");
+		}
+		sGetRangeSQL += TEXT(")");
 
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
 
-		rangecmd.bind(1, (int)ulStart);
-		rangecmd.bind(2, (int)ulCount);
+
+		for(int x=0; x<ulCount; x++)
+		{
+			rangecmd.bind(x+1, (long long)m_vIDList[ulStart+x]);
+		}
 
 		sqlite3x::sqlite3_reader reader = rangecmd.executereader();
 
@@ -685,50 +732,50 @@ bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_reader & reader, MediaItem
 {
 	try
 	{
-		item.ulItemID		= reader.getint64(0);
+		item.ulItemID				= reader.getint64(0);
 
-		item.dateAdded		= reader.getint64(2);
-		item.fileOnline		= reader.getint64(3);
+		item.dateAdded				= reader.getint64(2);
+		item.fileOnline				= reader.getint64(3);
 
 		item.filename				= reader.getstring16(4);
 		item.ullFilesize			= reader.getint64(5);
 		item.ullFileModifiedTime	= reader.getint64(6);
 
-		item.title			= reader.getstring16(7);
-		item.artist			= reader.getstring16(8);
+		item.title					= reader.getstring16(7);
+		item.artist					= reader.getstring16(8);
 
-		item.album			= reader.getstring16(10);
-		item.albumartist	= reader.getstring16(11);
-		item.composer		= reader.getstring16(12);
-		item.ulYear			= reader.getint64(13);
-		item.genre			= reader.getstring16(14);
-		item.comment		= reader.getstring16(15);
+		item.album					= reader.getstring16(10);
+		item.albumartist			= reader.getstring16(11);
+		item.composer				= reader.getstring16(12);
+		item.ulYear					= reader.getint64(13);
+		item.genre					= reader.getstring16(14);
+		item.comment				= reader.getstring16(15);
 
-		item.ulTrack		= reader.getint64(16);
-		item.ulMaxTrack		= reader.getint64(17);
+		item.ulTrack				= reader.getint64(16);
+		item.ulMaxTrack				= reader.getint64(17);
 
-		item.ulDisk			= reader.getint64(18);
-		item.ulMaxDisk		= reader.getint64(19);
+		item.ulDisk					= reader.getint64(18);
+		item.ulMaxDisk				= reader.getint64(19);
 
-		item.ulRating		= reader.getint64(20);
-		item.ulBPM			= reader.getint64(21);
+		item.ulRating				= reader.getint64(20);
+		item.ulBPM					= reader.getint64(21);
 
 		item.ulPlayTimeMS			= reader.getint64(22);
 		item.ulPlaybackTimeAccuracy	= reader.getint64(23);
 
-		item.ulSampleRate	= reader.getint64(24);
-		item.ulChannelCount	= reader.getint64(25);
-		item.ulBitRate		= reader.getint64(26);
+		item.ulSampleRate			= reader.getint64(24);
+		item.ulChannelCount			= reader.getint64(25);
+		item.ulBitRate				= reader.getint64(26);
 
-		item.ullFirstPlayed = reader.getint64(27);
-		item.ullLastPlayed	= reader.getint64(28);
-		item.ullPlayCount	= reader.getint64(29);
+		item.ullFirstPlayed 		= reader.getint64(27);
+		item.ullLastPlayed			= reader.getint64(28);
+		item.ullPlayCount			= reader.getint64(29);
 
-		item.fReplayGainTrack	= reader.getdouble(30);
-		item.fReplayPeakTrack	= reader.getdouble(31);
+		item.fReplayGainTrack		= reader.getdouble(30);
+		item.fReplayPeakTrack		= reader.getdouble(31);
 
-		item.fReplayGainAlbum	= reader.getdouble(32);
-		item.fReplayPeakAlbum	= reader.getdouble(33);
+		item.fReplayGainAlbum		= reader.getdouble(32);
+		item.fReplayPeakAlbum		= reader.getdouble(33);
 	}
 	catch (...)
 	{
