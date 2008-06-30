@@ -81,7 +81,9 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput)
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
 
-	fAmpGain = 1.99526231496888f;
+	fAmpGain = pow(10, 2 / 20.0);
+	//replayGainPreamp = 
+
 
 	return true;
 }
@@ -200,9 +202,15 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			{
 				XMM3 = _mm_load1_ps(&fReplayGainAlbum);
 			}
-			else //if(bTrackHasGain && !bUseAlbumGain)
+			else if(bTrackHasGain && !bUseAlbumGain)
 			{
 				XMM3 = _mm_load1_ps(&fReplayGainTrack);
+			}
+			else
+			{
+				float t = 1.0;
+				XMM3 = _mm_load1_ps(&t);
+				//XMM2 = _mm_load1_ps(&t);
 			}
 			
 

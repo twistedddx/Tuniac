@@ -55,13 +55,16 @@ BEGIN
     CONTROL         "",IDC_CROSSFADE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,7,10,10
     CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,18,209,20
     CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,39,209,8
-    GROUPBOX        "Audio Buffering",IDC_STATIC,7,56,222,68
+    GROUPBOX        "Audio Buffering",IDC_STATIC,7,56,222,50
     CONTROL         "",IDC_BUFFER_TIME_SLIDER,"msctls_trackbar32",WS_TABSTOP,13,67,209,20
     CTEXT           "%d Milliseconds",IDC_BUFFER_TIME_TEXT,20,90,209,8
-    LTEXT           "A larger buffer will help prevent audio skips but will increase delay in audio effects.",IDC_STATIC,13,103,209,17
-    GROUPBOX        "      Use ReplayGain",IDC_STATIC,7,129,222,32
-    CONTROL         "",IDC_REPLAYGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,129,10,10
-    CONTROL         "Use Album Gain Over Track",IDC_REPLAYGAINALBUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,145,115,10
+    GROUPBOX        "      Use ReplayGain",IDC_STATIC,7,112,222,57
+    CONTROL         "",IDC_REPLAYGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,112,10,10
+    CONTROL         "Use Album Gain Over Track",IDC_REPLAYGAINALBUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,124,115,10
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,135,209,19
+    LTEXT           "0db",IDC_STATIC,112,154,13,8
+    LTEXT           "-15db",IDC_STATIC,13,154,20,8
+    LTEXT           "+15db",IDC_STATIC,200,154,22,8
 END
 
 IDD_PREFERENCES_MEDIALIBRARY DIALOGEX 0, 0, 235, 176
@@ -233,9 +236,11 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 229
         VERTGUIDE, 13
+        VERTGUIDE, 118
         VERTGUIDE, 222
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
+        HORZGUIDE, 158
     END
 
     IDD_PREFERENCES_MEDIALIBRARY, DIALOG
