@@ -632,7 +632,10 @@ bool CMediaManager::AddFile(String filename)
 		return false;
 
 	if(InsertItemToMediaLibraryUsingConnection(con, newItem))
+	{
+		RebuildIDList();
 		return true;
+	}
 
 	return false;
 }
@@ -666,6 +669,8 @@ bool CMediaManager::AddFileArray(StringArray filenameArray)
 		}
 		trans.commit();
 
+		RebuildIDList();
+
 		return true;
 	}
 
@@ -696,6 +701,9 @@ bool	CMediaManager::DeleteByID(__int64 ullID)
 		return false;
 	}
 
+	RebuildIDList();
+
+
 	return true;
 }
 
@@ -722,6 +730,8 @@ bool	CMediaManager::DeleteByFilename(CStdString filename)
 		OutputDebugString((debugstring+TEXT("\n")).c_str());
 		return false;
 	}
+
+	RebuildIDList();
 
 	return true;
 }
