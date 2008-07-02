@@ -130,12 +130,6 @@ void jpeg_decoder::prep_in_buffer(void)
   if (eof_flag)
     return;
 
-#ifdef SUPPORT_MMX
-  bool was_mmx_active = mmx_active;
-  if (mmx_active)
-    get_bits_2_mmx_deinit();
-#endif
-
   do
   {
     int bytes_read = Pstream->read(in_buf + in_buf_left,
@@ -153,10 +147,6 @@ void jpeg_decoder::prep_in_buffer(void)
 
   word_clear(Pin_buf_ofs + in_buf_left, 0xD9FF, 64);
 
-#ifdef SUPPORT_MMX
-  if (was_mmx_active)
-    get_bits_2_mmx_init();
-#endif
 }
 //------------------------------------------------------------------------------
 // Read a Huffman code table.
@@ -254,9 +244,6 @@ void jpeg_decoder::read_dqt_marker(void)
       if (prec)
         temp = (temp << 8) + get_bits_1(8);
 
-      if (use_mmx_idct)
-        quant[n][ZAG[i]] = (temp * aan_scales[ZAG[i]] + (1 << (AAN_SCALE_BITS - IFAST_SCALE_BITS - 1))) >> (AAN_SCALE_BITS - IFAST_SCALE_BITS);
-      else
         quant[n][i] = temp;
     }
 
@@ -604,13 +591,9 @@ void jpeg_decoder::init(Pjpeg_decoder_stream Pstream, bool use_mmx)
 
   this->Pstream = Pstream;
 
-#ifdef SUPPORT_MMX
-  this->use_mmx = use_mmx;
-  use_mmx_idct = (use_mmx) && (jpeg_idct_ifast_avail());
-#else
+
   this->use_mmx = false;
   use_mmx_idct = false;
-#endif
 
   progressive_flag = FALSE;
 
@@ -753,19 +736,6 @@ void jpeg_decoder::fix_in_buffer(void)
 
   stuff_char( (uchar)((bit_buf >> 8) & 0xFF) );
 
-#ifdef SUPPORT_MMX
-  if (use_mmx_getbits)
-  {
-    bits_left = 48;
-    get_bits_2_mmx_init();
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-    get_bits_2_mmx_deinit();
-  }
-  else
-#endif
   {
     bits_left = 16;
     //bit_buf = 0;
@@ -777,44 +747,6 @@ void jpeg_decoder::fix_in_buffer(void)
 // Performs a 2D IDCT over the entire row's coefficient buffer.
 void jpeg_decoder::transform_row(void)
 {
-#ifdef SUPPORT_MMX
-  if (use_mmx_idct)
-  {
-    BLOCK_TYPE *Psrc_ptr = block_seg[0];
-    uchar *Pdst_ptr = Psample_buf - 8;
-
-    for (int mcu_row = 0; mcu_row < mcus_per_row; mcu_row++)
-    {
-      for (int mcu_block = 0; mcu_block < blocks_per_mcu; mcu_block++)
-      {
-        int component_id = mcu_org[mcu_block];
-        QUANT_TYPE *Pquant_ptr = quant[comp_quant[component_id]];
-
-        uchar * outptr[8];
-        outptr[0] = Pdst_ptr;
-        outptr[1] = Pdst_ptr+8*1;
-        outptr[2] = Pdst_ptr+8*2;
-        outptr[3] = Pdst_ptr+8*3;
-        outptr[4] = Pdst_ptr+8*4;
-        outptr[5] = Pdst_ptr+8*5;
-        outptr[6] = Pdst_ptr+8*6;
-        outptr[7] = Pdst_ptr+8*7;
-
-        jpeg_idct_ifast(
-          Psrc_ptr,
-          Pquant_ptr,
-          outptr,
-          8);
-
-        Psrc_ptr += 64;
-        Pdst_ptr += 64;
-      }
-    }
-
-    jpeg_idct_ifast_deinit();
-  }
-  else
-#endif
   {
     BLOCK_TYPE *Psrc_ptr = block_seg[0];
     uchar *Pdst_ptr = Psample_buf;
@@ -1020,17 +952,6 @@ void jpeg_decoder::process_restart(void)
 
   // Get the bit buffer going again...
 
-#ifdef SUPPORT_MMX
-  if (use_mmx_getbits)
-  {
-    bits_left = 48;
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-    get_bits_2_mmx(16);
-  }
-  else
-#endif
   {
     bits_left = 16;
     //bit_buf = 0;
@@ -1071,9 +992,6 @@ void jpeg_decoder::decode_next_row(void)
 
       last_dc_val[component_id] = (s += last_dc_val[component_id]);
 
-      if (use_mmx_idct)
-        p[0] = s;
-      else
         p[0] = s * q[0];
 
       int prev_num_set = block_max_zag_set[row_block];
@@ -1111,9 +1029,6 @@ void jpeg_decoder::decode_next_row(void)
 
           //assert(k < 64);
 
-          if (use_mmx_idct)
-            p[ZAG[k]] = s;
-          else
             p[ZAG[k]] = s * q[k];
         }
         else
@@ -1160,126 +1075,6 @@ void jpeg_decoder::decode_next_row(void)
   }
 }
 //------------------------------------------------------------------------------
-#ifdef SUPPORT_MMX
-void jpeg_decoder::decode_next_row_mmx(void)
-{
-  int row_block = 0;
-
-  // Clearing the entire row block buffer can take a lot of time!
-  // Instead of clearing the entire buffer each row, keep track
-  // of the number of nonzero entries written to each block and do
-  // selective clears.
-  //memset(block_seg[0], 0, mcus_per_row * blocks_per_mcu * 64 * sizeof(BLOCK_TYPE));
-
-  get_bits_2_mmx_init();
-
-  for (int mcu_row = 0; mcu_row < mcus_per_row; mcu_row++)
-  {
-    if ((restart_interval) && (restarts_left == 0))
-      process_restart();
-
-    for (int mcu_block = 0; mcu_block < blocks_per_mcu; mcu_block++)
-    {
-      int component_id = mcu_org[mcu_block];
-
-      BLOCK_TYPE *p = block_seg[row_block];
-      QUANT_TYPE *q = quant[comp_quant[component_id]];
-      int r, s;
-
-      if ((s = huff_decode_mmx(h[comp_dc_tab[component_id]])) != 0)
-      {
-        r = get_bits_2_mmx(s);
-        s = HUFF_EXTEND(r, s);
-      }
-
-      last_dc_val[component_id] = (s += last_dc_val[component_id]);
-
-      if (use_mmx_idct)
-        p[0] = s;
-      else
-        p[0] = s * q[0];
-
-      int prev_num_set = block_max_zag_set[row_block];
-
-      Phuff_tables_t Ph = h[comp_ac_tab[component_id]];
-
-	  int k;
-      for (k = 1; k < 64; k++)
-      {
-        s = huff_decode_mmx(Ph);
-
-        r = s >> 4;
-        s &= 15;
-
-        if (s)
-        {
-          if (r)
-          {
-            if ((k + r) > 63)
-              terminate(JPGD_DECODE_ERROR);
-
-            if (k < prev_num_set)
-            {
-              int n = min(r, prev_num_set - k);
-              int kt = k;
-              while (n--)
-                p[ZAG[kt++]] = 0;
-            }
-
-            k += r;
-          }
-
-          r = get_bits_2_mmx(s);
-          s = HUFF_EXTEND(r, s);
-
-          assert(k < 64);
-
-          if (use_mmx_idct)
-            p[ZAG[k]] = s;
-          else
-            p[ZAG[k]] = s * q[k];
-        }
-        else
-        {
-          if (r == 15)
-          {
-            if ((k + 15) > 63)
-              terminate(JPGD_DECODE_ERROR);
-
-            if (k < prev_num_set)
-            {
-              int n = min(16, prev_num_set - k);		//bugfix Dec. 19, 2001 - was 15!
-              int kt = k;
-              while (n--)
-                p[ZAG[kt++]] = 0;
-            }
-
-            k += 15;
-          }
-          else
-            break;
-        }
-      }
-
-      if (k < prev_num_set)
-      {
-        int kt = k;
-        while (kt < prev_num_set)
-          p[ZAG[kt++]] = 0;
-      }
-
-      block_max_zag_set[row_block] = k;
-
-      //block_num[row_block++] = k;
-      row_block++;
-    }
-
-    restarts_left--;
-  }
-
-  get_bits_2_mmx_deinit();
-}
-#endif
 //------------------------------------------------------------------------------
 // YCbCr H1V1 (1x1:1:1, 3 blocks per MCU) to 24-bit RGB
 void jpeg_decoder::H1V1Convert(void)
@@ -1466,11 +1261,6 @@ int jpeg_decoder::decode(
       load_next_row();
     else
     {
-#ifdef SUPPORT_MMX
-      if (use_mmx_getbits)
-        decode_next_row_mmx();
-      else
-#endif
         decode_next_row();
     }
 

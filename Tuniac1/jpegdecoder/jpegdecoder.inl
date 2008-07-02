@@ -4,17 +4,8 @@
 // Logical rotate left operation.
 inline uint jpeg_decoder::rol(uint i, uchar j)
 {
-#ifdef SUPPORT_X86ASM
-  // Breaks the rules a bit.. return value is in eax.
-  _asm
-  {
-    Mov eax, i
-    Mov cl, j
-    rol eax, cl
-  }
-#else
+
   return ((i << j) | (i >> (32 - j)));
-#endif
 }
 //------------------------------------------------------------------------------
 // Retrieve one character from the input stream.
@@ -216,35 +207,11 @@ const int extend_mask[] =
 };
 
 #define HUFF_EXTEND_TBL(x,s) ((x) < extend_test[s] ? (x) + extend_offset[s] : (x))
+#define HUFF_EXTEND(x,s)	HUFF_EXTEND_TBL(x,s)
+#define HUFF_EXTEND_P(x,s)	HUFF_EXTEND_TBL(x,s)
 
-#ifdef SUPPORT_X86ASM
-// Use the inline ASM version instead to prevent jump misprediction issues
-  #define HUFF_EXTEND(x,s) huff_extend(x, s)
-  #define HUFF_EXTEND_P(x,s) Pd->huff_extend(x, s)
-#else
-  #define HUFF_EXTEND(x,s) HUFF_EXTEND_TBL(x,s)
-  #define HUFF_EXTEND_P(x,s) HUFF_EXTEND_TBL(x,s)
-#endif
 //------------------------------------------------------------------------------
-#ifdef SUPPORT_X86ASM
-// This code converts the raw unsigned coefficient bits
-// read from the data stream to the proper signed range.
-// There are many ways of doing this, see the HUFF_EXTEND_TBL
-// macro for an alternative way.
-// It purposelly avoids any decision making that requires jumping.
-inline uint jpeg_decoder::huff_extend(uint i, int c)
-{
-  _asm
-  {
-    mov ecx, c
-    mov eax, i
-    cmp eax, [ecx*4+extend_mask]
-    sbb edx, edx
-    shl edx, cl
-    adc eax, edx
-  }
-}
-#endif
+
 //------------------------------------------------------------------------------
 // Clamps a value between 0-255.
 inline uchar jpeg_decoder::clamp(int i)
@@ -254,203 +221,5 @@ inline uchar jpeg_decoder::clamp(int i)
 
   return (i);
 }
-//------------------------------------------------------------------------------
-#ifdef SUPPORT_MMX
-//------------------------------------------------------------------------------
-inline uint jpeg_decoder::get_high_byte_mmx(void)
-{
-  _asm
-  {
-    movq mm1, mm0
-    psrlq mm1, 56
-    movd eax, mm1
-  }
-}
-//------------------------------------------------------------------------------
-inline uint jpeg_decoder::get_high_word_mmx(void)
-{
-  _asm
-  {
-    movq mm1, mm0
-    psrlq mm1, 48
-    movd eax, mm1
-  }
-}
-//------------------------------------------------------------------------------
-inline void jpeg_decoder::get_bits_2_mmx_init(void)
-{
-  assert(!mmx_active);
-  mmx_active = true;
-
-  _asm
-  {
-    mov esi, this
-    movq mm0, [esi].bit_buf
-    movq mm1, [esi].saved_mm1
-  }
-}
-//------------------------------------------------------------------------------
-inline void jpeg_decoder::get_bits_2_mmx_deinit(void)
-{
-  assert(mmx_active);
-  mmx_active = false;
-
-  _asm
-  {
-    mov esi, this
-    movq [esi].bit_buf, mm0
-    movq [esi].saved_mm1, mm1
-    emms
-  }
-}
-//------------------------------------------------------------------------------
-static __int64 cmp_mask = 0xFFFFFFFFFFFFFFFF;
-static __int64 zero = 0;
-//------------------------------------------------------------------------------
-//FIXME: This function doesn't compile right with the Intel Compiler in Release builds.
-//Something to do with funciton inlining.
-inline uint jpeg_decoder::get_bits_2_mmx(int numbits)
-{
-  _asm
-  {
-    // is the "mov esi, this" really necessary?
-    // this is safe but it's probably already "this" anyway
-    mov esi, this
-    mov ecx, numbits
-
-    mov edx, 64
-    movd mm3, ecx
-
-    sub edx, ecx
-    movq mm1, mm0
-
-    movd mm2, edx
-    sub [esi].bits_left, ecx
-
-    psrlq mm1, mm2
-    Jg gb2_done
-//-----------------------------
-    add ecx, [esi].bits_left
-    cmp [esi].in_buf_left, 12
-
-    movd mm4, ecx
-    mov edi, [esi].Pin_buf_ofs
-
-    psllq mm0, mm4
-    jb gb2_slowload
-//-----------------------------
-// FIXME: Pair better!
-
-    mov eax, [edi]
-    mov ebx, [edi+4]
-
-// FIXME: Is there a better way to do this other than using bswap?
-    bswap eax
-    bswap ebx
-
-    movd mm4, eax
-    movd mm3, ebx
-
-    psllq mm4, 32
-    add [esi].Pin_buf_ofs, 6
-
-    por mm3, mm4
-    mov ecx, [esi].bits_left
-
-    psrlq mm3, 16
-    neg ecx
-
-    movq mm4, mm3
-    sub [esi].in_buf_left, 6
-
-    pcmpeqb mm4, cmp_mask
-    por mm0, mm3
-
-    pcmpeqd mm4, zero
-    movd mm3, ecx
-
-    pxor mm4, cmp_mask
-    movd eax, mm1
-
-    psrlq mm4, 1
-    add [esi].bits_left, 48
-
-    movd ebx, mm4
-    psllq mm0, mm3
-
-    test ebx, ebx
-    jz gb2_return
-//-----------------------------
-    psrlq mm0, mm3
-    sub [esi].bits_left, 48
-    sub [esi].Pin_buf_ofs, 6
-    add [esi].in_buf_left, 6
-
-gb2_slowload:
-    psrlq mm0, 48
-  }
-
-  for (int i = 0; i < 6; i++)
-  {
-    uint c = get_octet();
-
-    _asm
-    {
-      movd mm3, c
-      psllq mm0, 8
-      por mm0, mm3
-    }
-  }
-
-  _asm
-  {
-    mov esi, this
-    mov ecx, [esi].bits_left
-    neg ecx
-    movd mm3, ecx
-    add [esi].bits_left, 48
-
-gb2_done:
-    movd eax, mm1
-    psllq mm0, mm3
-  }
-gb2_return:;
-}
-//------------------------------------------------------------------------------
-inline int jpeg_decoder::huff_decode_mmx(Phuff_tables_t Ph)
-{
-  int symbol;
-  //uint d = get_high_word_mmx();
-  uint d;
-  _asm
-  {
-    movq mm1, mm0
-    psrlq mm1, 48
-    movd eax, mm1
-    mov d, eax
-  }
-
-  // Check first 8-bits: do we have a complete symbol?
-  if ((symbol = Ph->look_up[(d >> 8) & 0xFF]) < 0)
-  {
-    uint ofs = 7;
-    d = ~d; // invert d here so we don't have to do it inside the loop
-
-    do
-    {
-      symbol = Ph->tree[~symbol + ((d >> ofs) & 1)];
-      ofs--;
-    } while (symbol < 0);
-
-    // Decode more bits, use a tree traversal to find symbol.
-    get_bits_2_mmx(8 + (7 - ofs));
-  }
-  else
-    get_bits_2_mmx(Ph->code_size[symbol]);
-
-  return symbol;
-}
-//------------------------------------------------------------------------------
-#endif
 //------------------------------------------------------------------------------
 
