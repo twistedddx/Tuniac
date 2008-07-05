@@ -228,23 +228,13 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 		}
 
+		/* we dont get pictures here see GetAlbumArt()
 		if(!id3v2Tag["APIC"].isEmpty())
 		{
 				TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2Tag["APIC"].front());
 				picframe->mimeType();
 		}
-
-		if(!id3v2Tag["RGAD"].isEmpty())
-		{
-				//_ASSERT(0);
-				// we dont actually support this yet and need to decode the data
-		}
-		if(!id3v2Tag["RVA2"].isEmpty())
-		{
-			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2Tag["RVA2"].front());
-			libEnt->fReplayGain_Album_Gain  = relVol->volumeAdjustment();
-			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
-		}
+		*/
 
 		/*
 				<Header for 'Replay Gain Adjustment', ID: "RGAD">
@@ -259,8 +249,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		In the RGAD frame, the flags state that the frame should be preserved if the ID3v2 
 		tag is altered, but discarded if the audio data is altered.
+		if(!id3v2Tag["RGAD"].isEmpty())
+		{
+				//_ASSERT(0);
+				// we dont actually support this yet and need to decode the data
+		}
 		*/
 
+		if(!id3v2Tag["RVA2"].isEmpty())
+		{
+			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2Tag["RVA2"].front());
+			libEnt->fReplayGain_Album_Gain  = relVol->volumeAdjustment();
+			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
+		}
 	}
 
 	if(!mp4Tag.isEmpty())
