@@ -14,6 +14,8 @@
 #include "ogg/flac/oggflacfile.h"
 #include "mp4/mp4file.h"
 #include "asf/asffile.h"
+#include "riff/aiff/aifffile.h"
+#include "riff/wav/wavfile.h"
 
 #include "mpeg/id3v1/id3v1tag.h"
 #include "mpeg/id3v2/id3v2tag.h"
@@ -40,6 +42,8 @@ protected:
 	TagLib::Ogg::FLAC::File *ogafile;
 	TagLib::Ogg::Speex::File *spxfile;
 	TagLib::ASF::File *wmafile;
+	TagLib::RIFF::AIFF::File *aiffile;
+	TagLib::RIFF::WAV::File *wavfile;
 
 public:
 	CSTDInfoManager(void);

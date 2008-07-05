@@ -27,11 +27,11 @@
 #include <tdebug.h>
 #include <id3v2tag.h>
 
-#include "aifffile.h"
+#include "wavfile.h"
 
 using namespace TagLib;
 
-class RIFF::AIFF::File::FilePrivate
+class RIFF::WAV::File::FilePrivate
 {
 public:
   FilePrivate() :
@@ -55,33 +55,33 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-RIFF::AIFF::File::File(FileName file, bool readProperties,
-                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+RIFF::WAV::File::File(FileName file, bool readProperties,
+                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, LittleEndian)
 {
   d = new FilePrivate;
   if(isOpen())
     read(readProperties, propertiesStyle);
 }
 
-RIFF::AIFF::File::~File()
+RIFF::WAV::File::~File()
 {
   delete d;
 }
 
-ID3v2::Tag *RIFF::AIFF::File::tag() const
+ID3v2::Tag *RIFF::WAV::File::tag() const
 {
   return d->tag;
 }
 
-RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
+RIFF::WAV::Properties *RIFF::WAV::File::audioProperties() const
 {
   return d->properties;
 }
 
-bool RIFF::AIFF::File::save()
+bool RIFF::WAV::File::save()
 {
   if(readOnly()) {
-    debug("RIFF::AIFF::File::save() -- File is read only.");
+    debug("RIFF::WAV::File::save() -- File is read only.");
     return false;
   }
 
@@ -94,12 +94,12 @@ bool RIFF::AIFF::File::save()
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-void RIFF::AIFF::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+void RIFF::WAV::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
 {
   for(uint i = 0; i < chunkCount(); i++) {
     if(chunkName(i) == "ID3 ")
       d->tag = new ID3v2::Tag(this, chunkOffset(i));
-    else if(chunkName(i) == "COMM" && readProperties)
+    else if(chunkName(i) == "fmt " && readProperties)
       d->properties = new Properties(chunkData(i), propertiesStyle);
   }
 

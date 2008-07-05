@@ -46,7 +46,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 15;
+	return 16;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -65,9 +65,10 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".3g2"),
 		TEXT(".wma"),
 		TEXT(".tta"),
-		TEXT(".spx")
+		TEXT(".spx"),
 		TEXT(".aif"),
-		TEXT(".aiff")
+		TEXT(".aiff"),
+		TEXT(".wav")
 	};
 
 	return exts[ulExtentionNum];
@@ -75,9 +76,6 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 {
-	if(PathIsURL(szSource))
-		return(false);
-
 	fileref = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
     if( !fileref.isNull() )
     {
@@ -100,6 +98,10 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		else if(spxfile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileref.file() ))
 			return true;
 		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+			return true;
+		else if(aiffile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileref.file() ))
+			return true;
+		else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
 			return true;
 	}
 

@@ -23,86 +23,82 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tdebug.h>
-#include <id3v2tag.h>
+#include "wavproperties.h"
 
-#include "aifffile.h"
+#include <tstring.h>
+#include <tdebug.h>
+#include <cmath>
+#include <math.h>
 
 using namespace TagLib;
 
-class RIFF::AIFF::File::FilePrivate
+class RIFF::WAV::Properties::PropertiesPrivate
 {
 public:
-  FilePrivate() :
-    properties(0),
-    tag(0)
+  PropertiesPrivate() :
+    format(0),
+    length(0),
+    bitrate(0),
+    sampleRate(0),
+    channels(0)
   {
 
   }
 
-  ~FilePrivate()
-  {
-    delete properties;
-    delete tag;
-  }
-
-  Properties *properties;
-  ID3v2::Tag *tag;
+  short format;
+  int length;
+  int bitrate;
+  int sampleRate;
+  int channels;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-RIFF::AIFF::File::File(FileName file, bool readProperties,
-                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+RIFF::WAV::Properties::Properties(const ByteVector &data, ReadStyle style) : AudioProperties(style)
 {
-  d = new FilePrivate;
-  if(isOpen())
-    read(readProperties, propertiesStyle);
+  d = new PropertiesPrivate;
+  read(data);
 }
 
-RIFF::AIFF::File::~File()
+RIFF::WAV::Properties::~Properties()
 {
   delete d;
 }
 
-ID3v2::Tag *RIFF::AIFF::File::tag() const
+int RIFF::WAV::Properties::length() const
 {
-  return d->tag;
+  return d->length;
 }
 
-RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
+int RIFF::WAV::Properties::bitrate() const
 {
-  return d->properties;
+  return d->bitrate;
 }
 
-bool RIFF::AIFF::File::save()
+int RIFF::WAV::Properties::sampleRate() const
 {
-  if(readOnly()) {
-    debug("RIFF::AIFF::File::save() -- File is read only.");
-    return false;
-  }
+  return d->sampleRate;
+}
 
-  setChunkData("ID3 ", d->tag->render());
-
-  return true;
+int RIFF::WAV::Properties::channels() const
+{
+  return d->channels;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-void RIFF::AIFF::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+void RIFF::WAV::Properties::read(const ByteVector &data)
 {
-  for(uint i = 0; i < chunkCount(); i++) {
-    if(chunkName(i) == "ID3 ")
-      d->tag = new ID3v2::Tag(this, chunkOffset(i));
-    else if(chunkName(i) == "COMM" && readProperties)
-      d->properties = new Properties(chunkData(i), propertiesStyle);
-  }
+  d->format     = data.mid(0, 2).toShort(false);
+  d->channels   = data.mid(2, 2).toShort(false);
+  d->sampleRate = data.mid(4, 4).toUInt(false);
+  d->bitrate    = data.mid(8, 4).toUInt(false) * 8 / 1024;
 
-  if(!d->tag)
-    d->tag = new ID3v2::Tag;
+  // short bitsPerSample = data.mid(10, 2).toShort();
+  // d->bitrate    = (sampleRate * sampleSize * d->channels) / 1024.0;
+  // d->length     = sampleFrames / d->sampleRate;
 }
