@@ -35,9 +35,10 @@
 #include "wavpackfile.h"
 #include "speexfile.h"
 #include "trueaudiofile.h"
-#include "aifffile.h"
 #include "mp4file.h"
 #include "asffile.h"
+#include "aifffile.h"
+#include "wavfile.h"
 
 using namespace TagLib;
 
@@ -125,13 +126,14 @@ StringList FileRef::defaultFileExtensions()
   l.append("spx");
   l.append("tta");
   l.append("aif");
-  l.append("aiff");
   l.append("m4a");
   l.append("m4b");
   l.append("m4p");
   l.append("mp4");
   l.append("3g2");
   l.append("wma");
+  l.append("aiff");
+  l.append("wav");
   return l;
 }
 
@@ -218,8 +220,10 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
 	   return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".WMA")
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
-	if(s.substr(s.size() - 4, 4).upper() == ".AIF")
+    if(s.substr(s.size() - 4, 4).upper() == ".AIF")
       return new RIFF::AIFF::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(s.substr(s.size() - 4, 4).upper() == ".WAV")
+      return new RIFF::WAV::File(fileName, readAudioProperties, audioPropertiesStyle);
   }
   if(s.size() > 3) {
     if(s.substr(s.size() - 3, 3).upper() == ".WV")

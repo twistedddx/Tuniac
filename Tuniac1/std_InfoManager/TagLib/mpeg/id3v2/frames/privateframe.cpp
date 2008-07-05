@@ -1,7 +1,8 @@
 /***************************************************************************
+    copyright            : (C) 2008 by Serkan Kalyoncu
     copyright            : (C) 2008 by Scott Wheeler
     email                : wheeler@kde.org
- ***************************************************************************/
+***************************************************************************/
 
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or modify  *
@@ -23,86 +24,105 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tdebug.h>
+#include <tbytevectorlist.h>
 #include <id3v2tag.h>
+#include <tdebug.h>
 
-#include "aifffile.h"
+#include "privateframe.h"
 
 using namespace TagLib;
+using namespace ID3v2;
 
-class RIFF::AIFF::File::FilePrivate
+
+class PrivateFrame::PrivateFramePrivate
 {
 public:
-  FilePrivate() :
-    properties(0),
-    tag(0)
-  {
-
-  }
-
-  ~FilePrivate()
-  {
-    delete properties;
-    delete tag;
-  }
-
-  Properties *properties;
-  ID3v2::Tag *tag;
+  ByteVector data;
+  String owner;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-RIFF::AIFF::File::File(FileName file, bool readProperties,
-                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+PrivateFrame::PrivateFrame() : Frame("PRIV")
 {
-  d = new FilePrivate;
-  if(isOpen())
-    read(readProperties, propertiesStyle);
+  d = new PrivateFramePrivate;
 }
 
-RIFF::AIFF::File::~File()
+PrivateFrame::PrivateFrame(const ByteVector &data) : Frame(data)
+{
+  d = new PrivateFramePrivate;
+  setData(data);
+}
+
+PrivateFrame::~PrivateFrame()
 {
   delete d;
 }
 
-ID3v2::Tag *RIFF::AIFF::File::tag() const
+String PrivateFrame::toString() const
 {
-  return d->tag;
+  return d->owner;
 }
 
-RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
+String PrivateFrame::owner() const
 {
-  return d->properties;
+  return d->owner;
 }
 
-bool RIFF::AIFF::File::save()
+ByteVector PrivateFrame::data() const
 {
-  if(readOnly()) {
-    debug("RIFF::AIFF::File::save() -- File is read only.");
-    return false;
+  return d->data;
+}
+
+void PrivateFrame::setOwner(const String &s)
+{
+  d->owner = s;
+}
+
+void PrivateFrame::setData(const ByteVector & data)
+{
+  d->data = data;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// protected members
+////////////////////////////////////////////////////////////////////////////////
+
+void PrivateFrame::parseFields(const ByteVector &data)
+{
+  if(data.size() < 2) {
+    debug("A private frame must contain at least 2 bytes.");
+    return;
   }
 
-  setChunkData("ID3 ", d->tag->render());
+  // Owner identifier is assumed to be Latin1
+  
+  const int byteAlign =  1;
+  const int endOfOwner = data.find(textDelimiter(String::Latin1), 0, byteAlign);
 
-  return true;
+  d->owner =  String(data.mid(0, endOfOwner));
+  d->data = data.mid(endOfOwner + 1);
+}
+
+ByteVector PrivateFrame::renderFields() const
+{
+  ByteVector v;
+
+  v.append(d->owner.data(String::Latin1));
+  v.append(textDelimiter(String::Latin1));
+  v.append(d->data);
+
+  return v;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-void RIFF::AIFF::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+PrivateFrame::PrivateFrame(const ByteVector &data, Header *h) : Frame(h)
 {
-  for(uint i = 0; i < chunkCount(); i++) {
-    if(chunkName(i) == "ID3 ")
-      d->tag = new ID3v2::Tag(this, chunkOffset(i));
-    else if(chunkName(i) == "COMM" && readProperties)
-      d->properties = new Properties(chunkData(i), propertiesStyle);
-  }
-
-  if(!d->tag)
-    d->tag = new ID3v2::Tag;
+  d = new PrivateFramePrivate();
+  parseFields(fieldData(data));
 }
