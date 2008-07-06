@@ -145,7 +145,7 @@ void			CAudioStream::UseAlbumGain(bool bUse)
 
 bool			CAudioStream::SetVolumeScale(float scale)
 {
-	fVolumeScale = pow(10, -((100-scale)/2)/20);
+	fVolumeScale = scale/100.0f;
 	return true;
 }
 

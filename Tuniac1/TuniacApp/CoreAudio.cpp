@@ -210,9 +210,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 						bShoudStart = true;
 					}
 
-					float scale = m_fVolume / 100.0f;
-
-					pStream->SetVolumeScale(scale);
+					pStream->SetVolumeScale(m_fVolume);
 					pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
 
 					pStream->EnableReplayGain(m_bReplayGainEnabled);
@@ -473,20 +471,11 @@ void CCoreAudio::SetReplayGain(float fReplayGain)
 
 void CCoreAudio::SetVolumePercent(float fVolume)
 {
-	if(fVolume < 0.0)
-	{
-		fVolume = 0.0;
-	}
-	if(fVolume > 100.0)
-	{
-		fVolume = 100.0;
-	}
-
 	m_fVolume = fVolume;
 
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
-		m_Streams[x]->SetVolumeScale(m_fVolume / 100.0f);
+		m_Streams[x]->SetVolumeScale(m_fVolume);
 	}
 }
 
