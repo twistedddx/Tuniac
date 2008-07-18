@@ -2230,7 +2230,7 @@ void	CTuniacApp::UpdateQueues(void)
 	{
 		for(unsigned x=0; x < tuniacApp.m_MediaLibrary.m_Queue.GetCount(); x++)
 		{
-			if(pPlaylistEX->GetFilteredIndexforItem(pIPE) == ulIndex)
+			if(pPlaylistEX->GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x)) == ulIndex)
 			{
 				tuniacApp.m_MediaLibrary.m_Queue.Remove(x);
 
