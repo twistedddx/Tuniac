@@ -502,6 +502,7 @@ BEGIN
     LTEXT           "Brice helped out.\nMike Vierya did some co development in the beginning.\n",IDC_STATIC,7,60,245,18
     LTEXT           "Developed by Tony Million, Bits, Daniel Somebody. RA.\nBlur did some code then vanished and came back again.",IDC_STATIC,7,38,245,21
     LTEXT           "Thanks to people who developed the decoders that Tuniac uses:\n(AAC/APE/OGG/FLAC/WavePack/Musepack)\n - See the various about screens for more information!",IDC_STATIC,7,84,245,28
+    LTEXT           "Build:",IDC_ABOUT_BUILD_TEXT,171,14,69,11
 END
 
 
