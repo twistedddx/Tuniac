@@ -23,8 +23,11 @@
 #include "tuniacvisual.h"
 
 #define TIMES	8
-
 #define DISPLAYSAMPLES	512
+
+static float	Samples[TIMES][DISPLAYSAMPLES];
+static int		Rotator = 0;
+
 
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
@@ -175,13 +178,10 @@ bool	CTuniacVisual::Render(int w, int h)
 
 	}
 
-	static float AudioData[DISPLAYSAMPLES*2];
-	unsigned long NumSamples = DISPLAYSAMPLES;
-
-	if(pHelper->GetVisData(AudioData, NumSamples))
+	if(pHelper->GetVisData(Samples[Rotator], DISPLAYSAMPLES))
 	{
-		//glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-		//glClear (GL_COLOR_BUFFER_BIT);
+		glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
+		glClear (GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();					// Reset The Modelview Matrix
 
 		glBegin(GL_QUAD_STRIP);
@@ -194,7 +194,7 @@ bool	CTuniacVisual::Render(int w, int h)
 			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
 			glVertex2f(m_LastWidth,	0);
 		
-			glColor4f(0.6f, 0.62f, 0.66f, 0.5f);
+			glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
 			glVertex2f(m_LastWidth,	m_LastHeight);
 		glEnd();
 
@@ -216,9 +216,81 @@ bool	CTuniacVisual::Render(int w, int h)
 		glEnd();
 
 
-
-//		if(Channels == 2)
+		for(int time=0; time<TIMES; time++)
 		{
+			float halfheight = ((float)m_LastHeight / 2.0f);
+			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
+
+			int thisindex = ((Rotator + 1) + time) % TIMES;
+
+
+			float alpha = 0.01 + (((float)time / (float)TIMES) / 3.0f);
+
+			glColor4f(0,0,0, alpha);
+			glBegin(GL_QUADS);
+			{
+				for(unsigned int samp=0; samp<DISPLAYSAMPLES-2; samp++)
+				{
+					glVertex2f(samp*multiplier,		halfheight);
+					glVertex2f(samp*multiplier,		halfheight 	- abs(Samples[thisindex][(samp*2)]		* halfheight) );
+
+					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(Samples[thisindex][(samp*2)+2]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight);
+				}
+			}
+			glEnd();
+
+			glColor4f(0,0,0, alpha);
+			glBegin(GL_QUADS);
+			{
+				for(unsigned int samp=0; samp<DISPLAYSAMPLES-2; samp++)
+				{
+					glVertex2f(samp*multiplier,		halfheight);
+					glVertex2f(samp*multiplier,		halfheight + abs(Samples[thisindex][(samp*2)+1]		* halfheight));
+
+					glVertex2f((samp+1)*multiplier,	halfheight + abs(Samples[thisindex][(samp*2)+3]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight);
+				}
+			}
+			glEnd();
+		}
+
+
+
+		Rotator++;
+		Rotator %= TIMES;
+
+		glFinish();
+
+		SwapBuffers(m_glDC);
+
+	}
+
+
+	return true;
+}
+
+bool	CTuniacVisual::About(HWND hWndParent)
+{
+	return true;
+}
+
+bool	CTuniacVisual::Configure(HWND hWndParent)
+{
+	return true;
+}
+
+bool	CTuniacVisual::Notify(unsigned long Notification)
+{
+	return true;
+}
+
+bool	CTuniacVisual::MouseFunction(unsigned long function, int x, int y)
+{
+	return true;
+}
+
+/*
 			float halfheight = ((float)m_LastHeight / 2.0f);
 			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
 
@@ -249,34 +321,4 @@ bool	CTuniacVisual::Render(int w, int h)
 				}
 			}
 			glEnd();
-
-		}
-		glFinish();
-
-		SwapBuffers(m_glDC);
-
-	}
-
-
-	return true;
-}
-
-bool	CTuniacVisual::About(HWND hWndParent)
-{
-	return true;
-}
-
-bool	CTuniacVisual::Configure(HWND hWndParent)
-{
-	return true;
-}
-
-bool	CTuniacVisual::Notify(unsigned long Notification)
-{
-	return true;
-}
-
-bool	CTuniacVisual::MouseFunction(unsigned long function, int x, int y)
-{
-	return true;
-}
+*/

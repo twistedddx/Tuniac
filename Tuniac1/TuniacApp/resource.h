@@ -170,6 +170,7 @@
 #define IDC_CHECK2                      1149
 #define IDC_REPLAYGAINALBUM             1149
 #define IDC_SLIDER1                     1150
+#define IDC_ABOUT_BUILD_TEXT			1151
 #define ID_FILE_EXIT                    40001
 #define ID_FILE_NEWPLAYLIST_NORMALPLAYLIST 40002
 #define ID_FILE_NEWPLAYLIST_SMARTPLAYLIST 40003
