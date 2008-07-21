@@ -55,9 +55,6 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
-				StringPooling="false"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				StructMemberAlignment="0"
 				BufferSecurityCheck="true"
@@ -65,10 +62,6 @@
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -149,18 +142,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -233,14 +220,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
-				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
-				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -321,22 +303,16 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
-				StringPooling="false"
 				EnableEnhancedInstructionSet="2"
-				TreatWChar_tAsBuiltInType="true"
-				OpenMP="false"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="1"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
-				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
