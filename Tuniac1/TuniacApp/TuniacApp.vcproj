@@ -390,10 +390,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<ProjectReference
-			ReferencedProjectIdentifier="{D77CC4A5-6510-4CC2-8087-4B505E201324}"
-			RelativePathToProject=".\ape_Plugin\ape_Plugin.vcproj"
-		/>
 	</References>
 	<Files>
 		<Filter
