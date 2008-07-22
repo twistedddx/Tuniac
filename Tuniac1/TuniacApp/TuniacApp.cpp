@@ -149,8 +149,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_WindowArray.AddTail(t);
 
 	//create visual window
-	t = new CVisualWindow;
-	m_WindowArray.AddTail(t);
+//	t = new CVisualWindow;
+//	m_WindowArray.AddTail(t);
 
 	//create log window
 	m_LogWindow = new CLogWindow();
