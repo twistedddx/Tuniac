@@ -62,6 +62,8 @@
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
+				WarningLevel="3"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,12 +144,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				BrowseInformation="1"
+				WarningLevel="3"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -167,9 +172,14 @@
 				SuppressStartupBanner="true"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
+				GenerateMapFile="true"
+				MapExports="true"
 				SubSystem="2"
 				TargetMachine="17"
+				CLRThreadAttribute="0"
+				CLRImageType="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
