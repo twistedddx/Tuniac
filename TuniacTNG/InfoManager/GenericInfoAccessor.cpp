@@ -104,6 +104,20 @@ void	CGenericInfoAccessor::Destroy()
 	delete this;
 }
 
+bool	CGenericInfoAccessor::ReadMetaData(MediaItem * pItem)
+{
+	pItem->title = TEXT("SomeTitle");
+	//pItem->title.assign(m_File->tag()->title().toWString());
+	return true;
+}
+
+bool	CGenericInfoAccessor::WriteMetaData(MediaItem * pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties)
+{
+	return false;
+}
+
+
+/*
 bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize)
 {
 	switch(field)
@@ -286,7 +300,7 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 	return true;
 }
 
-
+*/
 /*
 			{
 
@@ -306,7 +320,7 @@ bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHe
 		}
 	}
 	*/
-
+/*
 bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
 {
 	*toHere = 0;
@@ -523,6 +537,11 @@ bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
 
 	return true;
 }
+
+*/
+
+
+
 
 bool	CGenericInfoAccessor::GetAlbumArtCount(__int64 * pullCount)
 {

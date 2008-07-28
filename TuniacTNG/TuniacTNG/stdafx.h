@@ -7,6 +7,7 @@
 
 #include "targetver.h"
 
+#include <GlobalDefs.h>
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
@@ -29,22 +30,3 @@
 
 
 
-
-#include <map>
-#include <vector>
-
-#include "stdstring.h"
-
-
-
-
-typedef CStdStringW						String;	
-
-typedef std::vector<String>				StringArray;
-typedef std::vector<String>::iterator	StringIterator;
-
-typedef std::vector<long>				IntArray;
-typedef std::vector<__int64>			Int64Array;
-
-typedef std::vector<unsigned long>		UnsignedIntArray;
-typedef std::vector<unsigned __int64>	UnsignedInt64Array;

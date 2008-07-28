@@ -270,8 +270,7 @@ unsigned __int64 CMediaManager::GetNumEntries(void)
 
 bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & mediaItem)
 {
-	TCHAR			temp[1024];
-	__int64			tempint;
+	bool			bWorked = false;
 
 	mediaItem.filename = filename;
 
@@ -312,58 +311,20 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	if(!pAccessor)
 		return false;
 
-	pAccessor->GetTextField(Title, temp, 1024);
-	mediaItem.title				= temp;	
+		
+	//mediaItem.title.resize(200);
 
-	pAccessor->GetTextField(Artist, temp, 1024);
-	mediaItem.artist			= temp;	
 
-	pAccessor->GetTextField(Album, temp, 1024);
-	mediaItem.album				= temp;	
-
-	pAccessor->GetTextField(Composer, temp, 1024);
-	mediaItem.composer			= temp;	
-
-	pAccessor->GetTextField(Genre, temp, 1024);
-	mediaItem.genre				= temp;	
-
-	pAccessor->GetTextField(Comment, temp, 1024);
-	mediaItem.comment			= temp;	
-
-	pAccessor->GetIntField(Year,			&mediaItem.ulYear);
-
-	pAccessor->GetIntField(Track,			&mediaItem.ulTrack);
-	pAccessor->GetIntField(MaxTrack,		&mediaItem.ulMaxTrack);
-
-	pAccessor->GetIntField(Disc,			&mediaItem.ulDisk);
-	pAccessor->GetIntField(MaxDisc,			&mediaItem.ulMaxDisk);
-
-	tempint = 0;
-	mediaItem.ulRating			= tempint;
-	mediaItem.ulBPM				= tempint;
-
-	pAccessor->GetIntField(PlaybackTime,	&mediaItem.ulPlayTimeMS);
-
-	pAccessor->GetIntField(SampleRate,		&mediaItem.ulSampleRate);
-	pAccessor->GetIntField(Channels,		&mediaItem.ulChannelCount);
-	pAccessor->GetIntField(Bitrate,			&mediaItem.ulBitRate);
-
-	pAccessor->GetTextField(ReplayGainTrack, temp, 1024);
-	mediaItem.fReplayGainTrack = _wtof(temp);
-
-	pAccessor->GetTextField(ReplayPeakTrack, temp, 1024);
-	mediaItem.fReplayPeakTrack = _wtof(temp);
-
-	pAccessor->GetTextField(ReplayGainAlbum, temp, 1024);
-	mediaItem.fReplayGainAlbum = _wtof(temp);
-
-	pAccessor->GetTextField(ReplayPeakAlbum, temp, 1024);
-	mediaItem.fReplayPeakAlbum = _wtof(temp);
+	if(pAccessor->ReadMetaData(&mediaItem))
+	{
+		// yay
+		bWorked = true;
+	}
 
 	if(pAccessor)
 		pAccessor->Destroy();
 	
-	return true;
+	return bWorked;
 }
 
 bool CMediaManager::GetAlbums(StringArray & albumList)
@@ -627,7 +588,7 @@ bool CMediaManager::AddFile(String filename)
 		return true;
 
 
-	MediaItem	newItem = {0,};
+	MediaItem	newItem;
 	if(!PopulateMediaItemFromAccessor(filename, newItem))
 		return false;
 
