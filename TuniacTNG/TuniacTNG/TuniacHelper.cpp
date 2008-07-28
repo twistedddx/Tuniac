@@ -27,19 +27,6 @@ bool CTuniacHelper::GetTuniacRunFolder(String & toHere)
 	return false;
 }
 
-bool CTuniacHelper::GetTuniacLibraryFilename(String & toHere)
-{
-// TODO: eventually in debug mode keep the media library in the same folder as tuniac, in release keep it in the users home dir!
-
-	if(GetTuniacRunFolder(toHere))
-	{
-		toHere += TEXT("TuniacMediaLibrary.db");
-		return true;
-	}
-
-	return false;
-}
-
 bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool recurse)
 {
 	WIN32_FIND_DATA		w32fd;
@@ -116,7 +103,7 @@ bool CTuniacHelper::FormatSystemTime(String & toHere, SYSTEMTIME & st)
 
 
 	toHere.erase();
-//	toHere.Format(TEXT("%04d-%02d-%02d %02d:%02d:%02d"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+	toHere.Format(TEXT("%04d-%02d-%02d %02d:%02d:%02d"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 
 	return true;
 }
