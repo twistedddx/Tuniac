@@ -89,6 +89,7 @@ bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool 
 bool CTuniacHelper::GetAllFilesInFolderWithExtension(String folder, String Extension, StringArray & toHere)
 {
 	StringArray tempArray;
+	
 
 	if(GetFolderContents(folder, tempArray, false))
 	{
@@ -115,7 +116,7 @@ bool CTuniacHelper::FormatSystemTime(String & toHere, SYSTEMTIME & st)
 
 
 	toHere.erase();
-	toHere.Format(TEXT("%04d-%02d-%02d %02d:%02d:%02d"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+//	toHere.Format(TEXT("%04d-%02d-%02d %02d:%02d:%02d"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 
 	return true;
 }

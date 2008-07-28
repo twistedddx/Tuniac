@@ -57,11 +57,10 @@ public:
 public:
 	void	Destroy();
 
-	bool	GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize);
-	bool	SetTextField(InfoHandlerField field, wchar_t * fromHere);
+	bool			ReadMetaData(MediaItem * pItem);
+	bool			WriteMetaData(MediaItem * pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties);
 
-	bool	GetIntField(InfoHandlerField field, __int64 * toHere);
-	bool	SetIntField(InfoHandlerField field, __int64 toHere);
+
 
 	bool	GetAlbumArtCount(__int64 * pullCount);
 	bool	GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize);
