@@ -163,11 +163,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\sqlite3x_cursor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\sqlite3x_exception.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\sqlite3x_reader.cpp"
+				RelativePath=".\sqlite3x_settings_db.cpp"
 				>
 			</File>
 			<File
@@ -181,11 +185,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\noncopyable.hpp"
+				RelativePath=".\sqlite3x.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\sqlite3x.hpp"
+				RelativePath=".\sqlite3x_settings_db.hpp"
 				>
 			</File>
 		</Filter>

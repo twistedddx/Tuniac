@@ -341,17 +341,17 @@ bool CMediaManager::GetAlbums(StringArray & albumList)
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
 
-		sqlite3x::sqlite3_reader reader = albumcmd.executereader();
+		sqlite3x::sqlite3_cursor cursor = albumcmd.executecursor();
 
-		while(reader.read())
+		while(cursor.step())
 		{
 			//existscmd.
-			String temp = reader.getstring(0);
+			String temp = cursor.getstring(0);
 
 			albumList.push_back(temp);
 		}
 
-		reader.close();
+		cursor.close();
 	}
 	catch(std::exception &ex) 
 	{
@@ -377,17 +377,17 @@ bool CMediaManager::GetArtists(StringArray & artistList)
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
 
-		sqlite3x::sqlite3_reader reader = albumcmd.executereader();
+		sqlite3x::sqlite3_cursor cursor = albumcmd.executecursor();
 
-		while(reader.read())
+		while(cursor.step())
 		{
 			//existscmd.
-			String temp = reader.getstring(0);
+			String temp = cursor.getstring(0);
 
 			artistList.push_back(temp);
 		}
 
-		reader.close();
+		cursor.close();
 	}
 	catch(std::exception &ex) 
 	{
@@ -415,14 +415,14 @@ bool CMediaManager::RebuildIDList(void)
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
 
-		sqlite3x::sqlite3_reader reader = rangecmd.executereader();
+		sqlite3x::sqlite3_cursor cursor = rangecmd.executecursor();
 
-		while(reader.read())
+		while(cursor.step())
 		{
-			m_vIDList.push_back(reader.getint64(0));
+			m_vIDList.push_back(cursor.getint64(0));
 		}
 
-		reader.close();
+		cursor.close();
 	}
 	catch(...)
 	{
@@ -464,22 +464,22 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 			rangecmd.bind(x+1, (long long)m_vIDList[ulStart+x]);
 		}
 
-		sqlite3x::sqlite3_reader reader = rangecmd.executereader();
+		sqlite3x::sqlite3_cursor cursor = rangecmd.executecursor();
 
-		while(reader.read())
+		while(cursor.step())
 		{
 			//existscmd.
 			MediaItem tempItem = {0};
 
 
-			ReaderMediaItem(reader, tempItem);
+			ReaderMediaItem(cursor, tempItem);
 
 
 
 			itemList.push_back(tempItem);
 		}
 
-		reader.close();
+		cursor.close();
 	}
 	catch(...)
 	{
@@ -699,54 +699,54 @@ bool	CMediaManager::DeleteByFilename(CStdString filename)
 
 // THIS FUNCTION ONLY WORKS FOR SELECT * FROM MEDIALIBRARY!!!!1
 // this is so I only have to update it in one place!!!
-bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_reader & reader, MediaItem & item)
+bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item)
 {
 	try
 	{
-		item.ulID					= reader.getint64(0);
+		item.ulID					= cursor.getint64(0);
 
-		item.dateAdded				= reader.getint64(2);
-		item.fileOnline				= reader.getint64(3);
+		item.dateAdded				= cursor.getint64(2);
+		item.fileOnline				= cursor.getint64(3);
 
-		item.filename				= reader.getstring16(4);
-		item.ullFilesize			= reader.getint64(5);
-		item.ullFileModifiedTime	= reader.getint64(6);
+		item.filename				= cursor.getstring16(4);
+		item.ullFilesize			= cursor.getint64(5);
+		item.ullFileModifiedTime	= cursor.getint64(6);
 
-		item.title					= reader.getstring16(7);
-		item.artist					= reader.getstring16(8);
+		item.title					= cursor.getstring16(7);
+		item.artist					= cursor.getstring16(8);
 
-		item.album					= reader.getstring16(10);
-		item.albumartist			= reader.getstring16(11);
-		item.composer				= reader.getstring16(12);
-		item.ulYear					= reader.getint64(13);
-		item.genre					= reader.getstring16(14);
-		item.comment				= reader.getstring16(15);
+		item.album					= cursor.getstring16(10);
+		item.albumartist			= cursor.getstring16(11);
+		item.composer				= cursor.getstring16(12);
+		item.ulYear					= cursor.getint64(13);
+		item.genre					= cursor.getstring16(14);
+		item.comment				= cursor.getstring16(15);
 
-		item.ulTrack				= reader.getint64(16);
-		item.ulMaxTrack				= reader.getint64(17);
+		item.ulTrack				= cursor.getint64(16);
+		item.ulMaxTrack				= cursor.getint64(17);
 
-		item.ulDisk					= reader.getint64(18);
-		item.ulMaxDisk				= reader.getint64(19);
+		item.ulDisk					= cursor.getint64(18);
+		item.ulMaxDisk				= cursor.getint64(19);
 
-		item.ulRating				= reader.getint64(20);
-		item.ulBPM					= reader.getint64(21);
+		item.ulRating				= cursor.getint64(20);
+		item.ulBPM					= cursor.getint64(21);
 
-		item.ulPlayTimeMS			= reader.getint64(22);
-		item.ulPlaybackTimeAccuracy	= reader.getint64(23);
+		item.ulPlayTimeMS			= cursor.getint64(22);
+		item.ulPlaybackTimeAccuracy	= cursor.getint64(23);
 
-		item.ulSampleRate			= reader.getint64(24);
-		item.ulChannelCount			= reader.getint64(25);
-		item.ulBitRate				= reader.getint64(26);
+		item.ulSampleRate			= cursor.getint64(24);
+		item.ulChannelCount			= cursor.getint64(25);
+		item.ulBitRate				= cursor.getint64(26);
 
-		item.ullFirstPlayed 		= reader.getint64(27);
-		item.ullLastPlayed			= reader.getint64(28);
-		item.ullPlayCount			= reader.getint64(29);
+		item.ullFirstPlayed 		= cursor.getint64(27);
+		item.ullLastPlayed			= cursor.getint64(28);
+		item.ullPlayCount			= cursor.getint64(29);
 
-		item.fReplayGainTrack		= reader.getdouble(30);
-		item.fReplayPeakTrack		= reader.getdouble(31);
+		item.fReplayGainTrack		= cursor.getdouble(30);
+		item.fReplayPeakTrack		= cursor.getdouble(31);
 
-		item.fReplayGainAlbum		= reader.getdouble(32);
-		item.fReplayPeakAlbum		= reader.getdouble(33);
+		item.fReplayGainAlbum		= cursor.getdouble(32);
+		item.fReplayPeakAlbum		= cursor.getdouble(33);
 	}
 	catch (...)
 	{
