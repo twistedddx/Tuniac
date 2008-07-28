@@ -103,7 +103,7 @@ bool CMediaManager::Initialize(void)
 
 			String DBColumns[] =
 			{
-				TEXT("EntryID				 INTEGER PRIMARY KEY"),
+				TEXT("ID					 INTEGER PRIMARY KEY"),
 				TEXT("DirtyFlag				 INT"),
 
 				TEXT("DateAdded				 INT"),
@@ -315,7 +315,7 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	//mediaItem.title.resize(200);
 
 
-	if(pAccessor->ReadMetaData(&mediaItem))
+	if(pAccessor->ReadMetaData(mediaItem))
 	{
 		// yay
 		bWorked = true;
@@ -410,7 +410,7 @@ bool CMediaManager::RebuildIDList(void)
 	{
 		// TODO: replace this code with something a lot more efficient.....
 		// SQLite doesn't like LIMIT commands, so it may be a case of 
-		String sGetRangeSQL = TEXT("SELECT EntryID FROM MediaLibrary");
+		String sGetRangeSQL = TEXT("SELECT ID FROM MediaLibrary");
 
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
@@ -445,7 +445,7 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 		// SQLite doesn't like LIMIT commands, so it may be a case of 
 
 
-		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary WHERE EntryID IN (");
+		String sGetRangeSQL = TEXT("SELECT * FROM MediaLibrary WHERE ID IN (");
 
 		for(int x=0; x<ulCount; x++)
 		{
@@ -645,7 +645,7 @@ bool	CMediaManager::DeleteByID(__int64 ullID)
 
 	try
 	{
-		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE EntryID = ?;");
+		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE ID = ?;");
 
 		sqlite3x::sqlite3_connection con(szDBName);
 		sqlite3x::sqlite3_command deletecmd(con, sDeleteEntrySQL);
@@ -703,7 +703,7 @@ bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_reader & reader, MediaItem
 {
 	try
 	{
-		item.ulItemID				= reader.getint64(0);
+		item.ulID					= reader.getint64(0);
 
 		item.dateAdded				= reader.getint64(2);
 		item.fileOnline				= reader.getint64(3);

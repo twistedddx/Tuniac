@@ -11,24 +11,24 @@ enum
 class MediaItem
 {
 public:
-	unsigned long long		ulItemID;
+	unsigned long long		ulID;
 
 	long long				dateAdded;
 	long long				fileOnline;
 
-	CStdString					filename;
+	CStdString				filename;
 	long long				ullFilesize;
 	long long				ullFileModifiedTime;
 
-	CStdString					title;	
-	CStdString					artist;
-	CStdString					disktitle;
-	CStdString					album;
-	CStdString					albumartist;
-	CStdString					composer;
+	CStdString				title;	
+	CStdString				artist;
+	CStdString				disktitle;
+	CStdString				album;
+	CStdString				albumartist;
+	CStdString				composer;
 	long long				ulYear;
-	CStdString					genre;
-	CStdString					comment;
+	CStdString				genre;
+	CStdString				comment;
 
 
 	long long				ulTrack;
