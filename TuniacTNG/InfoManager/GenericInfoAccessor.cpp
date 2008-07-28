@@ -104,443 +104,237 @@ void	CGenericInfoAccessor::Destroy()
 	delete this;
 }
 
-bool	CGenericInfoAccessor::ReadMetaData(MediaItem * pItem)
+bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 {
-	pItem->title = TEXT("SomeTitle");
-	//pItem->title.assign(m_File->tag()->title().toWString());
-	return true;
-}
+	pItem.title		= m_File->tag()->title().toWString();
+	pItem.artist	= m_File->tag()->artist().toWString();
+	pItem.album		= m_File->tag()->album().toWString();
+	pItem.genre		= m_File->tag()->genre().toWString();
+	pItem.comment	= m_File->tag()->comment().toWString();
 
-bool	CGenericInfoAccessor::WriteMetaData(MediaItem * pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties)
-{
-	return false;
-}
+	pItem.ulYear	= m_File->tag()->year();
+	pItem.ulTrack	= m_File->tag()->track();
+
+	pItem.ulPlayTimeMS		= m_pProperties->length() * 1000;
+	pItem.ulSampleRate		= m_pProperties->sampleRate();
+	pItem.ulChannelCount	= m_pProperties->channels();
+	pItem.ulBitRate			= m_pProperties->bitrate() * 1000;
 
 
-/*
-bool	CGenericInfoAccessor::GetTextField(InfoHandlerField field, wchar_t * toHere, unsigned long ulBufferSize)
-{
-	switch(field)
+	if(!id3Tag.isEmpty())
 	{
-		case Title:
+		{
+			TagLib::ID3v2::FrameList l = id3Tag["RGAD"];
+			if(!l.isEmpty())
 			{
-				wcsncpy(toHere, m_File->tag()->title().toWString().c_str(), ulBufferSize);
+				//_ASSERT(0);
+				// we dont actually support this yet and need to decode the data
 			}
-			break;
-
-		case Artist:
+		}
+		{
+			TagLib::ID3v2::FrameList l = id3Tag["RVA2"];
+			if(!l.isEmpty())
 			{
-				wcsncpy(toHere, m_File->tag()->artist().toWString().c_str(), ulBufferSize);
+				TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
+				pItem.fReplayGainTrack = relVol->volumeAdjustment();
 			}
-			break;
-
-		case DiscTitle:
-		case Composer:
-			break;
-
-		case Album:
+		}
+		{
+			TagLib::ID3v2::FrameList l = id3Tag["TRCK"];
+			if(!l.isEmpty())
 			{
-				wcsncpy(toHere, m_File->tag()->album().toWString().c_str(), ulBufferSize);
-			}
-			break;
-
-
-		case Genre:
-			{
-				wcsncpy(toHere, m_File->tag()->genre().toWString().c_str(), ulBufferSize);
-			}
-			break;
-
-		case Comment:
-			{
-				wcsncpy(toHere, m_File->tag()->comment().toWString().c_str(), ulBufferSize);
-			}
-			break;
-
-		case ReplayGainTrack:
-			{
-				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
-				if(!id3Tag.isEmpty())
+				//std::cout << l.front()->toString() << std::endl;
+				TagLib::String pszData = l.front()->toString();
+				int val = pszData.find("/");
+				if(val == -1)
 				{
-					{
-						TagLib::ID3v2::FrameList l = id3Tag["RGAD"];
-						if(!l.isEmpty())
-						{
-							//_ASSERT(0);
-							// we dont actually support this yet and need to decode the data
-						}
-					}
-					{
-						TagLib::ID3v2::FrameList l = id3Tag["RVA2"];
-						if(!l.isEmpty())
-						{
-							TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
-							swprintf(toHere, TEXT("%f"), relVol->volumeAdjustment());
-							//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
-						}
-					}
+					pItem.ulDisk = pszData.toInt();
+					pItem.ulMaxDisk = 0;
 				}
-
-				if(!vorbisTag.isEmpty())
+				else
 				{
-					if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().toWString().c_str(), ulBufferSize);
-				}
+					TagLib::String track = pszData.substr(0,val);
+					TagLib::String trackMax = pszData.substr(val+1);
 
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-		 				wcsncpy(toHere, apeTag["REPLAYGAIN_TRACK_GAIN"].toString().toWString().c_str(), ulBufferSize);
+					pItem.ulDisk	= track.toInt();
+					pItem.ulMaxDisk = trackMax.toInt();
 				}
 			}
-			break;
+		}
 
-		case ReplayPeakTrack:
+		{
+			TagLib::ID3v2::FrameList l = id3Tag["TPOS"];
+			if(!l.isEmpty())
 			{
-				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().toWString().c_str(), ulBufferSize);
-				}
+				//std::cout << l.front()->toString() << std::endl;
+				TagLib::String pszData = l.front()->toString();
+				int val = pszData.find("/");
 
-				if(!apeTag.isEmpty())
+				if(val == -1)
 				{
-					if(!apeTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-		 				wcsncpy(toHere, apeTag["REPLAYGAIN_TRACK_PEAK"].toString().toWString().c_str(), ulBufferSize);
+					pItem.ulDisk = pszData.toInt();
+					pItem.ulMaxDisk = 0;
 				}
-			}
-			break;
-
-		case ReplayGainAlbum:
-			{
-				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
-				if(!vorbisTag.isEmpty())
+				else
 				{
-					if(!vorbisTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().toWString().c_str(), ulBufferSize);
-				}
+					TagLib::String disk = pszData.substr(0,val);
+					TagLib::String diskMax = pszData.substr(val+1);
 
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-		 				wcsncpy(toHere, apeTag["REPLAYGAIN_ALBUM_GAIN"].toString().toWString().c_str(), ulBufferSize);
+					pItem.ulDisk = disk.toInt();
+					pItem.ulMaxDisk = diskMax.toInt();
 				}
 			}
-			break;
-
-		case ReplayPeakAlbum:
-			{
-				wcsncpy(toHere, TEXT("0.0"), ulBufferSize);
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-		 				wcsncpy(toHere, vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().toWString().c_str(), ulBufferSize);
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-		 				wcsncpy(toHere, apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toWString().c_str(), ulBufferSize);
-				}
-			}
-			break;
-
-		default:
-			wcsncpy(toHere, TEXT(""), ulBufferSize);
-			return false;
-	}
-
-	return true;
-}
-
-bool	CGenericInfoAccessor::SetTextField(InfoHandlerField field, wchar_t * fromHere)
-{
-	switch(field)
-	{
-		case Title:
-			{
-				m_File->tag()->setTitle(fromHere);
-			}
-			break;
-
-		case Artist:
-			{
-				m_File->tag()->setArtist(fromHere);
-			}
-			break;
-
-		case DiscTitle:
-		case Composer:
-			break;
-
-		case Album:
-			{
-				m_File->tag()->setAlbum(fromHere);
-			}
-			break;
-
-
-		case Genre:
-			{
-				m_File->tag()->setGenre(fromHere);
-			}
-			break;
-
-		case Comment:
-			{
-				m_File->tag()->setComment(fromHere);
-			}
-			break;
-
-		default:
-			return false;
-	}
-
-	return true;
-}
-
-*/
-/*
-			{
-
-			}
-
-			{
-				TagLib::ID3v2::FrameList l = mpegFile->ID3v2Tag()->frameListMap()["APIC"];
-				if(!l.isEmpty())
-				{
-					TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
-
-					picframe->mimeType();
-				}
-			}
-
 
 		}
 	}
-	*/
-/*
-bool	CGenericInfoAccessor::GetIntField(InfoHandlerField field, __int64 * toHere)
-{
-	*toHere = 0;
 
-	switch(field)
+	if(!vorbisTag.isEmpty())
 	{
-		case Year:
+		// REPLAY GAIN
+		if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+			pItem.fReplayGainTrack = atof(vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().to8Bit().c_str());
+
+		if(!vorbisTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+			pItem.fReplayPeakTrack = atof(vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().to8Bit().c_str());
+
+		if(!vorbisTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+			pItem.fReplayGainAlbum = atof(vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().to8Bit().c_str());
+
+		if(!vorbisTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+			pItem.fReplayPeakAlbum = atof(vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().to8Bit().c_str());
+
+		// MAX TRACK
+		if(!vorbisTag["TOTALTRACKS"].isEmpty())
+		{
+			pItem.ulMaxTrack = vorbisTag["TOTALTRACKS"].toString().toInt();
+		}
+		else if(!vorbisTag["TRACKTOTAL"].isEmpty())
+		{
+			pItem.ulMaxTrack = vorbisTag["TRACKTOTAL"].toString().toInt();
+		}
+		
+		if(!vorbisTag["DISCNUMBER"].isEmpty())
+		{
+			TagLib::String pszData = vorbisTag["DISCNUMBER"].toString();
+			int val = pszData.find("/");
+
+			if(val == -1)
 			{
-				*toHere = m_File->tag()->year();
+				pItem.ulDisk = pszData.toInt();
+				pItem.ulMaxDisk = 0;
 			}
-			break;
-
-		case Track:
+			else
 			{
-				*toHere = m_File->tag()->track();
+				TagLib::String disk = pszData.substr(0,val);
+				TagLib::String diskMax = pszData.substr(val+1);
+
+				pItem.ulDisk = disk.toInt();
+				pItem.ulMaxDisk = diskMax.toInt();
 			}
-			break;
-
-		case MaxTrack:
-			{
-				if(!id3Tag.isEmpty())
-				{
-					TagLib::ID3v2::FrameList l = id3Tag["TRCK"];
-					if(!l.isEmpty())
-					{
-						//std::cout << l.front()->toString() << std::endl;
-						TagLib::String pszData = l.front()->toString();
-						int val = pszData.find("/");
-						if(val != -1)
-						{
-							TagLib::String trackMax = pszData.substr(val+1);
-							*toHere = trackMax.toInt();
-						}
-					}
-				}
-
-				if(!mp4Tag.isEmpty())
-				{
-					if(mp4Tag["trkn"].isValid())
-						*toHere = mp4Tag["trkn"].toIntPair().second;
-				}
-
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["TOTALTRACKS"].isEmpty())
-						*toHere = vorbisTag["TOTALTRACKS"].toString().toInt();
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["Track"].isEmpty())
-					{
-						TagLib::String pszData = apeTag["Track"].toString();
-						int val = pszData.find("/");
-						if(val != -1)
-						{
-							TagLib::String trackMax = pszData.substr(val+1);
-							*toHere = trackMax.toInt();
-						}
-					}
-				}
-
-				// check other special accessors!
-			}
-			break;
-
-		case MaxDisc:
-			{
-				if(!id3Tag.isEmpty())
-				{
-					TagLib::ID3v2::FrameList l = id3Tag["TPOS"];
-					if(!l.isEmpty())
-					{
-						//std::cout << l.front()->toString() << std::endl;
-						TagLib::String pszData = l.front()->toString();
-						int val = pszData.find("/");
-						if(val != -1)
-						{
-							TagLib::String diskMax = pszData.substr(val+1);
-							*toHere  = diskMax.toInt();
-						}
-					}
-				}
-			}
-			break;
-
-
-
-		case Disc:
-			{
-				if(!id3Tag.isEmpty())
-				{
-					TagLib::ID3v2::FrameList l = id3Tag["TPOS"];
-					if(!l.isEmpty())
-					{
-						//std::cout << l.front()->toString() << std::endl;
-						TagLib::String pszData = l.front()->toString();
-						int val = pszData.find("/");
-
-						if(val == -1)
-						{
-							if(field == Disc)
-								*toHere = pszData.toInt();
-							else
-								*toHere = 0;
-						}
-						else
-						{
-							TagLib::String disk = pszData.substr(0,val);
-							TagLib::String diskMax = pszData.substr(val+1);
-
-							if(field == Disc)
-								*toHere = disk.toInt();
-							else
-								*toHere = diskMax.toInt();
-						}
-					}
-
-				}
-
-				if(!mp4Tag.isEmpty())
-				{
-					if(mp4Tag["disc"].isValid())
-						*toHere = mp4Tag["disc"].toInt();
-				}
-
-				if(!vorbisTag.isEmpty())
-				{
-					if(!vorbisTag["DISCNUMBER"].isEmpty())
-						*toHere = vorbisTag["DISCNUMBER"].toString().toInt();
-				}
-
-				if(!apeTag.isEmpty())
-				{
-					if(!apeTag["disc"].isEmpty())
-						*toHere = apeTag["disc"].toString().toInt();
-				}
-
-			}
-			break;
-
-		case PlaybackTime:
-			{
-				if(m_pProperties)
-					*toHere = m_pProperties->length() * 1000;
-				else
-					*toHere = 0;
-			}
-			break;
-
-		case SampleRate:
-			{
-				if(m_pProperties)
-					*toHere = m_pProperties->sampleRate();
-				else
-					*toHere = 0;
-			}
-			break;
-
-		case Channels:
-			{
-				if(m_pProperties)
-					*toHere = m_pProperties->channels();
-				else
-					*toHere = 0;
-			}
-			break;
-
-		case Bitrate:
-			{
-				if(m_pProperties)
-					*toHere = m_pProperties->bitrate() * 1000;
-				else
-					*toHere = 0;
-			}
-			break;
-
-		case Rating:
-			{
-			}
-			break;
-
-		default:
-			return false;
+		}
 	}
+
+	if(!apeTag.isEmpty())
+	{
+		// REPLAY GAIN
+		if(!apeTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+			pItem.fReplayGainTrack = atof(vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().to8Bit().c_str());
+
+		if(!apeTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+			pItem.fReplayPeakTrack = atof(vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().to8Bit().c_str());
+
+		if(!apeTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+			pItem.fReplayGainAlbum = atof(vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().to8Bit().c_str());
+
+		if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+			pItem.fReplayPeakAlbum = atof(vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().to8Bit().c_str());
+
+		// max track
+		if(!apeTag["Track"].isEmpty())
+		{
+			TagLib::String pszData = apeTag["Track"].toString();
+			int val = pszData.find("/");
+
+			if(val == -1)
+			{
+				pItem.ulDisk = pszData.toInt();
+				pItem.ulMaxDisk = 0;
+			}
+			else
+			{
+				TagLib::String track = pszData.substr(0,val);
+				TagLib::String trackMax = pszData.substr(val+1);
+
+				pItem.ulDisk	= track.toInt();
+				pItem.ulMaxDisk = trackMax.toInt();
+			}
+		}
+
+		if(!apeTag["disc"].isEmpty())
+		{
+			TagLib::String pszData = apeTag["disc"].toString();
+			int val = pszData.find("/");
+
+			if(val == -1)
+			{
+				pItem.ulDisk = pszData.toInt();
+				pItem.ulMaxDisk = 0;
+			}
+			else
+			{
+				TagLib::String disk = pszData.substr(0,val);
+				TagLib::String diskMax = pszData.substr(val+1);
+
+				pItem.ulDisk = disk.toInt();
+				pItem.ulMaxDisk = diskMax.toInt();
+			}
+		}
+
+	}
+
+
+	if(!mp4Tag.isEmpty())
+	{
+		if(mp4Tag["trkn"].isValid())
+		{
+			pItem.ulTrack		= mp4Tag["trkn"].toIntPair().first;
+			pItem.ulMaxTrack	= mp4Tag["trkn"].toIntPair().first;
+		}
+
+		if(mp4Tag["disc"].isValid())
+			pItem.ulDisk = mp4Tag["disc"].toInt();
+	}
+
+
 
 	return true;
 }
 
-bool	CGenericInfoAccessor::SetIntField(InfoHandlerField field, __int64 fromHere)
+bool	CGenericInfoAccessor::WriteMetaData(MediaItem & pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties)
 {
-	switch(field)
+	for(unsigned long prop = 0; prop<ulNumProperties; prop++)
 	{
-		case Year:
-			{
-				m_File->tag()->setYear((TagLib::uint)fromHere);
-			}
-			break;
-
-		case Track:
-			{
-				m_File->tag()->setTrack((TagLib::uint)fromHere);
-			}
-			break;
-
-		case MaxTrack:
-		case Disc:
-		case MaxDisc:
-			break;
-
-		default:
-			return false;
+		switch(pPropertiesToStore[prop])
+		{
+			default:
+				{
+				}
+				break;
+		}
 	}
 
-	return true;
+
+	m_File->tag()->setTitle(pItem.title);
+	m_File->tag()->setArtist(pItem.artist);
+	m_File->tag()->setAlbum(pItem.album);
+	m_File->tag()->setGenre(pItem.genre);
+	m_File->tag()->setComment(pItem.comment);
+
+	m_File->tag()->setYear(pItem.ulYear);
+	m_File->tag()->setTrack(pItem.ulTrack);
+
+	return false;
 }
-
-*/
-
-
 
 
 bool	CGenericInfoAccessor::GetAlbumArtCount(__int64 * pullCount)

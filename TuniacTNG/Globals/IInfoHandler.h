@@ -10,8 +10,8 @@ class IInfoAccessor
 public:
 	virtual void			Destroy() = 0;
 
-	virtual bool			ReadMetaData(MediaItem * pItem) = 0;
-	virtual bool			WriteMetaData(MediaItem * pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties) = 0;
+	virtual bool			ReadMetaData(MediaItem & pItem) = 0;
+	virtual bool			WriteMetaData(MediaItem & pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties) = 0;
 
 	virtual bool			GetAlbumArtCount(__int64 * pullCount) = 0;
 	virtual bool			GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize) = 0;

@@ -57,14 +57,12 @@ public:
 public:
 	void	Destroy();
 
-	bool			ReadMetaData(MediaItem * pItem);
-	bool			WriteMetaData(MediaItem * pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties);
+	virtual bool			ReadMetaData(MediaItem & pItem);
+	virtual bool			WriteMetaData(MediaItem & pItem, unsigned long * pPropertiesToStore, unsigned long ulNumProperties);
 
+	virtual bool	GetAlbumArtCount(__int64 * pullCount);
+	virtual bool	GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize);
+	virtual bool	GetAlbumArtData(unsigned long ulIndex, void * pArtData, unsigned long ullArtDataSize);
 
-
-	bool	GetAlbumArtCount(__int64 * pullCount);
-	bool	GetAlbumArtInformation(__int64 ullArtIndex, unsigned __int64 * uqArtDataSize, wchar_t * pwcsMimeType, unsigned long ulMimeTypeBufferSize);
-	bool	GetAlbumArtData(unsigned long ulIndex, void * pArtData, unsigned long ullArtDataSize);
-
-	bool	SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType);
+	virtual bool	SetAlbumArt(unsigned long ulIndex, void * pArtData, unsigned __int64 uqArtSize, wchar_t * pwcsMimeType);
 };
