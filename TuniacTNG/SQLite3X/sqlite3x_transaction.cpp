@@ -18,9 +18,9 @@
 	3. This notice may not be removed or altered from any source distribution.
 	
 	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/06/16 20:46:40 $
-		$Revision: 1.1 $
+		$Author: sgbeal $
+		$Date: 2007/02/25 23:59:06 $
+		$Revision: 1.4 $
 */
 
 #include <sqlite3.h>
@@ -44,17 +44,17 @@ sqlite3_transaction::~sqlite3_transaction() {
 }
 
 void sqlite3_transaction::begin() {
-	con.executenonquery("begin;");
+	con.executenonquery("begin");
 	intrans=true;
 }
 
 void sqlite3_transaction::commit() {
-	con.executenonquery("commit;");
+	con.executenonquery("commit");
 	intrans=false;
 }
 
 void sqlite3_transaction::rollback() {
-	con.executenonquery("rollback;");
+	con.executenonquery("rollback");
 	intrans=false;
 }
 

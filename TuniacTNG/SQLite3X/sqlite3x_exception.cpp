@@ -18,17 +18,50 @@
 	3. This notice may not be removed or altered from any source distribution.
 	
 	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/06/16 20:46:40 $
-		$Revision: 1.1 $
+		$Author: sgbeal $
+		$Date: 2007/02/26 21:33:39 $
+		$Revision: 1.6 $
 */
 
 #include <sqlite3.h>
 #include "sqlite3x.hpp"
-
+#include <cstdarg> // varargs handling
+#include <limits> // std::max()
+#include <cstring> // strlen()
+#include <cstdio> // vsnprintf()
+#include <vector>
 namespace sqlite3x {
 
-database_error::database_error(const char *msg) : runtime_error(msg) {}
-database_error::database_error(sqlite3_connection &con) : runtime_error(sqlite3_errmsg(con.db)) {}
+	database_error::~database_error() throw() {}
 
+	database_error::database_error(sqlite3_connection &con)
+		: m_what( "sqlite3_connection["+con.name()+"]: "+con.errormsg() )
+	{
+	}
+
+	char const * database_error::what() const throw()
+	{
+		return this->m_what.c_str();
+	}
+
+	database_error::database_error(const char *format,...)
+	{
+		const int buffsz = static_cast<int>( std::max( (size_t) 2048, strlen(format) * 2 ) );
+		std::vector<char> buffer( buffsz, '\0' );
+		va_list vargs;
+		va_start ( vargs, format );
+		int size = vsnprintf(&buffer[0], buffsz, format, vargs);
+		va_end( vargs );
+		if (size > (buffsz-1))
+		{
+			// replace tail of msg with "..."
+			size = buffsz-1;
+			for( int i = buffsz-4; i < buffsz-1; ++i )
+			{
+				buffer[i] = '.';
+			}
+		}
+		buffer[size] = '\0';
+		this->m_what = std::string( &buffer[0], &buffer[0]+size );
+	}
 }
