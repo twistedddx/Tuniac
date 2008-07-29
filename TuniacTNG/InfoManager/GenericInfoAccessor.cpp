@@ -298,7 +298,7 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 		if(mp4Tag["trkn"].isValid())
 		{
 			pItem.ulTrack		= mp4Tag["trkn"].toIntPair().first;
-			pItem.ulMaxTrack	= mp4Tag["trkn"].toIntPair().first;
+			pItem.ulMaxTrack	= mp4Tag["trkn"].toIntPair().second;
 		}
 
 		if(mp4Tag["disc"].isValid())
