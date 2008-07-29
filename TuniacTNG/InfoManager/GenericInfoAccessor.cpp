@@ -148,16 +148,16 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 				int val = pszData.find("/");
 				if(val == -1)
 				{
-					pItem.ulDisk = pszData.toInt();
-					pItem.ulMaxDisk = 0;
+					pItem.ulTrack = pszData.toInt();
+					pItem.ulMaxTrack = 0;
 				}
 				else
 				{
 					TagLib::String track = pszData.substr(0,val);
 					TagLib::String trackMax = pszData.substr(val+1);
 
-					pItem.ulDisk	= track.toInt();
-					pItem.ulMaxDisk = trackMax.toInt();
+					pItem.ulTrack	= track.toInt();
+					pItem.ulMaxTrack = trackMax.toInt();
 				}
 			}
 		}
@@ -257,16 +257,16 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 
 			if(val == -1)
 			{
-				pItem.ulDisk = pszData.toInt();
-				pItem.ulMaxDisk = 0;
+				pItem.ulTrack = pszData.toInt();
+				pItem.ulMaxTrack = 0;
 			}
 			else
 			{
 				TagLib::String track = pszData.substr(0,val);
 				TagLib::String trackMax = pszData.substr(val+1);
 
-				pItem.ulDisk	= track.toInt();
-				pItem.ulMaxDisk = trackMax.toInt();
+				pItem.ulTrack	= track.toInt();
+				pItem.ulMaxTrack = trackMax.toInt();
 			}
 		}
 
