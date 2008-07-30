@@ -61,4 +61,4 @@ public:
 
 };
 
-typedef std::vector<MediaItem>			MediaItemList;
+typedef std::vector<MediaItem>			MediaItemArray;

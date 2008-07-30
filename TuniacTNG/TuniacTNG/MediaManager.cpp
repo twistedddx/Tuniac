@@ -432,7 +432,7 @@ bool CMediaManager::RebuildIDList(void)
 	return true;
 }
 
-bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemList & itemList)
+bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemArray & itemList)
 {
 	String szDBName;
 	GetMediaDBLocation(szDBName);

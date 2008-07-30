@@ -20,7 +20,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 HWND		hListView;
 
-MediaItemList		cacheList;
+MediaItemArray		cacheList;
 unsigned long		cacheStart;
 unsigned long		cacheSize;
 
