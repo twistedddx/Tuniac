@@ -18,6 +18,7 @@ protected:
 	std::vector<InfoHandler>		m_vInfoHandlers;
 	std::vector<unsigned long long>	m_vIDList;
 
+	String							m_DBFilename;
 
 	bool PopulateMediaItemFromAccessor(String filename, MediaItem & pItem);
 	bool InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_connection & con, MediaItem & pItem);
