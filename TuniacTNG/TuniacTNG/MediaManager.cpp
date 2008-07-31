@@ -248,22 +248,8 @@ bool CMediaManager::GetMediaDBLocation(String & strPath)
 
 unsigned __int64 CMediaManager::GetNumEntries(void)
 {
-	unsigned __int64 retval = 0;
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-	try
-	{
-		sqlite3x::sqlite3_connection con(szDBName);
+	unsigned __int64 retval = m_vIDList.size();
 
-		retval = con.executeint64("SELECT count(*) from MediaLibrary");
-
-	}
-	catch(std::exception &ex)
-	{
-		String debugstring = ex.what();
-		OutputDebugString(TEXT("Error: "));
-		OutputDebugString((debugstring+TEXT("\n")).c_str());
-	}
 
 	return retval;
 }
