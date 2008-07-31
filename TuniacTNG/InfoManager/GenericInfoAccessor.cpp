@@ -5,8 +5,6 @@
 
 CGenericInfoAccessor::CGenericInfoAccessor(void)
 {
-	m_mpegFile = NULL;
-	m_pProperties = NULL;
 }
 
 CGenericInfoAccessor::~CGenericInfoAccessor(void)
@@ -15,7 +13,7 @@ CGenericInfoAccessor::~CGenericInfoAccessor(void)
 
 bool	CGenericInfoAccessor::Open(wchar_t * filename)
 {
-	fileref = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
+	fileref = TagLib::FileRef(filename, 1, TagLib::AudioProperties::Fast);
     if( !fileref.isNull() )
     {
 		if(flacfile = dynamic_cast<TagLib::FLAC::File *>( fileref.file() ))
@@ -50,33 +48,46 @@ bool	CGenericInfoAccessor::Open(wchar_t * filename)
 
 void	CGenericInfoAccessor::Destroy()
 {
-	if(m_File)
-		delete m_File;
-
 	delete this;
 }
 
 bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 {
-	pItem.title		= m_File->tag()->title().toWString();
-	pItem.artist	= m_File->tag()->artist().toWString();
-	pItem.album		= m_File->tag()->album().toWString();
-	pItem.genre		= m_File->tag()->genre().toWString();
-	pItem.comment	= m_File->tag()->comment().toWString();
+	TagLib::AudioProperties *	audprops	 = 0;
+	TagLib::Tag				*	tag			= 0;
 
-	pItem.ulYear	= m_File->tag()->year();
-	pItem.ulTrack	= m_File->tag()->track();
+	TagLib::Ogg::FieldListMap		vorbisTag;
+	TagLib::APE::ItemListMap		apeTag;
+	TagLib::ID3v2::FrameListMap		id3v2Tag;
+	TagLib::MP4::ItemListMap		mp4Tag;
+	TagLib::ASF::AttributeListMap	wmaTag;
 
-	pItem.ulPlayTimeMS		= m_pProperties->length() * 1000;
-	pItem.ulSampleRate		= m_pProperties->sampleRate();
-	pItem.ulChannelCount	= m_pProperties->channels();
-	pItem.ulBitRate			= m_pProperties->bitrate() * 1000;
+	audprops = fileref.audioProperties();
+	if(audprops)
+	{
+		pItem.ulPlayTimeMS		= audprops->length() * 1000;
+		pItem.ulSampleRate		= audprops->sampleRate();
+		pItem.ulChannelCount	= audprops->channels();
+		pItem.ulBitRate			= audprops->bitrate() * 1000;
+	}
 
+	tag = fileref.tag();
+	if(tag)
+	{
+		pItem.title		= tag->title().toWString();
+		pItem.artist	= tag->artist().toWString();
+		pItem.album		= tag->album().toWString();
+		pItem.genre		= tag->genre().toWString();
+		pItem.comment	= tag->comment().toWString();
 
-	if(!id3Tag.isEmpty())
+		pItem.ulYear	= tag->year();
+		pItem.ulTrack	= tag->track();
+	}
+
+	if(!id3v2Tag.isEmpty())
 	{
 		{
-			TagLib::ID3v2::FrameList l = id3Tag["RGAD"];
+			TagLib::ID3v2::FrameList l = id3v2Tag["RGAD"];
 			if(!l.isEmpty())
 			{
 				//_ASSERT(0);
@@ -84,7 +95,7 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 			}
 		}
 		{
-			TagLib::ID3v2::FrameList l = id3Tag["RVA2"];
+			TagLib::ID3v2::FrameList l = id3v2Tag["RVA2"];
 			if(!l.isEmpty())
 			{
 				TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(l.front());
@@ -92,7 +103,7 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 			}
 		}
 		{
-			TagLib::ID3v2::FrameList l = id3Tag["TRCK"];
+			TagLib::ID3v2::FrameList l = id3v2Tag["TRCK"];
 			if(!l.isEmpty())
 			{
 				//std::cout << l.front()->toString() << std::endl;
@@ -115,7 +126,7 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 		}
 
 		{
-			TagLib::ID3v2::FrameList l = id3Tag["TPOS"];
+			TagLib::ID3v2::FrameList l = id3v2Tag["TPOS"];
 			if(!l.isEmpty())
 			{
 				//std::cout << l.front()->toString() << std::endl;
@@ -275,7 +286,7 @@ bool	CGenericInfoAccessor::WriteMetaData(MediaItem & pItem, unsigned long * pPro
 		}
 	}
 
-
+/*
 	m_File->tag()->setTitle(pItem.title);
 	m_File->tag()->setArtist(pItem.artist);
 	m_File->tag()->setAlbum(pItem.album);
@@ -284,7 +295,7 @@ bool	CGenericInfoAccessor::WriteMetaData(MediaItem & pItem, unsigned long * pPro
 
 	m_File->tag()->setYear(pItem.ulYear);
 	m_File->tag()->setTrack(pItem.ulTrack);
-
+*/
 	return false;
 }
 
