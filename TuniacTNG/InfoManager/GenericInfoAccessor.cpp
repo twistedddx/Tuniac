@@ -15,85 +15,37 @@ CGenericInfoAccessor::~CGenericInfoAccessor(void)
 
 bool	CGenericInfoAccessor::Open(wchar_t * filename)
 {
-	m_File = TagLib::FileRef::create(filename, true, TagLib::AudioProperties::Accurate);
-
-	if(m_File)
-	{
-		m_pProperties = m_File->audioProperties();
-
-
-		//vorbis comment, id3v2
-		if(!StrCmpI(TEXT(".flac"), PathFindExtension(m_File->name())))
-		{
-			m_flacFile = (TagLib::FLAC::File *)m_File;
-			if(m_flacFile->xiphComment())
-				vorbisTag = m_flacFile->xiphComment()->fieldListMap();
-
-			if(m_flacFile->ID3v2Tag()) 
-				id3Tag = m_flacFile->ID3v2Tag()->frameListMap();
+	fileref = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
+    if( !fileref.isNull() )
+    {
+		if(flacfile = dynamic_cast<TagLib::FLAC::File *>( fileref.file() ))
 			return true;
-		}
-
-		//id3v1. id3v2, ape
-		else if(!StrCmpI(TEXT(".mp3"), PathFindExtension(m_File->name())))
-		{
-			m_mpegFile = (TagLib::MPEG::File *)m_File;
-			if(m_mpegFile->APETag())
-				apeTag = m_mpegFile->APETag()->itemListMap();
-
-			if(m_mpegFile->ID3v2Tag()) 
-				id3Tag = m_mpegFile->ID3v2Tag()->frameListMap();
+		else if(mp3file = dynamic_cast<TagLib::MPEG::File *>( fileref.file() ))
 			return true;
-		}
-
-		//mp4 tag
-		else if(	(!StrCmpI(TEXT(".mp4"), PathFindExtension(m_File->name()))) ||
-					(!StrCmpI(TEXT(".m4a"), PathFindExtension(m_File->name()))) )
-		{
-			m_mp4File = (TagLib::MP4::File *)m_File;
-			if(m_mp4File->tag())
-				mp4Tag = m_mp4File->tag()->itemListMap();
+		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
 			return true;
-		}
-
-		//ape
-		else if(!StrCmpI(TEXT(".mpc"), PathFindExtension(m_File->name())))
-		{
-			m_mpcFile = (TagLib::MPC::File *)m_File;
-			if(m_mpcFile->APETag())
-				apeTag = m_mpcFile->APETag()->itemListMap();
+		else if(mpcfile = dynamic_cast<TagLib::MPC::File *>( fileref.file() ))
 			return true;
-		}
-
-		//vorbis comment
-		else if(!StrCmpI(TEXT(".ogg"), PathFindExtension(m_File->name())))
-		{
-			m_oggFile = (TagLib::Ogg::Vorbis::File *)m_File;
-			if(m_oggFile->tag())
-				vorbisTag = m_oggFile->tag()->fieldListMap();
+		else if(ttafile = dynamic_cast<TagLib::TrueAudio::File *>( fileref.file() ))
 			return true;
-		}
-
-		//id3v1, id3v2
-		else if(!StrCmpI(TEXT(".tta"), PathFindExtension(m_File->name())))
-		{
-			m_ttaFile = (TagLib::TrueAudio::File *)m_File;
-			if(m_ttaFile->ID3v2Tag()) 
-				id3Tag = m_ttaFile->ID3v2Tag()->frameListMap();
+		else if(wvfile = dynamic_cast<TagLib::WavPack::File *>( fileref.file() ))
 			return true;
-		}
-
-		//id3v1, ape
-		else if(!StrCmpI(TEXT(".wv"), PathFindExtension(m_File->name())))
-		{
-			m_wvFile = (TagLib::WavPack::File *)m_File;
-			if(m_wvFile->APETag())
-				apeTag = m_wvFile->APETag()->itemListMap();
+		else if(oggfile = dynamic_cast<TagLib::Ogg::Vorbis::File *>( fileref.file() ))
 			return true;
-		}
+		else if(ogafile = dynamic_cast<TagLib::Ogg::FLAC::File *>( fileref.file() ))
+			return true;
+		else if(spxfile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileref.file() ))
+			return true;
+		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+			return true;
+		else if(aiffile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileref.file() ))
+			return true;
+		else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
+			return true;
 	}
 
 	return false;
+
 }
 
 void	CGenericInfoAccessor::Destroy()
