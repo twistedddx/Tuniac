@@ -87,11 +87,13 @@ CMediaManager::~CMediaManager(void)
 
 bool CMediaManager::Initialize(void)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
+	GetMediaDBLocation(m_DBFilename);
+
+
+
 	try
 	{
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 
 		int count = con.executeint("select count(*) from sqlite_master;");
 
@@ -249,8 +251,6 @@ bool CMediaManager::GetMediaDBLocation(String & strPath)
 unsigned __int64 CMediaManager::GetNumEntries(void)
 {
 	unsigned __int64 retval = m_vIDList.size();
-
-
 	return retval;
 }
 
@@ -297,10 +297,6 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 	if(!pAccessor)
 		return false;
 
-		
-	//mediaItem.title.resize(200);
-
-
 	if(pAccessor->ReadMetaData(mediaItem))
 	{
 		// yay
@@ -315,16 +311,13 @@ bool CMediaManager::PopulateMediaItemFromAccessor(String filename, MediaItem & m
 
 bool CMediaManager::GetAlbums(StringArray & albumList)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	albumList.clear();
 
 	try
 	{
 		String sGetAlbumSQL = TEXT("SELECT DISTINCT Album FROM MediaLibrary;");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
 
 		sqlite3x::sqlite3_cursor cursor = albumcmd.executecursor();
@@ -351,16 +344,13 @@ bool CMediaManager::GetAlbums(StringArray & albumList)
 
 bool CMediaManager::GetArtists(StringArray & artistList)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	artistList.clear();
 
 	try
 	{
 		String sGetAlbumSQL = TEXT("SELECT DISTINCT Artist FROM MediaLibrary;");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command albumcmd(con, sGetAlbumSQL);
 
 		sqlite3x::sqlite3_cursor cursor = albumcmd.executecursor();
@@ -387,9 +377,6 @@ bool CMediaManager::GetArtists(StringArray & artistList)
 
 bool CMediaManager::RebuildIDList(void)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	m_vIDList.clear();
 
 	try
@@ -398,7 +385,7 @@ bool CMediaManager::RebuildIDList(void)
 		// SQLite doesn't like LIMIT commands, so it may be a case of 
 		String sGetRangeSQL = TEXT("SELECT ID FROM MediaLibrary");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
 
 		sqlite3x::sqlite3_cursor cursor = rangecmd.executecursor();
@@ -420,9 +407,6 @@ bool CMediaManager::RebuildIDList(void)
 
 bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemArray & itemList)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	itemList.clear();
 
 	try
@@ -441,7 +425,7 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 		}
 		sGetRangeSQL += TEXT(")");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command rangecmd(con, sGetRangeSQL);
 
 
@@ -565,11 +549,7 @@ bool CMediaManager::IsFileInLibrary(sqlite3x::sqlite3_connection & con, String f
 
 bool CMediaManager::AddFile(String filename)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
-
-	sqlite3x::sqlite3_connection con(szDBName);
+	sqlite3x::sqlite3_connection con(m_DBFilename);
 	if(IsFileInLibrary(con, filename))
 		return true;
 
@@ -591,10 +571,7 @@ bool CMediaManager::AddFileArray(StringArray filenameArray)
 {
 	if(filenameArray.size())
 	{
-		String szDBName;
-		GetMediaDBLocation(szDBName);
-
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 
 		for(unsigned int i=0; i<filenameArray.size(); i++)
 		{
@@ -626,14 +603,11 @@ bool CMediaManager::AddFileArray(StringArray filenameArray)
 
 bool	CMediaManager::DeleteByID(__int64 ullID)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	try
 	{
 		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE ID = ?;");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command deletecmd(con, sDeleteEntrySQL);
 
 		deletecmd.bind(1, ullID);
@@ -656,14 +630,11 @@ bool	CMediaManager::DeleteByID(__int64 ullID)
 
 bool	CMediaManager::DeleteByFilename(CStdString filename)
 {
-	String szDBName;
-	GetMediaDBLocation(szDBName);
-
 	try
 	{
 		String sDeleteEntrySQL = TEXT("DELETE FROM MediaLibrary WHERE Filename = ?;");
 
-		sqlite3x::sqlite3_connection con(szDBName);
+		sqlite3x::sqlite3_connection con(m_DBFilename);
 		sqlite3x::sqlite3_command deletecmd(con, sDeleteEntrySQL);
 
 		deletecmd.bind(1, filename);
