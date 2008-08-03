@@ -55,7 +55,7 @@ bool CTuniacHelper::GetFolderContents(String folder, StringArray & tohere, bool 
 
 			filePath += w32fd.cFileName;
 
-			if(GetFileAttributes(filePath.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
+			if(PathIsFolder(filePath))
 			{
 				if(recurse)
 					GetFolderContents(	filePath, tohere, recurse );
@@ -92,6 +92,14 @@ bool CTuniacHelper::GetAllFilesInFolderWithExtension(String folder, String Exten
 
 		return true;
 	}
+
+	return false;
+}
+
+bool CTuniacHelper::PathIsFolder(String & path)
+{
+	if(GetFileAttributes(path.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
+		return true;
 
 	return false;
 }

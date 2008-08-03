@@ -135,15 +135,15 @@ bool CMediaManager::Initialize(void)
 				TEXT("BPM					 INT"),
 
 				TEXT("PlaybackTime			 INT"),
-				TEXT("PlaybackTimeAccuracy	 INT"),
+				TEXT("PlaybackTimeAccuracy	 INT DEFAULT 0"),
 
 				TEXT("SampleRate			 INT"),
 				TEXT("Channels				 INT"),
 				TEXT("Bitrate				 INT"),
 
-				TEXT("FirstPlayed			 INT"),
-				TEXT("LastPlayed			 INT"),
-				TEXT("Playcount				 INT"),
+				TEXT("FirstPlayed			 INT DEFAULT 0"),
+				TEXT("LastPlayed			 INT DEFAULT 0"),
+				TEXT("Playcount				 INT DEFAULT 0"),
 
 				TEXT("ReplayGainTrack		 REAL"),
 				TEXT("ReplayPeakTrack		 REAL"),
@@ -152,6 +152,8 @@ bool CMediaManager::Initialize(void)
 
 				TEXT("EncoderDelay			 INT"),
 				TEXT("EncoderPadding		 INT"),
+
+				TEXT("InfoRead				 INT DEFAULT 0"),
 
 				TEXT("")
 			};
@@ -541,27 +543,6 @@ bool CMediaManager::IsFileInLibrary(sqlite3x::sqlite3_connection & con, String f
 		OutputDebugString(TEXT("Error: "));
 		OutputDebugString((debugstring+TEXT("\n")).c_str());
 		return false;
-	}
-
-	return false;
-}
-
-
-bool CMediaManager::AddFile(String filename)
-{
-	sqlite3x::sqlite3_connection con(m_DBFilename);
-	if(IsFileInLibrary(con, filename))
-		return true;
-
-
-	MediaItem	newItem;
-	if(!PopulateMediaItemFromAccessor(filename, newItem))
-		return false;
-
-	if(InsertItemToMediaLibraryUsingConnection(con, newItem))
-	{
-		RebuildIDList();
-		return true;
 	}
 
 	return false;

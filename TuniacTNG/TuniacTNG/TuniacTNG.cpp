@@ -352,22 +352,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
 
-				if(uNumFiles > 1)
-				{
-					StringArray		filesToAdd;
 
-					for(UINT file = 0; file<uNumFiles; file++)
+				StringArray		filesToAdd;
+
+				for(UINT file = 0; file<uNumFiles; file++)
+				{
+					DragQueryFile(hDrop, file, szURL, MAX_PATH);
+
+					if(CTuniacHelper::Instance()->PathIsFolder(String(szURL)))
 					{
-						DragQueryFile(hDrop, file, szURL, MAX_PATH);
+						StringArray		contents;
+
+						CTuniacHelper::Instance()->GetFolderContents(szURL, contents, true);
+
+						for(int x=0; x<contents.size(); x++)
+						{
+							filesToAdd.push_back(contents[x]);
+						}
+					}
+					else
+					{
 						filesToAdd.push_back(szURL);
 					}
-					CMediaManager::Instance()->AddFileArray(filesToAdd);
 				}
-				else
-				{
-					DragQueryFile(hDrop, 0, szURL, MAX_PATH);
-					CMediaManager::Instance()->AddFile(szURL);
-				}
+				CMediaManager::Instance()->AddFileArray(filesToAdd);
+
 				DragFinish(hDrop);
 
 
@@ -471,14 +480,16 @@ bool ShowAddFiles(HWND hWndParent)
 
 	if(GetOpenFileName(&ofn))
 	{
+		StringArray		nameArray;
 		if(ofn.nFileOffset < lstrlen(szURLBuffer))
 		{
-			CMediaManager::Instance()->AddFile(szURLBuffer);
+			nameArray.push_back(szURLBuffer);
+
+			CMediaManager::Instance()->AddFileArray(nameArray);
 		}
 		else
 		{
 			LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
-			StringArray		nameArray;
 
 			String szFilePath = szURLBuffer;
 			while( lstrlen(szOFNName) != 0 )
