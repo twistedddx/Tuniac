@@ -14,5 +14,7 @@ public:
 	bool GetFolderContents(String folder, StringArray & tohere, bool recurse);
 	bool GetAllFilesInFolderWithExtension(String folder, String Extension, StringArray & toHere);
 
+	bool PathIsFolder(String & path);
+
 	bool FormatSystemTime(String & toHere, SYSTEMTIME & st);
 };

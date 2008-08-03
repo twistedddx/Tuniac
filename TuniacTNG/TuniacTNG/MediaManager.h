@@ -45,7 +45,6 @@ public:
 	bool GetArtists(StringArray & artistList);
 	bool GetRange(unsigned long ulStart, unsigned long ulCount, MediaItemArray & itemList);
 
-	bool AddFile(String filename);
 	bool AddFileArray(StringArray filenameArray);
 
 	bool DeleteByID(__int64 ullID);
