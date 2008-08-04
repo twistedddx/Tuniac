@@ -232,8 +232,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
 				pPlaylist->RebuildPlaylistArrays();
-				pPlaylist->SetActiveFilteredIndex(PLDH.ActiveIndex);
-				if(pPlaylist->GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX)
+				pPlaylist->SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
 				{
 					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
 					CCoreAudio::Instance()->SetSource(pEntry);
@@ -241,11 +241,17 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				}
 			}
 		}
+
+		m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
+		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
+		PLDH.LibraryFilter[127] = L'\0';
+		m_LibraryPlaylist.SetTextFilter(PLDH.LibraryFilter);
+
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
-			m_LibraryPlaylist.SetActiveFilteredIndex(PLDH.ActiveIndex);
-			if(m_LibraryPlaylist.GetActiveFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
+			m_LibraryPlaylist.SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 			{
 				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
 				CCoreAudio::Instance()->SetSource(pEntry);
@@ -257,11 +263,6 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 
 	CloseHandle(hFile);
 
-	m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
-	m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
-	PLDH.LibraryFilter[127] = L'\0';
-	m_LibraryPlaylist.SetTextFilter(PLDH.LibraryFilter);
-	
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 	return bOK;
 }
@@ -308,12 +309,12 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 		if(GetActivePlaylistIndex() == 0)
 		{
 			PLDH.ActivePlaylist = 0;
-			PLDH.ActiveIndex = m_LibraryPlaylist.GetActiveFilteredIndex();
+			PLDH.ActiveIndex = m_LibraryPlaylist.GetActiveNormalFilteredIndex();
 		}
 		else
 		{
 			PLDH.ActivePlaylist	= GetActivePlaylistIndex() - (GetNumPlaylists() - m_StandardPlaylists.GetCount() - 1);
-			PLDH.ActiveIndex = ((IPlaylistEX *)m_ActivePlaylist)->GetActiveFilteredIndex();
+			PLDH.ActiveIndex = ((IPlaylistEX *)m_ActivePlaylist)->GetActiveNormalFilteredIndex();
 		}
 	}
 	else
