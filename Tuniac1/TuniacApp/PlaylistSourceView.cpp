@@ -1319,7 +1319,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 												lPos = ListView_GetNextItem(hListViewWnd, lPos, LVNI_SELECTED); //get the next selected i
 											}
-
+											ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
 											m_pPlaylist->DeleteItemArray(m_DeleteArray);
 											m_DeleteArray.RemoveAll();
 
