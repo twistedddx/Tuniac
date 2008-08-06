@@ -23,6 +23,8 @@ protected:
 	Frame						m_Frame;
 	IMPEGDecoder		*		m_pDecoder;
 
+	float						SampleBuffer[2304];
+
 	TCHAR						m_URL[4096];
 	char						m_Server[1024];
 	short						m_Port;
