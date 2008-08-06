@@ -55,7 +55,11 @@ public:
 
 	void FlushBuffer()
 	{
-		memset(m_Buffer, 0xff, BITSTREAM_BUFSIZE);
+		for(unsigned long x=0; x<BITSTREAM_BUFSIZE; x++)
+		{
+			m_Buffer[x] = 0xff;
+		}
+
 		m_InputIndex	= 0;
 		m_ByteIndex		= 0;
 		m_BitIndex		= 0;

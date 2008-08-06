@@ -445,11 +445,12 @@ void __forceinline CBaseDecoder::Window(int ch, float *S, int step)
 
 		DT += 16;
 
-
+/*
 		if( sum < -1.0 )
 			sum = -1.0;
 		else if( sum > 1.0 )
 			sum = 1.0;
+*/
 		*S = sum;
 
 		S+=step;

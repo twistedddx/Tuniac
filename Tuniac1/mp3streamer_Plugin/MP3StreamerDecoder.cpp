@@ -56,7 +56,7 @@ bool		CMP3StreamerDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSampl
 {
 	unsigned long		BytesUsed = 0;
 
-	float SampleBuffer[2304];
+	static float SampleBuffer[2304];
 
 	unsigned long BytesAvail = 0;
 
@@ -262,7 +262,7 @@ unsigned long CMP3StreamerDecoder::ThreadProc(void)
 #define MAXREADSIZE		2048
 
 	MSG					msg;
-	LPWSTR t;
+
 	unsigned long		BytesWritten;
 	unsigned char	*	buffer;
 	unsigned long		BufferLevel = m_DataInterval;
@@ -445,7 +445,7 @@ REURL:
 	{
 		while(strlen(szMessage))
 		{
-			if(strnicmp(szMessage, "Location: ", 10) == 0)
+			if(_strnicmp(szMessage, "Location: ", 10) == 0)
 			{
 				MultiByteToWideChar(CP_ACP, 0, &szMessage[10], -1, m_URL, 4096);
 
@@ -471,27 +471,27 @@ REURL:
 
 	while(strlen(szMessage))
 	{
-		if(strnicmp(szMessage, "icy-notice", 10) == 0)
+		if(_strnicmp(szMessage, "icy-notice", 10) == 0)
 		{
 			TCHAR szLogMsg[2048];
 			MultiByteToWideChar(CP_ACP, 0, szMessage, -1, szLogMsg, 2048);
 			//LogMessage(szLogMsg);
 		}
-		if(strnicmp(szMessage, "icy-metaint:", 12) == 0)
+		if(_strnicmp(szMessage, "icy-metaint:", 12) == 0)
 		{
 			m_bMetaData = true;
 			m_DataInterval = atoi(&szMessage[12]);
 
 			//LogMessage(TEXT("Got Metadata Interval."));
 		}
-		if(strnicmp(szMessage, "icy-name:", 9) == 0)
+		if(_strnicmp(szMessage, "icy-name:", 9) == 0)
 		{
 			TCHAR szName[128];
 			MultiByteToWideChar(CP_ACP, 0, szMessage, -1, szName, 128);
 			szArtist = StrStr(szName, TEXT("icy-name:"));
 			szArtist += wcslen(TEXT("icy-name:"));
 		}
-		if(strnicmp(szMessage, "icy-genre:", 10) == 0)
+		if(_strnicmp(szMessage, "icy-genre:", 10) == 0)
 		{
 			TCHAR szName[128];
 			MultiByteToWideChar(CP_ACP, 0, szMessage, -1, szName, 128);
