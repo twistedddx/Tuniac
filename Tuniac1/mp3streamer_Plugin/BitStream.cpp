@@ -24,13 +24,12 @@ original software.
 source distribution.
 */
 
-#include "stdafx.h"
 #include "BitStream.h"
 
 
 BitStream::BitStream()
 {
-	buffer		= NULL;
+	buffer		= 0;
 	bitindex	= 0;
 }
 

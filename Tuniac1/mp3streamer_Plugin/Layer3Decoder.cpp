@@ -1,4 +1,6 @@
-#include "stdafx.h"
+
+#include <math.h>
+
 #include "Layer3Decoder.h"
 
 static unsigned long g_huffman_table_1[7] = {

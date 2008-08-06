@@ -24,7 +24,6 @@ original software.
 source distribution.
 */
 
-#include "stdafx.h"
 #include "SideInfo.h"
 
 SideInfo::SideInfo()
