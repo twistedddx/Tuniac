@@ -27,6 +27,7 @@ protected:
 	bool ReaderMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item);
 
 	bool RebuildIDList(void);
+	void CreateDatabaseSchema(sqlite3x::sqlite3_connection & con);
 
 public:
 	CMediaManager(void);

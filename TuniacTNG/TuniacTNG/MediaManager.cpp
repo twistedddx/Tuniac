@@ -89,91 +89,10 @@ bool CMediaManager::Initialize(void)
 {
 	GetMediaDBLocation(m_DBFilename);
 
-
-
 	try
 	{
 		sqlite3x::sqlite3_connection con(m_DBFilename);
-
-		int count = con.executeint("select count(*) from sqlite_master;");
-
-		if(count == 0)
-		{
-			// all dates in TNG are stored in time_t format (either 32 r 64 bits it makes no difference)
-
-			// THERE IS NO MEDIA LIBRARY :(
-
-			String DBColumns[] =
-			{
-				TEXT("ID					 INTEGER PRIMARY KEY"),
-				TEXT("DirtyFlag				 INT"),
-
-				TEXT("DateAdded				 INT"),
-				TEXT("FileOnline			 INT"),
-
-				TEXT("Filename				 TEXT"),
-				TEXT("Filesize				 INT"),
-				TEXT("FileModifiedTime		 INT"),
-
-				TEXT("Title					 TEXT"),
-				TEXT("Artist				 TEXT"),
-				TEXT("DiscTitle				 TEXT"),
-				TEXT("Album					 TEXT"),
-				TEXT("AlbumArtist			 TEXT"),
-				TEXT("Composer				 TEXT"),
-				TEXT("Year					 INT"),
-				TEXT("Genre					 TEXT"),
-				TEXT("Comment				 TEXT"),
-
-				TEXT("Track					 INT"),
-				TEXT("MaxTrack				 INT"),
-
-				TEXT("Disc					 INT"),
-				TEXT("MaxDisc				 INT"),
-
-				TEXT("Rating				 INT"),
-				TEXT("BPM					 INT"),
-
-				TEXT("PlaybackTime			 INT"),
-				TEXT("PlaybackTimeAccuracy	 INT DEFAULT 0"),
-
-				TEXT("SampleRate			 INT"),
-				TEXT("Channels				 INT"),
-				TEXT("Bitrate				 INT"),
-
-				TEXT("FirstPlayed			 INT DEFAULT 0"),
-				TEXT("LastPlayed			 INT DEFAULT 0"),
-				TEXT("Playcount				 INT DEFAULT 0"),
-
-				TEXT("ReplayGainTrack		 REAL"),
-				TEXT("ReplayPeakTrack		 REAL"),
-				TEXT("ReplayGainAlbum		 REAL"),
-				TEXT("ReplayPeakAlbum		 REAL"),
-
-				TEXT("EncoderDelay			 INT"),
-				TEXT("EncoderPadding		 INT"),
-
-				TEXT("InfoRead				 INT DEFAULT 0"),
-
-				TEXT("")
-			};
-
-			String DBCreateBase = TEXT("CREATE TABLE MediaLibrary (");
-			
-			int x=0;
-			while(DBColumns[x].length())
-			{
-				DBCreateBase += DBColumns[x];
-
-				if(DBColumns[x+1].length())
-					DBCreateBase += TEXT(", ");
-
-				x++;
-			}
-			DBCreateBase += TEXT(");");
-
-			con.executenonquery(DBCreateBase);
-		}
+		CreateDatabaseSchema(con);
 	}
 	catch(std::exception &ex)
 	{
@@ -466,7 +385,7 @@ bool CMediaManager::InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_co
 	try
 	{
 		String insertFilenameSQL = TEXT("INSERT INTO  MediaLibrary \
-		(DateAdded,	FileOnline, Filename,	Filesize,	FileModifiedTime,	Title,	Artist,	DiscTitle,	Album,	AlbumArtist,	Composer,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	Rating,	BPM,	PlaybackTime,	PlaybackTimeAccuracy,	SampleRate, Channels,	Bitrate,	FirstPlayed,	LastPlayed,		PlayCount,	ReplayGainTrack,	ReplayPeakTrack,	ReplayGainAlbum,	ReplayPeakalbum)\
+		(DateAdded,	FileOnline, Filename,	FileSize,	FileModifiedTime,	Title,	Artist,	DiscTitle,	Album,	AlbumArtist,	Composer,	Year,	Genre,	Comment,	Track,	MaxTrack,	Disc,	MaxDisc,	Rating,	BPM,	PlaybackTime,	PlaybackTimeAccuracy,	SampleRate, Channels,	Bitrate,	FirstPlayed,	LastPlayed,		PlayCount,	ReplayGainTrack,	ReplayPeakTrack,	ReplayGainAlbum,	ReplayPeakAlbum)\
 		VALUES\
 		(?,			1,			?,			?,			?,					?,		?,		?,			?,		?,				?,			?,		?,		?,			?,		?,			?,		?,			?,		?,		?,				0,						?,			?,			?,			0,				0,				0,			?,					?,					?,					?)");
 
@@ -692,4 +611,95 @@ bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem
 	}
 
 	return true;
+}
+
+void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
+{
+	bool hasMediaLibrary	= con.executeint("SELECT COUNT(*) FROM SQLITE_MASTER WHERE TYPE = 'table' AND NAME = 'MediaLibrary'") == 1;
+	bool hasPlaylist		= con.executeint("SELECT COUNT(*) FROM SQLITE_MASTER WHERE TYPE = 'table' AND NAME = 'Playlist'") == 1;
+	bool hasPlaylistTracks	= con.executeint("SELECT COUNT(*) FROM SQLITE_MASTER WHERE TYPE = 'table' AND NAME = 'PlaylistTracks'") == 1;
+
+	if (!hasMediaLibrary)
+	{
+		// all dates in TNG are stored in time_t format (either 32 r 64 bits it makes no difference)
+		String sql = TEXT("										\
+			CREATE TABLE MediaLibrary (							\
+				ID						INTEGER PRIMARY KEY,	\
+				DirtyFlag				INTEGER,				\
+																\
+				DateAdded				INTEGER, 				\
+				FileOnline				INTEGER, 				\
+				Filename				TEXT, 					\
+				FileSize				TEXT, 					\
+				FileModifiedTime		INTEGER, 				\
+																\
+				Title					TEXT, 					\
+				Artist					TEXT, 					\
+				DiscTitle				TEXT, 					\
+				Album					TEXT, 					\
+				AlbumArtist				TEXT, 					\
+				Composer				TEXT, 					\
+				Year					INTEGER, 				\
+				Genre					TEXT, 					\
+				Comment					TEXT, 					\
+																\
+				Track					TEXT, 					\
+				MaxTrack				TEXT, 					\
+				Disc					TEXT, 					\
+				MaxDisc					TEXT, 					\
+																\
+				Rating					INTEGER, 				\
+				BPM						INTEGER, 				\
+				PlaybackTime			INTEGER, 				\
+				PlaybackTimeAccuracy	INTEGER DEFAULT 0, 		\
+				SampleRate				INTEGER, 				\
+				Channels				INTEGER, 				\
+				Bitrate					INTEGER, 				\
+																\
+				FirstPlayed				INTEGER DEFAULT 0, 		\
+				LastPlayed				INTEGER DEFAULT 0, 		\
+				PlayCount				INTEGER DEFAULT 0, 		\
+																\
+				ReplayGainTrack			REAL, 					\
+				ReplayPeakTrack			REAL, 					\
+				ReplayGainAlbum			REAL, 					\
+				ReplayPeakAlbum			REAL, 					\
+																\
+				EncoderDelay			INTEGER, 				\
+				EncoderPadding			INTEGER, 				\
+																\
+				InfoRead				INTEGER DEFAULT 0 		\
+			)													\
+		");
+
+		con.executenonquery(sql);
+
+	}
+
+	if (!hasPlaylist)
+	{
+		String sql = TEXT("										\
+			CREATE TABLE Playlist (								\
+				ID						INTEGER PRIMARY KEY,	\
+				Name					TEXT,					\
+				CreateDate				INTEGER 				\
+			)													\
+		");
+
+		con.executenonquery(sql);
+	}
+
+	if (!hasPlaylistTracks)
+	{
+		String sql = TEXT("							\
+			CREATE TABLE PlaylistTracks (			\
+				PlaylistID				INTEGER,	\
+				TrackID					INTEGER,	\
+				OrderNum				INTEGER		\
+			)										\
+		");
+
+		con.executenonquery(sql);
+	}
+
 }
