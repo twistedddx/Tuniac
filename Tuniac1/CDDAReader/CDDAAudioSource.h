@@ -4,6 +4,8 @@
 #include "ntddcdrm.h"
 #include "devioctl.h"
 
+#define BUF_SIZE 4096
+
 class CCDDAAudioSource :
 	public IAudioSource
 {
@@ -18,6 +20,9 @@ protected:
 					m_nStopSector;
 
 	unsigned long	m_Channels;
+
+	float			m_Buffer[BUF_SIZE];
+	BYTE			buffer[BUF_SIZE];
 
 	HRESULT Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign, LPDWORD pdwBytesRead);
 
