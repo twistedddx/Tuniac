@@ -46,6 +46,11 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 		return(false);
 	}
 
+	DWORD cbReturned;//discard results
+	PREVENT_MEDIA_REMOVAL pmr;
+	pmr.PreventMediaRemoval = TRUE;
+	DeviceIoControl(m_hDrive, IOCTL_STORAGE_MEDIA_REMOVAL, &pmr, sizeof(pmr), NULL, 0, &cbReturned, NULL);
+	
 	iTrackIndex = _wtoi(&szStream[10]);
 
 	DWORD BytesReturned;
@@ -88,6 +93,10 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 
 void		CCDDAAudioSource::Destroy(void)
 {
+	DWORD cbReturned;//discard results
+	PREVENT_MEDIA_REMOVAL pmr;
+	pmr.PreventMediaRemoval = false;
+	DeviceIoControl(m_hDrive, IOCTL_STORAGE_MEDIA_REMOVAL, &pmr, sizeof(pmr), NULL, 0, &cbReturned, NULL);
 	delete this;
 }
 
@@ -137,7 +146,8 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 
 		rawreadinfo.DiskOffset.QuadPart = sector*2048;
 		DWORD BytesReturned = 0;
-		BOOL b = DeviceIoControl(
+
+		bool b = DeviceIoControl(
 					m_hDrive, IOCTL_CDROM_RAW_READ,
 					&rawreadinfo, sizeof(rawreadinfo),
 					buff, RAW_SECTOR_SIZE,
@@ -159,22 +169,19 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 
 bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-#define BUFSIZE	4096
-	static float	audiobuffer[BUFSIZE];
-	static BYTE		buff[BUFSIZE];
 
-	if(Read(buff, BUFSIZE, TRUE, NULL) == S_OK)
+	if(Read(buffer, BUF_SIZE, TRUE, NULL) == S_OK)
 	{
-		short * t = (short*)buff;
+		short * pData = (short*)buffer;
 
-		for(int x=0; x<(BUFSIZE/2); x++)
+		for(int x=0; x<(BUF_SIZE/2); x++)
 		{
-			audiobuffer[x] = (float)t[x] / 16384.0f;
+			m_Buffer[x] = (float)pData[x] / 16384.0f;
 		}
 	}
 
-	*ppBuffer	= audiobuffer;
-	*NumSamples =(BUFSIZE/2);
+	*ppBuffer	= m_Buffer;
+	*NumSamples =(BUF_SIZE/2);
 
 
 	return true;
