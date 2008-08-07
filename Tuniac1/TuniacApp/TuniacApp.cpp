@@ -2204,16 +2204,17 @@ void	CTuniacApp::UpdateQueues(void)
 {
 	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
 	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-	unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
-
-	//add history
-	if (pIPE)
-		m_History.AddItem(pIPE);
-
-	//remove playselected
-	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED && tuniacApp.m_PlaySelected.GetCount())
+	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
+
+
+		//add history
+		if (pIPE)
+			m_History.AddItem(pIPE);
+
+		//remove playselected
 		for(unsigned i = 0; i < tuniacApp.m_PlaySelected.GetCount(); i++)
 		{
 			if(ulIndex == tuniacApp.m_PlaySelected[i])
@@ -2223,19 +2224,19 @@ void	CTuniacApp::UpdateQueues(void)
 				return;
 			}
 		}
-	}
 
-	//remove playqueue
-	if (tuniacApp.m_MediaLibrary.m_Queue.GetCount())
-	{
-		for(unsigned x=0; x < tuniacApp.m_MediaLibrary.m_Queue.GetCount(); x++)
+		//remove playqueue
+		if (tuniacApp.m_MediaLibrary.m_Queue.GetCount())
 		{
-			if(pPlaylistEX->GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x)) == ulIndex)
+			for(unsigned x=0; x < tuniacApp.m_MediaLibrary.m_Queue.GetCount(); x++)
 			{
-				tuniacApp.m_MediaLibrary.m_Queue.Remove(x);
+				if(pPlaylistEX->GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x)) == ulIndex)
+				{
+					tuniacApp.m_MediaLibrary.m_Queue.Remove(x);
 
-				if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
-					tuniacApp.m_MediaLibrary.m_Queue.Append(pIPE);
+					if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+						tuniacApp.m_MediaLibrary.m_Queue.Append(pIPE);
+				}
 			}
 		}
 	}
