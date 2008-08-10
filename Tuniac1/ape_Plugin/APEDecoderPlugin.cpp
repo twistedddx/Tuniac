@@ -68,7 +68,7 @@ LPTSTR			CAPEDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 	return TEXT(".ape");
 }
 
-IAudioSource *		CAPEDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CAPEDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CAPEDecoder *	pDec = new CAPEDecoder();
 

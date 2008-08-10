@@ -76,7 +76,7 @@ LPTSTR			CTTADecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		CTTADecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CTTADecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CTTADecoder *	pDec = new CTTADecoder();
 

@@ -69,7 +69,7 @@ LPTSTR			CMPCDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		CMPCDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CMPCDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CMPCDecoder *	pDec = new CMPCDecoder();
 

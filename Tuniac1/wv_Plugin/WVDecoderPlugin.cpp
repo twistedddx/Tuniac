@@ -69,7 +69,7 @@ LPTSTR			CWVDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		CWVDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CWVDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CWVDecoder *	pDec = new CWVDecoder();
 

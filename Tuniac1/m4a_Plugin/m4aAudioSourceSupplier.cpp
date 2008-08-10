@@ -80,7 +80,7 @@ LPTSTR			Cm4aAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 	return exts[ulIndex];
 }
 
-IAudioSource *	Cm4aAudioSourceSupplier::CreateAudioSource(LPTSTR szSource)
+IAudioSource *	Cm4aAudioSourceSupplier::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	Cm4aAudioSource * source = new Cm4aAudioSource;
 

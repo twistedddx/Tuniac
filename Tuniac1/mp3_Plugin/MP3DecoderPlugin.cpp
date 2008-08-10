@@ -71,7 +71,7 @@ LPTSTR			CMP3DecoderPlugin::GetCommonExt(unsigned long ulIndex)
 	return TEXT(".mp3");
 }
 
-IAudioSource *		CMP3DecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CMP3DecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CMP3Decoder * t = new CMP3Decoder(m_pHelper);
 

@@ -67,7 +67,7 @@ LPTSTR			CCDDAAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 	return NULL;
 }
 
-IAudioSource *	CCDDAAudioSourceSupplier::CreateAudioSource(LPTSTR szSource)
+IAudioSource *	CCDDAAudioSourceSupplier::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CCDDAAudioSource * pSource = new CCDDAAudioSource();
 

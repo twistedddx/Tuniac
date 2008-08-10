@@ -69,7 +69,7 @@ LPTSTR			CALACDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		CALACDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CALACDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CALACDecoder *	pDec = new CALACDecoder();
 
