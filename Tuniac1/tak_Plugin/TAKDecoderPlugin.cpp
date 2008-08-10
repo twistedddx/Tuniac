@@ -76,7 +76,7 @@ LPTSTR			CTAKDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		CTAKDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		CTAKDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CTAKDecoder *	pDec = new CTAKDecoder();
 

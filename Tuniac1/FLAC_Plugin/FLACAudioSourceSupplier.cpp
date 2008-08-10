@@ -68,7 +68,7 @@ LPTSTR			CFLACAudioSourceSupplier::GetCommonExt(unsigned long ulIndex)
 	return TEXT(".flac");
 }
 
-IAudioSource *	CFLACAudioSourceSupplier::CreateAudioSource(LPTSTR szSource)
+IAudioSource *	CFLACAudioSourceSupplier::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	CFLACAudioSource * pSource = new CFLACAudioSource;
 

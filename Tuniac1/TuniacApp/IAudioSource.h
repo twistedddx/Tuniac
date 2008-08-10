@@ -36,6 +36,16 @@
 #define FIELD_TITLE							4
 #define FIELD_GENRE							6
 
+class IAudioFileIO
+{
+public:
+	virtual bool Read(unsigned __int64 numberofbytes, void * pData, unsigned __int64 * pBytesRead = NULL) = 0;
+
+	virtual bool Seek(unsigned __int64 Offset, bool bFromEnd = false) = 0;
+	virtual bool Tell(unsigned __int64 * pCurrentOffset) = 0;
+};
+
+
 class IAudioSource
 {
 public:
@@ -62,6 +72,7 @@ public:
 
 #define FLAGS_ABOUT			0x00000001
 #define FLAGS_CONFIGURE		0x00000002
+#define FLAGS_PROVIDEFILEIO	0x00000004
 
 class IAudioSourceSupplier
 {
@@ -81,7 +92,7 @@ public:
 	virtual	unsigned long	GetNumCommonExts(void)										= 0;
 	virtual	LPTSTR			GetCommonExt(unsigned long ulIndex)							= 0;
 
-	virtual IAudioSource *	CreateAudioSource(LPTSTR szSource)							= 0;
+	virtual IAudioSource *	CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO = NULL)	= 0;
 };
 
 typedef IAudioSourceSupplier * (*CreateAudioSourceSupplierFunc)(void);

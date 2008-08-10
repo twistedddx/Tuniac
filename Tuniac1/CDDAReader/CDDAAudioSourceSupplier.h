@@ -24,6 +24,6 @@ public:
 	unsigned long	GetNumCommonExts(void);
 	LPTSTR			GetCommonExt(unsigned long ulIndex);
 
-	IAudioSource *	CreateAudioSource(LPTSTR szSource);
+	IAudioSource *	CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO);
 
 };

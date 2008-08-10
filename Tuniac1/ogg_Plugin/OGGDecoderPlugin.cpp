@@ -69,7 +69,7 @@ LPTSTR			COGGDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		COGGDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		COGGDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	COGGDecoder *	pDec = new COGGDecoder();
 

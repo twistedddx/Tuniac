@@ -77,7 +77,7 @@ LPTSTR			COFRDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 }
 
 
-IAudioSource *		COFRDecoderPlugin::CreateAudioSource(LPTSTR szSource)
+IAudioSource *		COFRDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFileIO * pFileIO)
 {
 	COFRDecoder *	pDec = new COFRDecoder();
 
