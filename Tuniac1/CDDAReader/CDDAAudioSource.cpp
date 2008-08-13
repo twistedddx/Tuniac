@@ -81,8 +81,8 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 	if(m_TOC.TrackData[iTrackIndex-1].Control&8) 
 		m_Channels = 4;
 
-	m_nStartSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
-	m_nStopSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nStartSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address) - 150;//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nStopSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex].Address) - 150;//MSF2UINT(m_TOC.TrackData[0].Address);
 	m_nCurrentSector	= 0;
 
 	return true;
@@ -151,6 +151,7 @@ bool CCDDAAudioSource::Read(PBYTE pbBuffer, LPDWORD pdwBytesRead)
 	if(b)
 	{
 		m_nCurrentSector++;
+		*pdwBytesRead = BytesReturned;
 		return true;
 	}
 
@@ -165,7 +166,7 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	if((m_nStartSector + m_nCurrentSector) > m_nStopSector)
 		return false;
 
-	if(Read(buffer, &ulNumIO) == S_OK)
+	if(Read(buffer, &ulNumIO))
 	{
 		TCHAR	tstr[1024];
 		wsprintf(tstr, TEXT("Read worked (%d bytes)\r\n"), ulNumIO);
