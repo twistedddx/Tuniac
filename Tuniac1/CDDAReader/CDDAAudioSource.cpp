@@ -137,7 +137,8 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 
 	while(pos >= 0 && pos < m_llLength && len > 0)
 	{
-		RAW_READ_INFO rawreadinfo;
+		RAW_READ_INFO rawreadinfo = {0};
+
 		rawreadinfo.SectorCount = 1;
 		rawreadinfo.TrackMode = CDDA;
 
@@ -147,9 +148,10 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 		rawreadinfo.DiskOffset.QuadPart = sector*2048;
 		DWORD BytesReturned = 0;
 
-		bool b = DeviceIoControl(
-					m_hDrive, IOCTL_CDROM_RAW_READ,
-					&rawreadinfo, sizeof(rawreadinfo),
+		bool b = DeviceIoControl(	m_hDrive, 
+									IOCTL_CDROM_RAW_READ,
+									&rawreadinfo, 
+									sizeof(rawreadinfo),
 					buff, RAW_SECTOR_SIZE,
 					&BytesReturned, 0);
 
