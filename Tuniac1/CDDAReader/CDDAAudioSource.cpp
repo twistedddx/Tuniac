@@ -8,7 +8,6 @@ CCDDAAudioSource::CCDDAAudioSource(void)
 {
 	m_hDrive = INVALID_HANDLE_VALUE;
 
-	m_llPosition = m_llLength = 0;
 
 	memset(&m_TOC, 0, sizeof(m_TOC));
 	m_nStartSector = m_nStopSector = 0;
@@ -82,10 +81,9 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 	if(m_TOC.TrackData[iTrackIndex-1].Control&8) 
 		m_Channels = 4;
 
-	m_nStartSector = MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
-	m_nStopSector = MSF2UINT(m_TOC.TrackData[iTrackIndex].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
-
-	m_llLength = (m_nStopSector-m_nStartSector)*RAW_SECTOR_SIZE;
+	m_nStartSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nStopSector		= MSF2UINT(m_TOC.TrackData[iTrackIndex].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nCurrentSector	= 0;
 
 	return true;
 }
@@ -102,17 +100,21 @@ void		CCDDAAudioSource::Destroy(void)
 
 bool		CCDDAAudioSource::GetLength(unsigned long * MS)
 {
-	*MS = (unsigned long)(((float)m_llLength / (float)((44100 * 2) * m_Channels)) * 1000.0f);
+	*MS = (unsigned long)(((float)((m_nStopSector - m_nStartSector) * RAW_SECTOR_SIZE)/ (float)((44100 * 2) * m_Channels)) * 1000.0f);
 	return true;
 }
 
 bool		CCDDAAudioSource::SetPosition(unsigned long * MS)
 {
+	/*
 	m_llPosition = (((float)((44100 * 2) * m_Channels)) / 1000.0f) * (*MS);
 
 	while(m_llPosition % (2 * m_Channels))
 		m_llPosition ++;
 	return true;
+	*/
+
+	return false;
 }
 
 bool		CCDDAAudioSource::SetState(unsigned long State)
@@ -127,49 +129,32 @@ bool		CCDDAAudioSource::GetFormat(unsigned long * SampleRate, unsigned long * Ch
 	return true;
 }
 
-HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign, LPDWORD pdwBytesRead)
+bool CCDDAAudioSource::Read(PBYTE pbBuffer, LPDWORD pdwBytesRead)
 {
-	BYTE buff[RAW_SECTOR_SIZE];
+	BYTE buff[RAW_SECTOR_SIZE]	= {0};
+	RAW_READ_INFO rawreadinfo	= {0};
+	unsigned long BytesReturned = 0;
 
-	PBYTE pbBufferOrg = pbBuffer;
-	LONGLONG pos = m_llPosition;
-	size_t len = (size_t)dwBytesToRead;
+	rawreadinfo.SectorCount			= 1;
+	rawreadinfo.TrackMode			= CDDA;
+	rawreadinfo.DiskOffset.QuadPart = (m_nStartSector + m_nCurrentSector)*2048;
 
-	while(pos >= 0 && pos < m_llLength && len > 0)
+	BOOL b = DeviceIoControl(	m_hDrive, 
+								IOCTL_CDROM_RAW_READ,
+								&rawreadinfo, 
+								sizeof(rawreadinfo),
+								pbBuffer, 
+								RAW_SECTOR_SIZE,
+								&BytesReturned, 
+								0);
+
+	if(b)
 	{
-		RAW_READ_INFO rawreadinfo = {0};
-
-		rawreadinfo.SectorCount = 1;
-		rawreadinfo.TrackMode = CDDA;
-
-		UINT sector = m_nStartSector + int(pos/RAW_SECTOR_SIZE);
-		__int64 offset = pos%RAW_SECTOR_SIZE;
-
-		rawreadinfo.DiskOffset.QuadPart = sector*2048;
-		DWORD BytesReturned = 0;
-
-		bool b = DeviceIoControl(	m_hDrive, 
-									IOCTL_CDROM_RAW_READ,
-									&rawreadinfo, 
-									sizeof(rawreadinfo),
-									buff, 
-									RAW_SECTOR_SIZE,
-									&BytesReturned, 
-									0);
-
-		size_t l = (size_t)min(min(len, RAW_SECTOR_SIZE - offset), m_llLength - pos);
-		memcpy(pbBuffer, &buff[offset], l);
-
-		pbBuffer += l;
-		pos += l;
-		len -= l;
+		m_nCurrentSector++;
+		return true;
 	}
 
-	if(pdwBytesRead) 
-		*pdwBytesRead = pbBuffer - pbBufferOrg;
-	m_llPosition += pbBuffer - pbBufferOrg;
-
-	return S_OK;
+	return false;
 }
 
 bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
@@ -177,19 +162,23 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	unsigned long	ulNumIO = 0;
 	BYTE			buffer[BUF_SIZE];
 
-	if(Read(buffer, BUF_SIZE, TRUE, &ulNumIO) == S_OK)
-	{
-		// uncomment this line and comment the one below it to go back to normal
-		//short * pData = (short*)buffer;
+	if((m_nStartSector + m_nCurrentSector) > m_nStopSector)
+		return false;
 
-		short * pData = (short*)(buffer+1);
+	if(Read(buffer, &ulNumIO) == S_OK)
+	{
+		TCHAR	tstr[1024];
+		wsprintf(tstr, TEXT("Read worked (%d bytes)\r\n"), ulNumIO);
+		OutputDebugString(tstr);
+
+		short * pData = (short*)buffer;
 
 		for(int x=0; x<(ulNumIO/2); x++)
 		{
 			m_Buffer[x] = (float)pData[x] / 16384.0f;
 		}
 		*ppBuffer	= m_Buffer;
-		*NumSamples =(ulNumIO/2);
+		*NumSamples = (ulNumIO/2);
 
 		return true;
 	}
@@ -198,3 +187,47 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 }
 
+/*
+	PBYTE pbBufferOrg = pbBuffer;
+	LONGLONG pos = m_llPosition;
+	size_t len = RAW_SECTOR_SIZE;
+
+	RAW_READ_INFO rawreadinfo = {0};
+
+	rawreadinfo.SectorCount = 1;
+	rawreadinfo.TrackMode = CDDA;
+
+	UINT sector = m_nStartSector + int(pos/RAW_SECTOR_SIZE);
+	__int64 offset = pos%RAW_SECTOR_SIZE;
+	rawreadinfo.DiskOffset.QuadPart = sector*2048;
+
+	DWORD BytesReturned = 0;
+
+	bool b = DeviceIoControl(	m_hDrive, 
+								IOCTL_CDROM_RAW_READ,
+								&rawreadinfo, 
+								sizeof(rawreadinfo),
+								buff, 
+								RAW_SECTOR_SIZE,
+								&BytesReturned, 
+								0);
+	if(!b)
+	{
+		TCHAR	tstr[1024];
+		wsprintf(tstr, TEXT("DeviceIoControl FAILED\r\n"));
+		OutputDebugString(tstr);
+		return (E_FAIL);
+	}
+
+	size_t l = (size_t)min(min(len, RAW_SECTOR_SIZE - offset), m_llLength - pos);
+	memcpy(pbBuffer, &buff[offset], l);
+
+
+	if(pdwBytesRead) 
+		*pdwBytesRead = pbBuffer - pbBufferOrg;
+	m_llPosition += pbBuffer - pbBufferOrg;
+
+
+	return S_OK;
+
+	*/

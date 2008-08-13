@@ -10,8 +10,6 @@ class CCDDAAudioSource :
 	public IAudioSource
 {
 protected:
-	LONGLONG		m_llPosition, 
-					m_llLength;
 
 	HANDLE			m_hDrive;
 	CDROM_TOC		m_TOC;
@@ -19,11 +17,13 @@ protected:
 					m_nStartSector, 
 					m_nStopSector;
 
+	UINT			m_nCurrentSector;
+
 	unsigned long	m_Channels;
 
 	float			m_Buffer[BUF_SIZE];
 
-	HRESULT Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign, LPDWORD pdwBytesRead);
+	bool Read(PBYTE pbBuffer, LPDWORD pdwBytesRead);
 
 
 public:
