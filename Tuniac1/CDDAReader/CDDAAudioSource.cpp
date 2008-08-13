@@ -26,7 +26,7 @@ CCDDAAudioSource::~CCDDAAudioSource(void)
 
 bool		CCDDAAudioSource::Open(LPTSTR szStream)
 {
-	TCHAR drive[32];
+	TCHAR drive[32] = {0};
 	int iTrackIndex;
 
 	StrCpy(	drive, TEXT("\\\\.\\"));
@@ -161,7 +161,8 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 		len -= l;
 	}
 
-	if(pdwBytesRead) *pdwBytesRead = pbBuffer - pbBufferOrg;
+	if(pdwBytesRead) 
+		*pdwBytesRead = pbBuffer - pbBufferOrg;
 	m_llPosition += pbBuffer - pbBufferOrg;
 
 	return S_OK;
@@ -169,21 +170,23 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 
 bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
+	unsigned long ulNumIO = 0;
 
-	if(Read(buffer, BUF_SIZE, TRUE, NULL) == S_OK)
+	if(Read(buffer, BUF_SIZE, TRUE, &ulNumIO) == S_OK)
 	{
 		short * pData = (short*)buffer;
 
-		for(int x=0; x<(BUF_SIZE/2); x++)
+		for(int x=0; x<(ulNumIO/2); x++)
 		{
 			m_Buffer[x] = (float)pData[x] / 16384.0f;
 		}
+		*ppBuffer	= m_Buffer;
+		*NumSamples =(ulNumIO/2);
+
+		return true;
 	}
 
-	*ppBuffer	= m_Buffer;
-	*NumSamples =(BUF_SIZE/2);
+	return false;
 
-
-	return true;
 }
 
