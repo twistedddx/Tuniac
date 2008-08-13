@@ -45,11 +45,12 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 		return(false);
 	}
 
+	/*
 	DWORD cbReturned;//discard results
 	PREVENT_MEDIA_REMOVAL pmr;
 	pmr.PreventMediaRemoval = TRUE;
 	DeviceIoControl(m_hDrive, IOCTL_STORAGE_MEDIA_REMOVAL, &pmr, sizeof(pmr), NULL, 0, &cbReturned, NULL);
-	
+	*/
 	iTrackIndex = _wtoi(&szStream[10]);
 
 	DWORD BytesReturned;
@@ -91,10 +92,12 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 
 void		CCDDAAudioSource::Destroy(void)
 {
+	/*
 	DWORD cbReturned;//discard results
 	PREVENT_MEDIA_REMOVAL pmr;
 	pmr.PreventMediaRemoval = false;
 	DeviceIoControl(m_hDrive, IOCTL_STORAGE_MEDIA_REMOVAL, &pmr, sizeof(pmr), NULL, 0, &cbReturned, NULL);
+*/
 	delete this;
 }
 
@@ -114,7 +117,14 @@ bool		CCDDAAudioSource::SetPosition(unsigned long * MS)
 	return true;
 	*/
 
-	return false;
+	// of this is the sample we need to seek to..
+	unsigned long ByteOffset = ((*MS) / 1000) * (44100 * m_Channels * 2);
+
+
+	m_nCurrentSector = SampleOffset / 2048;
+
+
+	return true;
 }
 
 bool		CCDDAAudioSource::SetState(unsigned long State)
@@ -178,6 +188,7 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		{
 			m_Buffer[x] = (float)pData[x] / 16384.0f;
 		}
+
 		*ppBuffer	= m_Buffer;
 		*NumSamples = (ulNumIO/2);
 
@@ -187,48 +198,3 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	return false;
 
 }
-
-/*
-	PBYTE pbBufferOrg = pbBuffer;
-	LONGLONG pos = m_llPosition;
-	size_t len = RAW_SECTOR_SIZE;
-
-	RAW_READ_INFO rawreadinfo = {0};
-
-	rawreadinfo.SectorCount = 1;
-	rawreadinfo.TrackMode = CDDA;
-
-	UINT sector = m_nStartSector + int(pos/RAW_SECTOR_SIZE);
-	__int64 offset = pos%RAW_SECTOR_SIZE;
-	rawreadinfo.DiskOffset.QuadPart = sector*2048;
-
-	DWORD BytesReturned = 0;
-
-	bool b = DeviceIoControl(	m_hDrive, 
-								IOCTL_CDROM_RAW_READ,
-								&rawreadinfo, 
-								sizeof(rawreadinfo),
-								buff, 
-								RAW_SECTOR_SIZE,
-								&BytesReturned, 
-								0);
-	if(!b)
-	{
-		TCHAR	tstr[1024];
-		wsprintf(tstr, TEXT("DeviceIoControl FAILED\r\n"));
-		OutputDebugString(tstr);
-		return (E_FAIL);
-	}
-
-	size_t l = (size_t)min(min(len, RAW_SECTOR_SIZE - offset), m_llLength - pos);
-	memcpy(pbBuffer, &buff[offset], l);
-
-
-	if(pdwBytesRead) 
-		*pdwBytesRead = pbBuffer - pbBufferOrg;
-	m_llPosition += pbBuffer - pbBufferOrg;
-
-
-	return S_OK;
-
-	*/
