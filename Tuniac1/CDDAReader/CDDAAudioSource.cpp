@@ -82,8 +82,8 @@ bool		CCDDAAudioSource::Open(LPTSTR szStream)
 	if(m_TOC.TrackData[iTrackIndex-1].Control&8) 
 		m_Channels = 4;
 
-	m_nStartSector = MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address) - 150;//MSF2UINT(m_TOC.TrackData[0].Address);
-	m_nStopSector = MSF2UINT(m_TOC.TrackData[iTrackIndex].Address) - 150;//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nStartSector = MSF2UINT(m_TOC.TrackData[iTrackIndex-1].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
+	m_nStopSector = MSF2UINT(m_TOC.TrackData[iTrackIndex].Address);//MSF2UINT(m_TOC.TrackData[0].Address);
 
 	m_llLength = (m_nStopSector-m_nStartSector)*RAW_SECTOR_SIZE;
 
@@ -152,8 +152,10 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 									IOCTL_CDROM_RAW_READ,
 									&rawreadinfo, 
 									sizeof(rawreadinfo),
-					buff, RAW_SECTOR_SIZE,
-					&BytesReturned, 0);
+									buff, 
+									RAW_SECTOR_SIZE,
+									&BytesReturned, 
+									0);
 
 		size_t l = (size_t)min(min(len, RAW_SECTOR_SIZE - offset), m_llLength - pos);
 		memcpy(pbBuffer, &buff[offset], l);
@@ -172,11 +174,15 @@ HRESULT CCDDAAudioSource::Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign,
 
 bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	unsigned long ulNumIO = 0;
+	unsigned long	ulNumIO = 0;
+	BYTE			buffer[BUF_SIZE];
 
 	if(Read(buffer, BUF_SIZE, TRUE, &ulNumIO) == S_OK)
 	{
-		short * pData = (short*)buffer;
+		// uncomment this line and comment the one below it to go back to normal
+		//short * pData = (short*)buffer;
+
+		short * pData = (short*)(buffer+1);
 
 		for(int x=0; x<(ulNumIO/2); x++)
 		{

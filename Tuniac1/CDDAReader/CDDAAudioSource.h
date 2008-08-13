@@ -22,7 +22,6 @@ protected:
 	unsigned long	m_Channels;
 
 	float			m_Buffer[BUF_SIZE];
-	BYTE			buffer[BUF_SIZE];
 
 	HRESULT Read(PBYTE pbBuffer, DWORD dwBytesToRead, BOOL bAlign, LPDWORD pdwBytesRead);
 
