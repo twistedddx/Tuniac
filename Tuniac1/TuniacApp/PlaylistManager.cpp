@@ -805,11 +805,19 @@ bool			CPlaylistManager::DeleteCDWithDriveLetter(char cDriveLetter)
 
 			m_CDPlaylists.RemoveAt(x);
 
+			/*
 			unsigned long VisItem = tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex();
 			if(VisItem > (1 + x))
 			{
 				tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(VisItem-1);
+				SetActivePlaylist(VisItem-1);
+
 			}
+			**/
+
+			tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
+			SetActivePlaylist(0);
+			m_LibraryPlaylist.RebuildPlaylist();
 
 			tuniacApp.m_SourceSelectorWindow->UpdateList();
 
