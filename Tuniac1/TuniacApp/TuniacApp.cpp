@@ -771,12 +771,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
-								//do we have a valid previous song, if not we have run out of songs(end of playlist?)
-								if(pPlaylist->Next())
+								//dont crossfade cdda
+								if(pPlaylist->GetPlaylistType() != PLAYLIST_TYPE_CD)
 								{
-									//play the current song
-									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-									if(pIPE)
+									//do we have a valid next song, if not we have run out of songs(end of playlist?)
+									if(pPlaylist->Next())
 									{
 										//play the song we got
 										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
@@ -799,29 +798,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							//crossfade would have triggered mixpointreached itself n seconds ago
 							// Core Audio will send this too. its up to us to decide what we want to do about it eh
-							if(!m_Preferences.CrossfadingEnabled())
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							if(!m_Preferences.CrossfadingEnabled() || pPlaylist->GetPlaylistType() == PLAYLIST_TYPE_CD)
 							{
-								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
 								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
 								if(pPlaylist->Next())
 								{
-									//play the current song
+									//play the song we got
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										//play the song we got
-										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-										if(pIPE)
+										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
-											if(CCoreAudio::Instance()->SetSource(pIPE))
-											{
-												//SetupReplayGain(pIPE);
-												CCoreAudio::Instance()->Play();
-											}
-											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+											//SetupReplayGain(pIPE);
+											CCoreAudio::Instance()->Play();
 										}
+										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 									}
 								}
 								//else
