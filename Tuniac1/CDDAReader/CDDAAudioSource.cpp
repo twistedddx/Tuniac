@@ -121,7 +121,7 @@ bool		CCDDAAudioSource::SetPosition(unsigned long * MS)
 	unsigned long ByteOffset = ((*MS) / 1000) * (44100 * m_Channels * 2);
 
 
-	m_nCurrentSector = SampleOffset / 2048;
+	m_nCurrentSector = ByteOffset / 2048;
 
 
 	return true;
