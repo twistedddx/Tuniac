@@ -56,7 +56,7 @@ bool CAudioCDPlaylist::GetCDInfo(void)
 		{
 			if((m_TOC.TrackData[x].Control & 0x4) == 0)
 			{
-				LibraryEntry	libEnt;
+				LibraryEntry	libEnt = {0};
 
 				libEnt.dwTrack[0]			= (unsigned short)x;
 				libEnt.dwTrack[1]			= m_TOC.LastTrack;
