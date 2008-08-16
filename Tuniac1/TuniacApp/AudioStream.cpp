@@ -81,7 +81,8 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput)
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
 
-	fAmpGain = pow(10, 2 / 20.0);
+	// when replaygain is enabled, -6db non replaygain files
+	fAmpGain = pow(10, -6 / 20.0);
 	//replayGainPreamp = 
 
 
@@ -190,27 +191,22 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
-
 			// WE NEED TO APPLY VOLUME AND REPLAYGAIN NO MATTER WHAT ANYWAY SO DO THEM HERE!!!
 			__m128 XMM0;
 			__m128 XMM1 = _mm_load1_ps(&fVolumeScale);
-			__m128 XMM2 = _mm_load1_ps(&fAmpGain);
-
-			__m128 XMM3;
+			__m128 XMM2;
 
 			if(bUseAlbumGain && bAlbumHasGain)
 			{
-				XMM3 = _mm_load1_ps(&fReplayGainAlbum);
+				XMM2 = _mm_load1_ps(&fReplayGainAlbum);
 			}
 			else if(bTrackHasGain && !bUseAlbumGain)
 			{
-				XMM3 = _mm_load1_ps(&fReplayGainTrack);
+				XMM2 = _mm_load1_ps(&fReplayGainTrack);
 			}
 			else
 			{
-				float t = 1.0;
-				XMM3 = _mm_load1_ps(&t);
-				//XMM2 = _mm_load1_ps(&t);
+				XMM2 = _mm_load1_ps(&fAmpGain);
 			}
 			
 
@@ -219,14 +215,12 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				// load XMM0 with 4 samples from the audio buffer
 				XMM0 = _mm_load_ps(&pAudioBuffer[x]);
 
-				// if enabled
+				// if replaygain enabled in prefs
 				if(bReplayGain)
 				{
-					// apply +6db gain
+					// apply -6db gain to files without replaygain data
+					// or apply whichever value we loaded into XMM3 (track or album)
 					XMM0 = _mm_mul_ps(XMM0, XMM2);
-
-					// apply whichever value we loaded into XMM3 (track or album)
-					XMM0 = _mm_mul_ps(XMM0, XMM3);
 				}
 
 				// apply volume
