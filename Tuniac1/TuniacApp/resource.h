@@ -169,9 +169,11 @@
 #define IDC_REPLAYGAIN                  1148
 #define IDC_CHECK2                      1149
 #define IDC_REPLAYGAINALBUM             1149
+#define IDC_GENERAL_ARTONSELECTION      1149
 #define IDC_SLIDER1                     1150
 #define IDC_ABOUT_BUILD_TEXT            1151
 #define IDC_GENERAL_SHOWALBUMART        1151
+#define IDC_GENERAL_ALBUMARTBOX         1152
 #define ID_FILE_EXIT                    40001
 #define ID_FILE_NEWPLAYLIST_NORMALPLAYLIST 40002
 #define ID_FILE_NEWPLAYLIST_SMARTPLAYLIST 40003
@@ -251,7 +253,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         40149
-#define _APS_NEXT_CONTROL_VALUE         1152
+#define _APS_NEXT_CONTROL_VALUE         1153
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

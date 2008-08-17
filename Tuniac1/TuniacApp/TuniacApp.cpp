@@ -239,7 +239,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	cds.lpData = szCommandLine;
 	SendMessage(m_hWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
 
-	SetArt();
+	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 
 	return true;
 }
@@ -849,7 +849,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//Coreaudio has was called to setsource
 					case NOTIFY_COREAUDIOTRANSITIONTO:
 						{
-							SetArt();
+							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 						}
 
 					//playlistmanager changed it's view
@@ -2245,13 +2245,8 @@ void	CTuniacApp::UpdateQueues(void)
 	}
 }
 
-
-
-bool	CTuniacApp::SetArt(void)
+bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 {
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 	if(pIPE)
 	{
 		bool bArtSuccess = false;
