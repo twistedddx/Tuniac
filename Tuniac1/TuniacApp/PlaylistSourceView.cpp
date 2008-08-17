@@ -1488,6 +1488,12 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							m_iLastClickedItem = lpnmitem->iItem;
 							// we need to remember this somewhere so that when the inplace editing begins we can edit the correct subitem
 							m_iLastClickedSubitem = lpnmitem->iSubItem;
+							if(tuniacApp.m_Preferences.GetArtOnSelection())
+							{
+								IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(lpnmitem->iItem);
+								if(pIPE)
+									tuniacApp.SetArt(pIPE);
+							}
 						}
 						break;
 

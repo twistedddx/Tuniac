@@ -36,6 +36,7 @@
 #define PAUSEONLOCK				TEXT("PauseOnLock")
 #define PAUSEONSCREENSAVE		TEXT("PauseOnScreensave")
 #define SHOWALBUMART			TEXT("ShowAlbumArt")
+#define ARTONSELECTION			TEXT("ArtOnSelection")
 #define FOLLOWCURRENTSONG		TEXT("FollowCurrentSong")
 #define SMARTSORTING			TEXT("SmartSorting")
 
@@ -131,6 +132,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_FUTURECOUNT), 0);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWALBUMART, BM_SETCHECK, pPrefs->m_ShowAlbumArt ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_ARTONSELECTION, BM_SETCHECK, pPrefs->m_ArtOnSelection ? BST_CHECKED : BST_UNCHECKED, 0);
 
 
 			}
@@ -228,6 +230,14 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(State);
 						}
 						break;
+
+					case IDC_GENERAL_ARTONSELECTION:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_ARTONSELECTION, BM_GETCHECK, 0, 0);
+							pPrefs->m_ArtOnSelection = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
 				}
 			}
 			break;
@@ -1140,6 +1150,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_PauseOnLock				= FALSE;
 	m_PauseOnScreensave			= FALSE;
 	m_ShowAlbumArt				= TRUE;
+	m_ArtOnSelection			= FALSE;
 	m_FollowCurrentSong			= TRUE;
 	m_SmartSorting				= TRUE;
 	wnsprintf(m_WindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
@@ -1303,6 +1314,15 @@ bool CPreferences::LoadPreferences(void)
 							NULL,
 							&Type,
 							(LPBYTE)&m_ShowAlbumArt,
+							&Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							ARTONSELECTION,
+							NULL,
+							&Type,
+							(LPBYTE)&m_ArtOnSelection,
 							&Size);
 
 		Size = sizeof(int);
@@ -1595,6 +1615,15 @@ bool CPreferences::SavePreferences(void)
 						0,
 						Type,
 						(LPBYTE)&m_ShowAlbumArt, 
+						Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey, 
+						ARTONSELECTION, 
+						0,
+						Type,
+						(LPBYTE)&m_ArtOnSelection, 
 						Size);
 
 		Size = sizeof(int);
@@ -2267,6 +2296,11 @@ bool		CPreferences::GetPauseOnScreensave(void)
 bool		CPreferences::GetShowAlbumArt(void)
 {
 	return m_ShowAlbumArt == TRUE ? true : false;
+}
+
+bool		CPreferences::GetArtOnSelection(void)
+{
+	return m_ArtOnSelection == TRUE ? true : false;
 }
 
 LPTSTR		CPreferences::GetWindowFormatString(void)
