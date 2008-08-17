@@ -813,7 +813,7 @@ bool			CPlaylistManager::DeleteCDWithDriveLetter(char cDriveLetter)
 				SetActivePlaylist(VisItem-1);
 
 			}
-			**/
+			*/
 
 			tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 			SetActivePlaylist(0);

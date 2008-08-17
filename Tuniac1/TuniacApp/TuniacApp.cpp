@@ -766,25 +766,25 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//end of song, or start of crossfade. Next Song needed
 					case NOTIFY_MIXPOINTREACHED:
 						{
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+							//Check if we are allowed to crossfade eg dont crossfade cd playlist
+							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
+								break;
+
 							// we only care about this if crossfading is enabled, Core Audio will notify us anyway, its up to us to ignore it!!!
 							if(m_Preferences.CrossfadingEnabled())
 							{
-								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-								//dont crossfade cdda
-								if(pPlaylist->GetPlaylistType() != PLAYLIST_TYPE_CD)
+								//do we have a valid next song, if not we have run out of songs(end of playlist?)
+								if(pPlaylist->Next())
 								{
-									//do we have a valid next song, if not we have run out of songs(end of playlist?)
-									if(pPlaylist->Next())
+									//play the song we got
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
 									{
-										//play the song we got
-										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-										if(pIPE)
-										{
-											CCoreAudio::Instance()->TransitionTo(pIPE);
-											//	CCoreAudio::Instance()->Play();
-											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
-										}
+										CCoreAudio::Instance()->TransitionTo(pIPE);
+										//	CCoreAudio::Instance()->Play();
+										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 									}
 								}
 								//else
@@ -799,7 +799,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//crossfade would have triggered mixpointreached itself n seconds ago
 							// Core Audio will send this too. its up to us to decide what we want to do about it eh
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-							if(!m_Preferences.CrossfadingEnabled() || pPlaylist->GetPlaylistType() == PLAYLIST_TYPE_CD)
+							if(!m_Preferences.CrossfadingEnabled() || pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
 							{
 								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
@@ -843,10 +843,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
 
-							SetArt();
-
 						}
 						break;
+
+					//Coreaudio has was called to setsource
+					case NOTIFY_COREAUDIOTRANSITIONTO:
+						{
+							SetArt();
+						}
 
 					//playlistmanager changed it's view
 					case NOTIFY_PLAYLISTSCHANGED:
@@ -1033,10 +1037,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										m_PlaylistManager.SetActivePlaylist(0);
 										if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 										{
-											IPlaylistEX * pPlaylist = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
-											pPlaylist->SetActiveFilteredIndex(ulMLOldCount);
-											IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+											pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
+											IPlaylistEntry * pEntry = pPlaylistEX->GetActiveItem();
 											CCoreAudio::Instance()->SetSource(pEntry);
 											//SetupReplayGain(pEntry);
 										}
@@ -1124,16 +1128,18 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(wCmdID >= FUTUREMENU_BASE && wCmdID <= (FUTUREMENU_BASE + m_Preferences.GetFutureListSize()))
 				{
 					unsigned long ulIndex = m_FutureMenu[wCmdID - FUTUREMENU_BASE];
-					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-					IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-					IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
-
-					if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
+					if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 					{
-						//SetupReplayGain(pEntry);
-						CCoreAudio::Instance()->Play();
-						pPlaylistEX->SetActiveFilteredIndex(ulIndex);
-						m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+						IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+						IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
+
+						if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
+						{
+							//SetupReplayGain(pEntry);
+							CCoreAudio::Instance()->Play();
+							pPlaylistEX->SetActiveFilteredIndex(ulIndex);
+							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+						}
 					}
 				}
 
@@ -1311,14 +1317,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							if(m_SourceSelectorWindow->GetVisiblePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
-								IPlaylistEX * pPlaylist = (IPlaylistEX *)m_SourceSelectorWindow->GetVisiblePlaylist();
+								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_SourceSelectorWindow->GetVisiblePlaylist();
 								IndexArray indexArray;
 								EntryArray exportArray;
 								if(m_SourceSelectorWindow->m_PlaylistSourceView->GetSelectedIndexes(indexArray))
 								{
 									for(unsigned long i = 0; i < indexArray.GetCount(); i++)
 									{
-										IPlaylistEntry * pIPE = pPlaylist->GetItemAtFilteredIndex(indexArray[i]);
+										IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(indexArray[i]);
 										if(pIPE)
 											exportArray.AddTail(pIPE);
 									}
@@ -2092,10 +2098,12 @@ IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 
 	if(iFromCurrent >= 0 && iFromCurrent < tuniacApp.m_FutureMenu.GetCount())
 	{
-		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[iFromCurrent]);
-		return pEntry;
+		if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+		{
+			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[iFromCurrent]);
+			return pEntry;
+		}
 	}
 	return NULL;
 }
@@ -2104,12 +2112,10 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 {
 	tuniacApp.m_FutureMenu.RemoveAll();
 
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+	if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
 		bool bFollowSelected = 1;
 		bool bFollowQueue = 1;
 
@@ -2119,6 +2125,7 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 
 		//getactiveindex fails if filtered out due to INVALID_PLAYLIST_INDEX
 		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
+
 		if(ulIndex == INVALID_PLAYLIST_INDEX)
 		{
 			if(pPlaylistEX->GetNumItems() > 0)
@@ -2171,18 +2178,20 @@ void	CTuniacApp::RebuildFutureMenu(void)
 		memset(szDetail, L'\0', 112);
 		memset(szTime, L'\0', 16);
 
-		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[i]);
+		if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+		{
+			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[i]);
 
-		//format info of file
-		FormatSongInfo(szDetail, 52, pEntry, m_Preferences.GetListFormatString(), true);
-		EscapeMenuItemString(szDetail, szItem, 52);
-		FormatSongInfo(szTime, 12, pEntry, TEXT("\t[@I]"), true);
-		StringCbCatN(szItem, 128, szTime, 24);
+			//format info of file
+			FormatSongInfo(szDetail, 52, pEntry, m_Preferences.GetListFormatString(), true);
+			EscapeMenuItemString(szDetail, szItem, 52);
+			FormatSongInfo(szTime, 12, pEntry, TEXT("\t[@I]"), true);
+			StringCbCatN(szItem, 128, szTime, 24);
 
-		//add menu item
-		AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);
+			//add menu item
+			AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);
+		}
 	}
 }
 
@@ -2195,13 +2204,14 @@ HMENU	CTuniacApp::GetFutureMenu(void)
 //if queued in both queues it will get removed from playselected
 void	CTuniacApp::UpdateQueues(void)
 {
-	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-	if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-	{
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
 
+
+	if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+	{
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+
+		IPlaylistEntry * pIPE = pPlaylistEX->GetActiveItem();
+		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
 
 		//add history
 		if (pIPE)

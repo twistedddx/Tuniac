@@ -130,7 +130,7 @@ unsigned long		CAudioCDPlaylist::GetNumCDTracks(void)
 
 unsigned long		CAudioCDPlaylist::GetFlags(void)
 {
-	return PLAYLIST_FLAGS_CANRENAME;
+	return PLAYLIST_FLAGS_CANRENAME | PLAYLIST_FLAGS_DONTCROSSFADE;
 }
 
 unsigned long		CAudioCDPlaylist::GetPlaylistType(void)

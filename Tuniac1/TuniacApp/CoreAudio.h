@@ -32,6 +32,7 @@
 #define NOTIFY_PLAYBACKFINISHED			1
 #define NOTIFY_PLAYBACKSTARTED			2
 #define NOTIFY_COREAUDIORESET			3
+#define NOTIFY_COREAUDIOTRANSITIONTO	4
 
 class CCoreAudio : 
 	public CSingleton<CCoreAudio>,

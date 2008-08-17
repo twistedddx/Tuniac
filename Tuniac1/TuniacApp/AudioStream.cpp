@@ -219,7 +219,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				if(bReplayGain)
 				{
 					// apply -6db gain to files without replaygain data
-					// or apply whichever value we loaded into XMM3 (track or album)
+					// or apply whichever value we loaded into XMM2 (track or album)
 					XMM0 = _mm_mul_ps(XMM0, XMM2);
 				}
 
