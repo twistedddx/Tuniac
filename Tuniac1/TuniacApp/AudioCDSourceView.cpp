@@ -186,6 +186,20 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 
 				switch(lpNotify->code)
 				{
+					//click an item in playlist
+					case NM_CLICK:
+						{
+
+							if(tuniacApp.m_Preferences.GetArtOnSelection())
+							{
+								LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetItemAtIndex(lpnmitem->iItem);
+								if(pIPE)
+									tuniacApp.SetArt(pIPE);
+							}
+						}
+						break;
+
 					case NM_DBLCLK:
 						{
 							LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
