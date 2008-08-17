@@ -540,7 +540,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					GetClientRect(hDlg, &r);
 					tuniacApp.m_TestArt.Draw(	hDC, 
 											2, 
-											r.bottom - m_ulSeparatorX-2,
+											r.bottom - m_ulAlbumArtX-2,
 											m_ulSeparatorX-2,
 											m_ulSeparatorX-2);
 				}
@@ -553,6 +553,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 			{
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
+
+				if(m_ulAlbumArtX)
+					m_ulAlbumArtX = m_ulSeparatorX;
 
 				unsigned long slSrcHeight = Height - m_ulAlbumArtX;
 
