@@ -2303,6 +2303,18 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 
 		return bArtSuccess;
 	}
+	else
+	{
+		TCHAR szURL[_MAX_PATH];
+		GetModuleFileName(NULL, szURL, _MAX_PATH);
+		PathRemoveFileSpec(szURL);
+		PathAddBackslash(szURL);
+		StrCat(szURL, TEXT("NoAlbumArt.jpg"));
+		m_TestArt.SetSource(szURL);
+	}
+
+	m_SourceSelectorWindow->Refresh();
+
 	return false;
 }
 /*
