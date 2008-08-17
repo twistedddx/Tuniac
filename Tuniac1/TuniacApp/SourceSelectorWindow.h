@@ -40,6 +40,7 @@ protected:
 	HMENU						m_hDragMenu;
 
 	unsigned long				m_ulSeparatorX;
+	unsigned long				m_ulAlbumArtX;
 	unsigned long				m_ulSeparatorXOld;
 
 	bool						m_bTrackingDrag;
@@ -98,6 +99,8 @@ public:
 
 	bool			Show(void);
 	bool			Hide(void);
+
+	void			ToggleAlbumArt(bool bEnabled);
 
 	bool			SetPos(int x, int y, int w, int h);
 

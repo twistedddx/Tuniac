@@ -85,6 +85,7 @@ protected:
 	BOOL		m_AlwaysOnTop;
 	BOOL		m_PauseOnLock;
 	BOOL		m_PauseOnScreensave;
+	BOOL		m_ShowAlbumArt;
 	BOOL		m_FollowCurrentSong;
 	BOOL		m_SmartSorting;
 	BOOL		m_ShuffleState;
@@ -190,6 +191,8 @@ public:
 
 	bool		GetPauseOnLock(void);
 	bool		GetPauseOnScreensave(void);
+
+	bool		GetShowAlbumArt(void);
 
 	LPTSTR		GetWindowFormatString(void);
 	LPTSTR		GetPluginFormatString(void);

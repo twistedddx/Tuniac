@@ -46,6 +46,7 @@ CSourceSelectorWindow::CSourceSelectorWindow(void) :
 	m_ulVisiblePlaylistIndex(-1)
 {
 	m_ulSeparatorX = tuniacApp.m_Preferences.GetSourceViewDividerX();
+	ToggleAlbumArt(tuniacApp.m_Preferences.GetShowAlbumArt());
 
 	ISourceView	* t;
 
@@ -133,6 +134,18 @@ bool			CSourceSelectorWindow::Hide(void)
 	}
 
 	return false;
+}
+
+void			CSourceSelectorWindow::ToggleAlbumArt(bool bEnabled)
+{
+	if(bEnabled)
+		m_ulAlbumArtX = tuniacApp.m_Preferences.GetSourceViewDividerX();
+	else
+		m_ulAlbumArtX = 0;
+
+	RECT		rcWindowRect;
+	GetClientRect(m_hSourceWnd, &rcWindowRect);
+	SendMessage(m_hSourceWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
 }
 
 bool			CSourceSelectorWindow::SetPos(int x, int y, int w, int h)
@@ -522,13 +535,15 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				doubleBuffer.End(hDC);
 
-				GetClientRect(hDlg, &r);
-				tuniacApp.m_TestArt.Draw(	hDC, 
+				if(m_ulAlbumArtX)
+				{
+					GetClientRect(hDlg, &r);
+					tuniacApp.m_TestArt.Draw(	hDC, 
 											2, 
 											r.bottom - m_ulSeparatorX-2,
 											m_ulSeparatorX-2,
 											m_ulSeparatorX-2);
-
+				}
 				EndPaint(hDlg, &ps);
 
 			}
@@ -539,7 +554,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
-				unsigned long slSrcHeight = Height - m_ulSeparatorX;
+				unsigned long slSrcHeight = Height - m_ulAlbumArtX;
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCESELECTOR),	
 							2,

@@ -172,7 +172,9 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 		CAutoLock	t(&m_Lock);
 		CheckOldStreams();
 	}
-	
+
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIOTRANSITIONTO, NULL);
+
 	LPTSTR szSource = (LPTSTR)pEntry->GetField(FIELD_URL);
 
 	// BITS YOU STUPID COCKFACE
@@ -221,6 +223,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 					if(bShoudStart)
 						pStream->Start();
+
 					return true;
 				}
 				else
@@ -504,18 +507,27 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 	if(pSource == NULL)
 		return;
 	
-	for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
-	{
-		/*
-		if(m_Streams[0]->m_pSource == pSource)
-		{
-			m_Streams[0]->m_pEntry->SetField(ulFieldID, szTitle);
-			tuniacApp.m_SourceSelectorWindow->UpdateView();
-			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
-			break;
-		}
-		*/
-	}
+	//for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
+	//{
+		//if(m_Streams[i]->m_pSource == pSource)
+		//{
+	//this "works" but needs to really be done via a callback system
+	//we need a way for coreaudio to tell tuniac what file it wants updated
+	//we use to have pEntry, maybe we could tell tuniac the url?
+	/*
+			IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+
+			IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+			if(pIPE)
+			{
+				pIPE->SetField(ulFieldID, szTitle);
+				tuniacApp.m_SourceSelectorWindow->UpdateView();
+				tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+				//break;
+			}
+			*/
+		//}
+	//}
 }
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)

@@ -608,9 +608,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					{
 						DrawText(PS.hdc, m_pPlaylist->GetPlaylistName(), lstrlen(m_pPlaylist->GetPlaylistName()), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 					}
-					else
-					{
-					}
 
 					EndPaint(hDlg, &PS);
 				}
@@ -1965,11 +1962,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 {
-	IPlaylist * t = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex);
-
-	if(t->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+	if (tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex)->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
-		m_pPlaylist = (IPlaylistEX*)t;
+		m_pPlaylist = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex);
 		m_ulActivePlaylistIndex = ulPlaylistIndex;
 		if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
 		{
