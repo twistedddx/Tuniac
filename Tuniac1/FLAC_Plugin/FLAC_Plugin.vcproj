@@ -25,6 +25,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,14 +44,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -64,11 +61,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib flaclib\debug\libFLAC++_static.lib"
-				LinkIncremental="2"
+				AdditionalDependencies="shlwapi.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				SubSystem="2"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -76,7 +73,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -100,6 +96,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -119,14 +116,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -140,11 +133,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib flaclib\release\libFLAC++_static64.lib flaclib\release\libFLAC_static64.lib flaclib\release\ogg_static64.lib"
-				LinkIncremental="2"
+				AdditionalDependencies="shlwapi.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				SubSystem="2"
-				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -152,7 +145,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -195,18 +187,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;FLAC__NO_DLL"
 				EnableEnhancedInstructionSet="1"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -220,23 +207,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="0"
-				IgnoreDefaultLibraryNames=""
-				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
-				ErrorReporting="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -260,6 +241,8 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
+			ManagedExtensions="0"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -279,18 +262,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp;flaclib/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FLAC__NO_DLL"
-				EnableEnhancedInstructionSet="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -304,15 +281,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="0"
-				GenerateDebugInformation="false"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
-				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -486,11 +459,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ogg_SDK\ogg_static.lib"
+					RelativePath=".\flaclib\release\ogg_static.lib"
 					>
 				</File>
 				<File
-					RelativePath="..\ogg_SDK\ogg_static64.lib"
+					RelativePath=".\flaclib\release\ogg_static64.lib"
 					>
 				</File>
 			</Filter>
