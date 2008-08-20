@@ -169,16 +169,16 @@ public:
 
 	bool				FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState);
 	bool				EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned int iDestSize);
-	bool				DoSoftPause(void);
 
 	HMENU				GetFutureMenu(void);
-
 	IPlaylistEntry *	GetFuturePlaylistEntry(int iFromCurrent);
 	void				BuildFuturePlaylistArray(void);
 	void				RebuildFutureMenu(void);
+
+	void				UpdateState(void);
+	void				UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID);
 	void				UpdateQueues(void);
+	bool				DoSoftPause(void);
+
 	bool				SetArt(IPlaylistEntry * pIPE);
-	//void				SetupReplayGain(IPlaylistEntry * pIPE);
-
-
 };

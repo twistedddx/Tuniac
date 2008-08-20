@@ -92,7 +92,6 @@ unsigned long	CMSNInfo::ThreadProc(void)
 			switch(msg.message)
 			{
 				case PLUGINNOTIFY_SONGCHANGE:
-				case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 				case PLUGINNOTIFY_SONGINFOCHANGE:
 					{
 						BOOL bShow = TRUE;
@@ -148,7 +147,7 @@ unsigned long	CMSNInfo::ThreadProc(void)
 
 bool			CMSNInfo::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("MSN Info Plugin for Tuniac.\r\nBy Bits & Blur, 2005-2008.\r\n\r\nWill update your MSN Messanger (v7 and above) info with the current song."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("MSN Info Plugin for Tuniac.\r\nBy Bits & Blur, 2005-2008.\r\n\r\nWill update your MSN Messenger (v7 and above) info with the current song."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

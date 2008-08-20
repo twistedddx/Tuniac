@@ -140,7 +140,6 @@ bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 	{
 		if(CCoreAudio::Instance()->SetSource(pIPE))
 		{
-//			tuniacApp.SetupReplayGain(pIPE);
 			bOK = true;
 			//SetActiveByEntry will fail if the played song is filtered out
 			//this in turn means the active song for infomational stuff never changed

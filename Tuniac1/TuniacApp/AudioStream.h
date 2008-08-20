@@ -45,6 +45,7 @@ public:
 	IAudioSource		*				m_pSource;
 	CAudioOutput		*				m_Output;
 
+	LPTSTR								szURL;
 
 	CAudioPacketizer					m_Packetizer;
 
@@ -105,6 +106,8 @@ public:
 	void			EnableReplayGain(bool bEnable = true);
 	bool			SetReplayGainScale(float trackscale, float albumscale);
 	void			UseAlbumGain(bool bUse);
+
+	void			SetURL(LPTSTR	szSource);
 
 	bool			IsFinished(void);
 

@@ -173,16 +173,11 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 		CheckOldStreams();
 	}
 
-	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIOTRANSITIONTO, NULL);
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
 
 	LPTSTR szSource = (LPTSTR)pEntry->GetField(FIELD_URL);
-
-	// BITS YOU STUPID COCKFACE
-	// REPLAY GAIN STUFF GOES HERE!!!!!!!!!!!!!!!!!!
-	
 	float *fReplayGainAlbum = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
 	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_TRACK_GAIN);
-	
 
 	for(unsigned long x=0; x<m_AudioSources.GetCount(); x++)
 	{
@@ -202,14 +197,11 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					CAutoLock	t(&m_Lock);
 
 					bool bShoudStart = false;
-					if(m_Streams.GetCount())
+					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
 					{
-						for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
-						{
-							m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
-						}
-						pStream->FadeIn(m_CrossfadeTimeMS);
-						bShoudStart = true;
+						m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
+					pStream->FadeIn(m_CrossfadeTimeMS);
+					bShoudStart = true;
 					}
 
 					pStream->SetVolumeScale(m_fVolume);
@@ -218,6 +210,8 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					pStream->EnableReplayGain(m_bReplayGainEnabled);
 					pStream->UseAlbumGain(m_bUseAlbumGain);
 					pStream->SetReplayGainScale(*fReplayGainTrack, *fReplayGainAlbum);
+
+					pStream->SetURL(szSource);
 
 					m_Streams.AddTail(pStream);
 
@@ -507,27 +501,13 @@ void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsig
 	if(pSource == NULL)
 		return;
 	
-	//for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
-	//{
-		//if(m_Streams[i]->m_pSource == pSource)
-		//{
-	//this "works" but needs to really be done via a callback system
-	//we need a way for coreaudio to tell tuniac what file it wants updated
-	//we use to have pEntry, maybe we could tell tuniac the url?
-	/*
-			IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-
-			IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-			if(pIPE)
-			{
-				pIPE->SetField(ulFieldID, szTitle);
-				tuniacApp.m_SourceSelectorWindow->UpdateView();
-				tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
-				//break;
-			}
-			*/
-		//}
-	//}
+	for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
+	{
+		if(m_Streams[i]->m_pSource == pSource)
+		{
+			tuniacApp.UpdateStreamTitle(m_Streams[i]->szURL, szTitle, ulFieldID);
+		}
+	}
 }
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)
@@ -559,7 +539,7 @@ void CCoreAudio::OnCriticalError(HRESULT Error)
 		default:
 		case XAUDIO2_E_DEVICE_INVALIDATED:
 			{
-				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIORESET, 0);
+				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
 			}
 			break;
 
