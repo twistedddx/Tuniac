@@ -23,9 +23,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			>
 			<Tool
@@ -42,27 +39,13 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/TuniacApp.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="1"
-				StructMemberAlignment="0"
-				BufferSecurityCheck="true"
 				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="0"
-				UsePrecompiledHeader="0"
-				BrowseInformation="1"
-				WarningLevel="3"
+				WarningLevel="1"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -79,14 +62,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
-				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
-				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -116,9 +95,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			>
 			<Tool
@@ -135,24 +111,14 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/TuniacApp.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				BrowseInformation="1"
-				WarningLevel="3"
-				DebugInformationFormat="4"
+				WarningLevel="1"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -168,25 +134,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
-				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
-				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
-				GenerateMapFile="true"
-				MapExports="true"
 				SubSystem="2"
 				TargetMachine="17"
-				CLRThreadAttribute="0"
-				CLRImageType="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -230,8 +188,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
 				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="false"
 				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
@@ -249,12 +212,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
 				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
-				SetChecksum="true"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -284,8 +242,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -303,26 +259,16 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Release/TuniacApp.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=""
+				FavorSizeOrSpeed="1"
 				PreprocessorDefinitions="_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
-				EnableEnhancedInstructionSet="2"
-				UsePrecompiledHeader="0"
-				BrowseInformation="0"
 				WarningLevel="1"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -339,18 +285,11 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
 				SuppressStartupBanner="true"
-				GenerateDebugInformation="false"
-				GenerateMapFile="false"
-				MapExports="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				RandomizedBaseAddress="0"
-				FixedBaseAddress="0"
-				DataExecutionPrevention="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
-				CLRThreadAttribute="0"
 			/>
 			<Tool
 				Name="VCALinkTool"

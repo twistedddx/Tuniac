@@ -24,7 +24,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
@@ -45,20 +44,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				EnableIntrinsicFunctions="false"
-				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
-				StringPooling="false"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
-				EnableEnhancedInstructionSet="0"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -72,17 +61,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				FixedBaseAddress="0"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -112,7 +95,6 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
@@ -134,19 +116,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				EnableIntrinsicFunctions="false"
-				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				StringPooling="false"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -160,15 +133,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="libs"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				FixedBaseAddress="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -222,10 +191,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
-				StringPooling="false"
 				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
@@ -240,14 +207,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				AdditionalLibraryDirectories=""
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
-				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -303,15 +266,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="false"
-				EnableEnhancedInstructionSet="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -324,19 +280,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="0"
-				AdditionalLibraryDirectories="libs"
-				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="0"
-				FixedBaseAddress="0"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool

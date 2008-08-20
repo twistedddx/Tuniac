@@ -23,8 +23,8 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\importexport"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\importexport"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,17 +43,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				StringPooling="false"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				RuntimeLibrary="1"
-				EnableEnhancedInstructionSet="0"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -69,14 +62,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
-				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -106,8 +94,8 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\importexport"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\importexport"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -127,15 +115,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -151,11 +134,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
+				AssemblyDebug="1"
 				SubSystem="2"
-				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
@@ -185,8 +166,8 @@
 			OutputDirectory="..\$(PlatformName)\$(ConfigurationName)\importexport"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\importexport"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -209,16 +190,9 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="false"
-				RuntimeLibrary="0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
 				EnableEnhancedInstructionSet="1"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -232,16 +206,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="0"
-				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
-				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool
@@ -272,6 +240,8 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\importexport"
 			ConfigurationType="2"
 			CharacterSet="1"
+			ManagedExtensions="0"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -295,15 +265,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="false"
-				EnableEnhancedInstructionSet="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -318,15 +281,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				LinkIncremental="0"
-				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
-				ImportLibrary=""
 				TargetMachine="17"
 			/>
 			<Tool
