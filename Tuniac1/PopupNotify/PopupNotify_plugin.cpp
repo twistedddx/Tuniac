@@ -312,7 +312,6 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 		case WM_HOTKEY:
 		case PLUGINNOTIFY_SONGCHANGE:
-		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 			{
 				KillTimer(m_hWnd, ID_TIMER_HIDE);
 				KillTimer(m_hWnd, ID_TIMER_FADE);

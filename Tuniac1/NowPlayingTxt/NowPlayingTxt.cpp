@@ -100,7 +100,6 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 			{
 
 				case PLUGINNOTIFY_SONGCHANGE:
-				case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 				case PLUGINNOTIFY_SONGINFOCHANGE:
 					{
 						TCHAR szSongW[512];

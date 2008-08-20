@@ -150,6 +150,11 @@ bool			CAudioStream::SetVolumeScale(float scale)
 	return true;
 }
 
+void			CAudioStream::SetURL(LPTSTR	szSource)
+{
+	szURL = szSource;
+}
+
 bool			CAudioStream::ServiceStream(void)
 {
 	if(m_Packetizer.IsFinished())
@@ -286,7 +291,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					if((ulSongLength - (GetPosition() + m_Output->GetAudioBufferMS())) < m_CrossfadeTimeMS)
 					{
 						m_bMixNotify = true;
-						tuniacApp.CoreAudioMessage(NOTIFY_MIXPOINTREACHED, NULL);
+						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
 					}
 				}
 			}
@@ -307,7 +312,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				{
 					m_bFinishNotify = true;
 					m_bIsFinished = true;
-					tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKFINISHED, NULL);
+					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, NULL);
 				}
 			}
 		}
@@ -353,7 +358,7 @@ bool			CAudioStream::FadeOut(unsigned long ulMS)
 
 bool			CAudioStream::Start(void)
 {
-	tuniacApp.CoreAudioMessage(NOTIFY_PLAYBACKSTARTED, NULL);
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKSTARTED, NULL);
 	m_PlayState = STATE_PLAYING;
 	return m_Output->Start();
 }

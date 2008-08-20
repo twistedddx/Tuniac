@@ -338,23 +338,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				if(wParam == WINDOWUPDATETIMER) //500
 				{
-					//set title of window/tray
-					TCHAR szWinTitle[512];
-					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-					IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-					
-					if(pIPE && (CCoreAudio::Instance()->GetState() != STATE_UNKNOWN))
-					{
-						FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
-					}
-					else
-					{
-						wnsprintf(szWinTitle, 512, TEXT("Tuniac"));
-					}
-
-					SetWindowText(getMainWindow(), szWinTitle);
-					m_Taskbar.SetTitle(szWinTitle);
-					
 					m_PlayControls.UpdateState();
 				}
 			}
@@ -755,7 +738,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				switch (wParam)
 				{
-					case NOTIFY_COREAUDIORESET:
+					case NOTIFY_COREAUDIO_RESET:
 						{
 							CCoreAudio::Instance()->Reset();
 							CCoreAudio::Instance()->Shutdown();
@@ -764,7 +747,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						break;
 
 					//end of song, or start of crossfade. Next Song needed
-					case NOTIFY_MIXPOINTREACHED:
+					case NOTIFY_COREAUDIO_MIXPOINTREACHED:
 						{
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
@@ -784,7 +767,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									{
 										CCoreAudio::Instance()->TransitionTo(pIPE);
 										//	CCoreAudio::Instance()->Play();
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 									}
 								}
 								//else
@@ -794,7 +776,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						break;
 
 					//audiostream has finished a song
-					case NOTIFY_PLAYBACKFINISHED:
+					case NOTIFY_COREAUDIO_PLAYBACKFINISHED:
 						{
 							//crossfade would have triggered mixpointreached itself n seconds ago
 							// Core Audio will send this too. its up to us to decide what we want to do about it eh
@@ -811,14 +793,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									{
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
-											//SetupReplayGain(pIPE);
 											CCoreAudio::Instance()->Play();
 										}
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 									}
 								}
-								//else
-								//no next song??
+								else
+									//no next song??
+									UpdateState();
 							}
 
 							//clear out old streams from crossfades and last song
@@ -828,8 +809,22 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						break;
 
 					//audiostream has started a song
-					case NOTIFY_PLAYBACKSTARTED:
+					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
 						{
+							UpdateState();
+						}
+						break;
+
+					//Coreaudio has was called to setsource
+					case NOTIFY_COREAUDIO_TRANSITIONTO:
+						{
+							//check if we were set to stop at this next song
+							tuniacApp.DoSoftPause();
+
+							UpdateState();
+
+							m_PlayControls.UpdateState();
+
 							//update the new current song on the playlist
 							m_SourceSelectorWindow->UpdateView();
 
@@ -840,17 +835,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 							UpdateQueues();
 
-							//check if we were set to stop at this next song
-							tuniacApp.DoSoftPause();
+							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 
+							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 						}
 						break;
-
-					//Coreaudio has was called to setsource
-					case NOTIFY_COREAUDIOTRANSITIONTO:
-						{
-							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
-						}
 
 					//playlistmanager changed it's view
 					case NOTIFY_PLAYLISTSCHANGED:
@@ -1042,7 +1031,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
 											IPlaylistEntry * pEntry = pPlaylistEX->GetActiveItem();
 											CCoreAudio::Instance()->SetSource(pEntry);
-											//SetupReplayGain(pEntry);
 										}
 
 									}
@@ -1135,7 +1123,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 						if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
 						{
-							//SetupReplayGain(pEntry);
 							CCoreAudio::Instance()->Play();
 							pPlaylistEX->SetActiveFilteredIndex(ulIndex);
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
@@ -1437,7 +1424,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							CCoreAudio::Instance()->Stop();
 							CCoreAudio::Instance()->SetPosition(0);
-							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGSTOP, NULL, NULL);
+							UpdateState();
 						}
 						break;
 
@@ -1447,7 +1434,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 							{
 								CCoreAudio::Instance()->Stop();
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+								UpdateState();
 							}
 						}
 						break;
@@ -1456,7 +1443,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_PLAY:
 						{
 							//if only paused we can simply play again
-							if(!CCoreAudio::Instance()->Play())
+							if(CCoreAudio::Instance()->Play())
+							{
+								UpdateState();
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+							}
+							else
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
@@ -1466,16 +1458,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								{
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
-										//SetupReplayGain(pIPE);
 										CCoreAudio::Instance()->Play();
-									}
-
-									//notify plugins of change of state
-									if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+									}
 								}
 							}
-
 
 						}
 						break;
@@ -1503,7 +1490,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulState = CCoreAudio::Instance()->GetState();
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
-										//SetupReplayGain(pIPE);
 										if(ulState == STATE_PLAYING)
 											CCoreAudio::Instance()->Play();
 
@@ -1544,7 +1530,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										unsigned long ulState = CCoreAudio::Instance()->GetState();
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
-											//SetupReplayGain(pIPE);
 											if(ulState == STATE_PLAYING)
 												CCoreAudio::Instance()->Play();
 
@@ -2069,29 +2054,6 @@ bool	CTuniacApp::EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned 
 	return true;
 }
 
-//check if we are set to pause at the current item
-bool	CTuniacApp::DoSoftPause(void)
-{
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-
-	//check if enabled and if current is our marked item
-	if(m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
-	{
-		//reset feature/GUI menu for  feature
-		m_SoftPause.bNow = false;
-		m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-		SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
-		//this will only stop the last stream, not all of them
-		CCoreAudio::Instance()->StopLast();
-		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
-		return true;
-	}
-
-	//softpause feature did not trigger
-	return false;
-}
-
 IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 {
 	BuildFuturePlaylistArray();
@@ -2245,6 +2207,65 @@ void	CTuniacApp::UpdateQueues(void)
 	}
 }
 
+//check if we are set to pause at the current item
+bool	CTuniacApp::DoSoftPause(void)
+{
+	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+
+	//check if enabled and if current is our marked item
+	if(m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
+	{
+		//reset feature/GUI menu for  feature
+		m_SoftPause.bNow = false;
+		m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+		SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
+		//this will only stop the last stream, not all of them
+		CCoreAudio::Instance()->StopLast();
+		UpdateState();
+		return true;
+	}
+
+	//softpause feature did not trigger
+	return false;
+}
+
+//update taskbar and titlebar
+void	CTuniacApp::UpdateState(void)
+{
+	//set title of window/tray
+	TCHAR szWinTitle[512];
+	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+	
+	if(pIPE)
+		FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
+	else
+		wnsprintf(szWinTitle, 512, TEXT("Tuniac"));
+
+	if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_PLAYING))
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+	else if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_STOPPED))
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+
+	SetWindowText(getMainWindow(), szWinTitle);
+	m_Taskbar.SetTitle(szWinTitle);
+}
+
+//update streamtitle eg for mp3 streams
+void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID)
+{
+	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByURL(szURL);
+
+	if(pIPE)
+	{
+		pIPE->SetField(ulFieldID, szTitle);
+		tuniacApp.m_SourceSelectorWindow->UpdateView();
+		UpdateState();
+		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+	}
+}
+
 bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 {
 	if(pIPE)
@@ -2317,17 +2338,3 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 
 	return false;
 }
-/*
-void	CTuniacApp::SetupReplayGain(IPlaylistEntry * pIPE)
-{
-	if(pIPE != NULL)
-	{
-		//get from prefs if we want to use track or album replaygain
-		bool bReplayGainTrack = m_Preferences.ReplayGainUseAlbumGain();
-
-
-
-		CCoreAudio::Instance()->SetReplayGain(*fReplayGain);
-	}
-}
-*/

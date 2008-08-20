@@ -237,7 +237,6 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				{
 					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
 					CCoreAudio::Instance()->SetSource(pEntry);
-//					tuniacApp.SetupReplayGain(pEntry);
 				}
 			}
 		}
@@ -255,7 +254,6 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			{
 				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
 				CCoreAudio::Instance()->SetSource(pEntry);
-//				tuniacApp.SetupReplayGain(pEntry);
 			}
 			
 		}
