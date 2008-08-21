@@ -178,10 +178,6 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	if(Read(buffer, &ulNumIO))
 	{
-		TCHAR	tstr[1024];
-		wsprintf(tstr, TEXT("Read worked (%d bytes)\r\n"), ulNumIO);
-		OutputDebugString(tstr);
-
 		short * pData = (short*)buffer;
 
 		for(int x=0; x<(ulNumIO/2); x++)
