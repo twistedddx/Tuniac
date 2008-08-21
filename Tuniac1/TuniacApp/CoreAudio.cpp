@@ -211,8 +211,6 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					pStream->UseAlbumGain(m_bUseAlbumGain);
 					pStream->SetReplayGainScale(*fReplayGainTrack, *fReplayGainAlbum);
 
-					pStream->SetURL(szSource);
-
 					m_Streams.AddTail(pStream);
 
 					if(bShoudStart)
@@ -496,18 +494,9 @@ void CCoreAudio::ReplayGainUseAlbumGain(bool bAlbumGain)
 }
 
 
-void	CCoreAudio::UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID)
+void	CCoreAudio::UpdateStreamTitle(LPTSTR szSource, LPTSTR szTitle, unsigned long ulFieldID)
 {
-	if(pSource == NULL)
-		return;
-	
-	for(unsigned long i = 0; i < m_Streams.GetCount(); i++)
-	{
-		if(m_Streams[i]->m_pSource == pSource)
-		{
-			tuniacApp.UpdateStreamTitle(m_Streams[i]->szURL, szTitle, ulFieldID);
-		}
-	}
+	tuniacApp.UpdateStreamTitle(szSource, szTitle, ulFieldID);
 }
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)

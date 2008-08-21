@@ -150,11 +150,6 @@ bool			CAudioStream::SetVolumeScale(float scale)
 	return true;
 }
 
-void			CAudioStream::SetURL(LPTSTR	szSource)
-{
-	szURL = szSource;
-}
-
 bool			CAudioStream::ServiceStream(void)
 {
 	if(m_Packetizer.IsFinished())

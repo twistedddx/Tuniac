@@ -572,9 +572,9 @@ REURL:
 							{
 								szEndTitle[0] = L'\0';
 							}
-							m_pHelper->UpdateStreamTitle(this, szStartTitle, FIELD_TITLE);
-							m_pHelper->UpdateStreamTitle(this, szArtist, FIELD_ARTIST);
-							m_pHelper->UpdateStreamTitle(this, szGenre, FIELD_GENRE);
+							m_pHelper->UpdateStreamTitle(m_URL, szStartTitle, FIELD_TITLE);
+							m_pHelper->UpdateStreamTitle(m_URL, szArtist, FIELD_ARTIST);
+							m_pHelper->UpdateStreamTitle(m_URL, szGenre, FIELD_GENRE);
 						}
 						free(szMeta);
 					}
