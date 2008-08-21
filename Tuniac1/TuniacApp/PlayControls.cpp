@@ -264,7 +264,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SendMessage(m_hVolumeWnd, TBM_SETRANGE, (WPARAM)FALSE, (LPARAM)MAKELONG(0, 100));
 				UpdateVolume();
 
-				SetTimer(hWnd, 0, 500, NULL);
+				SetTimer(hWnd, 0, 250, NULL);
 
 			}
 			break;
@@ -413,10 +413,10 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
 						}
 					}
-					else
-					{
-						RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-					}
+					//else
+					//{
+					//	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+					//}
 				}
 			}
 			break;

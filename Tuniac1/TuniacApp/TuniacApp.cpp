@@ -336,10 +336,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(wParam == SYSEVENTS_TIMERID)
 					m_SysEvents.CheckSystemState();
 
-				if(wParam == WINDOWUPDATETIMER) //500
-				{
-					m_PlayControls.UpdateState();
-				}
+				//if(wParam == WINDOWUPDATETIMER) //500
+				//{
+				//	m_PlayControls.UpdateState();
+				//}
 			}
 			break;
 
