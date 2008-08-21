@@ -105,7 +105,7 @@ public:
 	
 // IAudioSourceHelper inherited methods
 public:
-	void				UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID);
+	void				UpdateStreamTitle(LPTSTR m_URL, LPTSTR szTitle, unsigned long ulFieldID);
 	void				LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage);
 
 //IXAudio2EngineCallback inherited methods

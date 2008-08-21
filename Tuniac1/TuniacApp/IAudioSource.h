@@ -65,7 +65,7 @@ public:
 class IAudioSourceHelper
 {
 public:
-	virtual void		UpdateStreamTitle(IAudioSource * pSource, LPTSTR szTitle, unsigned long ulFieldID)		= 0;
+	virtual void		UpdateStreamTitle(LPTSTR szSource, LPTSTR szTitle, unsigned long ulFieldID)		= 0;
 	virtual void		LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)		= 0;
 };
 
