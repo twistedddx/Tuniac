@@ -182,7 +182,7 @@ bool		CCDDAAudioSource::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 		for(int x=0; x<(ulNumIO/2); x++)
 		{
-			m_Buffer[x] = (float)pData[x] / 16384.0f;
+			m_Buffer[x] = (float)pData[x] / 32767.0f;
 		}
 
 		*ppBuffer	= m_Buffer;
