@@ -51,6 +51,37 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 			return false;
 	}
 
+
+	// read chunks until a 'data' chunk is found
+	sflag = 1;
+	while(sflag!=0){
+
+		// check attempts before it gets out of hand
+		if(sflag>10)
+			//too many chunks
+			return false;
+
+		 // read chunk header
+		wstat = fread(&chk,sizeof(CHUNK_HDR),(size_t)1,m_file);
+		if(wstat!=1)
+			//cant read chunk
+			return false;
+
+		// check chunk type
+			if(FOURCC_EQUAL(chk.dId, "data"))
+				break;
+	 
+		// skip over chunk
+		sflag++;
+		wstat = fseek(m_file,chk.dLen,SEEK_CUR);
+		if(wstat!=0)
+			//cant seek
+			return false;
+	}
+
+	//store where we are for seeking later
+	fgetpos(m_file, &fpos );
+
 	if(wav.nBitsPerSample == 8)
 	{
 		m_divider = 128.0f;
@@ -101,14 +132,18 @@ bool		CWAVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CWAVDecoder::GetLength(unsigned long * MS)
 {
-	//*MS = filesize / (unsigned long)wav.nAvgBytesPerSec;wav.nSamplesPerSec  wav.nBitsPerSample wav.nSamplesPerSec
-
-	//int x =0;
+	*MS = GetFileSize(m_file, NULL) / (unsigned long)wav.nAvgBytesPerSec;
 	return(true);
 }
 
 bool		CWAVDecoder::SetPosition(unsigned long * MS)
 {
+	unsigned long ByteOffset = (float)(*MS / 1000) * (unsigned long)wav.nAvgBytesPerSec;
+
+	//setpos to the start of the data block we found on open
+	fsetpos(m_file, &fpos );
+	//seek in to where we want
+	fseek(m_file,ByteOffset,SEEK_CUR);
 	return(true);
 }
 
@@ -119,64 +154,32 @@ bool		CWAVDecoder::SetState(unsigned long State)
 
 bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	*NumSamples =0;
-
-	// read chunks until a 'data' chunk is found
-	sflag = 1;
-	while(sflag!=0){
-
-		// check attempts before it gets out of hand
-		if(sflag>10)
-			//too many chunks
-			return false;
-
-		 // read chunk header
-		wstat = fread(&chk,sizeof(CHUNK_HDR),(size_t)1,m_file);
-		if(wstat!=1)
-			//cant read chunk
-			return false;
-
-		// check chunk type
-			if(FOURCC_EQUAL(chk.dId, "data"))
-				break;
-	 
-		// skip over chunk
-		sflag++;
-		wstat = fseek(m_file,chk.dLen,SEEK_CUR);
-		if(wstat!=0)
-			//cant seek
-			return false;
-	}
-
-	/* find length of remaining data */ 
-	wbuff_len = chk.dLen;
+	BYTE			buffer[BUF_SIZE];
 
 	/* read signal data */
-	wstat = fread(wbuff,wbuff_len,1,m_file);
+	wstat = fread(buffer,BUF_SIZE,1,m_file);
 	if(wstat!=1)
 		//cant read chunk
 		return false;
 
 	if(m_bFloatMode)
 	{
-		*ppBuffer = (float*)wbuff;
+		*ppBuffer = (float*)buffer;
 	}
 	else
 	{
-		int		* pData		= (int *)wbuff;
-		float	* pBuffer	= m_Buffer;
-		
-		for(int x=0; x<wbuff_len;x++)
+
+		short * pData = (short*)buffer;
+
+		for(int x=0; x<(BUF_SIZE/2); x++)
 		{
-			*pBuffer = (float) ((double)(*pData) / m_divider);	
-
-			pData ++;
-			pBuffer++;
+			m_Buffer[x] = (float)pData[x] / m_divider;
 		}
-		*ppBuffer = m_Buffer;
-	}
 
-	*NumSamples = wbuff_len;
+		*ppBuffer	= m_Buffer;
+
+	}
+	*NumSamples = (BUF_SIZE/2);
 
 	return(true);
 }

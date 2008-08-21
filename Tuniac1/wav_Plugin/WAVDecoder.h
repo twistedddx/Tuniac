@@ -3,6 +3,8 @@
 #include "iaudiosource.h"
 #include <stdio.h>
 
+#define BUF_SIZE 4096
+
 typedef struct{
 	char rID[4];            // 'RIFF'
 	long int rLen;
@@ -31,9 +33,10 @@ class CWAVDecoder :
 {
 protected:
 	FILE			*	m_file;
-	float				m_Buffer[4096];
+	float				m_Buffer[BUF_SIZE];
 	float				m_divider;
-	long				wbuff[4096];
+
+	fpos_t				fpos;
 
 	bool m_bFloatMode;
 	WAV_HDR wav;
@@ -41,8 +44,6 @@ protected:
 	unsigned int wstat;
 	unsigned int rmore;
 	int sflag;
-
-	unsigned int wbuff_len;
 
 public:
 	CWAVDecoder(void);
