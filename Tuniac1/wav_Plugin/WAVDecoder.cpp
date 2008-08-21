@@ -118,6 +118,7 @@ bool CWAVDecoder::Close()
 
 void		CWAVDecoder::Destroy(void)
 {
+	fclose(m_file);
 	Close();
 	delete this;
 }
