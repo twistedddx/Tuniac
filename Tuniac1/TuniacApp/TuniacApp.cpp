@@ -724,6 +724,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 				}
+
+				return FALSE;
 			}
 			break;
 
