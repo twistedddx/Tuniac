@@ -1309,6 +1309,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_SourceSelectorWindow->GetVisiblePlaylist();
 								IndexArray indexArray;
 								EntryArray exportArray;
+								/*
 								if(m_SourceSelectorWindow->m_PlaylistSourceView->GetSelectedIndexes(indexArray))
 								{
 									for(unsigned long i = 0; i < indexArray.GetCount(); i++)
@@ -1318,7 +1319,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											exportArray.AddTail(pIPE);
 									}
 								}
-								else
+								else*/
 								{
 									// must want to export everything eh???
 
