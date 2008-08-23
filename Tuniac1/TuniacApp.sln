@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tta_Plugin", "tta_Plugin\tt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tak_Plugin", "tak_Plugin\tak_Plugin.vcproj", "{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFN_Exporter", "NFN_Exporter\NFN_Exporter.vcproj", "{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -222,6 +224,14 @@ Global
 		{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}.Release|Win32.ActiveCfg = Release|Win32
 		{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}.Release|Win32.Build.0 = Release|Win32
 		{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}.Release|x64.ActiveCfg = Release|x64
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Debug|Win32.Build.0 = Debug|Win32
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Debug|x64.ActiveCfg = Debug|x64
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Debug|x64.Build.0 = Debug|x64
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Release|Win32.ActiveCfg = Release|Win32
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Release|Win32.Build.0 = Release|Win32
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Release|x64.ActiveCfg = Release|x64
+		{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

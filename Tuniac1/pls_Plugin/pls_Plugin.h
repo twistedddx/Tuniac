@@ -57,7 +57,7 @@ public:
 
 	bool			CanHandle(LPTSTR szSource);
 
-	bool			BeginExport(LPTSTR szSource);
+	bool			BeginExport(LPTSTR szSource, unsigned long ulNumItems);
 	bool			ExportEntry(LibraryEntry & libraryEntry);
 	bool			EndExport(void);
 };
