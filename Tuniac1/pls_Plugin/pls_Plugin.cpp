@@ -193,7 +193,7 @@ bool			CPLS_Export::CanHandle(LPTSTR szSource)
 	return false;
 }
 
-bool			CPLS_Export::BeginExport(LPTSTR szSource)
+bool			CPLS_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 {
 	if(!CanHandle(szSource))
 		return false;

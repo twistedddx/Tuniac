@@ -725,7 +725,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						break;
 				}
 
-				return FALSE;
+				return(DefWindowProc(hWnd, message, wParam, lParam));
 			}
 			break;
 
@@ -1317,12 +1317,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										if(pIPE)
 											exportArray.AddTail(pIPE);
 									}
-									m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
 								}
 								else
 								{
-									MessageBox(getMainWindow(), TEXT("Select entries in the playlist to export."), TEXT("Export"), MB_OK | MB_ICONINFORMATION);
+									// must want to export everything eh???
+
+									for(unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
+									{
+										IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(i);
+										if(pIPE)
+											exportArray.AddTail(pIPE);
+									}
 								}
+								m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
 							}
 						}
 						break;

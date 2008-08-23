@@ -386,7 +386,7 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 
 bool			CImportExportManager::ExportTo(ITuniacExportPlugin * pExporter, LPTSTR szSource, EntryArray & entryArray)
 {
-	if(pExporter->BeginExport(szSource))
+	if(pExporter->BeginExport(szSource, entryArray.GetCount()))
 	{
 		LibraryEntry LE;
 		CMediaLibraryPlaylistEntry * pEntry;

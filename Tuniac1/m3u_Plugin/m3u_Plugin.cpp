@@ -191,7 +191,7 @@ bool			CM3U_Export::CanHandle(LPTSTR szSource)
 	return false;
 }
 
-bool			CM3U_Export::BeginExport(LPTSTR szSource)
+bool			CM3U_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 {
 	if(!CanHandle(szSource))
 		return false;
