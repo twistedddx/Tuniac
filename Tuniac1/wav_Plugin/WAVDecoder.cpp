@@ -158,8 +158,8 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	BYTE			buffer[BUF_SIZE];
 
 	/* read signal data */
-	wstat = fread(buffer,BUF_SIZE,1,m_file);
-	if(wstat!=1)
+	wstat = fread(buffer,sizeof(BYTE),BUF_SIZE,m_file);
+	if(wstat == 0)
 		//cant read chunk
 		return false;
 
@@ -172,7 +172,7 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 		short * pData = (short*)buffer;
 
-		for(int x=0; x<(BUF_SIZE/2); x++)
+		for(int x=0; x<(wstat/wav.nChannels); x++)
 		{
 			m_Buffer[x] = (float)pData[x] / m_divider;
 		}
@@ -180,7 +180,7 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		*ppBuffer	= m_Buffer;
 
 	}
-	*NumSamples = (BUF_SIZE/2);
+	*NumSamples = (wstat/wav.nChannels);
 
 	return(true);
 }
