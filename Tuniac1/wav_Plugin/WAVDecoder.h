@@ -41,8 +41,9 @@ protected:
 	bool m_bFloatMode;
 	WAV_HDR wav;
 	CHUNK_HDR chk;
-	unsigned int wstat;
+	size_t	read;
 	unsigned int rmore;
+	size_t	total_read;
 	int sflag;
 
 public:
