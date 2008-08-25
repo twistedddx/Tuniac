@@ -23,7 +23,7 @@ bool CWAVDecoder::Open(LPTSTR szSource)
     m_file = _wfopen(szSource,TEXT("rbS"));
     if (m_file)
     {
-		wstat = fread(&wav,sizeof(WAV_HDR),1,m_file);
+		read = fread(&wav,sizeof(WAV_HDR),1,m_file);
 
 		//check for RIFF header
 		if(!FOURCC_EQUAL(wav.rID, "RIFF"))
@@ -45,8 +45,8 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 			return false;
 
 		rmore = wav.pcm_header_len - (sizeof(WAV_HDR) - 20);
-		wstat = fseek(m_file,rmore,SEEK_CUR);
-		if(wstat!=0)
+		read = fseek(m_file,rmore,SEEK_CUR);
+		if(read!=0)
 			//cant seek
 			return false;
 	}
@@ -62,8 +62,8 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 			return false;
 
 		 // read chunk header
-		wstat = fread(&chk,sizeof(CHUNK_HDR),(size_t)1,m_file);
-		if(wstat!=1)
+		read = fread(&chk,sizeof(CHUNK_HDR),(size_t)1,m_file);
+		if(read!=1)
 			//cant read chunk
 			return false;
 
@@ -73,40 +73,22 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 	 
 		// skip over chunk
 		sflag++;
-		wstat = fseek(m_file,chk.dLen,SEEK_CUR);
-		if(wstat!=0)
+		read = fseek(m_file,chk.dLen,SEEK_CUR);
+		if(read!=0)
 			//cant seek
 			return false;
 	}
 
-	//store where we are for seeking later
-	fgetpos(m_file, &fpos );
-
 	if(wav.nBitsPerSample == 8)
-	{
 		m_divider = 128.0f;
-	}
-	else if(wav.nBitsPerSample == 12)
-	{
-		m_divider = 4095.0f;
-	}
 	else if(wav.nBitsPerSample == 16)
-	{
 		m_divider = 32767.0f;
-	}
-	else if(wav.nBitsPerSample == 20)
-	{
-		m_divider = 1048575.0f;
-	}
 	else if(wav.nBitsPerSample == 24)
-	{
 		m_divider = 8388608.0f;
-	}
 	else if(wav.nBitsPerSample == 32)
-	{
 		m_divider = 2147483648.0;
-	}
 
+	total_read = 0;
 
 	return(true);
 }
@@ -133,18 +115,18 @@ bool		CWAVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CWAVDecoder::GetLength(unsigned long * MS)
 {
-	*MS = GetFileSize(m_file, NULL) / (unsigned long)wav.nAvgBytesPerSec;
+	*MS = 1000 * ((unsigned long)chk.dLen / (unsigned long)wav.nAvgBytesPerSec);
 	return(true);
 }
 
 bool		CWAVDecoder::SetPosition(unsigned long * MS)
 {
-	unsigned long ByteOffset = (float)(*MS / 1000) * (unsigned long)wav.nAvgBytesPerSec;
 
-	//setpos to the start of the data block we found on open
-	fsetpos(m_file, &fpos );
+	unsigned long ByteOffset = ((float)*MS / 1000.0f) * (unsigned long)wav.nAvgBytesPerSec;
+	ByteOffset -= ByteOffset % wav.nBlockAlign;
+
 	//seek in to where we want
-	fseek(m_file,ByteOffset,SEEK_CUR);
+	fseek(m_file,wav.pcm_header_len+ByteOffset,SEEK_SET);
 	return(true);
 }
 
@@ -155,32 +137,38 @@ bool		CWAVDecoder::SetState(unsigned long State)
 
 bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	BYTE			buffer[BUF_SIZE];
+	char			buffer[BUF_SIZE] = {0};
+	read = 0;
 
 	/* read signal data */
-	wstat = fread(buffer,sizeof(BYTE),BUF_SIZE,m_file);
-	if(wstat == 0)
+	read = fread(buffer,sizeof(char),BUF_SIZE,m_file);
+	if(read > 0)
+	{
+		if(m_bFloatMode)
+		{
+			*ppBuffer = (float*)buffer;
+		}
+		else
+		{
+     		short * pData = (short*)buffer;
+			for(int x=0; x<(read/wav.nChannels); x++)
+			{
+				m_Buffer[x] = (float)pData[x] / m_divider;
+			}
+			*ppBuffer = m_Buffer;
+		}
+
+		*NumSamples = (read/wav.nChannels);
+	}
+	else
 		//cant read chunk
 		return false;
 
-	if(m_bFloatMode)
-	{
-		*ppBuffer = (float*)buffer;
+	total_read += read;
+
+	if(total_read >= chk.dLen){
+	  return false;
 	}
-	else
-	{
-
-		short * pData = (short*)buffer;
-
-		for(int x=0; x<(wstat/wav.nChannels); x++)
-		{
-			m_Buffer[x] = (float)pData[x] / m_divider;
-		}
-
-		*ppBuffer	= m_Buffer;
-
-	}
-	*NumSamples = (wstat/wav.nChannels);
 
 	return(true);
 }
