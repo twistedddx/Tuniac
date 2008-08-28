@@ -10,21 +10,23 @@ class CWMADecoder :
 protected:
 
 	float				m_Buffer[131072];
+	float				m_divider;
 
 	IWMSyncReader			*	m_ISyncReader;
 	INSSBuffer				*	m_pINSSBuffer;
 	WM_MEDIA_TYPE			*	m_theMediaType;
 	IWMOutputMediaProps		*	m_IAudioOutputProps;
-	WORD						m_iAudioStreamNumber;
+	IWMMetadataEditor		*	pEditor;
+	IWMHeaderInfo3			*	pHeaderInfo;
+	WORD						m_wAudioStreamNumber;
+	DWORD						m_dwAudioOutputNumber;
 	DWORD						m_theOutputsCount;
 	HRESULT hr;
 
-	int m_iAudioOutputNumber;
+	unsigned long		ulChannels;
+	unsigned long		ulSampleRate;
+	unsigned long		ulBitrate;
 
-	unsigned long ulChannels;
-	unsigned long ulSampleRate;
-
-	QWORD				m_cnsFileDuration;
 	BOOL                m_bIsSeekable;
 	unsigned long		m_ulTotalTimeInMS;
 

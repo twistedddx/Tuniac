@@ -2,17 +2,7 @@
 #include "wmadecoder.h"
 
 CWMADecoder::CWMADecoder(void)
-: m_theMediaType(NULL)
-, m_theOutputsCount(0)
-, m_IAudioOutputProps(0)
-, m_iAudioOutputNumber(0)
-, m_iAudioStreamNumber(0)
 {
-	CoInitialize(NULL);
-	m_ISyncReader = NULL;
-	m_pINSSBuffer = NULL;
-	m_ulTotalTimeInMS = 0;
-	m_bIsSeekable = 0;
 }
 
 CWMADecoder::~CWMADecoder(void)
@@ -21,7 +11,28 @@ CWMADecoder::~CWMADecoder(void)
 
 bool CWMADecoder::Open(LPTSTR szSource)
 {
-                   
+ 	CoInitialize(NULL);
+	m_ISyncReader = NULL;
+	m_pINSSBuffer = NULL;
+	m_theMediaType = NULL;
+	m_IAudioOutputProps = NULL;
+	pHeaderInfo = NULL;
+	pEditor = NULL;
+	m_ulTotalTimeInMS = 0;
+	m_bIsSeekable = 0;
+	m_wAudioStreamNumber = 0;
+	m_dwAudioOutputNumber = 0;
+	m_theOutputsCount = 0;
+	ulChannels = 0;
+	ulSampleRate = 0;
+	ulBitrate = 0;
+    WMT_ATTR_DATATYPE Type;
+	WORD wStreamNum = 0;
+	BYTE* pbValue = NULL;
+    WORD DataSize = sizeof(long);
+
+	hr = S_OK;
+
     hr  = WMCreateSyncReader(NULL,0,&m_ISyncReader);
 	if(hr!=S_OK)
 		return false;
@@ -48,58 +59,65 @@ bool CWMADecoder::Open(LPTSTR szSource)
 			if( WMFORMAT_WaveFormatEx == m_theMediaType->formattype)
 			{
 				//only handle audio files
-				m_iAudioOutputNumber = i;
-				m_ISyncReader->GetStreamNumberForOutput(m_iAudioOutputNumber,&m_iAudioStreamNumber);
-				WAVEFORMATEX *waveFormatEx = (WAVEFORMATEX*)m_theMediaType->pbFormat;
+				m_dwAudioOutputNumber = i;
+				m_ISyncReader->GetStreamNumberForOutput(m_dwAudioOutputNumber,&m_wAudioStreamNumber);
+				WAVEFORMATEX * waveFormatEx = ( WAVEFORMATEX * )m_theMediaType->pbFormat;
 				ulChannels = waveFormatEx->nChannels;
 				ulSampleRate = waveFormatEx->nSamplesPerSec;
+				ulBitrate = waveFormatEx->wBitsPerSample;
 			}
 		}
 	}
 	if(m_IAudioOutputProps)
 		m_IAudioOutputProps->Release();
 
-	hr = m_ISyncReader->SetReadStreamSamples(m_iAudioStreamNumber,FALSE);
+	hr = m_ISyncReader->QueryInterface(IID_IWMHeaderInfo3,(void**)&pHeaderInfo);
+	if( hr != S_OK )
+		return false;
+
+	hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, NULL, &DataSize);
+	if( hr == S_OK && hr != ASF_E_NOTFOUND )
+	{
+		pbValue = new BYTE[ DataSize ];
+		pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, pbValue, &DataSize);
+		if( NULL != pbValue )
+			m_ulTotalTimeInMS = *( QWORD* )pbValue / 10000;
+		delete [] pbValue;
+	}
+
+	hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, NULL, &DataSize);
+	if( hr ==S_OK && hr != ASF_E_NOTFOUND )
+	{
+		pbValue = new BYTE[ DataSize ];
+		hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, pbValue, &DataSize);
+		if( NULL != pbValue )
+			m_bIsSeekable = *( BOOL* )pbValue;
+		delete [] pbValue;
+	}
+	if(pHeaderInfo)
+		pHeaderInfo->Release();
+
+
+	WMT_STREAM_SELECTION	wmtSS = WMT_ON;
+    hr = m_ISyncReader->SetStreamsSelected( 1, &m_wAudioStreamNumber, &wmtSS );
+    if ( FAILED( hr ) )
+		return false;
+
+	hr = m_ISyncReader->SetReadStreamSamples(m_wAudioStreamNumber,FALSE);
 	if(hr!=S_OK)
 		return false;
 
-	IWMMetadataEditor		*	pEditor;
-	hr = WMCreateEditor(&pEditor);
-	if(hr==S_OK)
-	{
-
-        WMT_ATTR_DATATYPE Type;
-		IWMHeaderInfo* pHeaderInfo;
-		WORD wStreamNum = 0;
-		BYTE* pbValue = NULL;
-        WORD DataSize = sizeof(long);
-
-		pEditor->Open(szSource);
-		hr = pEditor->QueryInterface(IID_IWMHeaderInfo,(void**)&pHeaderInfo);
+	m_ISyncReader->SetRange(0, 0);
 
 
-		hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, NULL, &DataSize);
-		if( hr == S_OK && hr != ASF_E_NOTFOUND )
-		{
-			pbValue = new BYTE[ DataSize ];
-			pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, pbValue, &DataSize);
-			if( NULL != pbValue )
-				m_ulTotalTimeInMS = *( QWORD* )pbValue / 10000;
-		}
-
-		hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, NULL, &DataSize);
-		if( hr ==S_OK && hr != ASF_E_NOTFOUND )
-		{
-			pbValue = new BYTE[ DataSize ];
-			hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, pbValue, &DataSize);
-			if( NULL != pbValue )
-				m_bIsSeekable = *( BOOL* )pbValue;
-		}
-		if(pHeaderInfo)
-			pHeaderInfo->Release();
-	}
-	if(pEditor)
-		pEditor->Release();
+	if(ulBitrate == 8)
+		m_divider = 128.0f;
+	else if(ulBitrate == 16)
+		m_divider = 32767.0f;
+	else if(ulBitrate == 24)
+		m_divider = 8388608.0f;
+	else if(ulBitrate == 32)
+		m_divider = 2147483648.0f;
 
 	return(true);
 }
@@ -110,6 +128,10 @@ bool CWMADecoder::Close()
 	{
 		m_ISyncReader->Close();
 		m_ISyncReader->Release();
+	}
+	if(m_pINSSBuffer)
+	{
+		m_pINSSBuffer->Release();
 	}
 	CoUninitialize();
 	return(true);
@@ -139,7 +161,7 @@ bool		CWMADecoder::GetLength(unsigned long * MS)
 bool		CWMADecoder::SetPosition(unsigned long * MS)
 {
 	if(m_bIsSeekable)
-		m_ISyncReader->SetRange((QWORD)MS*100, 0);
+		m_ISyncReader->SetRange((QWORD)*MS*10000, 0);
 
 	return(true);
 }
@@ -162,7 +184,7 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	if(m_pINSSBuffer)
 		m_pINSSBuffer->Release();
 
-	hr = m_ISyncReader->GetNextSample(m_iAudioStreamNumber,
+	hr = m_ISyncReader->GetNextSample(m_wAudioStreamNumber,
 										&m_pINSSBuffer,
 										&cnsSampleTime,
 										&cnsSampleDuration,
@@ -183,18 +205,15 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	
 		for(unsigned long x=0; x<numSamples;x++)
 		{
-			*pBuffer = (*pData) / 32767.0f;
+			*pBuffer = (*pData) / m_divider;
 			pData++;
 			pBuffer++;
 		}
 		*ppBuffer = m_Buffer;
 
-
 		*NumSamples = numSamples;
 
-		if(m_pINSSBuffer)
-			m_pINSSBuffer->Release();
-		m_pINSSBuffer = NULL;
+
 	}
 	else if(hr == NS_E_NO_MORE_SAMPLES)
 		return false;
