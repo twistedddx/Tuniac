@@ -2,31 +2,10 @@
 
 #include "iaudiosource.h"
 #include <stdio.h>
+#include <mmsystem.h>
 
 #define BUF_SIZE 4096
 
-typedef struct{
-	char rID[4];            // 'RIFF'
-	long int rLen;
-  
-	char wID[4];            // 'WAVE'
-  
-	char fId[4];            // 'fmt '
-	long int pcm_header_len;   // varies...
-	short int wFormatTag;
-	short int nChannels;      // 1,2 for stereo data is (l,r) pairs
-	long int nSamplesPerSec;
-	long int nAvgBytesPerSec;
-	short int nBlockAlign;      
-	short int nBitsPerSample;
-}   WAV_HDR;
-
-	// header of wav file
-typedef struct{
-	char dId[4];            // 'data' or 'fact'
-	long int dLen;
-	//   unsigned char *data;
-}   CHUNK_HDR;
 
 class CWAVDecoder :
 	public IAudioSource
@@ -36,21 +15,17 @@ protected:
 	float				m_Buffer[BUF_SIZE];
 	float				m_divider;
 
-	fpos_t				fpos;
+	HMMIO hWav;
+	WAVEFORMATEX wfmex;
+	MMCKINFO child, parent;
 
-	bool m_bFloatMode;
-	WAV_HDR wav;
-	CHUNK_HDR chk;
-	size_t	read;
-	unsigned int rmore;
-	size_t	total_read;
-	int sflag;
+	unsigned long Read;
+	unsigned long ulChunkSize;
 
 public:
 	CWAVDecoder(void);
 	~CWAVDecoder(void);
 
-	bool FOURCC_EQUAL(char* X, char* Y);
 	bool Open(LPTSTR szSource);
 	bool Close();
 
