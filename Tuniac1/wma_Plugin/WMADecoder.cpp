@@ -2,14 +2,17 @@
 #include "wmadecoder.h"
 
 CWMADecoder::CWMADecoder(void)
-: m_pINSSBuffer(NULL)
-, m_IAudioOutputProps(NULL)
-, m_theMediaType(NULL)
+: m_theMediaType(NULL)
 , m_theOutputsCount(0)
+, m_IAudioOutputProps(0)
 , m_iAudioOutputNumber(0)
 , m_iAudioStreamNumber(0)
 {
+	CoInitialize(NULL);
 	m_ISyncReader = NULL;
+	m_pINSSBuffer = NULL;
+	m_ulTotalTimeInMS = 0;
+	m_bIsSeekable = 0;
 }
 
 CWMADecoder::~CWMADecoder(void)
@@ -33,15 +36,12 @@ bool CWMADecoder::Open(LPTSTR szSource)
 	DWORD theSize;
 	for (int i=0;i<m_theOutputsCount;i++)
 	{
-		SAFE_RELEASE( m_IAudioOutputProps );
-		SAFE_ARRAYDELETE( m_theMediaType );
+		if(m_IAudioOutputProps)
+			m_IAudioOutputProps->Release();
 		m_ISyncReader->GetOutputProps(i,&m_IAudioOutputProps); 
 		m_IAudioOutputProps->GetMediaType(NULL,&theSize);
 		m_theMediaType = ( WM_MEDIA_TYPE* ) new BYTE[theSize ];
 		m_IAudioOutputProps->GetMediaType(m_theMediaType,&theSize);
-
-		if( FAILED( hr ) )
-			return false;
 
 		if( WMMEDIATYPE_Audio == m_theMediaType->majortype)
 		{
@@ -56,44 +56,62 @@ bool CWMADecoder::Open(LPTSTR szSource)
 			}
 		}
 	}
-	//release the memory
-	SAFE_RELEASE( m_IAudioOutputProps );
-	SAFE_ARRAYDELETE( m_theMediaType );
+	if(m_IAudioOutputProps)
+		m_IAudioOutputProps->Release();
+
+	hr = m_ISyncReader->SetReadStreamSamples(m_iAudioStreamNumber,FALSE);
+	if(hr!=S_OK)
+		return false;
 
 	IWMMetadataEditor		*	pEditor;
 	hr = WMCreateEditor(&pEditor);
 	if(hr==S_OK)
 	{
-		pEditor->Open(szSource);
+
         WMT_ATTR_DATATYPE Type;
+		IWMHeaderInfo* pHeaderInfo;
+		WORD wStreamNum = 0;
+		BYTE* pbValue = NULL;
         WORD DataSize = sizeof(long);
-		IWMHeaderInfo3* pHeaderInfo;
-		WORD StreamNo = 0;
-		hr = pEditor->QueryInterface(IID_IWMHeaderInfo3,(void**)&pHeaderInfo);
-		hr = pHeaderInfo->GetAttributeByName( &StreamNo, g_wszWMDuration, &Type, NULL, &DataSize);
-		if( FAILED( hr ))
-			return false;
 
-		if (Type != WMT_TYPE_QWORD   || DataSize != sizeof(QWORD))
-			return false;
+		pEditor->Open(szSource);
+		hr = pEditor->QueryInterface(IID_IWMHeaderInfo,(void**)&pHeaderInfo);
 
-		QWORD qwDuration = 0;
-		hr = pHeaderInfo->GetAttributeByName( &StreamNo, g_wszWMDuration, &Type, (BYTE *) &qwDuration, &DataSize);
-		if( FAILED( hr ))
-			return false;
 
-		m_qwTotalTimeInMS = (long) (qwDuration / 10000);
+		hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, NULL, &DataSize);
+		if( hr == S_OK && hr != ASF_E_NOTFOUND )
+		{
+			pbValue = new BYTE[ DataSize ];
+			pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, pbValue, &DataSize);
+			if( NULL != pbValue )
+				m_ulTotalTimeInMS = *( QWORD* )pbValue / 10000;
+		}
 
-		SAFE_RELEASE(pHeaderInfo);
-		SAFE_RELEASE(pEditor);
+		hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, NULL, &DataSize);
+		if( hr ==S_OK && hr != ASF_E_NOTFOUND )
+		{
+			pbValue = new BYTE[ DataSize ];
+			hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMSeekable, &Type, pbValue, &DataSize);
+			if( NULL != pbValue )
+				m_bIsSeekable = *( BOOL* )pbValue;
+		}
+		if(pHeaderInfo)
+			pHeaderInfo->Release();
 	}
+	if(pEditor)
+		pEditor->Release();
 
 	return(true);
 }
 
 bool CWMADecoder::Close()
 {
-	SAFE_RELEASE(m_ISyncReader);
+	if(m_ISyncReader)
+	{
+		m_ISyncReader->Close();
+		m_ISyncReader->Release();
+	}
+	CoUninitialize();
 	return(true);
 }
 
@@ -113,14 +131,16 @@ bool		CWMADecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CWMADecoder::GetLength(unsigned long * MS)
 {
-
-	*MS = m_qwTotalTimeInMS;
+	*MS = m_ulTotalTimeInMS;
 
 	return(true);
 }
 
 bool		CWMADecoder::SetPosition(unsigned long * MS)
 {
+	if(m_bIsSeekable)
+		m_ISyncReader->SetRange((QWORD)MS*100, 0);
+
 	return(true);
 }
 
@@ -136,14 +156,24 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	QWORD cnsSampleTime = 0;
 	QWORD cnsSampleDuration = 0;
 	DWORD dwFlags = 0;
-		
-	hr = m_ISyncReader->GetNextSample(m_iAudioStreamNumber, &m_pINSSBuffer, &cnsSampleTime, &cnsSampleDuration, &dwFlags, NULL, NULL);
-	if(hr == NS_E_NO_MORE_SAMPLES)
-		return false;
+	DWORD dwOutputNum = 0;
+	WORD wStream = 0;
 
-	if(SUCCEEDED(hr))
+	if(m_pINSSBuffer)
+		m_pINSSBuffer->Release();
+
+	hr = m_ISyncReader->GetNextSample(m_iAudioStreamNumber,
+										&m_pINSSBuffer,
+										&cnsSampleTime,
+										&cnsSampleDuration,
+										&dwFlags,
+										NULL,//&dwOutputNum
+										NULL);//&wStream
+
+	if(hr == S_OK)
 	{
-		unsigned char *buffer;
+		BYTE        *buffer = NULL;
+		DWORD		m_audioBufferLength;
 		m_pINSSBuffer->GetBufferAndLength(&buffer,&m_audioBufferLength);
 
 		unsigned long numSamples = m_audioBufferLength / ulChannels;
@@ -162,10 +192,17 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 		*NumSamples = numSamples;
 
-		m_pINSSBuffer->Release();
+		if(m_pINSSBuffer)
+			m_pINSSBuffer->Release();
 		m_pINSSBuffer = NULL;
 	}
-	else
+	else if(hr == NS_E_NO_MORE_SAMPLES)
+		return false;
+	else if(hr == E_UNEXPECTED)
+		return false;
+	else if(hr == E_INVALIDARG)
+		return false;
+	else if(hr == NS_E_INVALID_REQUEST)
 		return false;
 
 	return(true);

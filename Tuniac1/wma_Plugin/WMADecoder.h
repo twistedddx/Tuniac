@@ -4,38 +4,17 @@
 
 #include <wmsdk.h>
 
-
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE( x )  \
-    if ( NULL != x )       \
-    {                      \
-        x->Release( );     \
-        x = NULL;          \
-    }
-
-#endif
-
-#ifndef SAFE_ARRAYDELETE
-#define SAFE_ARRAYDELETE( x )  \
-    if( NULL != x )        \
-    {                      \
-        delete [] x;       \
-        x = NULL;          \
-    }
-#endif
-
 class CWMADecoder :
 	public IAudioSource
 {
 protected:
 
 	float				m_Buffer[131072];
-	DWORD				m_audioBufferLength;
 
 	IWMSyncReader			*	m_ISyncReader;
 	INSSBuffer				*	m_pINSSBuffer;
-	IWMOutputMediaProps		*	m_IAudioOutputProps;
 	WM_MEDIA_TYPE			*	m_theMediaType;
+	IWMOutputMediaProps		*	m_IAudioOutputProps;
 	WORD						m_iAudioStreamNumber;
 	DWORD						m_theOutputsCount;
 	HRESULT hr;
@@ -44,7 +23,10 @@ protected:
 
 	unsigned long ulChannels;
 	unsigned long ulSampleRate;
-	unsigned long m_qwTotalTimeInMS;
+
+	QWORD				m_cnsFileDuration;
+	BOOL                m_bIsSeekable;
+	unsigned long		m_ulTotalTimeInMS;
 
 public:
 	CWMADecoder(void);
