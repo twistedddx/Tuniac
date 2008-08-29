@@ -46,7 +46,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 16;
+	return 15;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -67,8 +67,8 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".tta"),
 		TEXT(".spx"),
 		TEXT(".aif"),
-		TEXT(".aiff"),
-		TEXT(".wav")
+		TEXT(".aiff")//,
+		//TEXT(".wav")
 	};
 
 	return exts[ulExtentionNum];
@@ -101,8 +101,8 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(aiffile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileref.file() ))
 			return true;
-		else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
-			return true;
+		//else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
+			//return true;
 	}
 
 	return false;
