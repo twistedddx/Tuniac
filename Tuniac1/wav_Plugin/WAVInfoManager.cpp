@@ -81,7 +81,7 @@ bool			CWAVInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(ulLenthMS < 1)
 		ulLenthMS = NULL;
 
-	libEnt->iBitRate			= wfmex.nAvgBytesPerSec;
+	libEnt->iBitRate			= wfmex.nAvgBytesPerSec * 8;
 	libEnt->iChannels			= wfmex.nChannels;
 	libEnt->iSampleRate			= wfmex.nSamplesPerSec;
 	libEnt->iPlaybackTime		= ulLenthMS;

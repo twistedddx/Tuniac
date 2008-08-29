@@ -673,54 +673,46 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case APPCOMMAND_MEDIA_PLAY_PAUSE:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
-							return(TRUE);
 						}
 						break;
 
 					case APPCOMMAND_MEDIA_STOP:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
-							return(TRUE);
 						}
 						break;
 
 					case APPCOMMAND_MEDIA_PAUSE:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
-							return(TRUE);
 						}
 						break;
 
 					case APPCOMMAND_MEDIA_PLAY:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
-							return(TRUE);
 						}
 						break;
 
 					case APPCOMMAND_MEDIA_NEXTTRACK:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
-							return(TRUE);
 						}
 						break;
 
 					case APPCOMMAND_MEDIA_PREVIOUSTRACK:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
-							return(TRUE);
 						}
 						break;
 					case APPCOMMAND_MEDIA_FAST_FORWARD:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
-							return(TRUE);
 						}
 						break;
 					case APPCOMMAND_MEDIA_REWIND:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
-							return(TRUE);
 						}
 						break;
 				}
@@ -2245,8 +2237,7 @@ void	CTuniacApp::UpdateState(void)
 {
 	//set title of window/tray
 	TCHAR szWinTitle[512];
-	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-	IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
 	
 	if(pIPE)
 		FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);

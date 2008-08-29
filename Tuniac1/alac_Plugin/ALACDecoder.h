@@ -31,7 +31,6 @@ public:
 	CALACDecoder(void);
 	~CALACDecoder(void);
 
-;
 	bool Open(LPTSTR szSource);
 	bool Close();
 
