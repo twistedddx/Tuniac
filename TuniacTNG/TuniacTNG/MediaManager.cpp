@@ -660,13 +660,13 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 				LastPlayed				INTEGER DEFAULT 0, 		\
 				PlayCount				INTEGER DEFAULT 0, 		\
 																\
-				ReplayGainTrack			REAL, 					\
-				ReplayPeakTrack			REAL, 					\
-				ReplayGainAlbum			REAL, 					\
-				ReplayPeakAlbum			REAL, 					\
+				ReplayGainTrack			REAL DEFAULT 0, 		\
+				ReplayPeakTrack			REAL DEFAULT 0, 		\
+				ReplayGainAlbum			REAL DEFAULT 0, 		\
+				ReplayPeakAlbum			REAL DEFAULT 0, 		\
 																\
-				EncoderDelay			INTEGER, 				\
-				EncoderPadding			INTEGER, 				\
+				EncoderDelay			INTEGER DEFAULT 0,		\
+				EncoderPadding			INTEGER DEFAULT 0,		\
 																\
 				InfoRead				INTEGER DEFAULT 0 		\
 			)													\
@@ -691,12 +691,13 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 
 	if (!hasPlaylistTracks)
 	{
-		String sql = TEXT("							\
-			CREATE TABLE PlaylistTracks (			\
-				PlaylistID				INTEGER,	\
-				TrackID					INTEGER,	\
-				OrderNum				INTEGER		\
-			)										\
+		String sql = TEXT("									\
+			CREATE TABLE PlaylistTracks (					\
+				PlaylistEntryID			INTEGERPRIMARY KEY,	\
+				PlaylistID				INTEGER,			\
+				TrackID					INTEGER,			\
+				OrderNum				INTEGER				\
+			)												\
 		");
 
 		con.executenonquery(sql);
