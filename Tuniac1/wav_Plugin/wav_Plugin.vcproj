@@ -331,6 +331,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\WAVInfoManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wavPlugin.cpp"
 				>
 			</File>
@@ -354,6 +358,10 @@
 			</File>
 			<File
 				RelativePath=".\WAVDecoderPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WAVInfoManager.h"
 				>
 			</File>
 		</Filter>

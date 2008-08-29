@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <mmsystem.h>
 
-#define BUF_SIZE 4096
+#define BUF_SIZE 512
 
 
 class CWAVDecoder :
@@ -21,6 +21,7 @@ protected:
 
 	unsigned long Read;
 	unsigned long ulChunkSize;
+	unsigned long ulLenthMS;
 
 public:
 	CWAVDecoder(void);

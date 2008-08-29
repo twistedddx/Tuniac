@@ -18,7 +18,7 @@ bool CWMADecoder::Open(LPTSTR szSource)
 	m_IAudioOutputProps = NULL;
 	pHeaderInfo = NULL;
 	pEditor = NULL;
-	m_ulTotalTimeInMS = 0;
+	m_ulTotalTimeInMS = LENGTH_UNKNOWN;
 	m_bIsSeekable = 0;
 	m_wAudioStreamNumber = 0;
 	m_dwAudioOutputNumber = 0;

@@ -36,6 +36,9 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 		return false;
 
 	ulChunkSize = child.cksize;
+	ulLenthMS = 1000 * ((unsigned long)ulChunkSize / (unsigned long)wfmex.nAvgBytesPerSec);
+	if(ulLenthMS < 1)
+		ulLenthMS = LENGTH_UNKNOWN;
 
 	if(wfmex.wBitsPerSample == 8)
 		m_divider = 128.0f;
@@ -72,7 +75,7 @@ bool		CWAVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 
 bool		CWAVDecoder::GetLength(unsigned long * MS)
 {
-	*MS = 1000 * ((unsigned long)ulChunkSize / (unsigned long)wfmex.nAvgBytesPerSec);
+	*MS = ulLenthMS;
 	return(true);
 }
 
@@ -83,7 +86,7 @@ bool		CWAVDecoder::SetPosition(unsigned long * MS)
 	ByteOffset -= ByteOffset % wfmex.nBlockAlign;
 
 	//seek in to where we want
-	mmioSeek(hWav, parent.cksize+ByteOffset, SEEK_SET);
+	mmioSeek(hWav, parent.dwDataOffset+sizeof(FOURCC)+ByteOffset, SEEK_SET);
 	return(true);
 }
 
@@ -101,14 +104,17 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	if(Read > 0)
 	{
  		short * pData = (short*)buffer;
-		for(int x=0; x<(Read/wfmex.nChannels); x++)
+		for(int x=0; x<(Read/2); x++)
 		{
 			m_Buffer[x] = (float)pData[x] / m_divider;
 		}
 		*ppBuffer = m_Buffer;
 
-		*NumSamples = (Read/wfmex.nChannels);
+		*NumSamples = (Read/2);
 
 	}
+	else
+		return false;
+
 	return(true);
 }
