@@ -123,7 +123,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	audprops = fileref.audioProperties();
 	if(audprops)
 	{
-		libEnt->iBitRate		= audprops->bitrate();
+		libEnt->iBitRate		= audprops->bitrate() * 1024;
 		libEnt->iChannels		= audprops->channels();
 		libEnt->iPlaybackTime	= audprops->length() * 1000;
 		libEnt->iSampleRate		= audprops->sampleRate();
