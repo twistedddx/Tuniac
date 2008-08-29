@@ -35,11 +35,17 @@ bool CWMADecoder::Open(LPTSTR szSource)
 
     hr  = WMCreateSyncReader(NULL,0,&m_ISyncReader);
 	if(hr!=S_OK)
+	{
+		Close();
 		return false;
+	}
 
 	hr = m_ISyncReader->Open(szSource);
 	if(hr!=S_OK)
+	{
+		Close();
 		return false;
+	}
 
     DWORD m_theOutputCount; 
     m_ISyncReader->GetOutputCount(&m_theOutputsCount);
@@ -73,7 +79,10 @@ bool CWMADecoder::Open(LPTSTR szSource)
 
 	hr = m_ISyncReader->QueryInterface(IID_IWMHeaderInfo3,(void**)&pHeaderInfo);
 	if( hr != S_OK )
+	{
+		Close();
 		return false;
+	}
 
 	hr = pHeaderInfo->GetAttributeByName( &wStreamNum, g_wszWMDuration, &Type, NULL, &DataSize);
 	if( hr == S_OK && hr != ASF_E_NOTFOUND )
@@ -101,11 +110,17 @@ bool CWMADecoder::Open(LPTSTR szSource)
 	WMT_STREAM_SELECTION	wmtSS = WMT_ON;
     hr = m_ISyncReader->SetStreamsSelected( 1, &m_wAudioStreamNumber, &wmtSS );
     if ( FAILED( hr ) )
+	{
+		Close();
 		return false;
+	}
 
 	hr = m_ISyncReader->SetReadStreamSamples(m_wAudioStreamNumber,FALSE);
 	if(hr!=S_OK)
+	{
+		Close();
 		return false;
+	}
 
 	m_ISyncReader->SetRange(0, 0);
 
@@ -215,6 +230,12 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 
 	}
+	else
+	{
+		Close();
+		return false;
+	}
+	/*
 	else if(hr == NS_E_NO_MORE_SAMPLES)
 		return false;
 	else if(hr == E_UNEXPECTED)
@@ -223,6 +244,6 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		return false;
 	else if(hr == NS_E_INVALID_REQUEST)
 		return false;
-
+*/
 	return(true);
 }

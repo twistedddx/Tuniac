@@ -15,25 +15,43 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 	hWav = mmioOpen( szSource, NULL, MMIO_ALLOCBUF | MMIO_READ );
 
 	if (hWav==NULL)
+	{
+		Close();
 		return false;
+	}
 
 	parent.fccType = mmioFOURCC('W', 'A', 'V', 'E');
 	if (mmioDescend(hWav, &parent, NULL, MMIO_FINDRIFF))
+	{
+		Close();
 		return false;
+	}
 
 	child.ckid = mmioFOURCC('f', 'm', 't', ' ');
 	if (mmioDescend(hWav, &child,  &parent, 0))
+	{
+		Close();
 		return false;
+	}
 
 	if (mmioRead(hWav, (char*)&wfmex, sizeof(WAVEFORMATEX)) != sizeof(WAVEFORMATEX))
+	{
+		Close();
 		return false;
+	}
 
 	if (mmioAscend(hWav, &child, 0))
+	{
+		Close();
 		return false;
+	}
 
 	child.ckid = mmioFOURCC('d', 'a', 't', 'a');
 	if (mmioDescend(hWav, &child, &parent, MMIO_FINDCHUNK))
+	{
+		Close();
 		return false;
+	}
 
 	ulChunkSize = child.cksize;
 	ulLenthMS = 1000 * ((unsigned long)ulChunkSize / (unsigned long)wfmex.nAvgBytesPerSec);
@@ -114,7 +132,10 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	}
 	else
+	{
+		Close();
 		return false;
+	}
 
 	return(true);
 }
