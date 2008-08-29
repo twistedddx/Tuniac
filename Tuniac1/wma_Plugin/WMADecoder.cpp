@@ -75,7 +75,10 @@ bool CWMADecoder::Open(LPTSTR szSource)
 		}
 	}
 	if(m_IAudioOutputProps)
+	{
 		m_IAudioOutputProps->Release();
+		m_IAudioOutputProps = NULL;
+	}
 
 	hr = m_ISyncReader->QueryInterface(IID_IWMHeaderInfo3,(void**)&pHeaderInfo);
 	if( hr != S_OK )
@@ -104,7 +107,10 @@ bool CWMADecoder::Open(LPTSTR szSource)
 		delete [] pbValue;
 	}
 	if(pHeaderInfo)
+	{
 		pHeaderInfo->Release();
+		pHeaderInfo = NULL;
+	}
 
 
 	WMT_STREAM_SELECTION	wmtSS = WMT_ON;
@@ -139,14 +145,16 @@ bool CWMADecoder::Open(LPTSTR szSource)
 
 bool CWMADecoder::Close()
 {
+	if(m_pINSSBuffer)
+	{
+		m_pINSSBuffer->Release();
+		m_pINSSBuffer = NULL;
+	}
 	if(m_ISyncReader)
 	{
 		m_ISyncReader->Close();
 		m_ISyncReader->Release();
-	}
-	if(m_pINSSBuffer)
-	{
-		m_pINSSBuffer->Release();
+		m_ISyncReader = NULL;
 	}
 	CoUninitialize();
 	return(true);
@@ -197,7 +205,10 @@ bool		CWMADecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	WORD wStream = 0;
 
 	if(m_pINSSBuffer)
+	{
 		m_pINSSBuffer->Release();
+		m_pINSSBuffer = NULL;
+	}
 
 	hr = m_ISyncReader->GetNextSample(m_wAudioStreamNumber,
 										&m_pINSSBuffer,
