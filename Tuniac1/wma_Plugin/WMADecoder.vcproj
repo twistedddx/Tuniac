@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib wmvcore.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib wmvcore.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -206,7 +206,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib wmvcore.lib"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -280,7 +280,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib wmvcore.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -354,14 +354,6 @@
 			</File>
 			<File
 				RelativePath=".\WMADecoderPlugin.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="wmalib"
-			>
-			<File
-				RelativePath=".\wmalib\wmvcore.lib"
 				>
 			</File>
 		</Filter>
