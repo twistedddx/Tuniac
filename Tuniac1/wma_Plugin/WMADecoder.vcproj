@@ -44,7 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../TuniacApp;./libwma"
+				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
