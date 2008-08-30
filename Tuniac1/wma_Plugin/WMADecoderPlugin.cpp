@@ -37,7 +37,7 @@ unsigned long	CWMADecoderPlugin::GetFlags(void)
 
 bool			CWMADecoderPlugin::About(HWND hParent)
 {
-    MessageBox(hParent, TEXT("WMA Plugin \nUsing FFDShow based libwma "), GetName(), MB_OK | MB_ICONINFORMATION);
+    MessageBox(hParent, TEXT("WMA Plugin \nUsing wmfsdk"), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
