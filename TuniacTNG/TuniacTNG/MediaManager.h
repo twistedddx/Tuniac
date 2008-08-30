@@ -24,7 +24,7 @@ protected:
 	bool InsertItemToMediaLibraryUsingConnection(sqlite3x::sqlite3_connection & con, MediaItem & pItem);
 	bool IsFileInLibrary(sqlite3x::sqlite3_connection & con, String filename);
 
-	bool ReaderMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item);
+	bool CursorToMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item);
 
 	bool RebuildIDList(void);
 	void CreateDatabaseSchema(sqlite3x::sqlite3_connection & con);
