@@ -19,6 +19,7 @@ public:
 	CStdString				filename;
 	long long				ullFilesize;
 	long long				ullFileModifiedTime;
+	long long				ullFileCreationTime;
 
 	CStdString				title;	
 	CStdString				artist;

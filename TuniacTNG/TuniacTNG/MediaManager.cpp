@@ -362,10 +362,7 @@ bool CMediaManager::GetRange(unsigned long ulStart, unsigned long ulCount, Media
 			//existscmd.
 			MediaItem tempItem = {0};
 
-
-			ReaderMediaItem(cursor, tempItem);
-
-
+			CursorToMediaItem(cursor, tempItem);
 
 			itemList.push_back(tempItem);
 		}
@@ -556,54 +553,58 @@ bool	CMediaManager::DeleteByFilename(CStdString filename)
 
 // THIS FUNCTION ONLY WORKS FOR SELECT * FROM MEDIALIBRARY!!!!1
 // this is so I only have to update it in one place!!!
-bool CMediaManager::ReaderMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item)
+bool CMediaManager::CursorToMediaItem(sqlite3x::sqlite3_cursor & cursor, MediaItem & item)
 {
 	try
 	{
-		item.ulID					= cursor.getint64(0);
+		int index =0;
+		item.ulID					= cursor.getint64(index++);
+		index++;
 
-		item.dateAdded				= cursor.getint64(2);
-		item.fileOnline				= cursor.getint64(3);
+		item.dateAdded				= cursor.getint64(index++);
+		item.fileOnline				= cursor.getint64(index++);
 
-		item.filename				= cursor.getstring16(4);
-		item.ullFilesize			= cursor.getint64(5);
-		item.ullFileModifiedTime	= cursor.getint64(6);
+		item.filename				= cursor.getstring16(index++);
+		item.ullFilesize			= cursor.getint64(index++);
+		item.ullFileModifiedTime	= cursor.getint64(index++);
+		item.ullFileCreationTime	= cursor.getint64(index++);
 
-		item.title					= cursor.getstring16(7);
-		item.artist					= cursor.getstring16(8);
+		item.title					= cursor.getstring16(index++);
+		item.artist					= cursor.getstring16(index++);
+		index++;
 
-		item.album					= cursor.getstring16(10);
-		item.albumartist			= cursor.getstring16(11);
-		item.composer				= cursor.getstring16(12);
-		item.ulYear					= cursor.getint64(13);
-		item.genre					= cursor.getstring16(14);
-		item.comment				= cursor.getstring16(15);
+		item.album					= cursor.getstring16(index++);
+		item.albumartist			= cursor.getstring16(index++);
+		item.composer				= cursor.getstring16(index++);
+		item.ulYear					= cursor.getint64(index++);
+		item.genre					= cursor.getstring16(index++);
+		item.comment				= cursor.getstring16(index++);
 
-		item.ulTrack				= cursor.getint64(16);
-		item.ulMaxTrack				= cursor.getint64(17);
+		item.ulTrack				= cursor.getint64(index++);
+		item.ulMaxTrack				= cursor.getint64(index++);
 
-		item.ulDisk					= cursor.getint64(18);
-		item.ulMaxDisk				= cursor.getint64(19);
+		item.ulDisk					= cursor.getint64(index++);
+		item.ulMaxDisk				= cursor.getint64(index++);
 
-		item.ulRating				= cursor.getint64(20);
-		item.ulBPM					= cursor.getint64(21);
+		item.ulRating				= cursor.getint64(index++);
+		item.ulBPM					= cursor.getint64(index++);
 
-		item.ulPlayTimeMS			= cursor.getint64(22);
-		item.ulPlaybackTimeAccuracy	= cursor.getint64(23);
+		item.ulPlayTimeMS			= cursor.getint64(index++);
+		item.ulPlaybackTimeAccuracy	= cursor.getint64(index++);
 
-		item.ulSampleRate			= cursor.getint64(24);
-		item.ulChannelCount			= cursor.getint64(25);
-		item.ulBitRate				= cursor.getint64(26);
+		item.ulSampleRate			= cursor.getint64(index++);
+		item.ulChannelCount			= cursor.getint64(index++);
+		item.ulBitRate				= cursor.getint64(index++);
 
-		item.ullFirstPlayed 		= cursor.getint64(27);
-		item.ullLastPlayed			= cursor.getint64(28);
-		item.ullPlayCount			= cursor.getint64(29);
+		item.ullFirstPlayed 		= cursor.getint64(index++);
+		item.ullLastPlayed			= cursor.getint64(index++);
+		item.ullPlayCount			= cursor.getint64(index++);
 
-		item.fReplayGainTrack		= cursor.getdouble(30);
-		item.fReplayPeakTrack		= cursor.getdouble(31);
+		item.fReplayGainTrack		= cursor.getdouble(index++);
+		item.fReplayPeakTrack		= cursor.getdouble(index++);
 
-		item.fReplayGainAlbum		= cursor.getdouble(32);
-		item.fReplayPeakAlbum		= cursor.getdouble(33);
+		item.fReplayGainAlbum		= cursor.getdouble(index++);
+		item.fReplayPeakAlbum		= cursor.getdouble(index++);
 	}
 	catch (...)
 	{
@@ -632,6 +633,7 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 				Filename				TEXT, 					\
 				FileSize				TEXT, 					\
 				FileModifiedTime		INTEGER, 				\
+				FileCreationTime		INTEGER,				\
 																\
 				Title					TEXT, 					\
 				Artist					TEXT, 					\
@@ -693,7 +695,7 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 	{
 		String sql = TEXT("									\
 			CREATE TABLE PlaylistTracks (					\
-				PlaylistEntryID			INTEGERPRIMARY KEY,	\
+				PlaylistEntryID			INTEGER PRIMARY KEY,\
 				PlaylistID				INTEGER,			\
 				TrackID					INTEGER,			\
 				OrderNum				INTEGER				\
