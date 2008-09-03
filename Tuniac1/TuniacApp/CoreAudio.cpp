@@ -173,8 +173,6 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 		CheckOldStreams();
 	}
 
-	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
-
 	LPTSTR szSource = (LPTSTR)pEntry->GetField(FIELD_URL);
 	float *fReplayGainAlbum = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
 	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_TRACK_GAIN);
@@ -216,6 +214,8 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					if(bShoudStart)
 						pStream->Start();
 
+					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
+
 					return true;
 				}
 				else
@@ -226,6 +226,8 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			}
 		}
 	}
+
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
 
 	return false;
 }

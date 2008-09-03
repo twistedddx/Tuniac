@@ -805,7 +805,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has started a song
 					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
 						{
-							UpdateState();
 						}
 						break;
 
@@ -816,8 +815,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							tuniacApp.DoSoftPause();
 
 							UpdateState();
-
-							m_PlayControls.UpdateState();
 
 							//update the new current song on the playlist
 							m_SourceSelectorWindow->UpdateView();
@@ -2251,6 +2248,7 @@ void	CTuniacApp::UpdateState(void)
 
 	SetWindowText(getMainWindow(), szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);
+	m_PlayControls.UpdateState();
 }
 
 //update streamtitle eg for mp3 streams
