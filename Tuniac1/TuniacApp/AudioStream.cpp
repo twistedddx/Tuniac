@@ -353,8 +353,8 @@ bool			CAudioStream::FadeOut(unsigned long ulMS)
 
 bool			CAudioStream::Start(void)
 {
-	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKSTARTED, NULL);
 	m_PlayState = STATE_PLAYING;
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKSTARTED, NULL);
 	return m_Output->Start();
 }
 
