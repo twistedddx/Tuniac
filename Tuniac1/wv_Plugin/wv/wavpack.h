@@ -18,6 +18,7 @@
 
 #if defined(_WIN32) && !defined(__MINGW32__)
 #include <stdlib.h>
+typedef unsigned char   uchar;
 typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
@@ -30,8 +31,6 @@ typedef float float32_t;
 #else
 #include <inttypes.h>
 #endif
-
-typedef unsigned char   uchar;
 
 #if !defined(__GNUC__) || defined(WIN32)
 typedef unsigned short  ushort;
