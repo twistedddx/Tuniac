@@ -794,7 +794,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								else
 									//no next song??
 									UpdateState();
+
+
 							}
+							else if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+							{
+								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+								if(pPlaylistEX->GetNextFilteredIndex(pPlaylistEX->GetActiveFilteredIndex(), true, true) == -1)
+									//no next song??
+									UpdateState();
+							}
+								
 
 							//clear out old streams from crossfades and last song
 							CCoreAudio::Instance()->CheckOldStreams();
@@ -838,6 +848,38 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 //							m_Taskbar.UpdatePlaylistMenu();
 						}
 						break;
+
+
+					//audiostream has finished a song
+					case NOTIFY_COREAUDIO_PLAYBACKFAILED:
+						{
+							//CoreAudio couldnt open the last song we told it to, try again
+							//we may need to watch how many times this has failed so this doesnt try
+							//to churn through an entire invalid ML
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							if(pPlaylist->Next())
+							{
+								//play the song we got
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+								if(pIPE)
+								{
+									if(CCoreAudio::Instance()->SetSource(pIPE))
+									{
+										CCoreAudio::Instance()->Play();
+									}
+								}
+							}
+							else
+								//no next song??
+								UpdateState();
+
+							//clear out old streams from crossfades and last song
+							CCoreAudio::Instance()->CheckOldStreams();
+
+						}
+						break;
+
+
 				}
 			}
 			break;

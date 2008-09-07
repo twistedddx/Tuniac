@@ -18,7 +18,6 @@
 
 #if defined(_WIN32) && !defined(__MINGW32__)
 #include <stdlib.h>
-typedef unsigned char   uchar;
 typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
@@ -31,6 +30,8 @@ typedef float float32_t;
 #else
 #include <inttypes.h>
 #endif
+
+typedef unsigned char   uchar;
 
 #if !defined(__GNUC__) || defined(WIN32)
 typedef unsigned short  ushort;
@@ -120,7 +121,7 @@ typedef struct {
 
 #define MIN_STREAM_VERS     0x402       // lowest stream version we'll decode
 #define MAX_STREAM_VERS     0x410       // highest stream version we'll decode or encode
-#define CUR_STREAM_VERS     0x405       // stream version we are writing now
+#define CUR_STREAM_VERS     0x407       // stream version we are writing now
 
 // These are the mask bit definitions for the metadata chunk id byte (see format.txt)
 
@@ -236,11 +237,13 @@ int WavpackGetMode (WavpackContext *wpc);
 #define MODE_VALID_TAG  0x10
 #define MODE_HIGH       0x20
 #define MODE_FAST       0x40
-#define MODE_EXTRA      0x80
+#define MODE_EXTRA      0x80    // extra mode used, see MODE_XMODE for possible level
 #define MODE_APETAG     0x100
 #define MODE_SFX        0x200
 #define MODE_VERY_HIGH  0x400
 #define MODE_MD5        0x800
+#define MODE_XMODE      0x7000  // mask for extra level (1-6, 0=unknown)
+#define MODE_DNS        0x8000
 
 char *WavpackGetErrorMessage (WavpackContext *wpc);
 int WavpackGetVersion (WavpackContext *wpc);
@@ -291,8 +294,8 @@ void WavpackFloatNormalize (int32_t *values, int32_t num_values, int delta_exp);
 void WavpackLittleEndianToNative (void *data, char *format);
 void WavpackNativeToLittleEndian (void *data, char *format);
 
-uint32_t WavpackGetLibraryVersion ();
-const char *WavpackGetLibraryVersionString ();
+uint32_t WavpackGetLibraryVersion (void);
+const char *WavpackGetLibraryVersionString (void);
 
 #ifdef __cplusplus
 }
