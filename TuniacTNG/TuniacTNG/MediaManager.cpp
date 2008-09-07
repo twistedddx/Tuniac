@@ -650,8 +650,8 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 				Disc					TEXT, 					\
 				MaxDisc					TEXT, 					\
 																\
-				Rating					INTEGER, 				\
-				BPM						INTEGER, 				\
+				Rating					INTEGER DEFAULT 0,		\
+				BPM						INTEGER DEFAULT 0,		\
 				PlaybackTime			INTEGER, 				\
 				PlaybackTimeAccuracy	INTEGER DEFAULT 0, 		\
 				SampleRate				INTEGER, 				\

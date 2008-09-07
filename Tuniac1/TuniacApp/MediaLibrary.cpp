@@ -256,7 +256,6 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
 			StrCpy(libraryEntry.szURL, szURL);
 
-			GetLocalTime(&libraryEntry.stDateAdded);
 
 			// extract generic info from the file (creation time/size)
 			HANDLE hFile = CreateFile(szURL, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
@@ -266,6 +265,15 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			FILETIME ft;
 			GetFileTime(hFile, &ft, NULL, NULL);
 			FileTimeToSystemTime(&ft, &libraryEntry.stFileCreationDate);
+
+			if(tuniacApp.m_Preferences.GetDateAddedToFileCreationTime())
+			{
+				FileTimeToSystemTime(&ft, &libraryEntry.stDateAdded);
+			}
+			else
+			{
+				GetLocalTime(&libraryEntry.stDateAdded);
+			}
 
 			libraryEntry.dwFilesize = GetFileSize(hFile, NULL);
 			CloseHandle(hFile);
