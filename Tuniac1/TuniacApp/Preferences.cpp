@@ -1195,6 +1195,8 @@ bool CPreferences::DefaultPreferences(void)
 	m_HistoryListSize = 10;
 	m_FutureListSize = 10;
 
+	m_bSetDateAddedToFileCreationTime = TRUE;
+
 	return true;
 }
 
@@ -2337,3 +2339,9 @@ int			CPreferences::GetFutureListSize(void)
 {
 	return m_FutureListSize;
 }
+
+BOOL		CPreferences::GetDateAddedToFileCreationTime(void)
+{
+	return m_bSetDateAddedToFileCreationTime;
+}
+

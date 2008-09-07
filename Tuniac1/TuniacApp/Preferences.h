@@ -91,6 +91,8 @@ protected:
 	BOOL		m_SmartSorting;
 	BOOL		m_ShuffleState;
 
+	BOOL		m_bSetDateAddedToFileCreationTime;
+
 	int			m_PlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
 	int			m_PlaylistViewColumnWidths[FIELD_MAXFIELD];
@@ -211,4 +213,6 @@ public:
 
 	unsigned long	GetHistoryListSize(void);
 	int			GetFutureListSize(void);
+
+	BOOL		GetDateAddedToFileCreationTime(void);
 };
