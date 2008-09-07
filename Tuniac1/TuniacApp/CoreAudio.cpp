@@ -226,8 +226,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 			}
 		}
 	}
-
-	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
+	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
 
 	return false;
 }
