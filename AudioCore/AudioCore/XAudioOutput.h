@@ -40,7 +40,7 @@ public:
 /////////////////////////////////////////////////////////////
 //			XAUDIO CALLBACKS!!!!!!
 public:
-	STDMETHOD_(void, OnVoiceProcessingPassStart) () {}
+	STDMETHOD_(void, OnVoiceProcessingPassStart) (UINT32 BytesRequired) {}
     STDMETHOD_(void, OnVoiceProcessingPassEnd) () {}
     STDMETHOD_(void,OnStreamEnd) () 
 	{

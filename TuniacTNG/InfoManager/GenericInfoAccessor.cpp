@@ -75,6 +75,16 @@ bool	CGenericInfoAccessor::ReadMetaData(MediaItem & pItem)
 	if(tag)
 	{
 		pItem.title		= tag->title().toWString();
+		if(pItem.title.length() == 0)
+		{
+			// put filename in here?
+			int x = pItem.filename.ReverseFind(TEXT("\\"));
+			if(x != string::npos)
+				pItem.title = pItem.filename.Right(pItem.filename.length() - (x + 1));
+			else
+				pItem.title = pItem.filename;
+		}
+
 		pItem.artist	= tag->artist().toWString();
 		pItem.album		= tag->album().toWString();
 		pItem.genre		= tag->genre().toWString();

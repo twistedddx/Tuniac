@@ -36,7 +36,7 @@ public:
 
 	virtual GUID			GetPluginID(void)															= 0; // use guidgen to make a custom guid to return
 
-	virtual bool			CanHandle(wchar_t * wcsSource)												= 0;
+	virtual bool			CanHandle(wchar_t * wcsSource, unsigned long * ulAccuracy)					= 0;	// 0 - 100% (or > 100% if you absolutely must play this format)
 	virtual IAudioSource *	CreateAudioSource(wchar_t * wcsSource, IAudioSourceCallback * pCallback)	= 0;
 };
 
