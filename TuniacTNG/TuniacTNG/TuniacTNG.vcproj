@@ -206,6 +206,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TuniacApp.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacHelper.cpp"
 				>
 			</File>
@@ -233,6 +237,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TuniacApp.h"
 				>
 			</File>
 			<File

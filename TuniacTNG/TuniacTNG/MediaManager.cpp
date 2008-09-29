@@ -695,7 +695,7 @@ void CMediaManager::CreateDatabaseSchema(sqlite3x::sqlite3_connection & con)
 	{
 		String sql = TEXT("									\
 			CREATE TABLE PlaylistTracks (					\
-				PlaylistEntryID			INTEGER PRIMARY KEY,\
+				PlaylistEntryID			INTEGER,			\
 				PlaylistID				INTEGER,			\
 				TrackID					INTEGER,			\
 				OrderNum				INTEGER				\

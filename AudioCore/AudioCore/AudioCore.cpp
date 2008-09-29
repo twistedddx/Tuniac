@@ -94,6 +94,25 @@ bool				CAudioCore::FreeAudioSources(void)
 
 AUDIOSTREAMID		CAudioCore::RenderAudioStream(wchar_t	*	pwsFileName)
 {
+	IAudioSourceSupplier *			pAudioPotential = NULL;
+	unsigned long					ulLastPercent;
+
+	// find best plugin
+	for(int x=0; x<m_vAudioSources.size(); x++)
+	{
+		unsigned long ulThisAccuracy = 0;
+		if(m_vAudioSources[x].pSupplier->CanHandle(pwsFileName, &ulThisAccuracy))
+		{
+			if(ulThisAccuracy > ulLastPercent)
+			{
+				pAudioPotential = m_vAudioSources[x].pSupplier;
+			}
+		}
+	}
+
+	pAudioPotential->CreateAudioSource(pwsFileName, this);
+
+
 	IAudioOutput * pOutput = m_AudioProducer->CreateAudioOutput(44100, 2);
 	return 0;
 }
