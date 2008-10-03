@@ -282,14 +282,19 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 bool				CBasePlaylist::Previous(void)
 {
 		unsigned long ulFilteredIndex;
+		unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
+
+		if(ulActiveFilteredIndex == 0)
+			return SetActiveFilteredIndex(0);
 
 		//check if we are repeatingall and play last song in list
-		if( GetActiveFilteredIndex() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll )
+		if( ulActiveFilteredIndex == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll )
 			//m_NormalIndexArray/m_RandomIndexArray should always be the same length
 			ulFilteredIndex = m_NormalIndexArray.GetCount() - 1;
 		else
 			//try to set active as -1 of current active
-			ulFilteredIndex = GetActiveFilteredIndex() - 1;
+			ulFilteredIndex = ulActiveFilteredIndex - 1;
+
 
 		return SetActiveFilteredIndex(ulFilteredIndex);
 }
@@ -322,14 +327,16 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 {
 ///////////////// normal logic
 
+	if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
+		return 0;
+
 	//check that we are checking a valid index
-	if(!CheckFilteredIndex(ulFilteredIndex))
-		return -1;
+	//if(!CheckFilteredIndex(ulFilteredIndex))
+	//	return -1;
 
 	//if repeatone the next song is just the current song
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulFilteredIndex;
-
 
 	unsigned long ulActiveIndex = GetActiveFilteredIndex();
 
