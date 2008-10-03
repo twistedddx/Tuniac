@@ -856,22 +856,28 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case ID_UPDATE:
 						{
 							HWND		hListViewWnd	= GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
+							unsigned long deletedIndexes = 0;
 							int lPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
 							while(-1 != lPos)
 							{
-								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(lPos);
+								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(lPos - deletedIndexes);
 								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(realIndex))
 								{
 									IPlaylistEntry * pEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(realIndex);
-									unsigned long ulEntryID = pEntry->GetEntryID();
-									for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+									if(pEntry)
 									{
-										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-										pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
+										unsigned long ulEntryID = pEntry->GetEntryID();
+										for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+										{
+											IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
+											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+											pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
+										}
+										tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
+										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+										ListView_SetItemState(hListViewWnd, lPos, 0, LVIS_SELECTED);
+										deletedIndexes++;
 									}
-									tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
-									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 								}
 
 								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(realIndex);
@@ -880,7 +886,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateIndex(realIndex);
 								}
-								tuniacApp.m_SourceSelectorWindow->UpdateView();
 								lPos = ListView_GetNextItem(hListViewWnd, lPos, LVNI_SELECTED);
 							}
 
