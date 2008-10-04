@@ -926,6 +926,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								m_PlaylistSourceView->Redraw();
 
+								ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, LVSCW_AUTOSIZE_USEHEADER);
 							}
 						}
 						break;
