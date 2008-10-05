@@ -27,7 +27,7 @@
 
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 2)
+#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 3)
 
 
 
@@ -119,6 +119,7 @@ typedef struct
 {
 	unsigned long	Version;
 	unsigned long	NumEntries;
+	TCHAR			Name[128];
 	int				ActivePlaylist;
 	int				ActiveIndex;
 	TCHAR			LibraryFilter[128];
@@ -241,6 +242,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			}
 		}
 
+		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
 		m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
 		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
 		PLDH.LibraryFilter[127] = L'\0';
@@ -302,6 +304,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 	PLDH.LibraryFilterField = m_LibraryPlaylist.GetTextFilterField();
 	PLDH.LibraryFilterReverse = m_LibraryPlaylist.GetTextFilterReversed();
 	StrCpyN(PLDH.LibraryFilter, m_LibraryPlaylist.GetTextFilter(), 128);
+	StrCpyN(PLDH.Name, m_LibraryPlaylist.GetPlaylistName(), 128);
 	if(m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
 		if(GetActivePlaylistIndex() == 0)
