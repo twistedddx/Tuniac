@@ -14,7 +14,8 @@ bool CTuniacMemoryFileIO::Open(LPTSTR szFilename)
 {
 	m_hFile = CreateFile(	szFilename, 
 							GENERIC_READ, 
-							FILE_SHARE_READ, NULL, 
+							FILE_SHARE_READ | FILE_SHARE_WRITE, 
+							NULL, 
 							OPEN_EXISTING, 
 							FILE_FLAG_SEQUENTIAL_SCAN,
 							NULL);
