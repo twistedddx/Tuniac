@@ -198,7 +198,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 
 				if(!pFileIO)
-					break;;
+					break;
 			}
 
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource, pFileIO);
@@ -207,7 +207,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 				pStream = new CAudioStream();
 				pOutput = new CAudioOutput(m_pXAudio, m_BufferSizeMS);
 
-				if(pStream->Initialize(pSource, pOutput))
+				if(pStream->Initialize(pSource, pOutput, szSource))
 				{
 					CAutoLock	t(&m_Lock);
 

@@ -37,6 +37,7 @@ CAudioStream::CAudioStream()
 
 
 	fVolume			= 1.0f;
+	m_bEntryPlayed	= false;
 	m_bMixNotify	= false;
 	m_bFinishNotify	= false;
 	m_bIsFinished	= false;
@@ -63,9 +64,10 @@ CAudioStream::~CAudioStream(void)
 
 }
 
-bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput)
+bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LPTSTR szSource)
 {
 	unsigned long srate;
+	szURL			= szSource;
 	m_pSource		= pSource;
 	m_Output		= pOutput;
 
@@ -209,54 +211,58 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				XMM2 = _mm_load1_ps(&fAmpGain);
 			}
 			
-
+/*
 			for(unsigned long x=0; x<NumSamples; x+=4)
 			{
-				// load XMM0 with 4 samples from the audio buffer
-				XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
-
-				// if replaygain enabled in prefs
-				if(bReplayGain)
+				if(NumSamples-x > 4)
 				{
-					// apply -6db gain to files without replaygain data
-					// or apply whichever value we loaded into XMM2 (track or album)
-					XMM0 = _mm_mul_ps(XMM0, XMM2);
-				}
+					// load XMM0 with 4 samples from the audio buffer
+					XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
 
-				// apply volume
-				XMM0 = _mm_mul_ps(XMM0, XMM1);
-
-				// store XMM0 back to where we loaded it from thanks!
-				_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
-			}
-/*
-				for(unsigned long chan=0; chan<m_Channels; chan++)
-				{
-					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
-					// TO DO SSEIFY THIS PLSKTHANKX
-					// is replaygain set?
+					// if replaygain enabled in prefs
 					if(bReplayGain)
 					{
-						// replaygain
-						if(bUseAlbumGain && bAlbumHasGain)
-						{
-							// +6db replaygain files
-							pAudioBuffer[x+chan]		*= fAmpGain;
-							pAudioBuffer[x+chan]		*= fReplayGainAlbum;
-						}
-						else if(bTrackHasGain && !bUseAlbumGain)
-						{
-							// +6db replaygain files
-							pAudioBuffer[x+chan]		*= fAmpGain;
-							pAudioBuffer[x+chan]		*= fReplayGainTrack;
-						}
+						// apply -6db gain to files without replaygain data
+						// or apply whichever value we loaded into XMM2 (track or album)
+						XMM0 = _mm_mul_ps(XMM0, XMM2);
 					}
 
-					// and apply the volume
-					pAudioBuffer[x+chan]		*= fVolumeScale;
-				}
+					// apply volume
+					XMM0 = _mm_mul_ps(XMM0, XMM1);
 
+					// store XMM0 back to where we loaded it from thanks!
+					_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
+				}
+				else
+				{
 				*/
+					for(unsigned long i=0; i<NumSamples; i++)
+					{
+						// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
+						// TO DO SSEIFY THIS PLSKTHANKX
+						// is replaygain set?
+						if(bReplayGain)
+						{
+							// replaygain
+							if(bUseAlbumGain && bAlbumHasGain)
+							{
+								pAudioBuffer[i]		*= fReplayGainAlbum;
+							}
+							else if(bTrackHasGain && !bUseAlbumGain)
+							{
+								pAudioBuffer[i]		*= fReplayGainTrack;
+							}
+							else
+							{
+								pAudioBuffer[i]		*= fAmpGain;
+							}
+						}
+						// and apply the volume
+						pAudioBuffer[i]		*= fVolumeScale;
+					}
+				//}
+			//}
+
 			if(m_FadeState != FADE_NONE)
 			{
 				// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
@@ -278,16 +284,29 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 			//check if coreaudio has not been notified yet and if we are crossfading
 			if(ulSongLength != LENGTH_UNKNOWN)
-			{			
+			{
+				
+				unsigned long ulCurrentMS = GetPosition() + m_Output->GetAudioBufferMS();
+				if(!m_bEntryPlayed)
+				{
+					if(ulCurrentMS > (ulSongLength * 0.25))
+					{
+						m_bEntryPlayed = true;
+						tuniacApp.UpdatePlayedCount(szURL);
+					}
+				}
 				if(!m_bMixNotify)
 				{
 					//length longer then crossfade time
+					//
 
-					if((ulSongLength - (GetPosition() + m_Output->GetAudioBufferMS())) < m_CrossfadeTimeMS)
+					if((ulSongLength - ulCurrentMS) < m_CrossfadeTimeMS)
 					{
 						m_bMixNotify = true;
 						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
 					}
+
+
 				}
 			}
 

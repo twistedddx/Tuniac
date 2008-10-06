@@ -151,8 +151,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_WindowArray.AddTail(t);
 
 	//create visual window
-//	t = new CVisualWindow;
-//	m_WindowArray.AddTail(t);
+	//t = new CVisualWindow;
+	//m_WindowArray.AddTail(t);
 
 	//create log window
 	m_LogWindow = new CLogWindow();
@@ -243,13 +243,16 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 
+	//m_WindowArray[1]->Show();
+	//Sleep(300);
+	//m_WindowArray[1]->Hide();
+
 	return true;
 }
 
 bool CTuniacApp::Shutdown()
 {
 	//close tuniac
-
 	m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
 
 	m_SysEvents.Shutdown();
@@ -880,8 +883,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 						}
 						break;
-
-
 				}
 			}
 			break;
@@ -2303,6 +2304,26 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 	if(pIPE)
 	{
 		pIPE->SetField(ulFieldID, szTitle);
+		tuniacApp.m_SourceSelectorWindow->UpdateView();
+		UpdateState();
+		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+	}
+}
+
+//update played count and date played when more than 1/4 the way through
+void	CTuniacApp::UpdatePlayedCount(LPTSTR szURL)
+{
+	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByURL(szURL);
+
+	if(pIPE)
+	{
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+		pIPE->SetField(FIELD_DATELASTPLAYED, &st);
+
+		int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
+		pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
+
 		tuniacApp.m_SourceSelectorWindow->UpdateView();
 		UpdateState();
 		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
