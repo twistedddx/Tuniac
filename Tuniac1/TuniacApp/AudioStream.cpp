@@ -211,31 +211,27 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				XMM2 = _mm_load1_ps(&fAmpGain);
 			}
 			
-/*
+
 			for(unsigned long x=0; x<NumSamples; x+=4)
 			{
-				if(NumSamples-x > 4)
+				// load XMM0 with 4 samples from the audio buffer
+				XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
+
+				// if replaygain enabled in prefs
+				if(bReplayGain)
 				{
-					// load XMM0 with 4 samples from the audio buffer
-					XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
-
-					// if replaygain enabled in prefs
-					if(bReplayGain)
-					{
-						// apply -6db gain to files without replaygain data
-						// or apply whichever value we loaded into XMM2 (track or album)
-						XMM0 = _mm_mul_ps(XMM0, XMM2);
-					}
-
-					// apply volume
-					XMM0 = _mm_mul_ps(XMM0, XMM1);
-
-					// store XMM0 back to where we loaded it from thanks!
-					_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
+					// apply -6db gain to files without replaygain data
+					// or apply whichever value we loaded into XMM2 (track or album)
+					XMM0 = _mm_mul_ps(XMM0, XMM2);
 				}
-				else
-				{
-				*/
+
+				// apply volume
+				XMM0 = _mm_mul_ps(XMM0, XMM1);
+
+				// store XMM0 back to where we loaded it from thanks!
+				_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
+
+					/*
 					for(unsigned long i=0; i<NumSamples; i++)
 					{
 						// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
@@ -260,8 +256,9 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 						// and apply the volume
 						pAudioBuffer[i]		*= fVolumeScale;
 					}
-				//}
-			//}
+				}
+				*/
+			}
 
 			if(m_FadeState != FADE_NONE)
 			{
