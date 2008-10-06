@@ -87,6 +87,9 @@ unsigned long CAudioOutput::ThreadStub(void * in)
 unsigned long CAudioOutput::ThreadProc(void)
 {
 	DWORD currentDiskReadBuffer = 0;
+
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+
 	while(m_bThreadRun)
 	{
 
@@ -334,7 +337,7 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 		m_BlockSize			=	samplesperms	* (m_ulBuffersizeMS / MAX_BUFFER_COUNT);												// so 3*100ms buffers pls
 		m_BlockSizeBytes	=	m_BlockSize		* sizeof(float);
 
-		m_Interval = (m_ulBuffersizeMS / MAX_BUFFER_COUNT);
+		m_Interval = (m_ulBuffersizeMS / MAX_BUFFER_COUNT) / 2;
 
 		if(!Initialize())
 		{

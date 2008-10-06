@@ -58,6 +58,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 {
 	//load tuniac
 
+	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+
 
 	m_hInstance = hInstance;
 

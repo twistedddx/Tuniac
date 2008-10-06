@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TuniacMemoryFileIO.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacSkin.cpp"
 				>
 			</File>
@@ -724,6 +728,10 @@
 			</File>
 			<File
 				RelativePath=".\TuniacApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TuniacMemoryFileIO.h"
 				>
 			</File>
 			<File

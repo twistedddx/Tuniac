@@ -39,10 +39,16 @@
 class IAudioFileIO
 {
 public:
-	virtual bool Read(unsigned __int64 numberofbytes, void * pData, unsigned __int64 * pBytesRead = NULL) = 0;
+	virtual void Destroy(void) = 0;
+
+	virtual bool Read(unsigned __int64 numberofbytes, void * pData, unsigned __int64 * pBytesRead) = 0;
 
 	virtual bool Seek(unsigned __int64 Offset, bool bFromEnd = false) = 0;
-	virtual bool Tell(unsigned __int64 * pCurrentOffset) = 0;
+
+	virtual void Tell(unsigned __int64 * pCurrentOffset) = 0;
+	virtual void Size(unsigned __int64 * pSize) = 0;
+
+	virtual bool IsEOF(void) = 0;
 };
 
 

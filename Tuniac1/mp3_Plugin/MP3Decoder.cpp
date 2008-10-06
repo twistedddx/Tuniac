@@ -4,7 +4,8 @@
 
 CMP3Decoder::CMP3Decoder(IAudioSourceHelper * pHelper) :
 	m_hFile(NULL),
-	m_pDecoder(NULL)
+	m_pDecoder(NULL),
+	m_SampleBuffer(NULL)
 {
 	m_pHelper = pHelper;
 }
@@ -182,6 +183,14 @@ bool CMP3Decoder::Close(void)
 
 void		CMP3Decoder::Destroy(void)
 {
+	if(m_SampleBuffer)
+	{
+		VirtualUnlock(	m_SampleBuffer, 
+						BUFFERSIZE);
+
+		VirtualFree(m_SampleBuffer, 0, MEM_RELEASE);
+	}
+
 	delete this;
 }
 
@@ -223,6 +232,17 @@ bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 					return false;
 					break;
 			}
+		}
+
+		if(!m_SampleBuffer)
+		{
+			m_SampleBuffer = (float *)VirtualAlloc(	NULL, 
+													BUFFERSIZE, 
+													MEM_COMMIT, 
+													PAGE_READWRITE);		// allocate audio memory
+			VirtualLock(m_SampleBuffer, 
+						BUFFERSIZE);
+
 		}
 
 		if(!m_pDecoder->ProcessFrame(&m_Frame, m_SampleBuffer, NumSamples))
