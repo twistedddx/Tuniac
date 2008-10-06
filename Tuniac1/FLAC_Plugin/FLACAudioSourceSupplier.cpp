@@ -35,7 +35,7 @@ static const GUID FLAC_GUID =
 
 unsigned long	CFLACAudioSourceSupplier::GetFlags(void)
 {
-	return(0);
+	return(FLAGS_PROVIDEFILEIO);
 }
 
 bool			CFLACAudioSourceSupplier::About(HWND hParent)
@@ -72,7 +72,7 @@ IAudioSource *	CFLACAudioSourceSupplier::CreateAudioSource(LPTSTR szSource, IAud
 {
 	CFLACAudioSource * pSource = new CFLACAudioSource;
 
-	if(pSource->Open(szSource))
+	if(pSource->Open(pFileIO))
 	{
 		return (IAudioSource*)pSource;
 	}

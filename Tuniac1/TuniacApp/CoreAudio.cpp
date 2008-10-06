@@ -26,6 +26,8 @@
 #include "TuniacApp.h"
 #include "resource.h"
 
+#include "TuniacMemoryFileIO.h"
+
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 #endif
@@ -184,7 +186,22 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 		{
 			CAudioStream * pStream;
 			CAudioOutput * pOutput;
-			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource);
+
+			IAudioFileIO * pFileIO = NULL;
+
+			if(m_AudioSources[x]->GetFlags() & FLAGS_PROVIDEFILEIO)
+			{
+				CTuniacMemoryFileIO * pIO = new CTuniacMemoryFileIO();
+
+				if(pIO->Open(szSource))
+					pFileIO = pIO;
+
+
+				if(!pFileIO)
+					break;;
+			}
+
+			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource, pFileIO);
 			if(pSource)
 			{
 				pStream = new CAudioStream();

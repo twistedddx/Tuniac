@@ -4,6 +4,8 @@
 #include "FrameSplitter.h"
 #include "Layer3Decoder.h"
 
+#define BUFFERSIZE (4096 * sizeof(float))
+
 class CMP3Decoder :
 	public IAudioSource
 {
@@ -26,7 +28,7 @@ protected:
 	unsigned long				m_VbrScale;
 	unsigned char				m_TOC[100];
 
-	float						m_SampleBuffer[2304];
+	float					*	m_SampleBuffer;
 
 
 	bool						m_bXingValid;

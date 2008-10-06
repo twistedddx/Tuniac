@@ -4,6 +4,17 @@
 
 //#define 8BitToFloat(char x) 
 
+void OurDecoder::SetSource(IAudioFileIO	* pIO)
+{
+	if(m_pAudioIO)
+	{
+		m_pAudioIO->Destroy();
+		m_pAudioIO = NULL;
+	}
+
+	m_pAudioIO = pIO;
+}
+
 void OurDecoder::error_callback(::FLAC__StreamDecoderErrorStatus status)
 {
 	fprintf(stderr, "Got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
@@ -19,6 +30,41 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 		ulBitsPerSample	= metadata->data.stream_info.bits_per_sample;
 	}
 }
+
+::FLAC__StreamDecoderReadStatus OurDecoder::read_callback(FLAC__byte buffer[], size_t *bytes)
+{
+	if(!m_pAudioIO->Read(*bytes, buffer, bytes))
+		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+
+	if(*bytes == 0)
+		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+
+	return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+}
+
+::FLAC__StreamDecoderSeekStatus OurDecoder::seek_callback(FLAC__uint64 absolute_byte_offset)
+{
+	m_pAudioIO->Seek(absolute_byte_offset, false);
+	return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+}
+
+::FLAC__StreamDecoderTellStatus OurDecoder::tell_callback(FLAC__uint64 *absolute_byte_offset)
+{
+	m_pAudioIO->Tell(absolute_byte_offset);
+	return FLAC__STREAM_DECODER_TELL_STATUS_OK;
+}
+
+::FLAC__StreamDecoderLengthStatus OurDecoder::length_callback(FLAC__uint64 *stream_length)
+{
+	m_pAudioIO->Size(stream_length);
+	return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+}
+
+bool OurDecoder::eof_callback()
+{
+	return m_pAudioIO->IsEOF();
+}
+
 
 ::FLAC__StreamDecoderWriteStatus OurDecoder::write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[])
 {
@@ -68,28 +114,16 @@ CFLACAudioSource::~CFLACAudioSource(void)
 {
 }
 
-bool		CFLACAudioSource::Open(LPTSTR szStream)
+bool		CFLACAudioSource::Open(IAudioFileIO * pFileIO)
 {
 //TODO: replace this with FILE * fp = fopen() code, which supports unicode, cos wcstomb isn't going to cut it!
 
-	char tempname[_MAX_PATH];
 
-#ifdef UNICODE
-	WideCharToMultiByte(CP_ACP,
-						0,
-						szStream,
-						-1,
-						tempname,
-						_MAX_PATH,
-						NULL,
-						NULL);
-#endif
-
-	//fopen(
+	m_FileDecoder.SetSource(pFileIO);
 
 	::FLAC__StreamDecoderInitStatus		flacStat;
 
-	flacStat = m_FileDecoder.init(tempname);
+	flacStat = m_FileDecoder.init();
 	if(flacStat != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 		return false;
 
@@ -105,6 +139,8 @@ void		CFLACAudioSource::Destroy(void)
 	{
 		m_FileDecoder.finish();
 	}
+
+	m_FileDecoder.SetSource(NULL);
 
 	delete this;
 }
