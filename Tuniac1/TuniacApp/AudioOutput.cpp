@@ -25,6 +25,7 @@
 #define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
 
 #define MAX_BUFFER_COUNT		8
+#define MAX_BUFFER_MEMORY		(MAX_BUFFER_COUNT+2)
 
 
 #ifndef SAFE_RELEASE
@@ -206,11 +207,11 @@ bool CAudioOutput::Initialize(void)
 	//m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
 		
 	m_pfAudioBuffer = (float *)VirtualAlloc(NULL, 
-											(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1), 
+											(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY), 
 											MEM_COMMIT, 
 											PAGE_READWRITE);		// allocate audio memory
 	VirtualLock(m_pfAudioBuffer, 
-				(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+				(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
 
 
 	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -256,7 +257,7 @@ bool CAudioOutput::Shutdown(void)
 	{
 //		free(m_pfAudioBuffer);
 		VirtualUnlock(	m_pfAudioBuffer, 
-						(m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
+						(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
 
 		VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
 
