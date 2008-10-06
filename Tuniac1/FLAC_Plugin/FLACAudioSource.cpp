@@ -33,11 +33,14 @@ void OurDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
 
 ::FLAC__StreamDecoderReadStatus OurDecoder::read_callback(FLAC__byte buffer[], size_t *bytes)
 {
-	if(!m_pAudioIO->Read(*bytes, buffer, bytes))
+	unsigned __int64 bytesRead;
+	if(!m_pAudioIO->Read(*bytes, buffer, &bytesRead))
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 
-	if(*bytes == 0)
+	if(bytesRead == 0)
 		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+
+	*bytes = bytesRead;
 
 	return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
