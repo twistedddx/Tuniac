@@ -44,6 +44,7 @@ private:
 public:
 	IAudioSource		*				m_pSource;
 	CAudioOutput		*				m_Output;
+	LPTSTR								szURL;
 
 	CAudioPacketizer					m_Packetizer;
 
@@ -70,10 +71,9 @@ public:
 	unsigned long						m_FadeState;
 
 	bool								m_bIsFinished;
+	bool								m_bEntryPlayed;
 	bool								m_bMixNotify;
 	bool								m_bFinishNotify;
-
-	bool								m_bEntryPlayed;
 
 	unsigned long						m_Channels;
 
@@ -82,7 +82,7 @@ public:
 public:
 	CAudioStream();
 
-	bool Initialize(IAudioSource * pSource, CAudioOutput * pOutput);
+	bool Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LPTSTR szSource);
 
 	void Destroy();
 
