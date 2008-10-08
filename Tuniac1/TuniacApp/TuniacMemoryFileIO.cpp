@@ -46,6 +46,8 @@ bool CTuniacMemoryFileIO::Open(LPTSTR szFilename)
 	if(!m_pMemory)
 		return false;
 
+	VirtualLock(m_pMemory, m_ullFileSize);
+
 
 	return true;
 }
@@ -54,6 +56,7 @@ void CTuniacMemoryFileIO::Destroy(void)
 {
 	if(m_pMemory)
 	{
+		VirtualUnlock(m_pMemory, m_ullFileSize);
 		UnmapViewOfFile(m_pMemory);
 	}
 
