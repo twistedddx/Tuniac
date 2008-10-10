@@ -40,8 +40,6 @@
 
 #define szClassName			TEXT("TUNIACWINDOWCLASS")
 
-#define WINDOWUPDATETIMER			1
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -340,11 +338,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				if(wParam == SYSEVENTS_TIMERID)
 					m_SysEvents.CheckSystemState();
-
-				//if(wParam == WINDOWUPDATETIMER) //500
-				//{
-				//	m_PlayControls.UpdateState();
-				//}
 			}
 			break;
 
@@ -445,10 +438,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				ReleaseDC(hWnd, hDC);
 
 				m_TrayMenu = GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_TRAYMENU)), 0);
+				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+				CheckMenuRadioItem(GetSubMenu(m_TrayMenu, 3), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
+				EnableMenuItem(GetSubMenu(m_TrayMenu, 3), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
 
-				if(m_Taskbar.Initialize(hWnd, WM_TRAYICON))
-				{
-				}
+				m_Taskbar.Initialize(hWnd, WM_TRAYICON);
 
 				for(unsigned long x=0; x<m_WindowArray.GetCount(); x++)
 				{
@@ -483,9 +478,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				//create the future menu(right click "next" button)
 				m_hFutureMenu = CreatePopupMenu();
 
-				//set how often to update window and tray title
-				SetTimer(hWnd, WINDOWUPDATETIMER, 500, NULL);
-
 				ShowWindow(hWnd, SW_SHOW);
 
 				if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
@@ -501,8 +493,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_DESTROY:
 			{
-				KillTimer(hWnd, WINDOWUPDATETIMER);
-
 				WINDOWPLACEMENT wp;
 				wp.length = sizeof(WINDOWPLACEMENT);
 				GetWindowPlacement(hWnd, &wp);
@@ -655,14 +645,18 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		case WM_MENUSELECT:
 			{
 				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
-
-				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 
 				CheckMenuRadioItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 8), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
 				EnableMenuItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 8), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
+				CheckMenuRadioItem(GetSubMenu(m_TrayMenu, 3), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
+				EnableMenuItem(GetSubMenu(m_TrayMenu, 3), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
 
 				EnableMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_CLEARQUEUE, m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED);
 				EnableMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_CLEARPAUSEAT, m_SoftPause.ulAt == INVALID_PLAYLIST_INDEX ? MF_GRAYED : MF_ENABLED);
+
+				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 			}
 			break;
 
@@ -1515,6 +1509,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_SOFTPAUSE:
 						{
 							m_SoftPause.bNow = !m_SoftPause.bNow;
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1664,6 +1659,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_CLEARPAUSEAT:
 						{
 							m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
 						}
 						break;
 
