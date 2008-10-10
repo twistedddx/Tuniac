@@ -39,6 +39,7 @@ CCoreAudio::CCoreAudio(void) :
 	m_CrossfadeTimeMS(6000),
 	m_BufferSizeMS(250),
 	m_fVolume(100.0f),
+	m_fAmpGain(-6.0f),
 	m_pXAudio(NULL),
 	m_pMasteringVoice(NULL),
 	m_bReplayGainEnabled(true),
@@ -220,6 +221,7 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					}
 
 					pStream->SetVolumeScale(m_fVolume);
+					pStream->SetAmpGain(m_fAmpGain);
 					pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
 
 					pStream->EnableReplayGain(m_bReplayGainEnabled);
@@ -489,6 +491,21 @@ void CCoreAudio::SetVolumePercent(float fVolume)
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
 		m_Streams[x]->SetVolumeScale(m_fVolume);
+	}
+}
+
+float CCoreAudio::GetAmpGain()
+{
+	return m_fAmpGain;
+}
+
+void CCoreAudio::SetAmpGain(float fAmpGain)
+{
+	m_fAmpGain = fAmpGain;
+
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->SetAmpGain(m_fAmpGain);
 	}
 }
 

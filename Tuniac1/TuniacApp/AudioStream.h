@@ -100,6 +100,7 @@ public:
 	unsigned long	GetFadeState(void);
 
 	bool			SetVolumeScale(float scale);
+	bool			SetAmpGain(float scale);
 
 	void			EnableReplayGain(bool bEnable = true);
 	bool			SetReplayGainScale(float trackscale, float albumscale);

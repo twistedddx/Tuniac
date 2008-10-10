@@ -52,6 +52,7 @@
 #define AUDIOGAINALBUM			TEXT("AudioReplayGainAlbum")
 
 #define VOLUME 					TEXT("Volume")
+#define AMPGAIN					TEXT("AmpGain")
 
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
@@ -564,7 +565,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					SendDlgItemMessage(hDlg, IDC_CROSSFADE_ENABLE, BM_SETCHECK, BST_CHECKED, 0);
 				}
 
-				wsprintf(tstr, TEXT("Buffer size %d milliseconds"), pPrefs->m_AudioBuffering);
+				wsprintf(tstr, TEXT("Buffer length %d milliseconds"), pPrefs->m_AudioBuffering);
 				SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(250, 5000));
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETPOS,	TRUE, pPrefs->m_AudioBuffering);
@@ -573,11 +574,13 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				if(pPrefs->ReplayGainEnabled())
 				{
 					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_CHECKED, 0);
 				}
 				else
 				{
 					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
@@ -590,6 +593,10 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
+				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygains files by %1.2f db"), pPrefs->m_AmpGain);
+				SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
+				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
+				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_AmpGain*10));
 			}
 			break;
 
@@ -625,11 +632,13 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							if(State == BST_UNCHECKED)
 							{
 								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
 								pPrefs->m_bReplayGain = FALSE;
 							}
 							else
 							{
 								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
 								pPrefs->m_bReplayGain = TRUE;
 							}
 
@@ -677,6 +686,11 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							pPrefs->m_AudioBuffering = SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_GETPOS, 0, 0); 
 							wsprintf(tstr, TEXT("Buffer length %d milliseconds"), pPrefs->m_AudioBuffering);
 							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
+
+							pPrefs->m_AmpGain = SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
+							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygains files by %1.2f db"), pPrefs->m_AmpGain);
+							SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
+							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_AmpGain);
 						}
 						break;
 				}
@@ -1166,9 +1180,8 @@ bool CPreferences::DefaultPreferences(void)
 	m_bReplayGain				= true;
 	m_bReplayGainAlbum			= false;
 
-
-
 	m_Volume					= 100.0;
+	m_AmpGain					= -60;
 
 	m_ShuffleState				= FALSE;
 
@@ -1435,6 +1448,15 @@ bool CPreferences::LoadPreferences(void)
 							NULL,
 							&Type,
 							(LPBYTE)&m_Volume,
+							&Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							AMPGAIN,
+							NULL,
+							&Type,
+							(LPBYTE)&m_AmpGain,
 							&Size);
 
 		Size = sizeof(int);
@@ -1736,6 +1758,15 @@ bool CPreferences::SavePreferences(void)
 						0,
 						Type,
 						(LPBYTE)&m_Volume, 
+						Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey, 
+						AMPGAIN, 
+						0,
+						Type,
+						(LPBYTE)&m_AmpGain, 
 						Size);
 
 		Size = sizeof(int);
@@ -2183,6 +2214,16 @@ float	CPreferences::GetVolumePercent(void)
 void	CPreferences::SetVolumePercent(float fPercent)
 {
 	m_Volume = fPercent;
+}
+
+float		CPreferences::GetAmpGain(void)
+{
+	return m_AmpGain;
+}
+
+void	CPreferences::SetAmpGain(float fGain)
+{
+	m_AmpGain = fGain;
 }
 
 int		CPreferences::GetPlaylistViewNumColumns(void)
