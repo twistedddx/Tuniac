@@ -243,9 +243,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 
-	//m_WindowArray[1]->Show();
-	//Sleep(300);
-	//m_WindowArray[1]->Hide();
+	if(m_Preferences.GetFollowCurrentSongMode())
+		m_SourceSelectorWindow->ShowCurrentlyPlaying();
 
 	return true;
 }
@@ -658,8 +657,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 
-				CheckMenuRadioItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 7), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
-				EnableMenuItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 7), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
+				CheckMenuRadioItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 8), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
+				EnableMenuItem(GetSubMenu(GetSubMenu(m_hPopupMenu, 2), 8), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
 
 				EnableMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_CLEARQUEUE, m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED);
 				EnableMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_CLEARPAUSEAT, m_SoftPause.ulAt == INVALID_PLAYLIST_INDEX ? MF_GRAYED : MF_ENABLED);
