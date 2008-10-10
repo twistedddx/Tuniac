@@ -574,12 +574,14 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				if(pPrefs->ReplayGainEnabled())
 				{
 					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), TRUE);
 					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_CHECKED, 0);
 				}
 				else
 				{
 					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), FALSE);
 					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
@@ -632,12 +634,14 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							if(State == BST_UNCHECKED)
 							{
 								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), FALSE);
 								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
 								pPrefs->m_bReplayGain = FALSE;
 							}
 							else
 							{
 								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), TRUE);
 								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
 								pPrefs->m_bReplayGain = TRUE;
 							}
