@@ -69,6 +69,7 @@ protected:
 	BOOL		m_bReplayGainAlbum;
 
 	float		m_Volume;
+	float		m_AmpGain;
 
 	RECT		m_MainWindowRect;
 	BOOL		m_MainWindowMaximized;
@@ -169,6 +170,9 @@ public:
 
 	float	GetVolumePercent(void);
 	void	SetVolumePercent(float percent);
+
+	float	GetAmpGain(void);
+	void	SetAmpGain(float gain);
 
 	int		GetPlaylistViewNumColumns(void);
 	void	SetPlaylistViewNumColumns(int iColumns);

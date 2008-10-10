@@ -60,6 +60,7 @@ protected:
 	unsigned long						m_BufferSizeMS;
 
 	float								m_fVolume;
+	float								m_fAmpGain;
 	bool								m_bReplayGainEnabled;
 	bool								m_bUseAlbumGain;
 
@@ -97,6 +98,9 @@ public:
 
 	float				GetVolumePercent();
 	void				SetVolumePercent(float fPercent);
+
+	float				GetAmpGain();
+	void				SetAmpGain(float fPercent);
 
 	void				EnableReplayGain(bool bEnable);
 	void				ReplayGainUseAlbumGain(bool bAlbumGain);

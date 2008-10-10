@@ -83,11 +83,6 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
 
-	// when replaygain is enabled, -6db non replaygain files
-	fAmpGain = pow(10, -6 / 20.0);
-	//replayGainPreamp = 
-
-
 	return true;
 }
 
@@ -152,6 +147,15 @@ bool			CAudioStream::SetVolumeScale(float scale)
 	return true;
 }
 
+bool			CAudioStream::SetAmpGain(float scale)
+{
+
+	// used when replaygain is enabled, default -6db non replaygain files
+	fAmpGain = pow(10, scale / 20.0);
+
+	return true;
+}
+
 bool			CAudioStream::ServiceStream(void)
 {
 	if(m_Packetizer.IsFinished())
@@ -193,6 +197,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
+
 			// WE NEED TO APPLY VOLUME AND REPLAYGAIN NO MATTER WHAT ANYWAY SO DO THEM HERE!!!
 			__m128 XMM0;
 			__m128 XMM1 = _mm_load1_ps(&fVolumeScale);
@@ -211,68 +216,68 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				XMM2 = _mm_load1_ps(&fAmpGain);
 			}
 			
-
 			for(unsigned long x=0; x<NumSamples; x+=4)
 			{
-				// load XMM0 with 4 samples from the audio buffer
-				XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
-
-				// if replaygain enabled in prefs
-				if(bReplayGain)
+				if(NumSamples-x > 4)
 				{
-					// apply -6db gain to files without replaygain data
-					// or apply whichever value we loaded into XMM2 (track or album)
-					XMM0 = _mm_mul_ps(XMM0, XMM2);
-				}
+					// load XMM0 with 4 samples from the audio buffer
+					XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
 
-				// apply volume
-				XMM0 = _mm_mul_ps(XMM0, XMM1);
-
-				// store XMM0 back to where we loaded it from thanks!
-				_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
-
-					/*
-					for(unsigned long i=0; i<NumSamples; i++)
+					// if replaygain enabled in prefs
+					if(bReplayGain)
 					{
-						// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
-						// TO DO SSEIFY THIS PLSKTHANKX
-						// is replaygain set?
-						if(bReplayGain)
-						{
-							// replaygain
-							if(bUseAlbumGain && bAlbumHasGain)
-							{
-								pAudioBuffer[i]		*= fReplayGainAlbum;
-							}
-							else if(bTrackHasGain && !bUseAlbumGain)
-							{
-								pAudioBuffer[i]		*= fReplayGainTrack;
-							}
-							else
-							{
-								pAudioBuffer[i]		*= fAmpGain;
-							}
-						}
-						// and apply the volume
-						pAudioBuffer[i]		*= fVolumeScale;
+						// apply -6db gain to files without replaygain data
+						// or apply whichever value we loaded into XMM2 (track or album)
+						XMM0 = _mm_mul_ps(XMM0, XMM2);
 					}
+
+					// apply volume
+					XMM0 = _mm_mul_ps(XMM0, XMM1);
+
+					// store XMM0 back to where we loaded it from thanks!
+					_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
 				}
-				*/
 			}
 
-			if(m_FadeState != FADE_NONE)
+
+			for(unsigned long i=0; i<NumSamples; i+=m_Channels)
 			{
-				// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
-				for(unsigned long x=0; x<NumSamples; x+=m_Channels)
+				for(unsigned long chan=0; chan<m_Channels; chan++)
 				{
-					for(unsigned long chan=0; chan<m_Channels; chan++)
+/* Intrinsic section above replaces this section
+					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
+					// TO DO SSEIFY THIS PLSKTHANKX
+					// is replaygain set?
+					if(bReplayGain)
+					{
+						// replaygain
+						if(bUseAlbumGain && bAlbumHasGain)
+						{
+							pAudioBuffer[i+chan]		*= fReplayGainAlbum;
+						}
+						else if(bTrackHasGain && !bUseAlbumGain)
+						{
+							pAudioBuffer[i+chan]		*= fReplayGainTrack;
+						}
+						else
+						{
+							pAudioBuffer[i+chan]		*= fAmpGain;
+						}
+					}
+					// and apply the volume
+					pAudioBuffer[i+chan]		*= fVolumeScale;
+*/
+					// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
+					if(m_FadeState != FADE_NONE)
 					{
 						// apply the crossfade
 						// we REALLY should SSE THIS HERE!!!
 						// TODO: SSE THIS PLEASE
-						pAudioBuffer[x+chan]		*= fVolume;
+						pAudioBuffer[i+chan]		*= fVolume;
 					}
-
+				}
+				if(m_FadeState != FADE_NONE)
+				{
 					fVolume += fVolumeChange;
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
