@@ -688,7 +688,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 
 							pPrefs->m_AmpGain = SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
-							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygains files by %1.2f db"), pPrefs->m_AmpGain);
+							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
 							SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
 							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_AmpGain);
 						}
