@@ -179,11 +179,11 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				// Create columns.
 				lvC.mask	= LVCF_WIDTH | LVCF_TEXT;
 				lvC.cx		= 200;
-
 				lvC.pszText	= TEXT("Source");
+
 				ListView_InsertColumn(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, &lvC);
 
-				HIMAGELIST hList  = ImageList_Create(32, 32, ILC_COLOR32 | ILC_MASK, 3, 1); 
+				HIMAGELIST hList  = ImageList_Create(24, 24, ILC_COLOR32 | ILC_MASK, 3, 1); 
 
 				// 0 : unknown playlist
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD)); 
@@ -204,7 +204,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				//ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_RADIO)); 
 
 				ListView_SetImageList(GetDlgItem(hDlg, IDC_SOURCESELECTOR), hList, LVSIL_SMALL);
-
 				ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex);
 			}
 			break;
@@ -551,6 +550,8 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 		case WM_SIZE:
 			{
+				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX-25);
+
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
@@ -584,12 +585,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				{
 					m_SourceViewArray[x]->MoveSourceView(m_ulSeparatorX+SEPERATOR_WIDTH,	0, Width-(m_ulSeparatorX+SEPERATOR_WIDTH),		Height);
 				}
-
-				RECT r = {0,0, m_ulSeparatorX+10, Height};
-
+				RECT r = {0, 0, m_ulSeparatorX+10, Height};
 				RedrawWindow(hDlg, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
 
-				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, LVSCW_AUTOSIZE_USEHEADER);
 			}
 			break;
 
@@ -926,7 +924,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								m_PlaylistSourceView->Redraw();
 
-								ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, LVSCW_AUTOSIZE_USEHEADER);
+								ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX-25);
 							}
 						}
 						break;
@@ -993,7 +991,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							}
 						}
 						break;
-
 				}
 			}
 			break;
@@ -1001,15 +998,18 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 		case WM_UPDATELIST:
 			{
 				unsigned long itemCount = tuniacApp.m_PlaylistManager.GetNumPlaylists();
-				ListView_SetItemCountEx(GetDlgItem(hDlg, IDC_SOURCESELECTOR), itemCount, LVSICF_NOSCROLL);
-				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, LVSCW_AUTOSIZE_USEHEADER);
+				ListView_SetItemCount(GetDlgItem(hDlg, IDC_SOURCESELECTOR), itemCount);
+				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX-25);
 			}
 			break;
 
 		case WM_RENAMEITEM:
 			{
 				if(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(lParam)->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
+				{
 					ListView_EditLabel(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), lParam);
+
+				}
 			}
 			break;
 
