@@ -593,7 +593,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
-				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygains files by %1.2f db"), pPrefs->m_AmpGain);
+				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
 				SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
 				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_AmpGain*10));
