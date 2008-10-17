@@ -1185,7 +1185,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bReplayGainAlbum			= false;
 
 	m_Volume					= 100.0;
-	m_AmpGain					= -60;
+	m_AmpGain					= -6.0;
 
 	m_ShuffleState				= FALSE;
 
@@ -2222,6 +2222,8 @@ void	CPreferences::SetVolumePercent(float fPercent)
 
 float		CPreferences::GetAmpGain(void)
 {
+	if(m_AmpGain < -15.0)
+		m_AmpGain = -6.0;
 	return m_AmpGain;
 }
 

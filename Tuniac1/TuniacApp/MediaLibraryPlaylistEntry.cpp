@@ -444,7 +444,10 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 				else
 				{
 					int time = m_LibraryEntry.iPlaybackTime / 1000;
-					wnsprintf(szString, ulNumChars, TEXT("%02d:%02d:%02d"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
+					if(time > 3600)
+						wnsprintf(szString, ulNumChars, TEXT("%02d:%02d:%02d"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
+					else
+						wnsprintf(szString, ulNumChars, TEXT("%02d:%02d"), (time / 60) % 60, time % 60 );
 				}
 			}
 			break;
