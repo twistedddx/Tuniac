@@ -78,7 +78,7 @@ BEGIN
     PUSHBUTTON      "...",IDC_MEDIALIBRARYBROWSE_BUTTON,205,19,16,12,WS_DISABLED
     PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,66,90,14,WS_DISABLED
     LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,38,207,8
-    CONTROL         "Set Date Added to File Creaion Time",IDC_FILETIMETODATEADDED,
+    CONTROL         "Set Date Added to File Creation Time",IDC_FILETIMETODATEADDED,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,142,207,10
 END
 
