@@ -197,7 +197,10 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
-
+			// WE CAN ACTUALLY DO 8 SAMPLES AT ONCE
+			// THEN 4 + whatevers left
+			// + leftover
+			//because we only need 3 SSE registers and we have 8 to play with
 			// WE NEED TO APPLY VOLUME AND REPLAYGAIN NO MATTER WHAT ANYWAY SO DO THEM HERE!!!
 			__m128 XMM0;
 			__m128 XMM1 = _mm_load1_ps(&fVolumeScale);
