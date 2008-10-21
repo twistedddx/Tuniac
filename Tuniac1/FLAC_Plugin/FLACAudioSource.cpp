@@ -84,7 +84,7 @@ bool OurDecoder::eof_callback()
 		{
 			if(ulBitsPerSample == 8)
 			{
-				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int8)buffer[channel][i] / 128.0f;
+				m_AudioBuffer[(i*ulChannels)+channel]	= (float)(FLAC__int8)buffer[channel][i] / 127.0f;
 			}
 			else if(ulBitsPerSample == 16)
 			{
