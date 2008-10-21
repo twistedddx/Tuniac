@@ -218,7 +218,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			
 			for(unsigned long x=0; x<NumSamples; x+=4)
 			{
-				if(NumSamples-x > 4)
+				if(NumSamples-x >= 4)
 				{
 					// load XMM0 with 4 samples from the audio buffer
 					XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
@@ -236,6 +236,31 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 					// store XMM0 back to where we loaded it from thanks!
 					_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
+				}
+				else
+				{
+					int ttt=NumSamples-x;
+					for(int ss=0; x<ttt; ss++)
+					{
+						float * pSample = ((float*)pAudioBuffer)+x;
+						if(bReplayGain)
+						{
+							if(bUseAlbumGain && bAlbumHasGain)
+							{
+								*pSample *= fReplayGainAlbum;
+							}
+							else if(bTrackHasGain && !bUseAlbumGain)
+							{
+								*pSample *= fReplayGainTrack;
+							}
+							else
+							{
+								*pSample *= fAmpGain;
+							}
+						}
+
+						*pSample *= fVolumeScale;
+					}
 				}
 			}
 
