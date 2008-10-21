@@ -240,9 +240,9 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				else
 				{
 					int ttt=NumSamples-x;
-					for(int ss=0; x<ttt; ss++)
+					for(int ss=0; ss<ttt; ss++)
 					{
-						float * pSample = ((float*)pAudioBuffer)+x;
+						float * pSample = ((float*)pAudioBuffer)+x+ss;
 						if(bReplayGain)
 						{
 							if(bUseAlbumGain && bAlbumHasGain)
