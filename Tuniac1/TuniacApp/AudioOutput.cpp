@@ -159,8 +159,15 @@ unsigned long CAudioOutput::ThreadProc(void)
 				//
 				if(m_pCallback)
 				{
-					while(m_pCallback->ServiceStream())
+					bool bDidService = false;
+					while(true)
 					{
+						if(m_pCallback->ServiceStream())
+							bDidService = true;
+						else
+							break;
+
+						// if we are ready to write, lets break out
 						if(WaitForSingleObject( m_hEvent, 0 ) == WAIT_OBJECT_0)
 							break;
 					}
@@ -168,7 +175,8 @@ unsigned long CAudioOutput::ThreadProc(void)
 					// if the stream didn't need servicing then we have a full buffer ready for when we 
 					// are able to write to the audio device. So.. lets go to sleep!
 					// we'll be awoken by the audio device, but lets sleep for the length of one buffer
-					WaitForSingleObject( m_hEvent, m_Interval );
+					if(bDidService)
+						WaitForSingleObject( m_hEvent, m_Interval );
 				}
 				else
 				{
