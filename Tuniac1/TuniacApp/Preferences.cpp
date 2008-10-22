@@ -1181,8 +1181,8 @@ bool CPreferences::DefaultPreferences(void)
 	m_CrossfadeTime				= 6;
 
 	m_AudioBuffering			= 500;
-	m_bReplayGain				= true;
-	m_bReplayGainAlbum			= false;
+	m_bReplayGain				= FALSE;
+	m_bReplayGainAlbum			= FALSE;
 
 	m_Volume					= 100.0;
 	m_AmpGain					= -6.0;
