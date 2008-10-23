@@ -88,7 +88,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 {
 	DWORD currentDiskReadBuffer = 0;
 
-	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	//SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 	while(m_bThreadRun)
 	{
@@ -102,7 +102,10 @@ unsigned long CAudioOutput::ThreadProc(void)
 			if(state.BuffersQueued < MAX_BUFFER_COUNT)
 			{
 				float * pOffset = &m_pfAudioBuffer[(currentDiskReadBuffer*m_BlockSize)];
-				if(m_pCallback->GetBuffer(pOffset, m_BlockSize))
+
+				int getbufferret = m_pCallback->GetBuffer(pOffset, m_BlockSize);
+
+				if(getbufferret == 1)
 				{
 					CAutoLock lock(&m_AudioLock);
 
@@ -136,7 +139,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 					currentDiskReadBuffer++;
 					currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 				}
-				else
+				else if(getbufferret == -1)
 				{
 					// write an empty end of stream buffer!
 					XAUDIO2_BUFFER buf	= {0};

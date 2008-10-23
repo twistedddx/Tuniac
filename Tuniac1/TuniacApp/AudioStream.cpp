@@ -174,10 +174,24 @@ int			CAudioStream::ServiceStream(void)
 
 		//get buffer
 		CAutoLock t(&m_Lock);
-		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
+		while(!m_Packetizer.IsBufferAvailable())
 		{
-			m_Packetizer.WriteData(pBuffer, ulNumSamples);
-			return 1;
+			if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
+			{
+				if(ulNumSamples)
+				{
+					m_Packetizer.WriteData(pBuffer, ulNumSamples);
+					return 1;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			else
+			{
+				return 0;
+			}
 		}
 
 		// there are no more buffers to get!!
@@ -212,7 +226,7 @@ DWORD CAudioStream::serviceThread(void)
 	return 0;
 }
 
-bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
+int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 {
 	CAutoLock t(&m_Lock);
 
@@ -220,6 +234,7 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 	if(m_Packetizer.AnyMoreBuffer())
 	{
+
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
 			// WE CAN ACTUALLY DO 8 SAMPLES AT ONCE
@@ -368,8 +383,10 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			// TODO: if we have played more than 'x' percent of a song send a last played notification back to our controller
 			// could be a LastFM thing there!!
 
-			return true;
+			return 1;
 		}
+
+		return 0;
 	}
 	else
 	{
@@ -384,10 +401,12 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, NULL);
 				}
 			}
+
+			return -1;
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 unsigned long	CAudioStream::GetState(void)

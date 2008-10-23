@@ -95,7 +95,7 @@ public:
 	void Destroy();
 
 public:
-	bool GetBuffer(float * pAudioBuffer, unsigned long NumSamples);
+	int GetBuffer(float * pAudioBuffer, unsigned long NumSamples);
 
 public:
 
