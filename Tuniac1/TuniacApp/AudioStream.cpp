@@ -83,11 +83,15 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
 
+	m_bServiceThreadRun = true;
+	CreateThread(NULL, 0, serviceThreadStub, this, 0, NULL);
+
 	return true;
 }
 
 bool CAudioStream::Shutdown(void)
 {
+	m_bServiceThreadRun = false;
 	Stop(); 
 
 	if(m_Output)
@@ -156,11 +160,11 @@ bool			CAudioStream::SetAmpGain(float scale)
 	return true;
 }
 
-bool			CAudioStream::ServiceStream(void)
+int			CAudioStream::ServiceStream(void)
 {
 	if(m_Packetizer.IsFinished())
 	{
-		return false;
+		return -1;
 	}
 
 	if(!m_Packetizer.IsBufferAvailable())
@@ -173,14 +177,39 @@ bool			CAudioStream::ServiceStream(void)
 		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
 		{
 			m_Packetizer.WriteData(pBuffer, ulNumSamples);
-			return true;
+			return 1;
 		}
 
 		// there are no more buffers to get!!
 		m_Packetizer.Finished();
 	}
 
-	return false;
+	return 0;
+}
+
+DWORD CAudioStream::serviceThreadStub(void * pData)
+{
+	CAudioStream * pStream = (CAudioStream*)pData;
+
+	return pStream->serviceThread();
+}
+
+DWORD CAudioStream::serviceThread(void)
+{
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+
+	while(m_bServiceThreadRun)
+	{
+		int ssres = ServiceStream();
+
+		if(ssres==0)
+			Sleep(10);
+
+		if(ssres ==-1)
+			return 0;
+	}
+
+	return 0;
 }
 
 bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
@@ -188,10 +217,6 @@ bool			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	CAutoLock t(&m_Lock);
 
 	unsigned long ulSongLength = GetLength();
-
-	while(ServiceStream())
-	{
-	}
 
 	if(m_Packetizer.AnyMoreBuffer())
 	{

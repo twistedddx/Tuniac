@@ -36,6 +36,14 @@
 
 class CAudioStream : public IAudioCallback
 {
+protected:
+	bool			m_bServiceThreadRun;
+
+	static DWORD serviceThreadStub(void * pData);
+	DWORD serviceThread(void);
+	int ServiceStream(void);			// new so audio playback thread can produce a new buffer while its not doing anything else!!!
+
+
 private:
 	~CAudioStream(void);
 	bool Shutdown(void);
@@ -88,7 +96,6 @@ public:
 
 public:
 	bool GetBuffer(float * pAudioBuffer, unsigned long NumSamples);
-	bool ServiceStream(void);			// new so audio playback thread can produce a new buffer while its not doing anything else!!!
 
 public:
 

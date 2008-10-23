@@ -148,47 +148,10 @@ unsigned long CAudioOutput::ThreadProc(void)
 			}
 			else
 			{
-				///////////////////////////////////////////////////////////////////////
-				//
-				// ok we wait here while we have no buffers available
-				//
-				// While we wait we see if we can service the stream to make sure 
-				// we have a buffer ready to go when a buffer becomes available!
-				// this way, we dont have to suddenly jump up, do a crapload of 
-				// decoding then write the buffer a simple memory copy will suffice!
-				//
-				if(m_pCallback)
-				{
-					bool bDidService = false;
-					while(true)
-					{
-						if(m_pCallback->ServiceStream())
-							bDidService = true;
-						else
-							break;
-
-						// if we are ready to write, lets break out
-						if(WaitForSingleObject( m_hEvent, 0 ) == WAIT_OBJECT_0)
-							break;
-					}
-
-					// if the stream didn't need servicing then we have a full buffer ready for when we 
-					// are able to write to the audio device. So.. lets go to sleep!
-					// we'll be awoken by the audio device, but lets sleep for the length of one buffer
-					if(bDidService)
-						WaitForSingleObject( m_hEvent, m_Interval );
-				}
-				else
-				{
-					// we should NEVER get here, but we did once in the past :/
-					WaitForSingleObject( m_hEvent, m_Interval );
-				}
+				WaitForSingleObject( m_hEvent, m_Interval );
 			}
 		}
-		else
-		{
-			WaitForSingleObject( m_hEvent, m_Interval );
-		}
+
 	}
 
 	return(0);
@@ -391,13 +354,15 @@ bool CAudioOutput::Reset(void)
 	CAutoLock lock(&m_AudioLock);
 	if(m_pSourceVoice)
 	{
-		m_pSourceVoice->Stop(0);
-		m_pSourceVoice->FlushSourceBuffers();
-
 		//m_SamplesOutLastReset
 		XAUDIO2_VOICE_STATE state;
 		m_pSourceVoice->GetState(&state);
 		m_SamplesOutLastReset = state.SamplesPlayed;
+
+		m_pSourceVoice->Stop(0);
+		m_pSourceVoice->FlushSourceBuffers();
+
+
 
 
 		if(m_bPlaying)
