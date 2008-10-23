@@ -121,6 +121,11 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	setVSync(1);
 
+	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
+	{
+		return false;								// Return FALSE
+	}
+
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);
 
@@ -129,6 +134,7 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_POLYGON_SMOOTH);
+
 
 	return true;
 }
