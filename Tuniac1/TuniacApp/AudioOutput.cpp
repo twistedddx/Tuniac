@@ -148,6 +148,15 @@ unsigned long CAudioOutput::ThreadProc(void)
 					buf.Flags = XAUDIO2_END_OF_STREAM;
 					m_pSourceVoice->SubmitSourceBuffer( &buf );
 				}
+				else if(getbufferret == -2)
+				{
+					//break;
+					int t=0;
+				}
+				else
+				{
+					int x=0;
+				}
 			}
 			else
 			{
@@ -217,7 +226,7 @@ bool CAudioOutput::Shutdown(void)
 
 		SetEvent(m_hEvent);
 
-		if(WaitForSingleObject(m_hThread, 10000) == WAIT_TIMEOUT)
+		if(WaitForSingleObject(m_hThread, 1000) == WAIT_TIMEOUT)
 			TerminateThread(m_hThread, 0);
 
 		CloseHandle(m_hThread);

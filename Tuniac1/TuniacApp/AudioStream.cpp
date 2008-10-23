@@ -167,35 +167,29 @@ int			CAudioStream::ServiceStream(void)
 		return -1;
 	}
 
-	if(!m_Packetizer.IsBufferAvailable())
+	CAutoLock t(&m_Lock);
+	while(!m_Packetizer.IsBufferAvailable())
 	{
 		float *			pBuffer			= NULL;
 		unsigned long	ulNumSamples	= 0;
 
-		//get buffer
-		CAutoLock t(&m_Lock);
-		while(!m_Packetizer.IsBufferAvailable())
+		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
 		{
-			if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
+			if(ulNumSamples)
 			{
-				if(ulNumSamples)
-				{
-					m_Packetizer.WriteData(pBuffer, ulNumSamples);
-					return 1;
-				}
-				else
-				{
-					return 0;
-				}
+				m_Packetizer.WriteData(pBuffer, ulNumSamples);
 			}
 			else
 			{
 				return 0;
 			}
 		}
-
-		// there are no more buffers to get!!
-		m_Packetizer.Finished();
+		else
+		{
+			// there are no more buffers to get!!
+			m_Packetizer.Finished();
+			return -1;
+		}
 	}
 
 	return 0;
@@ -399,7 +393,9 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					m_bFinishNotify = true;
 					m_bIsFinished = true;
 					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, NULL);
+					return -2;
 				}
+				return -2;
 			}
 
 			return -1;
