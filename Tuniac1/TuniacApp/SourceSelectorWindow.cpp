@@ -925,6 +925,8 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								m_PlaylistSourceView->Redraw();
 
 								ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX-25);
+
+								PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 							}
 						}
 						break;

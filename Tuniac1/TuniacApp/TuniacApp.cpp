@@ -841,14 +841,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
-					//playlistmanager changed it's view
-					case NOTIFY_PLAYLISTSCHANGED:
-						{
-//							m_Taskbar.UpdatePlaylistMenu();
-						}
-						break;
-
-
 					//audiostream has finished a song
 					case NOTIFY_COREAUDIO_PLAYBACKFAILED:
 						{
@@ -877,6 +869,28 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 						}
 						break;
+
+
+					//playlistmanager changed it's view
+					case NOTIFY_PLAYLISTSCHANGED:
+						{
+							HMENU tMenu = GetSubMenu(m_TrayMenu, 12);
+							if(IsMenu(tMenu))
+							{
+								while(GetMenuItemCount(tMenu))
+								{
+									DeleteMenu(tMenu, 0, MF_BYPOSITION);
+								}
+
+								for(unsigned long item = 0; item < m_PlaylistManager.GetNumPlaylists(); item++)
+								{
+									AppendMenu(tMenu, MF_ENABLED, TRAYMENU_BASE+item, m_PlaylistManager.GetPlaylistAtIndex(item)->GetPlaylistName());
+								}
+							}
+						}
+						break;
+
+
 				}
 			}
 			break;
@@ -1158,6 +1172,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 						}
 					}
+				}
+
+				//clicked a different view in menu
+				if(wCmdID >= TRAYMENU_BASE && wCmdID <= (TRAYMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
+				{
+					unsigned long m_PlaylistIndex = wCmdID - TRAYMENU_BASE;
+					m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistIndex);
 				}
 
 
