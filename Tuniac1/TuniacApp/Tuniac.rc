@@ -899,6 +899,9 @@ BEGIN
         MENUITEM "&Rename",                     ID_RENAME
         MENUITEM "R&emove",                     ID_REMOVE
         MENUITEM SEPARATOR
+		MENUITEM "&Save Order",                 ID_SAVEORDER
+        MENUITEM "Res&tore Order",              ID_RESTOREORDER
+		MENUITEM SEPARATOR
         MENUITEM "Remove &Duplicates",          ID_REMOVEDUPLICATES
         MENUITEM "E&xport...",                  ID_EXPORT
     END

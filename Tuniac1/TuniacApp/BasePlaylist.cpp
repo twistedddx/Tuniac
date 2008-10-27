@@ -250,7 +250,7 @@ unsigned long		CBasePlaylist::RandomFilteredIndexToRealIndex(unsigned long ulRan
 
 unsigned long		CBasePlaylist::GetFlags(void)
 {
-	return PLAYLIST_FLAGS_CANRENAME | PLAYLIST_FLAGS_EXTENDED | PLAYLISTEX_FLAGS_CANFILTER | PLAYLISTEX_FLAGS_CANADD | PLAYLISTEX_FLAGS_CANDELETE | PLAYLISTEX_FLAGS_CANMOVE;
+	return PLAYLIST_FLAGS_CANRENAME | PLAYLIST_FLAGS_EXTENDED | PLAYLISTEX_FLAGS_CANFILTER | PLAYLISTEX_FLAGS_CANADD | PLAYLISTEX_FLAGS_CANDELETE | PLAYLISTEX_FLAGS_CANMOVE | PLAYLISTEX_FLAGS_CANSORT;
 }
 
 unsigned long		CBasePlaylist::GetPlaylistType(void)
@@ -1069,4 +1069,41 @@ bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
 	return true;
+}
+
+bool				CBasePlaylist::HasSavedOrder(void)
+{
+	if(m_SavedPlaylistArray.GetCount() > 0)
+		return true;
+
+	return false;
+}
+
+void				CBasePlaylist::SaveOrder(void)
+{
+	m_SavedPlaylistArray.RemoveAll();
+	unsigned long id;
+	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
+	{
+		id = m_PlaylistArray[x].pEntry->GetEntryID();
+		m_SavedPlaylistArray.AddTail(id);
+	}
+}
+
+void				CBasePlaylist::RestoreOrder(void)
+{
+	if(m_SavedPlaylistArray.GetCount() > 0)
+	{
+		m_PlaylistArray.RemoveAll();
+
+		PlaylistEntry PE;
+		PE.bFiltered	= false;
+		for(unsigned long x=0; x<m_SavedPlaylistArray.GetCount(); x++)
+		{
+			PE.pEntry = tuniacApp.m_MediaLibrary.GetItemByID(m_SavedPlaylistArray[x]);
+			m_PlaylistArray.AddTail(PE);
+		}
+		ApplyFilter();
+		tuniacApp.m_SourceSelectorWindow->UpdateView();
+	}
 }

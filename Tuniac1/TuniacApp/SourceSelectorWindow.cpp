@@ -812,7 +812,41 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							}
 						}
 						break;
-					
+
+					case ID_SAVEORDER:
+						{
+							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
+							if(iSel >= 0)
+							{
+								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel);
+
+								if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+								{
+									IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+									pPlaylistEX->SaveOrder();
+								}
+
+							}
+						}
+						break;
+
+					case ID_RESTOREORDER:
+						{
+							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
+							if(iSel >= 0)
+							{
+								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel);
+
+								if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+								{
+									IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+									pPlaylistEX->RestoreOrder();
+								}
+
+							}
+						}
+						break;
+
 				}
 
 			}
@@ -952,13 +986,21 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							POINT pt;
 							GetCursorPos(&pt);
 							IPlaylist * pSPlaylist = GetPlaylistFromPoint(&pt);
+
+
+
 							if (pSPlaylist != NULL) 
 							{
 								EnableMenuItem(m_hMenu, ID_RENAME, MF_BYCOMMAND | (pSPlaylist->GetFlags() & PLAYLIST_FLAGS_CANRENAME ? MF_ENABLED : MF_GRAYED));
 								EnableMenuItem(m_hMenu, ID_REMOVE, MF_BYCOMMAND | (pSPlaylist->GetPlaylistType() != PLAYLIST_TYPE_MEDIALIBRARY ? MF_ENABLED : MF_GRAYED));
 								EnableMenuItem(m_hMenu, ID_REMOVEDUPLICATES, MF_BYCOMMAND | (pSPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANDELETE && pSPlaylist->GetPlaylistType() != PLAYLIST_TYPE_MEDIALIBRARY ? MF_ENABLED : MF_GRAYED));
 								EnableMenuItem(m_hMenu, ID_EXPORT, MF_BYCOMMAND | (pSPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED ? MF_ENABLED : MF_GRAYED));
-								
+								EnableMenuItem(m_hMenu, ID_RESTOREORDER, MF_BYCOMMAND | (pSPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED ? MF_ENABLED : MF_GRAYED));
+								if(pSPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+								{
+									IPlaylistEX * pSPlaylistEX = (IPlaylistEX *)pSPlaylist;
+									EnableMenuItem(m_hMenu, ID_RESTOREORDER, MF_BYCOMMAND | (pSPlaylistEX->HasSavedOrder() ? MF_ENABLED : MF_GRAYED));
+								}
 								TrackPopupMenu(m_hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hSourceWnd, NULL);
 							}
 						}

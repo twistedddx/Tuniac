@@ -219,6 +219,8 @@
 #define ID_PAUSEHERE                    40071
 #define ID_PLAYBACK_SOFTPAUSE           40072
 #define ID_EDIT_ALWAYSONTOP             40073
+#define ID_SAVEORDER	                40074
+#define ID_RESTOREORDER	                40075
 #define ID_PLAYNEXT                     40080
 #define ID_QUEUE                        40081
 #define ID_PLAYBACK_CLEARQUEUE          40082
