@@ -58,6 +58,7 @@
 #define PLAYLISTMENU_BASE			(50200)
 #define HISTORYMENU_BASE			(50300)
 #define FUTUREMENU_BASE				(50400)
+#define TRAYMENU_BASE				(50500)
 
 #define WM_TRAYICON 				WM_USER + 1
 
