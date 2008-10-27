@@ -149,6 +149,10 @@ public:
 
 	virtual bool				DeleteAllItemsWhereIDEquals(unsigned long ID)	= 0;
 	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;
+
+	virtual void				SaveOrder(void)			= 0;
+	virtual void				RestoreOrder(void)		= 0;
+	virtual bool				HasSavedOrder(void)							= 0;
 };
 
 

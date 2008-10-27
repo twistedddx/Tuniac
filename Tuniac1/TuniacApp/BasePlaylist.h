@@ -40,6 +40,8 @@ protected:
 
 	Array<PlaylistEntry, 100>				m_PlaylistArray;
 
+	Array<unsigned long, 100>				m_SavedPlaylistArray;
+
 	Array<unsigned long, 100>				m_RandomIndexArray;
 	Array<unsigned long, 100>				m_NormalIndexArray;
 
@@ -121,4 +123,9 @@ public:
 
 	bool				DeleteAllItemsWhereIDEquals(unsigned long ID);
 	bool				UpdateIndex(unsigned long ulRealIndex);
+
+	void				SaveOrder(void);
+	void				RestoreOrder(void);
+	bool				HasSavedOrder(void);
+
 };
