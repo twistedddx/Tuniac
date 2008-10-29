@@ -205,6 +205,9 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd)
 
 bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 {
+	if(GetItemByURL(szURL))
+		return true;
+
 	LibraryEntry  libraryEntry;
 
 	ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
@@ -227,6 +230,34 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
 	pEntry->SetEntryID(dwEntryID);
 	m_MediaLibrary.AddTail(pEntry);
+
+	//create or add to Streams playlist
+	IPlaylistEntry	*	pPE = NULL;
+	EntryArray playlistEntries;
+	pPE = pEntry;
+	if(pPE)
+	{
+		playlistEntries.AddTail(pPE);
+	}
+
+
+	bool bStreamPlaylist = false;
+	unsigned long ulPlaylistCount = tuniacApp.m_PlaylistManager.GetNumPlaylists();
+	for(unsigned long i = 0; i < ulPlaylistCount; i++)
+	{
+		if(StrCmpI(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i)->GetPlaylistName(), L"Streams") == 0)
+		{
+			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i);
+			pPlaylistEX->AddEntryArray(playlistEntries);
+			bStreamPlaylist=true;
+		}
+
+	}
+	if(!bStreamPlaylist)
+	{
+		tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(L"Streams", playlistEntries);
+	}
+	tuniacApp.m_SourceSelectorWindow->UpdateList();
 
 	return true;
 }
