@@ -1179,6 +1179,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					unsigned long m_PlaylistIndex = wCmdID - TRAYMENU_BASE;
 					m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistIndex);
+					m_PlaylistManager.SetActivePlaylist(m_PlaylistIndex);
 				}
 
 
