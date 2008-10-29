@@ -259,19 +259,21 @@ bool			CImportExportManager::Import(LPTSTR szSource)
 bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR szSource)
 {
 	
-	bool bOK = false, bStreamList = false;
+	bool bOK = false;
+	bool bStreamList = false;
 	CMediaLibraryPlaylistEntry * pStreamEntry;
 	TCHAR szFilename[512];
 
 	if(pImporter->BeginImport(szSource) && pImporter->ImportUrl(szFilename, 512))
 	{
 		bOK = true;
-		bStreamList = PathIsURL(szFilename) == TRUE;
+		bStreamList = PathIsURL(szFilename);
 		if(bStreamList)
 		{
-
 			tuniacApp.m_MediaLibrary.AddItem(szFilename);
-			pStreamEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(tuniacApp.m_MediaLibrary.GetCount() - 1);
+
+			pStreamEntry = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
+			//pStreamEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(tuniacApp.m_MediaLibrary.GetCount() - 1);
 
 			TCHAR szTitle[128];
 			if(pImporter->ImportTitle(szTitle, 128))
@@ -287,26 +289,47 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 					StrCpy(pStreamEntry->GetLibraryEntry()->szArtist, TEXT("[Unknown Stream]"));
 			}
 
-
+			/*
 			if(pStreamEntry != NULL && StrCmpI(pStreamEntry->GetLibraryEntry()->szURL, szFilename) == 0)
 			{
-				/*
+				
 				for(int i = 1; i < LIBENTRY_MAX_URLS; i++)
 				{
 					if(!pImporter->ImportUrl(pStreamEntry->GetLibraryEntry()->szURL[i], 512))
 						break;
 				}
-				*/
-			} else {
+				
+			}
+			else
+			{
 				bOK = false;
 			}
+			*/
+
+
+
 		}
 		else
 		{
+			IPlaylistEntry	*	pPE = NULL;
+			EntryArray playlistEntries;
+
 			do
 			{
 				tuniacApp.m_MediaLibrary.AddItem(szFilename);
+				pPE = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
+				if(pPE)
+				{
+					playlistEntries.AddTail(pPE);
+				}
+
 			} while(pImporter->ImportUrl(szFilename, 512));
+
+
+			TCHAR	szFileTitle[128];
+			GetFileTitle(szSource, szFileTitle, 128);
+			tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFileTitle, playlistEntries);
+			tuniacApp.m_SourceSelectorWindow->UpdateList();
 		}
 		pImporter->EndImport();
 	}
