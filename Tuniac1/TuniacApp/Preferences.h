@@ -94,6 +94,8 @@ protected:
 
 	BOOL		m_bSetDateAddedToFileCreationTime;
 
+	BOOL		m_bPlaylistSorting;
+
 	int			m_PlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
 	int			m_PlaylistViewColumnWidths[FIELD_MAXFIELD];
@@ -219,4 +221,6 @@ public:
 	int			GetFutureListSize(void);
 
 	BOOL		GetDateAddedToFileCreationTime(void);
+
+	BOOL		GetCanPlaylistsSort(void);
 };
