@@ -54,6 +54,9 @@
 #define VOLUME 					TEXT("Volume")
 #define AMPGAIN					TEXT("AmpGain")
 
+#define DATEADDED 				TEXT("DateAdded")
+#define PLAYLISTSORTING			TEXT("PlaylistSorting")
+
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
 
@@ -573,32 +576,32 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 
 				if(pPrefs->ReplayGainEnabled())
 				{
-					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
-					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), TRUE);
-					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
-					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_CHECKED, 0);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_REPLAYGAINALBUM), TRUE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINTEXT), TRUE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINSLIDER), TRUE);
+					SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAIN, BM_SETCHECK, BST_CHECKED, 0);
 				}
 				else
 				{
-					EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
-					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), FALSE);
-					EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
-					SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_SETCHECK, BST_UNCHECKED, 0);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_REPLAYGAINALBUM), FALSE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINTEXT), FALSE);
+					EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINSLIDER), FALSE);
+					SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAIN, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
 				if(pPrefs->ReplayGainUseAlbumGain())
 				{
-					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_CHECKED, 0);
+					SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAINALBUM, BM_SETCHECK, BST_CHECKED, 0);
 				}
 				else
 				{
-					SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
+					SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
 				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
-				SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
-				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
-				SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_AmpGain*10));
+				SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
+				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
+				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_AmpGain*10));
 			}
 			break;
 
@@ -627,22 +630,22 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 						}
 						break;
 
-					case IDC_REPLAYGAIN:
+					case IDC_AUDIO_REPLAYGAIN:
 						{
-							int State = SendDlgItemMessage(hDlg, IDC_REPLAYGAIN, BM_GETCHECK, 0, 0);
+							int State = SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAIN, BM_GETCHECK, 0, 0);
 			
 							if(State == BST_UNCHECKED)
 							{
-								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), FALSE);
-								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), FALSE);
-								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), FALSE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_REPLAYGAINALBUM), FALSE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINTEXT), FALSE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINSLIDER), FALSE);
 								pPrefs->m_bReplayGain = FALSE;
 							}
 							else
 							{
-								EnableWindow(GetDlgItem(hDlg, IDC_REPLAYGAINALBUM), TRUE);
-								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_TEXT), TRUE);
-								EnableWindow(GetDlgItem(hDlg, IDC_AMPGAIN_SLIDER), TRUE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_REPLAYGAINALBUM), TRUE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINTEXT), TRUE);
+								EnableWindow(GetDlgItem(hDlg, IDC_AUDIO_AMPGAINSLIDER), TRUE);
 								pPrefs->m_bReplayGain = TRUE;
 							}
 
@@ -651,9 +654,9 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 						}
 						break;
 
-					case IDC_REPLAYGAINALBUM:
+					case IDC_AUDIO_REPLAYGAINALBUM:
 						{
-							int State = SendDlgItemMessage(hDlg, IDC_REPLAYGAINALBUM, BM_GETCHECK, 0, 0);
+							int State = SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAINALBUM, BM_GETCHECK, 0, 0);
 			
 							if(State == BST_UNCHECKED)
 							{
@@ -691,9 +694,9 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							wsprintf(tstr, TEXT("Buffer length %d milliseconds"), pPrefs->m_AudioBuffering);
 							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 
-							pPrefs->m_AmpGain = SendDlgItemMessage(hDlg, IDC_AMPGAIN_SLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
+							pPrefs->m_AmpGain = SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
 							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
-							SetDlgItemText(hDlg, IDC_AMPGAIN_TEXT, tstr);
+							SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
 							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_AmpGain);
 						}
 						break;
@@ -801,6 +804,11 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 			{
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
+
+				SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_SETCHECK, pPrefs->m_bSetDateAddedToFileCreationTime ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_SETCHECK, pPrefs->m_bPlaylistSorting ? BST_CHECKED : BST_UNCHECKED, 0);
+
+
 			}
 			break;
 
@@ -810,6 +818,19 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				switch(wCmdID)
 				{
+					case IDC_FILETIMETODATEADDED:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_GETCHECK, 0, 0);
+							pPrefs->m_bSetDateAddedToFileCreationTime = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+					case IDC_LIBRARY_PLAYLISTSORTING:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_GETCHECK, 0, 0);
+							pPrefs->m_bPlaylistSorting = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
 
 					case IDC_REBUILD_ML:
 						{
@@ -872,12 +893,12 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				SendDlgItemMessage(hDlg, IDC_VISUALPREFS_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 100));
-				SendDlgItemMessage(hDlg, IDC_VISUALPREFS_FPS, TBM_SETPOS,	TRUE, pPrefs->m_VisualFPS);
+				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 100));
+				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETPOS,	TRUE, pPrefs->m_VisualFPS);
 
 				TCHAR	tstr[32];
 				wsprintf(tstr, TEXT("%d FPS"), pPrefs->m_VisualFPS);
-				SetDlgItemText(hDlg, IDC_VISUALPREFS_FPSDISPLAY, tstr);
+				SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
 			}
 			break;
 
@@ -888,11 +909,11 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					case TB_THUMBTRACK:
 					case TB_ENDTRACK:
 						{
-							pPrefs->m_VisualFPS = SendDlgItemMessage(hDlg, IDC_VISUALPREFS_FPS, TBM_GETPOS, 0, 0);
+							pPrefs->m_VisualFPS = SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_GETPOS, 0, 0);
 
 							TCHAR	tstr[32];
 							wsprintf(tstr, TEXT("%d FPS"), pPrefs->m_VisualFPS);
-							SetDlgItemText(hDlg, IDC_VISUALPREFS_FPSDISPLAY, tstr);
+							SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
 						}
 						break;
 				}
@@ -1188,6 +1209,8 @@ bool CPreferences::DefaultPreferences(void)
 	m_AmpGain					= -6.0;
 
 	m_ShuffleState				= FALSE;
+
+	m_bPlaylistSorting			= FALSE;
 
 	m_PlaylistViewNumColumns		= 5;
 	m_PlaylistViewColumnIDs[0]		= FIELD_TITLE;
@@ -1545,6 +1568,24 @@ bool CPreferences::LoadPreferences(void)
 							(LPBYTE)&m_FutureListSize,
 							&Size);	
 
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							DATEADDED,
+							NULL,
+							&Type,
+							(LPBYTE)&m_bSetDateAddedToFileCreationTime,
+							&Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegQueryValueEx(	hTuniacPrefKey,
+							PLAYLISTSORTING,
+							NULL,
+							&Type,
+							(LPBYTE)&m_bPlaylistSorting,
+							&Size);
+
 		RegCloseKey(hTuniacPrefKey);
 
 		return true;
@@ -1854,6 +1895,23 @@ bool CPreferences::SavePreferences(void)
 						(LPBYTE)&m_FutureListSize, 
 						Size);
 
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey,
+						DATEADDED,
+						NULL,
+						Type,
+						(LPBYTE)&m_bSetDateAddedToFileCreationTime,
+						Size);
+
+		Size = sizeof(int);
+		Type = REG_DWORD;
+		RegSetValueEx(	hTuniacPrefKey,
+						PLAYLISTSORTING,
+						NULL,
+						Type,
+						(LPBYTE)&m_bPlaylistSorting,
+						Size);
 
 		RegCloseKey(hTuniacPrefKey);
 	}
@@ -2392,3 +2450,7 @@ BOOL		CPreferences::GetDateAddedToFileCreationTime(void)
 	return m_bSetDateAddedToFileCreationTime;
 }
 
+BOOL		CPreferences::GetCanPlaylistsSort(void)
+{
+	return m_bPlaylistSorting;
+}

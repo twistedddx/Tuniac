@@ -2322,7 +2322,9 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 	if(pIPE)
 	{
 		pIPE->SetField(ulFieldID, szTitle);
-		tuniacApp.m_SourceSelectorWindow->UpdateView();
+		//make sure the source selector window exists we can get here before its created
+		if(tuniacApp.m_SourceSelectorWindow)
+			tuniacApp.m_SourceSelectorWindow->UpdateView();
 		UpdateState();
 		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 	}
