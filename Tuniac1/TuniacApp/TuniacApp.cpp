@@ -1188,7 +1188,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//show tuniac
 					case ID_APP_SHOW:
 						{
+							bool bMax = m_Preferences.GetMainWindowMaximized();
 							ShowWindow(hWnd, SW_SHOWNORMAL);
+							if(bMax)
+								SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 							SetForegroundWindow(hWnd);
 						}
 						break;
@@ -1739,7 +1742,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//left double click tray icon (restore window)
 					case WM_LBUTTONDBLCLK:
 						{
+							bool bMax = m_Preferences.GetMainWindowMaximized();
 							ShowWindow(hWnd, SW_SHOWNORMAL);
+							if(bMax)
+								SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 							SetForegroundWindow(hWnd);
 						}
 						break;
