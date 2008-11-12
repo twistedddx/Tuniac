@@ -306,7 +306,19 @@ bool				CBasePlaylist::Previous(void)
 bool				CBasePlaylist::Next(void)
 {
 	//get the next index
-	unsigned long ulFilteredIndex = GetNextFilteredIndex(GetActiveFilteredIndex(), 1, 1);
+	unsigned long ulIndex = GetActiveFilteredIndex();
+
+	//if the current song is filtered we wont be able to get its filtered index
+	bool bForceNext = 0;
+	if(ulIndex == INVALID_PLAYLIST_INDEX)
+	{
+		if(GetNumItems() > 0)
+		{
+			bForceNext = 1;
+		}
+	}
+
+	unsigned long ulFilteredIndex = GetNextFilteredIndex(ulIndex, true, true, bForceNext);
 
 	//set our found next index
 	return SetActiveFilteredIndex(ulFilteredIndex);
@@ -326,20 +338,22 @@ bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
 }
 
 //will return the next song index and return -1 the index given is not valid
-unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue)
+unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)
 {
 ///////////////// normal logic
+	if(!bForceNext)
+	{
+		if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
+			return 0;
 
-	if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
-		return 0;
+		//check that we are checking a valid index
+		//if(!CheckFilteredIndex(ulFilteredIndex))
+		//	return -1;
 
-	//check that we are checking a valid index
-	//if(!CheckFilteredIndex(ulFilteredIndex))
-	//	return -1;
-
-	//if repeatone the next song is just the current song
-	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
-		return ulFilteredIndex;
+		//if repeatone the next song is just the current song
+		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
+			return ulFilteredIndex;
+	}
 
 	unsigned long ulActiveIndex = GetActiveFilteredIndex();
 
@@ -388,42 +402,42 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 		//if play queue play is valid check
 		if (iQueueSize)
 		{
+			unsigned long ulNextIndex = INVALID_PLAYLIST_INDEX;
 			//if we are checking the current song the next song is our queue
 			if(ulFilteredIndex == ulActiveIndex )
 			{
-				IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(0);
-				//check if the first queued song is actually the current song(bizarre? :P)
-				if(GetFilteredIndexforItem(pIPE) != ulActiveIndex)
-					return GetFilteredIndexforItem(pIPE);
+				ulNextIndex = 0;
 			}
-
-			//see if found within m_Queue 0 thru GetCount - 1
-			int iFound = -1;
-			for(int x=0; x < iQueueSize ; x++)
+			else
 			{
-				IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x);
-				if(GetFilteredIndexforItem(pIPE) == ulFilteredIndex)
+				//see if found within m_Queue 0 thru GetCount - 1
+				for(int x=0; x < iQueueSize ; x++)
 				{
-					iFound = x;
-					break;
+					IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x);
+					if(GetFilteredIndexforItem(pIPE) == ulFilteredIndex)
+					{
+						ulNextIndex = x + 1;
+						break;
+					}
 				}
+
+				//if it was found to be the last queueing
+				if(ulNextIndex == iQueueSize)
+					return ulFilteredIndex + 1;
 			}
 
-			//if it was found to be the last queueing
-			if(iFound == (tuniacApp.m_MediaLibrary.m_Queue.GetCount() - 1))
-				return ulFilteredIndex + 1;
 
 			//if found we want it's next
-			if(iFound != -1)
+			if(ulNextIndex != INVALID_PLAYLIST_INDEX)
 			{
 				//remove dead entries
 				for(int x=0; x < iQueueSize; x++)
 				{
-					IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(iFound + 1);
-					if(GetFilteredIndexforItem(pIPE) != INVALID_PLAYLIST_INDEX)
-						return GetFilteredIndexforItem(pIPE);
+					unsigned long ulFilIndex = GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(ulNextIndex));
+					if(ulFilIndex != INVALID_PLAYLIST_INDEX && ulFilIndex != ulActiveIndex)
+						return ulFilIndex;
 					else
-						tuniacApp.m_MediaLibrary.m_Queue.Remove(iFound + 1);
+						tuniacApp.m_MediaLibrary.m_Queue.Remove(ulNextIndex);
 				}
 			}
 		}
@@ -440,6 +454,8 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 	if(ulFilteredIndex <= m_NormalIndexArray.GetCount() - 2)
 		return ulFilteredIndex + 1;
 	
+	if(bForceNext)
+		return 0;
 
 	//no files
 	return -1;
