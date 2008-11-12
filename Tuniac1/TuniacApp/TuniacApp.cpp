@@ -799,7 +799,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							else if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-								if(pPlaylistEX->GetNextFilteredIndex(pPlaylistEX->GetActiveFilteredIndex(), true, true) == -1)
+								unsigned long ulFilIndex = pPlaylistEX->GetActiveFilteredIndex();
+								bool bForceNext = 0;
+								if(ulFilIndex == INVALID_PLAYLIST_INDEX)
+								{
+									if(pPlaylistEX->GetNumItems() > 0)
+									{
+										bForceNext = 1;
+									}
+								}
+								if(pPlaylistEX->GetNextFilteredIndex(pPlaylistEX->GetActiveFilteredIndex(), true, true, bForceNext) == -1)
 									//no next song??
 									UpdateState();
 							}
@@ -2148,6 +2157,7 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 
 		bool bFollowSelected = 1;
 		bool bFollowQueue = 1;
+		bool bForceNext = 0;
 
 		int iSize = m_Preferences.GetFutureListSize();
 		int iSelectedSize = tuniacApp.m_PlaySelected.GetCount();
@@ -2160,7 +2170,7 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 		{
 			if(pPlaylistEX->GetNumItems() > 0)
 			{
-				ulIndex = 0;
+				bForceNext = 1;
 			}
 		}
 
@@ -2178,7 +2188,8 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 				bFollowQueue = 0;
 			}
 
-			ulIndex = pPlaylistEX->GetNextFilteredIndex(ulIndex, bFollowSelected, bFollowQueue);
+			ulIndex = pPlaylistEX->GetNextFilteredIndex(ulIndex, bFollowSelected, bFollowQueue, bForceNext);
+			bForceNext = 0;
 			if(ulIndex == INVALID_PLAYLIST_INDEX)
 				break;
 
@@ -2263,7 +2274,8 @@ void	CTuniacApp::UpdateQueues(void)
 		{
 			for(unsigned x=0; x < tuniacApp.m_MediaLibrary.m_Queue.GetCount(); x++)
 			{
-				if(pPlaylistEX->GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x)) == ulIndex)
+				unsigned long ulFilIndex = pPlaylistEX->GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x));
+				if(ulFilIndex == ulIndex || ulFilIndex == INVALID_PLAYLIST_INDEX)
 				{
 					tuniacApp.m_MediaLibrary.m_Queue.Remove(x);
 

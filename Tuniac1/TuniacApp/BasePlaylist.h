@@ -86,7 +86,7 @@ public:
 	bool				Next(void);
 	bool				CheckFilteredIndex(unsigned long ulFilteredIndex);
 
-	unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue);
+	unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext);
 	unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex);
 
 	IPlaylistEntry	*	GetActiveItem(void);
