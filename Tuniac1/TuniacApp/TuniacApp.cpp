@@ -722,35 +722,44 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_APP:
 			{
-				// lets just keep core Audio up to date anyway!!!
-				CCoreAudio::Instance()->SetCrossfadeTime(m_Preferences.GetCrossfadeTime() * 1000);
-				CCoreAudio::Instance()->SetAudioBufferSize(m_Preferences.GetAudioBuffering());
-
-				CCoreAudio::Instance()->EnableReplayGain(m_Preferences.ReplayGainEnabled());
-				CCoreAudio::Instance()->ReplayGainUseAlbumGain(m_Preferences.ReplayGainUseAlbumGain());
-
 				switch (wParam)
 				{
-					case NOTIFY_COREAUDIO_RESET:
+					//Coreaudio was called to setsource
+					case NOTIFY_COREAUDIO_TRANSITIONTO:
 						{
-							CCoreAudio::Instance()->Reset();
-							CCoreAudio::Instance()->Shutdown();
-							CCoreAudio::Instance()->Startup();
+							//check if we were set to stop at this next song
+							tuniacApp.DoSoftPause();
+
+							UpdateState();
+
+							//update the new current song on the playlist
+							m_SourceSelectorWindow->UpdateView();
+
+							//focus current song if we are following playback
+							if(m_SourceSelectorWindow->GetVisiblePlaylistIndex() == m_PlaylistManager.GetActivePlaylistIndex())
+								if(m_Preferences.GetFollowCurrentSongMode())
+									m_SourceSelectorWindow->ShowCurrentlyPlaying();
+
+							UpdateQueues();
+
+							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
+
+							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 						}
 						break;
 
-					//end of song, or start of crossfade. Next Song needed
+					//start of crossfade. Next Song needed if required
 					case NOTIFY_COREAUDIO_MIXPOINTREACHED:
 						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-							//Check if we are allowed to crossfade eg dont crossfade cd playlist
-							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
-								break;
-
 							// we only care about this if crossfading is enabled, Core Audio will notify us anyway, its up to us to ignore it!!!
 							if(m_Preferences.CrossfadingEnabled())
 							{
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+								//Check if we are allowed to crossfade eg dont crossfade cd playlist
+								if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
+									break;
+
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
 								if(pPlaylist->Next())
 								{
@@ -759,7 +768,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									if(pIPE)
 									{
 										CCoreAudio::Instance()->TransitionTo(pIPE);
-										//	CCoreAudio::Instance()->Play();
 									}
 								}
 								//else
@@ -771,13 +779,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has finished a song
 					case NOTIFY_COREAUDIO_PLAYBACKFINISHED:
 						{
-							bool mixpointreached = lParam;
-							//crossfade would have triggered mixpointreached itself n seconds ago
 							// Core Audio will send this too. its up to us to decide what we want to do about it eh
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-							if(!mixpointreached || !m_Preferences.CrossfadingEnabled() || pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
+							if(!m_Preferences.CrossfadingEnabled() || pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
 							{
-								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
 								if(pPlaylist->Next())
 								{
@@ -821,37 +826,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
-					//audiostream has started a song
-					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
-						{
-						}
-						break;
-
-					//Coreaudio has was called to setsource
-					case NOTIFY_COREAUDIO_TRANSITIONTO:
-						{
-							//check if we were set to stop at this next song
-							tuniacApp.DoSoftPause();
-
-							UpdateState();
-
-							//update the new current song on the playlist
-							m_SourceSelectorWindow->UpdateView();
-
-							//focus current song if we are following playback
-							if(m_SourceSelectorWindow->GetVisiblePlaylistIndex() == m_PlaylistManager.GetActivePlaylistIndex())
-								if(m_Preferences.GetFollowCurrentSongMode())
-									m_SourceSelectorWindow->ShowCurrentlyPlaying();
-
-							UpdateQueues();
-
-							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
-
-							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
-						}
-						break;
-
-					//audiostream has finished a song
+					//audiostream has finished a song unexpectedly
 					case NOTIFY_COREAUDIO_PLAYBACKFAILED:
 						{
 							//CoreAudio couldnt open the last song we told it to, try again
@@ -900,7 +875,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+					case NOTIFY_COREAUDIO_RESET:
+						{
+							CCoreAudio::Instance()->Reset();
+							CCoreAudio::Instance()->Shutdown();
+							CCoreAudio::Instance()->Startup();
+						}
+						break;
 
+					//audiostream has started a song
+					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
+						{
+						}
+						break;
 				}
 			}
 			break;
@@ -1184,7 +1171,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					}
 				}
 
-				//clicked a different view in menu
+				//clicked a different view in tray menu
 				if(wCmdID >= TRAYMENU_BASE && wCmdID <= (TRAYMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
 				{
 					unsigned long m_PlaylistIndex = wCmdID - TRAYMENU_BASE;
