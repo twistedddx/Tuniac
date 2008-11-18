@@ -771,10 +771,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has finished a song
 					case NOTIFY_COREAUDIO_PLAYBACKFINISHED:
 						{
+							bool mixpointreached = lParam;
 							//crossfade would have triggered mixpointreached itself n seconds ago
 							// Core Audio will send this too. its up to us to decide what we want to do about it eh
 							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-							if(!m_Preferences.CrossfadingEnabled() || pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
+							if(!mixpointreached || !m_Preferences.CrossfadingEnabled() || pPlaylist->GetFlags() & PLAYLIST_FLAGS_DONTCROSSFADE)
 							{
 								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
