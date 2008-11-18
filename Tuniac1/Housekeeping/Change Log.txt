@@ -1,3 +1,90 @@
+Nov, 2008
+---------
+-handle when mix points are missed with crossfade enabled(manual skip to end of song and unexpected decoder stop)
+-Better playlist logic when current song is filtered or if a queued song is filtered
+-set maximize as required on tray restore
+-DirectX November 2008 update (xaudio 2.3)
+-Add preference to disable playlist sorting. Add creation/add date preference code.
+-Create Tuniac playlist, on playlist import. Create Streams playlist for streams.
+-Save/Restore playlist order. Does not actually save/load from disk yet, only valid while Tuniac is open.
+-Fix playlist menu in tray
+-Prevent nVidia visual crash (visuals are back)
+-Default replaygain off
+
+
+Oct, 2008
+---------
+-fix typos
+-fix default pref for replaygain, causing no audio. Should have been -6db not -60db. This setting will automatically be reset if required due to incorrect setting being applied by previous build.
+-Update tray menu
+-remove hours field from playback time if not required.
+-smaller source selector icons to fit more playlists per screen
+-truncate playlists names instead of horizontal scroll
+-amp gain slider in preference now actually saves/loads and works
+-cosmetic fixes (replaygain in ML with 2 decimal places, a string in preferences)
+-fix repeat menu
+-show currently playing song on init if pref set
+-play count and last played date feature readded (as before this happens after the 1/4 mark of a file)
+-allows for saving/loading of custom Media Library name
+-fixes scrollbar update on playlist rename.
+-Fix next on invalid current
+-Changes to right click -> update
+-Next song on decoder fail
+-Less redraws of main window
+-increase decoder priority
+-fix mp3 decoder (edit perhaps not)
+-added fileio interface for plugins
+-flac decoder uses fileio
+-removed ability to sort playlists
+-file creation date -> date added option
+
+
+Aug, 2008
+---------
+-wma decoder
+-wav decoder fixes
+-wav infomanager (taglib doesnt support length just yet)
+-fix std_IM bitrate error
+-wav decoder
+-fix cdda output
+-instant titles (rework of notify's and redraws)
+-updatestreamtitle changes
+-Option to show/hide album art
+-add art on selection option
+-Set art when coreaudio sets a source instead of when it actually starts playing
+-Changes to how replaygain behaviour is done, hopefully wont distort music now
+-DONTCROSSFADE playlist flag, this allows in the future a feature for users to turn crossfade on/off per playlist
+-DirectX August 2008 update(XAudio 2.2)
+-numerous cdda fixes (fix eject crash, better reader, fix replaygain issue, dont crossfade cdda)
+-fix mp3 streaming
+-Other minor things
+-Correctly remember activesong with filtering on medialibrary playlist.
+
+
+Jun, 2008
+---------
+-Update Taglib to latest SVN, includes aiff/riff now even though we dont use it, plus several other fixes and improvements.
+-Update XAudio to DirectX June 2008 (2.0 -> 2.1)
+-Update installer, now DirectX XAudio June 2008 ships inside the installer and will install automatically if required.
+
+
+Apr, 2008
+---------
+-correctly show replaygain under xp(instead of "f")
+-cosmetic change to flac decoder
+-better/faster/configurable replaygain
+-updated no album art image(thanks Jacoby)
+-Add alac infomanager(file properties, not tags), fix up ape and tak infomanagers.
+-Handle more files correctly in mp3 decoder(only layer 3 is now supported)
+-load album art on startup and other fixes
+-bug fixes from yesterdays build (unbreak std_InfoManager, bumb ML version, rename replyagain columns)
+-replaygain(pretty crummy support, might work :/)
+-more tag stuff in general like disk number and max track number from more formats
+-a hackish "update" on right click file menu for rereading single file tags
+-TAK(x86 only), OptimFROG(ofr/ofs)(x86 only), ALAC, TrueAudio(tta)
+-fix: songs not cut short by the buffer length(080404 fixed?)
+
+
 Mar 24, 2008
 ------------
 -Album Art (mp3 id3v2 apic tag, folder.jpg folder.png)
