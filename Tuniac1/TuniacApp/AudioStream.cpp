@@ -392,7 +392,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				{
 					m_bFinishNotify = true;
 					m_bIsFinished = true;
-					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, NULL);
+					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, (void *)m_bMixNotify);
 					return -2;
 				}
 				return -2;

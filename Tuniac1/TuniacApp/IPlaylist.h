@@ -128,7 +128,7 @@ public:
 	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)			= 0;
 	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pEntry)					= 0;
 
-	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue)			= 0;
+	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)			= 0;
 	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;
 
 	virtual bool				SetTextFilter(LPTSTR	szFilterString)			= 0;
