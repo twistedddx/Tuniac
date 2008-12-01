@@ -486,6 +486,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TuniacStandardFileIO.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacVisual.cpp"
 				>
 			</File>
@@ -736,6 +740,10 @@
 			</File>
 			<File
 				RelativePath=".\TuniacSkin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TuniacStandardFileIO.h"
 				>
 			</File>
 			<File
