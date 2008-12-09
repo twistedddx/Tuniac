@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB;WITH_ASF;WITH_MP4"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
@@ -117,7 +117,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB;WITH_ASF;WITH_MP4"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
@@ -192,7 +192,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;MAKE_TAGLIB_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;MAKE_TAGLIB_LIB;WITH_ASF;WITH_MP4"
 				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
@@ -267,7 +267,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAKE_TAGLIB_LIB;WITH_ASF;WITH_MP4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

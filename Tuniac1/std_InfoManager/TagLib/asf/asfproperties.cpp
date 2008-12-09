@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_ASF
+
 #include <tdebug.h>
 #include <tstring.h>
 #include "asfproperties.h"
@@ -98,3 +104,4 @@ void ASF::Properties::setChannels(int length)
   d->channels = length;
 }
 
+#endif

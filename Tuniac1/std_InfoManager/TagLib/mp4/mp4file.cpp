@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_MP4
+
 #include <tdebug.h>
 #include <tstring.h>
 #include "mp4atom.h"
@@ -101,3 +107,5 @@ MP4::File::save()
 {
   return d->tag->save();
 }
+
+#endif
