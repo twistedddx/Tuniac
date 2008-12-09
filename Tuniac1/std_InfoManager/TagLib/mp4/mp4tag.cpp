@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_MP4
+
 #include <tdebug.h>
 #include <tstring.h>
 #include "mp4atom.h"
@@ -548,3 +554,5 @@ MP4::Tag::itemListMap()
 {
   return d->items;
 }
+
+#endif

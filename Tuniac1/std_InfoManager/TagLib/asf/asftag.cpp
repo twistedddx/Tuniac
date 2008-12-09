@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_ASF
+
 #include "asftag.h"
 
 using namespace TagLib;
@@ -204,3 +210,5 @@ bool ASF::Tag::isEmpty() const {
          rating().isEmpty() &&
          d->attributeListMap.isEmpty();
 }
+
+#endif

@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_MP4
+
 #include <tdebug.h>
 #include <tstring.h>
 #include "mp4file.h"
@@ -159,3 +165,5 @@ MP4::Properties::bitsPerSample() const
 {
   return d->bitsPerSample;
 }
+
+#endif

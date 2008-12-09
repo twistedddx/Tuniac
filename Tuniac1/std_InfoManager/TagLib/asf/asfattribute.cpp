@@ -23,6 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef WITH_ASF
+
 #include <taglib.h>
 #include "asfattribute.h"
 #include "asffile.h"
@@ -306,3 +312,5 @@ ASF::Attribute::setStream(int value)
 {
   d->stream = value;
 }
+
+#endif
