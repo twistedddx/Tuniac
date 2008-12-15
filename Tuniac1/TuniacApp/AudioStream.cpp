@@ -94,7 +94,7 @@ bool CAudioStream::Shutdown(void)
 	m_bServiceThreadRun = false;
 	if(WaitForSingleObject(m_hServiceThread, 10000) == WAIT_TIMEOUT)
 	{
-		TerminateThread(m_hServiceThread);
+		TerminateThread(m_hServiceThread, 0);
 		m_hServiceThread = NULL;
 	}
 	
