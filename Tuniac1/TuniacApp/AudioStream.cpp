@@ -91,10 +91,13 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 
 bool CAudioStream::Shutdown(void)
 {
-	m_bServiceThreadRun = false;
-	if(WaitForSingleObject(m_hServiceThread, 10000) == WAIT_TIMEOUT)
+	if(m_hServiceThread)
 	{
-		TerminateThread(m_hServiceThread, 0);
+		m_bServiceThreadRun = false;
+		if(WaitForSingleObject(m_hServiceThread, 10000) == WAIT_TIMEOUT)
+			TerminateThread(m_hServiceThread, 0);
+
+		CloseHandle(m_hServiceThread);
 		m_hServiceThread = NULL;
 	}
 	
