@@ -60,7 +60,6 @@ unsigned long BitStream::GetBits(unsigned long N)
 	return rval;
 }
 
-
 bool BitStream::Load(unsigned char *FromHere)
 {
 	buffer		= FromHere;

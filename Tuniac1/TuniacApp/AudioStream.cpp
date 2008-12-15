@@ -84,7 +84,7 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	m_Output->SetCallback(this);
 
 	m_bServiceThreadRun = true;
-	CreateThread(NULL, 0, serviceThreadStub, this, 0, NULL);
+	m_hServiceThread = CreateThread(NULL, 0, serviceThreadStub, this, 0, NULL);
 
 	return true;
 }
@@ -92,6 +92,12 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 bool CAudioStream::Shutdown(void)
 {
 	m_bServiceThreadRun = false;
+	if(WaitForSingleObject(m_hServiceThread, 10000) == WAIT_TIMEOUT)
+	{
+		TerminateThread(m_hServiceThread);
+		m_hServiceThread = NULL;
+	}
+	
 	Stop(); 
 
 	if(m_Output)
