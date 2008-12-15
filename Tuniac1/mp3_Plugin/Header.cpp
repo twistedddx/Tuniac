@@ -34,6 +34,7 @@
 #define LAYER_BITS_3	0x00020000
 
 
+
 const unsigned long Header::BitRates[2][3][16] = 
 {
 	{

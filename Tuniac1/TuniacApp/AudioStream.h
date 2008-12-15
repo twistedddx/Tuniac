@@ -86,6 +86,8 @@ public:
 	unsigned long						m_Channels;
 
 	unsigned long						m_CrossfadeTimeMS;
+	
+	HANDLE								m_hServiceThread;
 
 public:
 	CAudioStream();
