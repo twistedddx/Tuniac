@@ -39,6 +39,21 @@ LRESULT CALLBACK CTagEditor::EditorProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPA
 	{
 		case WM_INITDIALOG:
 			{
+/*
+				TCHAR szFieldData[256];
+
+				pPE->GetTextRepresentation(FIELD_PLAYBACKTIME, szFieldData, 256);
+				SendDlgItemMessage(hDlg, IDC_PLAYTIME_TEXT, WM_SETTEXT, 0, (WPARAM)szFieldData);
+
+				pPE->GetTextRepresentation(FIELD_SAMPLERATE, szFieldData, 256);
+				SendDlgItemMessage(hDlg, IDC_SAMPLERATE_TEXT, WM_SETTEXT, 0, (WPARAM)szFieldData);
+
+				pPE->GetTextRepresentation(FIELD_NUMCHANNELS, szFieldData, 256);
+				SendDlgItemMessage(hDlg, IDC_CHANNELS_TEXT, WM_SETTEXT, 0, (WPARAM)szFieldData);
+
+				pPE->GetTextRepresentation(FIELD_BITRATE, szFieldData, 256);
+				SendDlgItemMessage(hDlg, IDC_BITRATE_TEXT, WM_SETTEXT, 0, (WPARAM)szFieldData);
+*/
 			}
 			break;
 

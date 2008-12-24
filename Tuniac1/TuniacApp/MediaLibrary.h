@@ -74,6 +74,9 @@ public:
 	bool					RemoveItem(IPlaylistEntry *			pEntry);
 
 	bool					UpdateMLIndex(unsigned long	ulMLIndex);
+//todo bits: per column tag writing?
+//	bool					WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData);
+	bool					WriteFileTags(IPlaylistEntry * pEntry);
 
 	CMediaLibraryPlaylistEntry *	GetItemByIndex(unsigned long	ulIndex);
 	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);

@@ -37,10 +37,10 @@ CSysEvents::~CSysEvents(void)
 bool			CSysEvents::Initialize(void)
 {
 
-	OSVERSIONINFO ovi;
-	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&ovi);
-	m_IsNT = ovi.dwPlatformId == VER_PLATFORM_WIN32_NT;
+	//OSVERSIONINFO ovi = { 0 };
+	//ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	//GetVersionEx(&ovi);
+	//m_IsNT = ovi.dwPlatformId == VER_PLATFORM_WIN32_NT;
 	m_WasPlaying = false;
 
 	m_WorkstationLocked = false;
@@ -58,11 +58,10 @@ bool			CSysEvents::Shutdown(void)
 
 void			CSysEvents::CheckSystemState()
 {
-	bool bLocked = false;
-	if(m_IsNT){
-		bLocked = IsWorkstationLocked();
-	}
-
+	//bool bLocked = false;
+	//if(m_IsNT){
+	bool bLocked = IsWorkstationLocked();
+	//}
 	bool bSaver = IsScreensaverActive();
 
 	if((tuniacApp.m_Preferences.GetPauseOnLock() && bLocked && !m_WorkstationLocked)

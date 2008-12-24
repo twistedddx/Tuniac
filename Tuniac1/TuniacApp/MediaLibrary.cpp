@@ -565,6 +565,23 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 	return false;
 }
 
+//todo bits: per column tag writing?
+//bool CMediaLibrary::WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData)
+bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pEntry)
+{
+	LibraryEntry * libEnt = GetItemByID(pEntry->GetEntryID())->GetLibraryEntry();
+	// let the info manager get the format specific stuff here!
+	for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
+	{
+		if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(libEnt->szURL))
+		{
+			if(m_InfoManagerArray[plugin].pInfoManager->SetInfo(libEnt))
+				return true;;
+		}
+	}
+	return false;
+}
+
 typedef struct
 {
 	unsigned long Version;
