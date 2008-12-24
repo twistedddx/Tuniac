@@ -26,7 +26,7 @@
 class CSysEvents
 {
 protected:
-	bool			m_IsNT;
+	//bool			m_IsNT;
 	bool			m_WasPlaying;
 
 	bool			m_WorkstationLocked;

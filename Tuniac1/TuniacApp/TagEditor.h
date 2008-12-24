@@ -29,7 +29,7 @@ public:
 
 	bool ShowEditor(HWND aParentWnd);
 
-	bool AddListToEdit(EntryArray *aPlaylistEdit) {m_EditPlaylist = aPlaylistEdit;} //
+	void AddListToEdit(EntryArray *aPlaylistEdit) {m_EditPlaylist = aPlaylistEdit;} //
 
 protected:
 	

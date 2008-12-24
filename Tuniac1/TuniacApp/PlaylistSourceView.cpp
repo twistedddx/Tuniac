@@ -923,7 +923,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case ID_SHOWFILE:
 						{
 							IPlaylistEntry	*	pPE = NULL;
-							EntryArray			entryArray;
 							HWND				hListViewWnd	= GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
 
 							unsigned long ulPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
@@ -1270,6 +1269,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										{	
 											tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 										}
+
+										//todo bits: per column tag writing?
+										//tuniacApp.m_MediaLibrary.WriteFileTags(pEntry, m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText);
+										tuniacApp.m_MediaLibrary.WriteFileTags(pEntry);
 									}
 								}
 							}
@@ -2088,7 +2091,6 @@ bool CPlaylistSourceView::UpdateColumns(void)
 //Added Mark 7th October
 bool CPlaylistSourceView::EditTrackInfo(void)
 {
-							
 	//get the list of files here
 	//TODO spin into seperate function
 							
@@ -2096,6 +2098,27 @@ bool CPlaylistSourceView::EditTrackInfo(void)
 	//m_TagEditor.AddListToEdit(//pointer to EntryArray);
 
 	//display the dialog
+
+
+	if(m_iLastClickedItem < 0)
+		return false;
+
+	IPlaylistEntry	*	pPE = NULL;
+	EntryArray			entryArray;
+
+	HWND		hListViewWnd	= GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST);
+	unsigned long	ulPos		= ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
+	while(-1 != ulPos)
+	{
+		pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(ulPos);
+		if(pPE)
+		{
+			entryArray.AddTail(pPE);
+		}
+		ulPos = ListView_GetNextItem(hListViewWnd, ulPos, LVNI_SELECTED); //get the next selected i
+	}
+	m_TagEditor.AddListToEdit(&entryArray);
+
 	return	m_TagEditor.ShowEditor(m_PlaylistSourceWnd);
 }
 

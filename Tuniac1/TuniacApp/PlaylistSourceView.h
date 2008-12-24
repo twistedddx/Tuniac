@@ -54,8 +54,8 @@ protected:
 	bool				m_Drag;
 	bool				m_ShowingHeaderFilter;
 
-	int					m_iLastClickedItem;
-	int					m_iLastClickedSubitem;
+	unsigned long		m_iLastClickedItem;
+	unsigned long		m_iLastClickedSubitem;
 	WNDPROC				m_origEditWndProc;
 	RECT				m_editRect;
 
