@@ -318,8 +318,27 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	return true;
 }
 
+//todo bits: per column tag writing?
+//bool			CSTDInfoManager::SetInfo(LPTSTR szFilename, unsigned long ulFieldID, void * pNewData)
 bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 {
+	TagLib::Tag *tag = 0;
+
+	tag = fileref.tag();
+	if(tag)
+	{
+		tag->setAlbum(libEnt->szAlbum);
+		tag->setArtist(libEnt->szArtist);
+		tag->setComment(libEnt->szComment);
+		tag->setGenre(libEnt->szGenre);
+		tag->setTitle(libEnt->szTitle);
+		tag->setTrack(libEnt->dwTrack[0]);
+		tag->setYear(libEnt->iYear);
+
+		if(fileref.save())
+			return true;
+	}
+
 	return false;
 }
 
