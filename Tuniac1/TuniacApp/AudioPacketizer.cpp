@@ -92,6 +92,7 @@ bool	CAudioPacketizer::IsBufferAvailable(void)
 
 unsigned long CAudioPacketizer::BytesAvailable(void)
 {
+	unsigned long BytesAvailable;
 	if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
 	{		
 		return (m_ulPipeSize - BytesAvailable);

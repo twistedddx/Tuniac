@@ -172,42 +172,34 @@ bool			CAudioStream::SetAmpGain(float scale)
 
 int			CAudioStream::ServiceStream(void)
 {
+	static float *			pBuffer			= NULL;
+	static unsigned long	ulNumSamples	= 0;
+
 	if(m_Packetizer.IsFinished())
 	{
 		return -1;
 	}
 
-	CAutoLock t(&m_Lock);
-
-	// keep filling untill there is 4k samples spare..
 	
-	// what we should do it GetBuffer into static variables
-	// then see if we have that much space free, if so write it and clear the variables
-	// otherwise return and try again later
-	while(m_Packetizer.BytesAvailable() > 4096)
+	if(!pBuffer)
 	{
-		float *			pBuffer			= NULL;
-		unsigned long	ulNumSamples	= 0;
-
-		if(m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
-		{
-			if(ulNumSamples)
-			{
-				m_Packetizer.WriteData(pBuffer, ulNumSamples);
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else
+		if(!m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
 		{
 			// there are no more buffers to get!!
 			m_Packetizer.Finished();
 			return -1;
-		}		
+		}
 	}
 	
+	// we have enough room to write this buffer eh
+	if(ulNumSamples < (m_Packetizer.BytesAvailable()/4))
+	{
+		CAutoLock t(&m_Lock);
+		m_Packetizer.WriteData(pBuffer, ulNumSamples);
+		pBuffer = NULL;
+		ulNumSamples = 0;
+		return 1;
+	}	
 
 	return 0;
 }
