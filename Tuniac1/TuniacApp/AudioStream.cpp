@@ -28,6 +28,8 @@
 #define CopyFloat(dst, src, num)  { CopyMemory(dst, src, (num) * sizeof(float)) }
 
 
+
+
 CAudioStream::CAudioStream()
 {
 	m_bEntryPlayed	= false;
@@ -58,6 +60,9 @@ CAudioStream::CAudioStream()
 	m_CrossfadeTimeMS = 0;
 
 	m_Output	= NULL;
+	
+	pBuffer			= NULL;
+	ulNumSamples	= 0;
 }
 
 CAudioStream::~CAudioStream(void)
@@ -172,8 +177,6 @@ bool			CAudioStream::SetAmpGain(float scale)
 
 int			CAudioStream::ServiceStream(void)
 {
-	static float *			pBuffer			= NULL;
-	static unsigned long	ulNumSamples	= 0;
 
 	if(m_Packetizer.IsFinished())
 	{
@@ -192,15 +195,20 @@ int			CAudioStream::ServiceStream(void)
 	}
 	
 	// we have enough room to write this buffer eh
-	if(ulNumSamples < (m_Packetizer.BytesAvailable()/4))
+	if(pBuffer)
 	{
-		CAutoLock t(&m_Lock);
-		m_Packetizer.WriteData(pBuffer, ulNumSamples);
-		pBuffer = NULL;
-		ulNumSamples = 0;
-		return 1;
-	}	
-
+		if(ulNumSamples < (m_Packetizer.BytesAvailable()/4))
+		{
+			CAutoLock t(&m_Lock);
+	
+			m_Packetizer.WriteData(pBuffer, ulNumSamples);
+	
+			pBuffer = NULL;
+			ulNumSamples = 0;
+			return 1;
+		}	
+	}
+	
 	return 0;
 }
 
