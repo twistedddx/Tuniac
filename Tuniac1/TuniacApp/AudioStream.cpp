@@ -25,7 +25,8 @@
 #include <intrin.h>
 
 
-#define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
+#define CopyFloat(dst, src, num)  { CopyMemory(dst, src, (num) * sizeof(float)) }
+
 
 CAudioStream::CAudioStream()
 {
@@ -177,7 +178,8 @@ int			CAudioStream::ServiceStream(void)
 	}
 
 	CAutoLock t(&m_Lock);
-	while(!m_Packetizer.IsBufferAvailable())
+
+	do
 	{
 		float *			pBuffer			= NULL;
 		unsigned long	ulNumSamples	= 0;
@@ -200,6 +202,7 @@ int			CAudioStream::ServiceStream(void)
 			return -1;
 		}
 	}
+	while(!m_Packetizer.IsBufferAvailable())
 
 	return 0;
 }
@@ -518,4 +521,44 @@ bool			CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSamples)
 		return false;
 
 	return m_Output->GetVisData(ToHere, ulNumSamples);
+}
+
+float MMtoDB(float mm)
+{
+	float db;
+	
+	mm = 100. - mm;
+	
+	if (mm <= 0.) {
+		db = 10.;
+	} else if (mm < 48.) {
+		db = 10. - 5./12. * mm;
+	} else if (mm < 84.) {
+		db = -10. - 10./12. * (mm - 48.);
+	} else if (mm < 96.) {
+		db = -40. - 20./12. * (mm - 84.);
+	} else if (mm < 100.) {
+		db = -60. - 35. * (mm - 96.);
+	} else db = -200.;
+	return db;
+}
+
+float DBtoMM(float db)
+{
+	float mm;
+	if (db >= 10.) {
+		mm = 0.;
+	} else if (db > -10.) {
+		mm = -12./5. * (db - 10.);
+	} else if (db > -40.) {
+		mm = 48. - 12./10. * (db + 10.);
+	} else if (db > -60.) {
+		mm = 84. - 12./20. * (db + 40.);
+	} else if (db > -200.) {
+		mm = 96. - 1./35. * (db + 60.);
+	} else mm = 100.;
+	
+	mm = 100. - mm;
+
+        return mm;
 }
