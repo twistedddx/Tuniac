@@ -88,6 +88,10 @@ public:
 	unsigned long						m_CrossfadeTimeMS;
 	
 	HANDLE								m_hServiceThread;
+	
+	float 				*				pBuffer;
+ 	unsigned long						ulNumSamples;
+	
 
 public:
 	CAudioStream();
