@@ -179,7 +179,12 @@ int			CAudioStream::ServiceStream(void)
 
 	CAutoLock t(&m_Lock);
 
-	do
+	// keep filling untill there is 4k samples spare..
+	
+	// what we should do it GetBuffer into static variables
+	// then see if we have that much space free, if so write it and clear the variables
+	// otherwise return and try again later
+	while(m_Packetizer.BytesAvailable() > 4096)
 	{
 		float *			pBuffer			= NULL;
 		unsigned long	ulNumSamples	= 0;
@@ -200,9 +205,9 @@ int			CAudioStream::ServiceStream(void)
 			// there are no more buffers to get!!
 			m_Packetizer.Finished();
 			return -1;
-		}
+		}		
 	}
-	while(!m_Packetizer.IsBufferAvailable())
+	
 
 	return 0;
 }

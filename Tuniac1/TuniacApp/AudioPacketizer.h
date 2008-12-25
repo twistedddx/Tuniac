@@ -45,6 +45,7 @@ public:
 	bool WriteData(float * Data, unsigned long Samples);
 
 	bool IsBufferAvailable(void);
+	unsigned long BytesAvailable(void);
 	bool GetBuffer(float * ToHere);
 
 	void Reset(void);
