@@ -18,8 +18,8 @@ extern "C" {
   Software Developement Kit for TAK, (T)om's lossless (A)udio (K)ompressor:
   Decoder library.
 
-  Version:  1.0.5
-  Date:     07-12-05
+  Version:  1.1.0
+  Date:     08-12-21
   Language: C
 
   Copyright 2007 by Thomas Becker, D-49080 Osnabrueck.
@@ -190,8 +190,6 @@ enum tak_str_FrameSizeType {
   tak_FrameSizeType_512        =  7,
   tak_FrameSizeType_1024       =  8,
   tak_FrameSizeType_2048       =  9,
-  tak_FrameSizeType_6144       = 10,
-  tak_FrameSizeType_12288      = 11,
 };
 
 typedef struct Ttak_str_SizeInfo {
