@@ -25,11 +25,9 @@ bool CAPEDecoder::Open(LPTSTR szSource)
 	nSampleRate		= MACDecompressor->GetInfo(APE_INFO_SAMPLE_RATE);
 	nBlockAlign		= MACDecompressor->GetInfo(APE_INFO_BLOCK_ALIGN);
 	
-	if(!pRawData)
-	{
-		pRawData = new char [1024 * nBlockAlign];
-	}
-	
+	pRawData = new char [4096 * nBlockAlign];
+	m_Buffer = new float [4096 * nBlockAlign];
+
 	return true;
 }
 
@@ -42,7 +40,11 @@ bool CAPEDecoder::Close()
 		delete [] pRawData;
 		pRawData = NULL;
 	}
-
+	if(m_Buffer)
+	{
+		delete [] m_Buffer;
+		m_Buffer = NULL;
+	}
 	return true;
 }
 
@@ -93,7 +95,7 @@ bool		CAPEDecoder::SetState(unsigned long State)
 
 bool		CAPEDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	result = MACDecompressor->GetData (pRawData, 1024, &nBlocksRetrieved);
+	result = MACDecompressor->GetData (pRawData, 4096, &nBlocksRetrieved);
 	if((nBlocksRetrieved == 0) || (result != ERROR_SUCCESS))
 		return false;
 

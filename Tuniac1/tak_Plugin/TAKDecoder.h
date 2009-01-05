@@ -17,9 +17,9 @@ protected:
 	Ttak_str_StreamInfo			StreamInfo;
 	TtakInt32					ReadNum;
 	TtakResult					OpResult;
-	TtakInt32					SamplesPerBuf;
-	TtakInt32					SampleSize;
-	TtakInt32					BufSize;
+//	TtakInt32					SamplesPerBuf;
+//	TtakInt32					SampleSize;
+//	TtakInt32					BufSize;
 
 
 public:

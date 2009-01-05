@@ -11,10 +11,10 @@ class CAPEDecoder :
 	public IAudioSource
 {
 protected:
-	float				m_Buffer[4096];
 	IAPEDecompress	*	MACDecompressor;
 
 	char			*	pRawData;
+	float			*	m_Buffer;
 	int nChannels;
 	int nBitsPerSample;
 	int nBytesPerSample;

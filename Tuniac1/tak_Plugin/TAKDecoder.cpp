@@ -27,15 +27,15 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 	if (tak_SSD_GetStreamInfo (Decoder, &StreamInfo) != tak_res_Ok) 
 		return false;
 
-	SamplesPerBuf = StreamInfo.Sizes.FrameSizeInSamples;
-	SampleSize    = StreamInfo.Audio.BlockSize;
+	//SamplesPerBuf = StreamInfo.Sizes.FrameSizeInSamples;
+	//SampleSize    = StreamInfo.Audio.BlockSize;
 	/* Frame / Sample size.
 	*/
-	BufSize = SamplesPerBuf * SampleSize;
+	//BufSize = SamplesPerBuf * SampleSize;
 	/* Enough space to hold a decoded frame.
 	*/
-	buffer = new char [BufSize];
-	m_Buffer = new float [BufSize];
+	buffer = new char [4096 * StreamInfo.Audio.BlockSize];
+	m_Buffer = new float [4096 * StreamInfo.Audio.BlockSize];
 
 	if(StreamInfo.Audio.SampleBits == 8)
 	{
@@ -59,10 +59,16 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 bool CTAKDecoder::Close()
 {
 	tak_SSD_Destroy (Decoder);
-	delete [] buffer;
-	buffer = NULL;
-	delete [] m_Buffer;
-	m_Buffer = NULL;
+	if(buffer)
+	{
+		delete [] buffer;
+		buffer = NULL;
+	}
+	if(m_Buffer)
+	{
+		delete [] m_Buffer;
+		m_Buffer = NULL;
+	}
 	return(true);
 }
 
@@ -102,7 +108,7 @@ bool		CTAKDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
 	*NumSamples =0;
 
-	OpResult = tak_SSD_ReadAudio (Decoder, buffer, SamplesPerBuf, &ReadNum);
+	OpResult = tak_SSD_ReadAudio (Decoder, buffer, 4096, &ReadNum);
 	if ((OpResult != tak_res_Ok) && (OpResult != tak_res_ssd_FrameDamaged))
 	{
 		//char ErrorMsg[tak_ErrorStringSizeMax];
