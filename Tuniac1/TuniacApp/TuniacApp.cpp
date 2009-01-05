@@ -855,6 +855,31 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+					// coreaudio now classes this song as being played (1/4 played point)
+					case NOTIFY_COREAUDIO_PLAYEDPOINTREACHED:
+						{
+						//update played count and date played when more than 1/4 the way through
+							LPTSTR szURL = (LPTSTR)lParam;
+							IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByURL(szURL);
+
+							if(pIPE)
+							{
+								SYSTEMTIME st;
+								GetLocalTime(&st);
+								pIPE->SetField(FIELD_DATELASTPLAYED, &st);
+
+								int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
+								pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
+
+								tuniacApp.m_SourceSelectorWindow->UpdateView();
+								UpdateState();
+								tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+								tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAYED, NULL, NULL);
+							}
+						}
+						break;
+
+
 
 					//playlistmanager changed it's view
 					case NOTIFY_PLAYLISTSCHANGED:
@@ -2331,26 +2356,6 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 		//make sure the source selector window exists we can get here before its created
 		if(tuniacApp.m_SourceSelectorWindow)
 			tuniacApp.m_SourceSelectorWindow->UpdateView();
-		UpdateState();
-		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
-	}
-}
-
-//update played count and date played when more than 1/4 the way through
-void	CTuniacApp::UpdatePlayedCount(LPTSTR szURL)
-{
-	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByURL(szURL);
-
-	if(pIPE)
-	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-		pIPE->SetField(FIELD_DATELASTPLAYED, &st);
-
-		int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
-		pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
-
-		tuniacApp.m_SourceSelectorWindow->UpdateView();
 		UpdateState();
 		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 	}

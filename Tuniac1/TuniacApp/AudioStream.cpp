@@ -373,7 +373,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					if(ulCurrentMS > (ulSongLength * 0.25))
 					{
 						m_bEntryPlayed = true;
-						tuniacApp.UpdatePlayedCount(szURL);
+						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYEDPOINTREACHED, szURL);
 					}
 				}
 				if(!m_bMixNotify)
