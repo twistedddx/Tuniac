@@ -57,7 +57,7 @@ CAudioStream::CAudioStream()
 
 	m_ulLastSeekMS	= 0;
 
-	m_CrossfadeTimeMS = 0;
+	m_ulCrossfadeTimeMS = 0;
 
 	m_Output	= NULL;
 	
@@ -381,7 +381,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					//length longer then crossfade time
 					//
 
-					if((ulSongLength - ulCurrentMS) < m_CrossfadeTimeMS)
+					if((ulSongLength - ulCurrentMS) < m_ulCrossfadeTimeMS)
 					{
 						m_bMixNotify = true;
 						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);

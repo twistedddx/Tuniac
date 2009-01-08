@@ -57,7 +57,7 @@ protected:
 	IXAudio2				*			m_pXAudio;
     IXAudio2MasteringVoice	*			m_pMasteringVoice;
 
-	unsigned long						m_CrossfadeTimeMS;
+	unsigned long						m_ulCrossfadeTimeMS;
 	unsigned long						m_BufferSizeMS;
 
 	float								m_fVolume;

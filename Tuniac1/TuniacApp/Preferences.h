@@ -59,55 +59,53 @@ protected:
 
 	HWND		m_hTextFormatToolTip;
 
-	int			m_SourceViewDividerX;
+	int			m_iSourceViewDividerX;
 
-	int			m_CrossfadeEnabled;
-	int			m_CrossfadeTime;
+	BOOL		m_bMainWindowMaximized;
+	BOOL		m_bMinimizeOnClose;
+	BOOL		m_bAlwaysOnTop;
+	BOOL		m_bPauseOnLock;
+	BOOL		m_bPauseOnScreensave;
+	BOOL		m_bShowAlbumArt;
+	BOOL		m_bArtOnSelection;
+	BOOL		m_bFollowCurrentSong;
+	BOOL		m_bSmartSorting;
+	BOOL		m_bShuffleState;
+	BOOL		m_bSetDateAddedToFileCreationTime;
+	BOOL		m_bPlaylistSorting;
 
-	int			m_AudioBuffering;
+	BOOL		m_bCrossfadeEnabled;
+	int			m_iCrossfadeTime;
+
+	int			m_iAudioBuffering;
 	BOOL		m_bReplayGain;
 	BOOL		m_bReplayGainAlbum;
 
 	float		m_Volume;
 	float		m_AmpGain;
 
-	RECT		m_MainWindowRect;
-	BOOL		m_MainWindowMaximized;
-
-	TCHAR		m_Theme[128];
+	// TCHAR		m_Theme[128];
 
 	TCHAR		m_WindowFormatString[256];
 	TCHAR		m_PluginFormatString[256];
 	TCHAR		m_ListFormatString[256];
 
+	RECT		m_MainWindowRect;
+
 	TrayIconMode	m_eTrayIconMode;
-	BOOL		m_MinimizeOnClose;
-
-	BOOL		m_AlwaysOnTop;
-	BOOL		m_PauseOnLock;
-	BOOL		m_PauseOnScreensave;
-	BOOL		m_ShowAlbumArt;
-	BOOL		m_ArtOnSelection;
-	BOOL		m_FollowCurrentSong;
-	BOOL		m_SmartSorting;
-	BOOL		m_ShuffleState;
-
-	BOOL		m_bSetDateAddedToFileCreationTime;
-
-	BOOL		m_bPlaylistSorting;
+	RepeatMode	m_RepeatMode;
 
 	int			m_PlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
 	int			m_PlaylistViewColumnWidths[FIELD_MAXFIELD];
 
-	RepeatMode	m_RepeatMode;
+	int			m_iVisualFPS;
+	int			m_iCurrentVisual;
 
-	int			m_VisualFPS;
+	int			m_iFileAssocType;
 
-	int			m_FileAssocType;
-
-	unsigned long	m_HistoryListSize;
-	int			m_FutureListSize;
+	int			m_iHistoryListSize;
+	int			m_iFutureListSize;
 
 	void		BuildTree(HWND hTree, int iPage);
 	int			FindNthTreeLeaf(int i, int iParent);
@@ -152,23 +150,24 @@ public:
 
 public:
 // preference accessor methods here!
-	void	SetSourceViewDividerX(int x);
+	void	SetSourceViewDividerX(int iPixels);
 	int		GetSourceViewDividerX(void);
 
 	void	SetMainWindowRect(RECT * lpRect);
 	RECT *	GetMainWindowRect(void);
 
-	void	SetMainWindowMaximized(bool bMaximized);
-	bool	GetMainWindowMaximized(void);
+	void	SetMainWindowMaximized(BOOL bMaximized);
+	BOOL	GetMainWindowMaximized(void);
 
-	bool	CrossfadingEnabled(void);
+	BOOL	CrossfadingEnabled(void);
 
 	int		GetCrossfadeTime(void);
 	void	SetCrossfadeTime(int time);
 
 	int		GetAudioBuffering(void);
-	bool	ReplayGainEnabled(void);
-	bool	ReplayGainUseAlbumGain(void);
+
+	BOOL	ReplayGainEnabled(void);
+	BOOL	ReplayGainUseAlbumGain(void);
 
 	float	GetVolumePercent(void);
 	void	SetVolumePercent(float percent);
@@ -185,42 +184,43 @@ public:
 	int		GetPlaylistViewColumnWidthAtIndex(int index);
 	void	SetPlaylistViewColumnWidthAtIndex(int index, int Width);
 
-	LPTSTR	GetTheme(void);
+	//LPTSTR	GetTheme(void);
 
-	bool	GetShuffleState(void);
-	void	SetShuffleState(bool bEnabled);
+	BOOL	GetShuffleState(void);
+	void	SetShuffleState(BOOL bEnabled);
 
 	RepeatMode	GetRepeatMode(void);
 	void		SetRepeatMode(RepeatMode eMode);
 
-	void		SetFollowCurrentSongMode(bool bEnabled);
-	bool		GetFollowCurrentSongMode(void);
+	void		SetFollowCurrentSongMode(BOOL bEnabled);
+	BOOL		GetFollowCurrentSongMode(void);
 
-	bool		GetSmartSortingEnabled(void);
+	BOOL		GetPauseOnLock(void);
+	BOOL		GetPauseOnScreensave(void);
 
-	bool		GetPauseOnLock(void);
-	bool		GetPauseOnScreensave(void);
-
-	bool		GetShowAlbumArt(void);
-	bool		GetArtOnSelection(void);
+	BOOL		GetShowAlbumArt(void);
+	BOOL		GetArtOnSelection(void);
 
 	LPTSTR		GetWindowFormatString(void);
 	LPTSTR		GetPluginFormatString(void);
 	LPTSTR		GetListFormatString(void);
 
-	unsigned long	GetVisualFPS(void);
+	int			GetVisualFPS(void);
+	int			GetCurrentVisual(void);
+	void		SetCurrentVisual(int iVisual);
 
 	TrayIconMode	GetTrayIconMode(void);
 	void		SetTrayIconMode(TrayIconMode eMode);
-	bool		GetMinimizeOnClose(void);
 
-	bool		GetAlwaysOnTop(void);
-	void		SetAlwaysOnTop(bool bEnabled);
+	BOOL		GetMinimizeOnClose(void);
+	BOOL		GetAlwaysOnTop(void);
+	void		SetAlwaysOnTop(BOOL bEnabled);
 
-	unsigned long	GetHistoryListSize(void);
+
+	int			GetHistoryListSize(void);
 	int			GetFutureListSize(void);
 
 	BOOL		GetDateAddedToFileCreationTime(void);
-
 	BOOL		GetCanPlaylistsSort(void);
+	BOOL		GetSmartSortingEnabled(void);
 };

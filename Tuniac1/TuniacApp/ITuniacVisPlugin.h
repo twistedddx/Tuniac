@@ -32,6 +32,11 @@ public:
 	virtual bool	GetVisData(float * pWaveformData, unsigned long ulNumSamples) = 0;
 
 	virtual void *	GetVariable(Variable eVar) = 0;
+
+	virtual bool	GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData) = 0;
+	virtual bool	SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData) = 0;
+	virtual void	GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent) = 0;
+
 };
 
 #define PLUGINFLAGS_ABOUT	0x00000001

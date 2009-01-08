@@ -42,7 +42,7 @@ class CTuniacSkin
 protected:
 	TCHAR				m_BasePath[512];
 
-	bool				LoadTheme(LPTSTR szThemeName);
+	//bool				LoadTheme(LPTSTR szThemeName);
 
 public:
 	CTuniacSkin(void);

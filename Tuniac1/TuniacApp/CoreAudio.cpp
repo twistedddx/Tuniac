@@ -37,8 +37,8 @@
 // TODO: Change AudioStream to have Initialize and Shutdown so we can return audio errors back up the chain!
 
 CCoreAudio::CCoreAudio(void) : 
-	m_CrossfadeTimeMS(6000),
-	m_BufferSizeMS(250),
+	m_ulCrossfadeTimeMS(6000),
+	m_BufferSizeMS(500),
 	m_fVolume(100.0f),
 	m_fAmpGain(-6.0f),
 	m_pXAudio(NULL),
@@ -229,14 +229,14 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					bool bShoudStart = false;
 					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
 					{
-						m_Streams[ttt]->FadeOut(m_CrossfadeTimeMS);
-					pStream->FadeIn(m_CrossfadeTimeMS);
+						m_Streams[ttt]->FadeOut(m_ulCrossfadeTimeMS);
+					pStream->FadeIn(m_ulCrossfadeTimeMS);
 					bShoudStart = true;
 					}
 
 					pStream->SetVolumeScale(m_fVolume);
 					pStream->SetAmpGain(m_fAmpGain);
-					pStream->SetCrossfadePoint(m_CrossfadeTimeMS);
+					pStream->SetCrossfadePoint(m_ulCrossfadeTimeMS);
 
 					pStream->EnableReplayGain(m_bReplayGainEnabled);
 					pStream->UseAlbumGain(m_bUseAlbumGain);
@@ -554,7 +554,7 @@ void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)
 
 void CCoreAudio::SetCrossfadeTime(unsigned long ulMS) 
 { 
-	m_CrossfadeTimeMS = ulMS; 
+	m_ulCrossfadeTimeMS = ulMS; 
 
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{

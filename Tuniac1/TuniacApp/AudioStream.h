@@ -85,7 +85,7 @@ public:
 
 	unsigned long						m_Channels;
 
-	unsigned long						m_CrossfadeTimeMS;
+	unsigned long						m_ulCrossfadeTimeMS;
 	
 	HANDLE								m_hServiceThread;
 	
@@ -129,5 +129,5 @@ public:
 
 	bool			GetVisData(float * ToHere, unsigned long ulNumSamples);
 
-	void			SetCrossfadePoint(unsigned long ulCrossfadeTimeMS) { m_CrossfadeTimeMS = ulCrossfadeTimeMS; }
+	void			SetCrossfadePoint(unsigned long ulCrossfadeTimeMS) { m_ulCrossfadeTimeMS = ulCrossfadeTimeMS; }
 };

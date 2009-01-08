@@ -86,4 +86,8 @@ public:
 	bool	GetVisData(float * pWaveformData, unsigned long ulNumSamples);
 	void *	GetVariable(Variable eVar);
 
+	bool	GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
+	bool	SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData);
+
+	void	GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iIndex);
 };
