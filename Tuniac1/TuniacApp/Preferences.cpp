@@ -266,7 +266,7 @@ LRESULT CALLBACK CPreferences::FormattingProc(HWND hDlg, UINT uMsg, WPARAM wPara
 				pPrefs = (CPreferences *)lParam;
 
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_WindowFormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_szWindowFormatString);
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@T - @A [Tuniac]"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@!: @T - @A [Tuniac]"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("(@I) @T - @A [Tuniac]"));
@@ -276,13 +276,13 @@ LRESULT CALLBACK CPreferences::FormattingProc(HWND hDlg, UINT uMsg, WPARAM wPara
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("Tuniac - @!: @F (@I)"));
 
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_PluginFormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_szPluginFormatString);
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@T - @A"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@F"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("[@#][@T - @A][@L - @Y][@I|@B|@S]"));
 
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, CB_RESETCONTENT, 0, 0);
-				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_ListFormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_szListFormatString);
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@T - @A"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@F"));
 
@@ -317,18 +317,18 @@ LRESULT CALLBACK CPreferences::FormattingProc(HWND hDlg, UINT uMsg, WPARAM wPara
 
 					case IDC_FORMATTING_WINDOWTITLEFORMAT:
 						{
-							SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_WindowFormatString);
+							SendDlgItemMessage(hDlg, IDC_FORMATTING_WINDOWTITLEFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szWindowFormatString);
 						}
 						break;
 					case IDC_FORMATTING_PLUGINFORMAT:
 						{
-							SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_PluginFormatString);
+							SendDlgItemMessage(hDlg, IDC_FORMATTING_PLUGINFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szPluginFormatString);
 						}
 						break;
 
 					case IDC_FORMATTING_LISTFORMAT:
 						{
-							SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_ListFormatString);
+							SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szListFormatString);
 						}
 						break;
 
@@ -599,10 +599,10 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 					SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAINALBUM, BM_SETCHECK, BST_UNCHECKED, 0);
 				}
 
-				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
+				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
 				SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
-				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_AmpGain*10.0f));
+				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_fAmpGain*10.0f));
 			}
 			break;
 
@@ -667,10 +667,10 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 							CCoreAudio::Instance()->SetAudioBufferSize(pPrefs->m_iAudioBuffering);
 
-							pPrefs->m_AmpGain = SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
-							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_AmpGain);
+							pPrefs->m_fAmpGain = SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
+							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
 							SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
-							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_AmpGain);
+							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_fAmpGain);
 						}
 						break;
 				}
@@ -1172,9 +1172,9 @@ bool CPreferences::DefaultPreferences(void)
 	m_bSetDateAddedToFileCreationTime = FALSE;
 	m_bPlaylistSorting			= FALSE;
 
-	wnsprintf(m_WindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
-	wnsprintf(m_PluginFormatString, 256, TEXT("@T - @A"));
-	wnsprintf(m_ListFormatString, 256, TEXT("@T - @A"));
+	wnsprintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
+	wnsprintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
+	wnsprintf(m_szListFormatString, 256, TEXT("@T - @A"));
 
 	m_bCrossfadeEnabled			= TRUE;
 	m_iCrossfadeTime			= 6;
@@ -1183,10 +1183,10 @@ bool CPreferences::DefaultPreferences(void)
 	m_bReplayGain				= FALSE;
 	m_bReplayGainAlbum			= FALSE;
 
-	m_Volume					= 100.0f;
-	m_AmpGain					= -6.0f;
+	m_fVolume					= 100.0f;
+	m_fAmpGain					= -6.0f;
 
-	m_PlaylistViewNumColumns		= 5;
+	m_iPlaylistViewNumColumns		= 5;
 	m_PlaylistViewColumnIDs[0]		= FIELD_TITLE;
 	m_PlaylistViewColumnWidths[0]	= 300;
 	m_PlaylistViewColumnIDs[1]		= FIELD_ARTIST;
@@ -1198,7 +1198,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_PlaylistViewColumnIDs[4]		= FIELD_PLAYBACKTIME;
 	m_PlaylistViewColumnWidths[4]	= 70;
 
-	m_RepeatMode				= RepeatNone;
+	m_eRepeatMode				= RepeatNone;
 	m_bShuffleState				= FALSE;
 
 	m_iVisualFPS				= 35;
@@ -1401,7 +1401,7 @@ bool CPreferences::LoadPreferences(void)
 						REPEATMODE,
 						NULL,
 						&Type,
-						(LPBYTE)&m_RepeatMode,
+						(LPBYTE)&m_eRepeatMode,
 						&Size);
 
 	Size = sizeof(int);
@@ -1425,7 +1425,7 @@ bool CPreferences::LoadPreferences(void)
 						VOLUME,
 						NULL,
 						&Type,
-						(LPBYTE)&m_Volume,
+						(LPBYTE)&m_fVolume,
 						&Size);
 
 	Size = sizeof(float);
@@ -1433,7 +1433,7 @@ bool CPreferences::LoadPreferences(void)
 						AMPGAIN,
 						NULL,
 						&Type,
-						(LPBYTE)&m_AmpGain,
+						(LPBYTE)&m_fAmpGain,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1457,10 +1457,10 @@ bool CPreferences::LoadPreferences(void)
 						PLAYLISTVIEWNUMCOLS,
 						NULL,
 						&Type,
-						(LPBYTE)&m_PlaylistViewNumColumns,
+						(LPBYTE)&m_iPlaylistViewNumColumns,
 						&Size);	
 
-	Size = sizeof(int) * m_PlaylistViewNumColumns;
+	Size = sizeof(int) * m_iPlaylistViewNumColumns;
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTVIEWCOLIDS,
 						NULL,
@@ -1468,7 +1468,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)m_PlaylistViewColumnIDs,
 						&Size);	
 
-	Size = sizeof(int) * m_PlaylistViewNumColumns;
+	Size = sizeof(int) * m_iPlaylistViewNumColumns;
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTVIEWCOLWIDTHS,
 						NULL,
@@ -1481,7 +1481,7 @@ bool CPreferences::LoadPreferences(void)
 						WINDOWFORMATSTRING,
 						NULL,
 						&Type,
-						(LPBYTE)&m_WindowFormatString,
+						(LPBYTE)&m_szWindowFormatString,
 						&Size);
 
 	Size = 256 * sizeof(WCHAR);
@@ -1489,7 +1489,7 @@ bool CPreferences::LoadPreferences(void)
 						PLUGINFORMATSTRING,
 						NULL,
 						&Type,
-						(LPBYTE)&m_PluginFormatString,
+						(LPBYTE)&m_szPluginFormatString,
 						&Size);
 
 	Size = 256 * sizeof(WCHAR);
@@ -1497,7 +1497,7 @@ bool CPreferences::LoadPreferences(void)
 						LISTFORMATSTRING,
 						NULL,
 						&Type,
-						(LPBYTE)&m_ListFormatString,
+						(LPBYTE)&m_szListFormatString,
 						&Size);
 
 	Size = sizeof(RECT);
@@ -1529,262 +1529,259 @@ bool CPreferences::SavePreferences(void)
 {
 	HKEY		hTuniacPrefKey;
 
-	if(RegCreateKey(	HKEY_CURRENT_USER,
-						PREFERENCES_KEY,
-						&hTuniacPrefKey) == ERROR_SUCCESS)
-	{
+	if(RegCreateKey(HKEY_CURRENT_USER, PREFERENCES_KEY, &hTuniacPrefKey) != ERROR_SUCCESS)
+		return false;
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						MAINWINDOWMAXIMIZED, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bMainWindowMaximized, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					MAINWINDOWMAXIMIZED, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bMainWindowMaximized, 
+					sizeof(BOOL));
 
-		/*
-		Size = (wcslen(m_Theme) + 1) * sizeof(TCHAR);
-		Type = REG_SZ;
-		RegSetValueEx(	hTuniacPrefKey,
-						ACTIVETHEME,
-						NULL,
-						Type,
-						(LPBYTE)&m_Theme,
-						Size);
-		*/
+	/*
+	Size = (wcslen(m_Theme) + 1) * sizeof(TCHAR);
+	Type = REG_SZ;
+	RegSetValueEx(	hTuniacPrefKey,
+					ACTIVETHEME,
+					NULL,
+					Type,
+					(LPBYTE)&m_Theme,
+					Size);
+	*/
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						TRAYICONMODE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_eTrayIconMode, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					TRAYICONMODE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_eTrayIconMode, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						MINIMIZEONCLOSE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bMinimizeOnClose, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					MINIMIZEONCLOSE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bMinimizeOnClose, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						ALWAYSONTOP, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bAlwaysOnTop, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					ALWAYSONTOP, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bAlwaysOnTop, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						PAUSEONLOCK, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bPauseOnLock, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					PAUSEONLOCK, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bPauseOnLock, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						PAUSEONSCREENSAVE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bPauseOnScreensave, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					PAUSEONSCREENSAVE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bPauseOnScreensave, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						SHOWALBUMART, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bShowAlbumArt, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					SHOWALBUMART, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bShowAlbumArt, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						ARTONSELECTION, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bArtOnSelection, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					ARTONSELECTION, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bArtOnSelection, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						FOLLOWCURRENTSONG, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bFollowCurrentSong, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					FOLLOWCURRENTSONG, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bFollowCurrentSong, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						SMARTSORTING, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bSmartSorting, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					SMARTSORTING, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bSmartSorting, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						SOURCEVIEWDIVIDERX, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iSourceViewDividerX, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					SOURCEVIEWDIVIDERX, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iSourceViewDividerX, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						CROSSFADEENABLED, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bCrossfadeEnabled, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					CROSSFADEENABLED, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bCrossfadeEnabled, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						CROSSFADETIME, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iCrossfadeTime, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					CROSSFADETIME, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iCrossfadeTime, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						AUDIOBUFFERING, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iAudioBuffering, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					AUDIOBUFFERING, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iAudioBuffering, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						VOLUME, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_Volume, 
-						sizeof(float));
+	RegSetValueEx(	hTuniacPrefKey, 
+					VOLUME, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_fVolume, 
+					sizeof(float));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						AMPGAIN, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_AmpGain, 
-						sizeof(float));
+	RegSetValueEx(	hTuniacPrefKey, 
+					AMPGAIN, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_fAmpGain, 
+					sizeof(float));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						AUDIOGAIN, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bReplayGain, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					AUDIOGAIN, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bReplayGain, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						AUDIOGAINALBUM, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bReplayGainAlbum, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					AUDIOGAINALBUM, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bReplayGainAlbum, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						SHUFFLEPLAY, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_bShuffleState, 
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey, 
+					SHUFFLEPLAY, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bShuffleState, 
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						REPEATMODE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_RepeatMode, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					REPEATMODE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_eRepeatMode, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey,
-						CURRENTVISUAL,
-						NULL,
-						REG_DWORD,
-						(LPBYTE)&m_iCurrentVisual,
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey,
+					CURRENTVISUAL,
+					NULL,
+					REG_DWORD,
+					(LPBYTE)&m_iCurrentVisual,
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						VISUALFPS, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iVisualFPS, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					VISUALFPS, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iVisualFPS, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						FILEASSOCTYPE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iFileAssocType, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					FILEASSOCTYPE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iFileAssocType, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						HISTORYLISTSIZE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iHistoryListSize, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					HISTORYLISTSIZE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iHistoryListSize, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						FUTURELISTSIZE, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_iFutureListSize, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					FUTURELISTSIZE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iFutureListSize, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey,
-						DATEADDED,
-						NULL,
-						REG_DWORD,
-						(LPBYTE)&m_bSetDateAddedToFileCreationTime,
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey,
+					DATEADDED,
+					NULL,
+					REG_DWORD,
+					(LPBYTE)&m_bSetDateAddedToFileCreationTime,
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey,
-						PLAYLISTSORTING,
-						NULL,
-						REG_DWORD,
-						(LPBYTE)&m_bPlaylistSorting,
-						sizeof(BOOL));
+	RegSetValueEx(	hTuniacPrefKey,
+					PLAYLISTSORTING,
+					NULL,
+					REG_DWORD,
+					(LPBYTE)&m_bPlaylistSorting,
+					sizeof(BOOL));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						PLAYLISTVIEWNUMCOLS, 
-						0,
-						REG_DWORD,
-						(LPBYTE)&m_PlaylistViewNumColumns, 
-						sizeof(int));
+	RegSetValueEx(	hTuniacPrefKey, 
+					PLAYLISTVIEWNUMCOLS, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iPlaylistViewNumColumns, 
+					sizeof(int));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						PLAYLISTVIEWCOLIDS, 
-						0,
-						REG_BINARY,
-						(LPBYTE)m_PlaylistViewColumnIDs, 
-						sizeof(int) * m_PlaylistViewNumColumns);
+	RegSetValueEx(	hTuniacPrefKey, 
+					PLAYLISTVIEWCOLIDS, 
+					0,
+					REG_BINARY,
+					(LPBYTE)m_PlaylistViewColumnIDs, 
+					sizeof(int) * m_iPlaylistViewNumColumns);
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						PLAYLISTVIEWCOLWIDTHS, 
-						0,
-						REG_BINARY,
-						(LPBYTE)m_PlaylistViewColumnWidths, 
-						sizeof(int) * m_PlaylistViewNumColumns);
+	RegSetValueEx(	hTuniacPrefKey, 
+					PLAYLISTVIEWCOLWIDTHS, 
+					0,
+					REG_BINARY,
+					(LPBYTE)m_PlaylistViewColumnWidths, 
+					sizeof(int) * m_iPlaylistViewNumColumns);
 
-		RegSetValueEx(	hTuniacPrefKey,
-						WINDOWFORMATSTRING,
-						NULL,
-						REG_SZ,
-						(LPBYTE)&m_WindowFormatString,
-						(wcslen(m_WindowFormatString) + 1) * sizeof(TCHAR));
+	RegSetValueEx(	hTuniacPrefKey,
+					WINDOWFORMATSTRING,
+					NULL,
+					REG_SZ,
+					(LPBYTE)&m_szWindowFormatString,
+					(wcslen(m_szWindowFormatString) + 1) * sizeof(TCHAR));
 
-		RegSetValueEx(	hTuniacPrefKey,
-						PLUGINFORMATSTRING,
-						NULL,
-						REG_SZ,
-						(LPBYTE)&m_PluginFormatString,
-						(wcslen(m_WindowFormatString) + 1) * sizeof(TCHAR));
+	RegSetValueEx(	hTuniacPrefKey,
+					PLUGINFORMATSTRING,
+					NULL,
+					REG_SZ,
+					(LPBYTE)&m_szPluginFormatString,
+					(wcslen(m_szPluginFormatString) + 1) * sizeof(TCHAR));
 
-		RegSetValueEx(	hTuniacPrefKey,
-						LISTFORMATSTRING,
-						NULL,
-						REG_SZ,
-						(LPBYTE)&m_ListFormatString,
-						(wcslen(m_WindowFormatString) + 1) * sizeof(TCHAR));
+	RegSetValueEx(	hTuniacPrefKey,
+					LISTFORMATSTRING,
+					NULL,
+					REG_SZ,
+					(LPBYTE)&m_szListFormatString,
+					(wcslen(m_szListFormatString) + 1) * sizeof(TCHAR));
 
-		RegSetValueEx(	hTuniacPrefKey, 
-						MAINWINDOWPOS, 
-						0,
-						REG_BINARY,
-						(LPBYTE)&m_MainWindowRect, 
-						sizeof(RECT));
+	RegSetValueEx(	hTuniacPrefKey, 
+					MAINWINDOWPOS, 
+					0,
+					REG_BINARY,
+					(LPBYTE)&m_MainWindowRect, 
+					sizeof(RECT));
 
-		RegCloseKey(hTuniacPrefKey);
-	}
+	RegCloseKey(hTuniacPrefKey);
 
 	return true;
 }
@@ -2137,32 +2134,32 @@ BOOL CPreferences::ReplayGainUseAlbumGain(void)
 
 float	CPreferences::GetVolumePercent(void)
 {
-	return m_Volume;
+	return m_fVolume;
 }
 
 void	CPreferences::SetVolumePercent(float fPercent)
 {
-	m_Volume = fPercent;
+	m_fVolume = fPercent;
 }
 
 float		CPreferences::GetAmpGain(void)
 {
-	return m_AmpGain;
+	return m_fAmpGain;
 }
 
 void	CPreferences::SetAmpGain(float fGain)
 {
-	m_AmpGain = fGain;
+	m_fAmpGain = fGain;
 }
 
 int		CPreferences::GetPlaylistViewNumColumns(void)
 {
-	return m_PlaylistViewNumColumns;
+	return m_iPlaylistViewNumColumns;
 }
 
 void	CPreferences::SetPlaylistViewNumColumns(int iColumns)
 {
-	m_PlaylistViewNumColumns = iColumns;
+	m_iPlaylistViewNumColumns = iColumns;
 }
 
 int		CPreferences::GetPlaylistViewColumnIDAtIndex(int index)
@@ -2211,12 +2208,12 @@ void CPreferences::SetShuffleState(BOOL bEnabled)
 
 RepeatMode	CPreferences::GetRepeatMode(void)
 {
-	return m_RepeatMode;
+	return m_eRepeatMode;
 }
 
 void		CPreferences::SetRepeatMode(RepeatMode eMode)
 {
-	m_RepeatMode = eMode;
+	m_eRepeatMode = eMode;
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 }
 
@@ -2277,17 +2274,17 @@ BOOL		CPreferences::GetArtOnSelection(void)
 
 LPTSTR		CPreferences::GetWindowFormatString(void)
 {
-	return m_WindowFormatString;
+	return m_szWindowFormatString;
 }
 
 LPTSTR		CPreferences::GetPluginFormatString(void)
 {
-	return m_PluginFormatString;
+	return m_szPluginFormatString;
 }
 
 LPTSTR		CPreferences::GetListFormatString(void)
 {
-	return m_ListFormatString;
+	return m_szListFormatString;
 }
 
 BOOL		CPreferences::GetAlwaysOnTop(void)

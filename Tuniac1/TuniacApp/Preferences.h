@@ -81,21 +81,21 @@ protected:
 	BOOL		m_bReplayGain;
 	BOOL		m_bReplayGainAlbum;
 
-	float		m_Volume;
-	float		m_AmpGain;
+	float		m_fVolume;
+	float		m_fAmpGain;
 
 	// TCHAR		m_Theme[128];
 
-	TCHAR		m_WindowFormatString[256];
-	TCHAR		m_PluginFormatString[256];
-	TCHAR		m_ListFormatString[256];
+	TCHAR		m_szWindowFormatString[256];
+	TCHAR		m_szPluginFormatString[256];
+	TCHAR		m_szListFormatString[256];
 
 	RECT		m_MainWindowRect;
 
 	TrayIconMode	m_eTrayIconMode;
-	RepeatMode	m_RepeatMode;
+	RepeatMode	m_eRepeatMode;
 
-	int			m_PlaylistViewNumColumns;
+	int			m_iPlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
 	int			m_PlaylistViewColumnWidths[FIELD_MAXFIELD];
 
