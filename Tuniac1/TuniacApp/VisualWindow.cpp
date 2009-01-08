@@ -48,6 +48,8 @@ bool 			CVisualWindow::SetVisPlugin(int iPlugin)
 	while(!PostThreadMessage(m_dwThreadID, WM_APP, 0, iPlugin) && postcount--)
 		Sleep(5);
 
+	tuniacApp.m_Preferences.SetCurrentVisual(iPlugin);
+
 	return true;
 }
 
@@ -210,7 +212,10 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 	if(m_VisualArray.GetCount())
 	{
-		SetVisPlugin(0);
+		if(tuniacApp.m_Preferences.GetCurrentVisual() >= m_VisualArray.GetCount())
+			tuniacApp.m_Preferences.SetCurrentVisual(0);
+
+		SetVisPlugin(tuniacApp.m_Preferences.GetCurrentVisual());
 	}
 	else
 	{
@@ -479,13 +484,13 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 			}
 			break;
-
+/*
 		case WM_LBUTTONDBLCLK:
 			{
 				SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_VIS_FULLSCREEN, 0), 0);
 			}
 			break;
-
+*/
 		default:
 			return(DefWindowProc(hWnd, message, wParam, lParam));
 			break;
@@ -604,4 +609,39 @@ bool	CVisualWindow::GetVisData(float * pWaveformData, unsigned long ulNumSamples
 void *	CVisualWindow::GetVariable(Variable eVar)
 {
 	return tuniacApp.m_PluginManager.GetVariable(eVar);
+}
+
+bool	CVisualWindow::GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
+{
+	TCHAR szVisualSubKey[128];
+	wnsprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	return tuniacApp.m_Preferences.PluginGetValue(szVisualSubKey, lpValueName, lpType, lpData, lpcbData);
+}
+
+bool	CVisualWindow::SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
+{
+	TCHAR szVisualSubKey[128];
+	wnsprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	return tuniacApp.m_Preferences.PluginSetValue(szVisualSubKey, lpValueName, dwType, lpData, cbData);
+}
+
+void	CVisualWindow::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
+{ // szFormat=NULL to use full format from preferences
+
+	IPlaylistEntry * pEntry = NULL;
+
+	memset(szDest, L'\0', iDestSize);
+	if(iFromCurrent == 0)
+	{
+		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+		pEntry = pPlaylist->GetActiveItem();
+	}
+	else
+		pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
+
+	if(pEntry == NULL)
+		return;
+
+	tuniacApp.FormatSongInfo(szDest, iDestSize, pEntry, szFormat == NULL ? tuniacApp.m_Preferences.GetPluginFormatString() : szFormat, true);
 }

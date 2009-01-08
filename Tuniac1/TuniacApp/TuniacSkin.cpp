@@ -125,7 +125,8 @@ bool			CTuniacSkin::Initialize(void)
 	{
 		ThemeIconSet[i].hHandle = (HICON)LoadImage(tuniacApp.getMainInstance(), MAKEINTRESOURCE(ThemeIconSet[i].ulRes), IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR);
 	}
-	LoadTheme(tuniacApp.m_Preferences.GetTheme());
+
+	//LoadTheme(tuniacApp.m_Preferences.GetTheme());
 
 	return true;
 }
@@ -134,7 +135,7 @@ bool			CTuniacSkin::Shutdown(void)
 {
 	return true;
 }
-
+/*
 bool			CTuniacSkin::LoadTheme(LPTSTR szThemeName)
 {
 	if(szThemeName == NULL)
@@ -164,7 +165,7 @@ bool			CTuniacSkin::LoadTheme(LPTSTR szThemeName)
 	}
 	return true;
 }
-
+*/
 HICON			CTuniacSkin::GetIcon(unsigned long ulIcon)
 {
 	if(ulIcon >= THEMEICON_MAXICON)
