@@ -1566,7 +1566,20 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								hdHitTest.pt = cpt;
 								SendMessage(hListHeader, HDM_HITTEST, 0, (LPARAM)&hdHitTest);
 								m_iLastClickedSubitem = hdHitTest.iItem;
-								bool bCanFilter = m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER && m_iLastClickedSubitem > 0 && HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem-1]].bFilterable;
+								bool bCanFilter = false;
+								if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
+								{
+									if(m_iLastClickedSubitem > 0)
+									{
+										if(m_iLastClickedSubitem < m_ColumnIDArray.GetCount())
+										{
+											if(HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem-1]].bFilterable)
+											{
+												bCanFilter = true;
+											}
+										}
+									}
+								}
 								EnableMenuItem(m_HeaderMenu, ID_FILTERBY, (bCanFilter ? MF_ENABLED : MF_GRAYED) | MF_BYCOMMAND);
 								TrackPopupMenu(m_HeaderMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_PlaylistSourceWnd, NULL);
 							}
