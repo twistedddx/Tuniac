@@ -78,19 +78,80 @@ class SoniqueQueryInterface : public QueryInterface
 {
 	bool QueryInt(char* expression, int* result)
 	{
-		*result = 0;
+		if(strcmp(expression, "currentsonglength") == 0)
+			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@i"), 0);
+			*result = 1;
 
-		return false;
+		else if(strcmp(expression, "currentsongposition") == 0)
+			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@i"), 0);
+			*result = 1;
+
+
+		else if(strcmp(expression, "scheme_visual_left") == 0)
+			*result = 1;
+
+		else if(strcmp(expression, "scheme_visual_right") == 0)
+			*result = 1;
+
+		else if(strcmp(expression, "scheme_visual_blend") == 0)
+			*result = 1;
+
+		else
+			*result = 0;
+
+		return true;
 	}
 
 	char* QueryString(char* expression)
 	{
-		OutputDebugStringA(expression);
-		return (char*)"TestThing";
+		if(strcmp(expression, "currentsongtitle") == 0)
+			return (char*)"Title";
+		/*
+		{
+			TCHAR szSongW[512];
+			char * tempname; 
+			m_pHelper->GetTrackInfo(szSongW, 512, TEXT("@T"), 0);
+			WideCharToMultiByte(CP_UTF8, 0, szSongW, -1, tempname, _MAX_PATH, 0, 0);
+			return tempname;
+		}
+		*/
+
+		else if(strcmp(expression, "currentsongauthor") == 0)
+			return (char*)"Author";
+		/*
+		{
+
+			TCHAR szString[512];
+			char * mbString = ""; 
+			m_pHelper->GetTrackInfo(szString, 512, TEXT("@A"), 0);
+			WideCharToMultiByte(CP_UTF8, 0, szString, -1, mbString, _MAX_PATH, 0, 0);
+			return mbString;
+
+		}
+		*/
+
+		else if(strcmp(expression, "currentsongfilename") == 0)
+			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
+			return (char*)"Filename";
+
+		else if(strcmp(expression, "currentsongdisplaystring") == 0)
+			//return m_pHelper->GetTrackInfo(szData, 512, NULL, 0);
+			return (char*)"DisplayString";
+
+		else if(strcmp(expression, "currentskinname") == 0)
+			return (char*)"Default Skin";
+
+		else
+			//OutputDebugStringA(expression);
+			return (char*)"Unknown Query";
 	}
 
 	void FreeString(char* String)
 	{
+		//if(String)
+		//	delete String;
+
+		//return;
 	}
 };
 

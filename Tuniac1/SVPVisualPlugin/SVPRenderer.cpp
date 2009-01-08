@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include ".\svprenderer.h"
+#include "svprenderer.h"
 #include "Transform.h"
 
 #include <emmintrin.h>
@@ -317,6 +317,12 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	if(m_VisFilenameArray.GetCount())
 	{
+		DWORD				lpRegType = REG_DWORD;
+		DWORD				iRegSize = sizeof(int);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
+		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
+			m_SelectedVisual = 0;
+
 		SetActiveVisual(m_SelectedVisual);
 	}
 
@@ -357,6 +363,11 @@ bool	SVPRenderer::Attach(HDC hDC)
 	}
 
 	setVSync(1);
+
+	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
+	{
+		return false;								// Return FALSE
+	}
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -579,6 +590,7 @@ bool SVPRenderer::SetActiveVisual(int vis)
 
 	SetCurrentDirectory(oldFolder);
 
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 
 	return true;
 }
