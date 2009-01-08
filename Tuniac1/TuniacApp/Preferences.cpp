@@ -1225,6 +1225,7 @@ bool CPreferences::LoadPreferences(void)
 	DWORD Size = NULL;
 	DWORD Type = NULL;
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						MAINWINDOWMAXIMIZED,
 						NULL,
@@ -1232,6 +1233,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bMainWindowMaximized,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						SOURCEVIEWDIVIDERX,
 						NULL,
@@ -1250,6 +1252,7 @@ bool CPreferences::LoadPreferences(void)
 						&Size);
 	*/
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						TRAYICONMODE,
 						NULL,
@@ -1257,6 +1260,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_eTrayIconMode,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						MINIMIZEONCLOSE,
 						NULL,
@@ -1264,6 +1268,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bMinimizeOnClose,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						ALWAYSONTOP,
 						NULL,
@@ -1271,6 +1276,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bAlwaysOnTop,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PAUSEONLOCK,
 						NULL,
@@ -1278,6 +1284,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bPauseOnLock,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PAUSEONSCREENSAVE,
 						NULL,
@@ -1285,6 +1292,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bPauseOnScreensave,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						SHOWALBUMART,
 						NULL,
@@ -1292,6 +1300,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bShowAlbumArt,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						ARTONSELECTION,
 						NULL,
@@ -1299,6 +1308,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bArtOnSelection,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						FOLLOWCURRENTSONG,
 						NULL,
@@ -1306,6 +1316,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bFollowCurrentSong,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						SMARTSORTING,
 						NULL,
@@ -1313,6 +1324,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bSmartSorting,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						CROSSFADEENABLED,
 						NULL,
@@ -1320,6 +1332,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bCrossfadeEnabled,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						CROSSFADETIME,
 						NULL,
@@ -1327,6 +1340,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iCrossfadeTime,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						AUDIOBUFFERING,
 						NULL,
@@ -1334,6 +1348,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iAudioBuffering,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						FILEASSOCTYPE,
 						NULL,
@@ -1341,6 +1356,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iFileAssocType,
 						&Size);	
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						HISTORYLISTSIZE,
 						NULL,
@@ -1348,6 +1364,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iHistoryListSize,
 						&Size);	
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						FUTURELISTSIZE,
 						NULL,
@@ -1355,6 +1372,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iFutureListSize,
 						&Size);	
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						DATEADDED,
 						NULL,
@@ -1362,6 +1380,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bSetDateAddedToFileCreationTime,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTSORTING,
 						NULL,
@@ -1369,6 +1388,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bPlaylistSorting,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						SHUFFLEPLAY,
 						NULL,
@@ -1376,6 +1396,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bShuffleState,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						REPEATMODE,
 						NULL,
@@ -1383,6 +1404,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_RepeatMode,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						CURRENTVISUAL,
 						NULL,
@@ -1390,6 +1412,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iCurrentVisual,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						VISUALFPS,
 						NULL,
@@ -1397,6 +1420,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iVisualFPS,
 						&Size);
 
+	Size = sizeof(float);
 	RegQueryValueEx(	hTuniacPrefKey,
 						VOLUME,
 						NULL,
@@ -1404,6 +1428,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_Volume,
 						&Size);
 
+	Size = sizeof(float);
 	RegQueryValueEx(	hTuniacPrefKey,
 						AMPGAIN,
 						NULL,
@@ -1411,6 +1436,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_AmpGain,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						AUDIOGAIN,
 						NULL,
@@ -1418,6 +1444,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bReplayGain,
 						&Size);
 
+	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						AUDIOGAINALBUM,
 						NULL,
@@ -1425,6 +1452,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bReplayGainAlbum,
 						&Size);
 
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTVIEWNUMCOLS,
 						NULL,
@@ -1432,6 +1460,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_PlaylistViewNumColumns,
 						&Size);	
 
+	Size = sizeof(int) * m_PlaylistViewNumColumns;
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTVIEWCOLIDS,
 						NULL,
@@ -1439,6 +1468,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)m_PlaylistViewColumnIDs,
 						&Size);	
 
+	Size = sizeof(int) * m_PlaylistViewNumColumns;
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLAYLISTVIEWCOLWIDTHS,
 						NULL,
@@ -1446,6 +1476,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)m_PlaylistViewColumnWidths,
 						&Size);	
 
+	Size = 256 * sizeof(WCHAR);
 	RegQueryValueEx(	hTuniacPrefKey,
 						WINDOWFORMATSTRING,
 						NULL,
@@ -1453,6 +1484,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_WindowFormatString,
 						&Size);
 
+	Size = 256 * sizeof(WCHAR);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PLUGINFORMATSTRING,
 						NULL,
@@ -1460,6 +1492,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_PluginFormatString,
 						&Size);
 
+	Size = 256 * sizeof(WCHAR);
 	RegQueryValueEx(	hTuniacPrefKey,
 						LISTFORMATSTRING,
 						NULL,
@@ -1467,6 +1500,7 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_ListFormatString,
 						&Size);
 
+	Size = sizeof(RECT);
 	RegQueryValueEx(	hTuniacPrefKey,
 						MAINWINDOWPOS,
 						NULL,
