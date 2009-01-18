@@ -1,6 +1,30 @@
+Jan, 2009
+---------
+-readd trayicon on explorer restart.
+-handle keyboard select from systray
+-Fix crash on right click invalid column header
+-Actually apply buffersize(before it was just locked to 250ms)
+-Tidy up pref code.
+-Save/load current visual in Tuniac and SVP plugin
+-Start of visual query interface
+-tak 1.1.0 plus fixes, ape fixes
+-songplayed plugin notify
+
+
+Dec, 2008
+---------
+-smoother playback, hopefully the end of audio breakups.
+-begin of tag writing (inline editing in the playlist will save to the file now)
+-Fix that random crash on song change. I pointed Tony to the problem and he wrote a nice real fix for it(this is a fix, not a workaround that was in 081214)
+-taglib svn catchup
+-tidy up about screen
+-standard file i/o interface
+-move flac decoder back to memoryio.
+
 Nov, 2008
 ---------
 -handle when mix points are missed with crossfade enabled(manual skip to end of song and unexpected decoder stop)
+-the audioengine in this version is now back with the latest SVN and includes many improvements from Tony Million. Hopefully this will improve the smoothness of playback.
 -Better playlist logic when current song is filtered or if a queued song is filtered
 -set maximize as required on tray restore
 -DirectX November 2008 update (xaudio 2.3)
