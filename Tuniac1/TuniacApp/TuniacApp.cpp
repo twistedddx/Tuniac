@@ -40,6 +40,8 @@
 
 #define szClassName			TEXT("TUNIACWINDOWCLASS")
 
+static UINT WM_TASKBARCREATED = RegisterWindowMessage(TEXT("TaskbarCreated"));
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -55,14 +57,11 @@ CTuniacApp::~CTuniacApp()
 bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 {
 	//load tuniac
-
 	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
-
 
 	m_hInstance = hInstance;
 
-#ifndef DEBUG
-	//one instance for release
+	//one instance
 	m_hOneInstanceOnlyMutex = CreateMutex(NULL, FALSE, szClassName);
 	if(GetLastError() == ERROR_ALREADY_EXISTS) 
 	{ 
@@ -95,7 +94,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		CloseHandle(m_hOneInstanceOnlyMutex);
 		return(0);
 	}
-#endif
 
 	CoInitialize(NULL);
 	InitCommonControls();
@@ -176,7 +174,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_wc.lpszMenuName	= MAKEINTRESOURCE(IDR_TUNIAC_MENU);
 	m_wc.lpszClassName	= szClassName;
 	if(!RegisterClassEx(&m_wc))
-		return(false);
+		return false;
 
 	//move tuniac back on screen if moved off
 	RECT r;
@@ -210,9 +208,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//window did not create!
 	if(!m_hWnd)
-	{
-		return(false);
-	}
+		return false;
 
 	//set always ontop state
 	CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | (m_Preferences.GetAlwaysOnTop() ? MF_CHECKED : MF_UNCHECKED));
@@ -592,7 +588,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 					{
 						ShowWindow(hWnd, SW_HIDE);
-						m_Taskbar.Show();
+						//m_Taskbar.Show();
 						break;
 					}
 				}
@@ -1762,6 +1758,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				switch (uMouseMsg)
 				{
+					//selected by keyboard in windows 2000 and up
+					case NIN_KEYSELECT:
 					//left double click tray icon (restore window)
 					case WM_LBUTTONDBLCLK:
 						{
@@ -1790,6 +1788,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			break;
 
 		default:
+			//restore trayicon after explorer restart
+			if(message == WM_TASKBARCREATED)
+			{
+				if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
+				{
+					m_Taskbar.Show();
+				}
+			}
 			return(DefWindowProc(hWnd, message, wParam, lParam));
 			break;
 	}
