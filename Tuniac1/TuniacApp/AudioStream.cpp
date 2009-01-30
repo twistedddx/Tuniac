@@ -24,9 +24,16 @@
 
 #include <intrin.h>
 
+#ifdef SSE
+#include "SSE_Utils.h"
+#define CopyFloat(dst, src, num)  { SSE_CopyFloat(dst, src, num); }
+
+
+#else
 
 #define CopyFloat(dst, src, num)  { CopyMemory(dst, src, (num) * sizeof(float)) }
 
+#endif
 
 
 
@@ -270,53 +277,57 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				XMM2 = _mm_load1_ps(&fAmpGain);
 			}
 			
-			for(unsigned long x=0; x<NumSamples; x+=4)
+			int samplesleft = NumSamples;
+			int offset =0;
+			
+			while(samplesleft>=4)
 			{
-				if(NumSamples-x >= 4)
+				// load XMM0 with 4 samples from the audio buffer
+				XMM0 = _mm_load_ps(((float*)pAudioBuffer)+offset);
+
+				// if replaygain enabled in prefs
+				if(bReplayGain)
 				{
-					// load XMM0 with 4 samples from the audio buffer
-					XMM0 = _mm_load_ps(((float*)pAudioBuffer)+x);
-
-					// if replaygain enabled in prefs
-					if(bReplayGain)
-					{
-						// apply -6db gain to files without replaygain data
-						// or apply whichever value we loaded into XMM2 (track or album)
-						XMM0 = _mm_mul_ps(XMM0, XMM2);
-					}
-
-					// apply volume
-					XMM0 = _mm_mul_ps(XMM0, XMM1);
-
-					// store XMM0 back to where we loaded it from thanks!
-					_mm_store_ps(((float*)pAudioBuffer)+x, XMM0);
+					// apply -6db gain to files without replaygain data
+					// or apply whichever value we loaded into XMM2 (track or album)
+					XMM0 = _mm_mul_ps(XMM0, XMM2);
 				}
-				else
-				{
-					int ttt=NumSamples-x;
-					for(int ss=0; ss<ttt; ss++)
-					{
-						float * pSample = ((float*)pAudioBuffer)+x+ss;
-						if(bReplayGain)
-						{
-							if(bUseAlbumGain && bAlbumHasGain)
-							{
-								*pSample *= fReplayGainAlbum;
-							}
-							else if(bTrackHasGain && !bUseAlbumGain)
-							{
-								*pSample *= fReplayGainTrack;
-							}
-							else
-							{
-								*pSample *= fAmpGain;
-							}
-						}
 
-						*pSample *= fVolumeScale;
-					}
-				}
+				// apply volume
+				XMM0 = _mm_mul_ps(XMM0, XMM1);
+
+				// store XMM0 back to where we loaded it from thanks!
+				_mm_store_ps(((float*)pAudioBuffer)+offset, XMM0);
+				
+				offset		+=4;
+				samplesleft	-=4;				
 			}
+			
+			while(samplesleft)
+			{
+				float * pSample = ((float*)pAudioBuffer)+offset;
+				if(bReplayGain)
+				{
+					if(bUseAlbumGain && bAlbumHasGain)
+					{
+						*pSample *= fReplayGainAlbum;
+					}
+					else if(bTrackHasGain && !bUseAlbumGain)
+					{
+						*pSample *= fReplayGainTrack;
+					}
+					else
+					{
+						*pSample *= fAmpGain;
+					}
+				}
+
+				*pSample *= fVolumeScale;	
+					
+				offset		++;
+				samplesleft	--;				
+			}			
+
 
 
 			for(unsigned long i=0; i<NumSamples; i+=m_Channels)
