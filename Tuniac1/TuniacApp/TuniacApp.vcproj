@@ -450,6 +450,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSE_Utils.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StandardPlaylist.cpp"
 				>
 			</File>
@@ -704,6 +708,10 @@
 			</File>
 			<File
 				RelativePath=".\SourceSelectorWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SSE_Utils.h"
 				>
 			</File>
 			<File

@@ -537,7 +537,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if(m_ulAlbumArtX)
 				{
 					GetClientRect(hDlg, &r);
-					tuniacApp.m_TestArt.Draw(	hDC, 
+					tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
 											2, 
 											r.bottom - m_ulAlbumArtX-2,
 											m_ulSeparatorX-2,

@@ -22,8 +22,6 @@
 #include "StdAfx.h"
 #include ".\audiopacketizer.h"
 
-#define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
-
 #define NiceCloseHandle(handle)  if(handle) { CloseHandle(handle); handle = NULL; }
 
 CAudioPacketizer::CAudioPacketizer(void) :

@@ -137,7 +137,7 @@ public:
 
 	CTuniacSkin					m_Skin;
 
-	CAlbumArt					m_TestArt;
+	CAlbumArt					m_AlbumArtPanel;
 
 
 	struct
