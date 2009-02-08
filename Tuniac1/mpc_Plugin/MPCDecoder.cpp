@@ -86,15 +86,11 @@ bool		CMPCDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
 	*NumSamples = 0;
 
-	unsigned status = mpc_decoder_decode(&decoder, m_Buffer, 0, 0);
-    if (status == (unsigned)(-1)) 
-	{
+	unsigned int status = mpc_decoder_decode(&decoder, m_Buffer, 0, 0);
+    if (status == -1) 
         return false;
-    }
     else if (status == 0)   //EOF
-    {
         return false;
-    }
     else                    //status>0
     {
 		*NumSamples = status * si.channels;

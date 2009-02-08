@@ -19,8 +19,8 @@ protected:
 	unsigned long ulSampleRate;
 	unsigned long ulChannels;
 	unsigned long ulSamples;
-	unsigned long ulBitsPerSample;
-	unsigned long ulBytesPerSample;
+	//unsigned long ulBitsPerSample;
+	//unsigned long ulBytesPerSample;
 	unsigned long ulDecodeSamples;
 
 
