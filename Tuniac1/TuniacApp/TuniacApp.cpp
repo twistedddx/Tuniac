@@ -2386,7 +2386,7 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 			unsigned long artType;
 			if(pManager->GetAlbumArt(szSource, 0, &art, &ulSize, szMimeType, &artType))
 			{
-				if(m_TestArt.SetSource(art, ulSize, szMimeType))
+				if(m_AlbumArtPanel.SetSource(art, ulSize, szMimeType))
 					bArtSuccess = true;
 
 				pManager->FreeAlbumArt(art);
@@ -2405,9 +2405,9 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 			PathAppend(szJPGPath, TEXT("folder.jpg"));
 			PathAppend(szPNGPath, TEXT("folder.png"));
 
-			if(m_TestArt.SetSource(szJPGPath))
+			if(m_AlbumArtPanel.SetSource(szJPGPath))
 				bArtSuccess = true;
-			else if(m_TestArt.SetSource(szPNGPath))
+			else if(m_AlbumArtPanel.SetSource(szPNGPath))
 				bArtSuccess = true;
 			
 		}
@@ -2419,7 +2419,7 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 			PathRemoveFileSpec(szURL);
 			PathAddBackslash(szURL);
 			StrCat(szURL, TEXT("NoAlbumArt.jpg"));
-			m_TestArt.SetSource(szURL);
+			m_AlbumArtPanel.SetSource(szURL);
 		}
 
 		m_SourceSelectorWindow->Refresh();
@@ -2433,7 +2433,7 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 		PathRemoveFileSpec(szURL);
 		PathAddBackslash(szURL);
 		StrCat(szURL, TEXT("NoAlbumArt.jpg"));
-		m_TestArt.SetSource(szURL);
+		m_AlbumArtPanel.SetSource(szURL);
 	}
 
 	m_SourceSelectorWindow->Refresh();

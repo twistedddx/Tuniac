@@ -24,19 +24,6 @@
 
 #include <intrin.h>
 
-#ifdef SSE
-#include "SSE_Utils.h"
-#define CopyFloat(dst, src, num)  { SSE_CopyFloat(dst, src, num); }
-
-
-#else
-
-#define CopyFloat(dst, src, num)  { CopyMemory(dst, src, (num) * sizeof(float)) }
-
-#endif
-
-
-
 CAudioStream::CAudioStream()
 {
 	m_bEntryPlayed	= false;
@@ -328,13 +315,25 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				samplesleft	--;				
 			}			
 
+			if(m_FadeState != FADE_NONE)
+			{
+				for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
+				{
+					for(unsigned long ulChan=0; ulChan<m_Channels; ulChan++)
+					{
+						pAudioBuffer[ulSample+ulChan]		*= fVolume;
+					}
+					fVolume += fVolumeChange;
+					fVolume = max(0.0f, min(fVolume, 1.0f));
+				}
+			}
 
-
+/* Intrinsic section above replaces this section
 			for(unsigned long i=0; i<NumSamples; i+=m_Channels)
 			{
 				for(unsigned long chan=0; chan<m_Channels; chan++)
 				{
-/* Intrinsic section above replaces this section
+
 					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
 					// TO DO SSEIFY THIS PLSKTHANKX
 					// is replaygain set?
@@ -356,7 +355,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					}
 					// and apply the volume
 					pAudioBuffer[i+chan]		*= fVolumeScale;
-*/
+
 					// IF WE ARE CROSSFADING WE NEED TO DO THAT TOO!!!
 					if(m_FadeState != FADE_NONE)
 					{
@@ -372,15 +371,14 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
 			}
-
+*/
 
 			//check if coreaudio has not been notified yet and if we are crossfading
 			if(ulSongLength != LENGTH_UNKNOWN)
 			{
-				
-				unsigned long ulCurrentMS = GetPosition() + m_Output->GetAudioBufferMS();
 				if(!m_bEntryPlayed)
 				{
+					unsigned long ulCurrentMS = GetPosition() + m_Output->GetAudioBufferMS();
 					if(ulCurrentMS > (ulSongLength * 0.25))
 					{
 						m_bEntryPlayed = true;
@@ -389,16 +387,17 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				}
 				if(!m_bMixNotify)
 				{
-					//length longer then crossfade time
-					//
-
-					if((ulSongLength - ulCurrentMS) < m_ulCrossfadeTimeMS)
+					//song is longer than crossfade time
+					if(ulSongLength > m_ulCrossfadeTimeMS)
 					{
-						m_bMixNotify = true;
-						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
+						unsigned long ulCurrentMS = GetPosition() + m_Output->GetAudioBufferMS();
+						//time left shorter than crossfade time
+						if((ulSongLength - ulCurrentMS) < m_ulCrossfadeTimeMS)
+						{
+							m_bMixNotify = true;
+							tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
+						}
 					}
-
-
 				}
 			}
 

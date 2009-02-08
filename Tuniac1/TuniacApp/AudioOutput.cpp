@@ -22,7 +22,12 @@
 #include "StdAfx.h"
 #include ".\audiooutput.h"
 
-#define CopyFloat(dst, src, num) CopyMemory(dst, src, (num) * sizeof(float))
+#ifdef SSE
+#include "SSE_Utils.h"
+#define CopyFloat(dst, src, num)  SSE_CopyFloat(dst, src, num)
+#else
+#define CopyFloat(dst, src, num)  CopyMemory(dst, src, (num) * sizeof(float))
+#endif
 
 #define MAX_BUFFER_COUNT		8
 #define MAX_BUFFER_MEMORY		(MAX_BUFFER_COUNT+2)

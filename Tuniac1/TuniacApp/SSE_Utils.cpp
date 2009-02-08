@@ -1,9 +1,9 @@
 #include <xmmintrin.h>
 
-void SSE_CopyFloat(float * Src, float * Dest, int len)
+void SSE_CopyFloat(float * Src, float * Dest, unsigned long len)
 {
 	__m128 a;
-	int index = 0;
+	unsigned long index = 0;
 	
 	while(len >= 4)
 	{
