@@ -19,7 +19,7 @@ protected:
 	WAVEFORMATEX wfmex;
 	MMCKINFO child, parent;
 
-	unsigned long Read;
+	long Read;
 	unsigned long ulChunkSize;
 	unsigned long ulLenthMS;
 

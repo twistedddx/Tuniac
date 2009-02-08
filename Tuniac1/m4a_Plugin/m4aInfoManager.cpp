@@ -105,16 +105,11 @@ bool			Cm4aInfoManager::GetInfo(LibraryEntry * libEnt)
 {
     char *pVal = NULL;
 
-	// stuff from ID3Lib here
-	char ConvertBuffer[512];
-
-	WideCharToMultiByte(CP_ACP, 0, libEnt->szURL, 512, ConvertBuffer, 512, NULL, NULL);
-
 	FILE *mp4File;
 	mp4ff_callback_t mp4cb = {0};
 	mp4ff_t *file;
 
-	mp4File = fopen(ConvertBuffer, "rb");
+	mp4File = _wfopen(libEnt->szURL, TEXT("rbS"));
 	mp4cb.read = read_callback;
 	mp4cb.seek = seek_callback;
 	mp4cb.write = write_callback;

@@ -102,10 +102,8 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 				case PLUGINNOTIFY_SONGCHANGE:
 				case PLUGINNOTIFY_SONGINFOCHANGE:
 					{
-						TCHAR szSongW[512];
-						m_pHelper->GetTrackInfo(szSongW, 512, NULL, 0); //get current song, using default format
-						char szSong[512];
-						WideCharToMultiByte(CP_ACP, 0, szSongW, -1, szSong, 512, NULL, FALSE);
+						TCHAR szSong[512];
+						m_pHelper->GetTrackInfo(szSong, 512, NULL, 0); //get current song, using default format
 
 						TCHAR szURL[512];
 						GetModuleFileName(NULL, szURL, 512);
@@ -124,7 +122,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						if(hOutFile == INVALID_HANDLE_VALUE)
 							break;
 						unsigned long ulBytesWritten;
-						WriteFile(hOutFile, &szSong, (strlen(szSong)) * sizeof(char), &ulBytesWritten, NULL);
+						WriteFile(hOutFile, &szSong, (wcslen(szSong)) * sizeof(TCHAR), &ulBytesWritten, NULL);
 						CloseHandle(hOutFile);
 
 						//we need a real setting for this ;)
@@ -139,7 +137,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 
 							if (hwnd != NULL) {
 								
-								int iLen = strlen(szSong);
+								int iLen = wcslen(szSong);
 
 								HANDLE hMap = CreateFileMapping(NULL,
 												NULL,
@@ -164,7 +162,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 															iLen);
 
 									// update the file map with the command
-									strcpy(szContents, szSong);
+									WideCharToMultiByte(CP_ACP, 0, szSong, -1, szContents, 512, NULL, FALSE);
 
 									// issue the configured mirc command to the current instance of mIRC.
 									long lRes =  SendMessage(hwnd,  WM_MCOMMAND, 1, 0L);

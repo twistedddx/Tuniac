@@ -17,17 +17,21 @@ bool COFRDecoder::Open(LPTSTR szSource)
 
     decoderInstance = OptimFROG_createInstance();
     if (decoderInstance == NULL)
-        return 0;
+        return false;
     if (!OptimFROG_open(decoderInstance, tempname))
     {
         OptimFROG_destroyInstance(decoderInstance);
         decoderInstance = NULL;
-        return 0;
+        return false;
     }
 
     OptimFROG_getInfo(decoderInstance, &iInfo);
 
+	//work out divider for unsigned integer signed: (float)(1<<wfmex.wBitsPerSample)-1;
+	//m_divider = pow(2, (wfmex.wBitsPerSample-1))-1;
+	m_divider = (float)(1<<(iInfo.bitspersample-1))-1;
 
+	/*
 	if(iInfo.bitspersample == 8)
 	{
 		m_divider = 128.0f;
@@ -52,6 +56,7 @@ bool COFRDecoder::Open(LPTSTR szSource)
 	{
 		m_divider = 2147483648.0f;
 	}
+	*/
 
 	buffer = new char [1024*(iInfo.bitspersample/8)*iInfo.channels];
 	m_Buffer = new float [1024*(iInfo.bitspersample/8)*iInfo.channels];
@@ -112,7 +117,7 @@ bool		COFRDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
     sInt32_t pointsRetrieved = OptimFROG_read(decoderInstance, buffer, 1024);
     if (pointsRetrieved <= 0)
-        return 0;
+        return false;
 
 	short * pData = (short *)buffer;
 	float * pBuffer = m_Buffer;

@@ -367,8 +367,7 @@ char *GetHomeDir( void )
     /* load the shfolder dll to retrieve SHGetFolderPath */
     if( ( shfolder_dll = LoadLibrary( _T("SHFolder.dll") ) ) != NULL )
     {
-        SHGetFolderPath = (void *)GetProcAddress( shfolder_dll,
-                                                  _T("SHGetFolderPathA") );
+        SHGetFolderPath = (void *)GetProcAddress( shfolder_dll, (LPCSTR)"SHGetFolderPathA" );
         if ( SHGetFolderPath != NULL )
         {
             p_homedir = (char *)malloc( MAX_PATH );

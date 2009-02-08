@@ -58,6 +58,11 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 	if(ulLenthMS < 1)
 		ulLenthMS = LENGTH_UNKNOWN;
 
+	//work out divider for unsigned integer signed: (float)(1<<wfmex.wBitsPerSample)-1;
+	//m_divider = pow(2, (wfmex.wBitsPerSample-1))-1;
+	m_divider = (float)(1<<(wfmex.wBitsPerSample-1))-1;
+
+	/*
 	if(wfmex.wBitsPerSample == 8)
 		m_divider = 128.0f;
 	else if(wfmex.wBitsPerSample == 16)
@@ -66,15 +71,16 @@ bool CWAVDecoder::Open(LPTSTR szSource)
 		m_divider = 8388608.0f;
 	else if(wfmex.wBitsPerSample == 32)
 		m_divider = 2147483648.0;
+	*/
 
 
-	return(true);
+	return true;
 }
 
 bool CWAVDecoder::Close()
 {
 	mmioClose(hWav, 0);
-	return(true);
+	return true;
 }
 
 void		CWAVDecoder::Destroy(void)
@@ -88,13 +94,13 @@ bool		CWAVDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channel
 	*SampleRate = wfmex.nSamplesPerSec;
 	*Channels	= wfmex.nChannels;
 
-	return(true);
+	return true;
 }
 
 bool		CWAVDecoder::GetLength(unsigned long * MS)
 {
 	*MS = ulLenthMS;
-	return(true);
+	return true;
 }
 
 bool		CWAVDecoder::SetPosition(unsigned long * MS)
@@ -105,12 +111,12 @@ bool		CWAVDecoder::SetPosition(unsigned long * MS)
 
 	//seek in to where we want
 	mmioSeek(hWav, parent.dwDataOffset+sizeof(FOURCC)+ByteOffset, SEEK_SET);
-	return(true);
+	return true;
 }
 
 bool		CWAVDecoder::SetState(unsigned long State)
 {
-	return(true);
+	return true;
 }
 
 bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
@@ -122,13 +128,23 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	if(Read > 0)
 	{
  		short * pData = (short*)buffer;
+		float * pBuffer = m_Buffer;
+		for(int x=0; x<Read/2; x++)
+		{
+			*pBuffer = (*pData) / m_divider;	
+			pData ++;
+			pBuffer++;
+		}
+
+		/*
 		for(int x=0; x<(Read/2); x++)
 		{
-			m_Buffer[x] = (float)pData[x] / m_divider;
+			m_Buffer[x] = pData[x] / m_divider;
 		}
+		*/
 		*ppBuffer = m_Buffer;
 
-		*NumSamples = (Read/2);
+		*NumSamples = Read/2;
 
 	}
 	else
@@ -137,5 +153,5 @@ bool		CWAVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		return false;
 	}
 
-	return(true);
+	return true;
 }

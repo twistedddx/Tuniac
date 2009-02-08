@@ -19,17 +19,23 @@ bool CWVDecoder::Open(LPTSTR szSource)
     char error [128];
     wpc = WavpackOpenFileInput(tempname, error, OPEN_WVC, 23);
     if (!wpc)
-        return(false);
+        return false;
 
 	ulSampleRate = WavpackGetSampleRate(wpc);
 	ulChannels = WavpackGetNumChannels(wpc);
 	ulSamples = WavpackGetNumSamples(wpc);
-	ulBitsPerSample = WavpackGetBitsPerSample(wpc);
-	ulBytesPerSample = WavpackGetBytesPerSample(wpc);
+	//ulBitsPerSample = WavpackGetBitsPerSample(wpc);
+	//ulBytesPerSample = WavpackGetBytesPerSample(wpc);
 
 	if(WavpackGetMode(wpc) & MODE_FLOAT)
 		m_bFloatMode = true;
 
+
+	//work out divider for unsigned integer signed: (float)(1<<wfmex.wBitsPerSample)-1;
+	//m_divider = pow(2, (wfmex.wBitsPerSample-1))-1;
+	m_divider = (float)(1<<(WavpackGetBitsPerSample(wpc)-1))-1;
+
+	/*
 	if(ulBitsPerSample == 8)
 	{
 		m_divider = 128.0f;
@@ -54,7 +60,7 @@ bool CWVDecoder::Open(LPTSTR szSource)
 	{
 		m_divider = 2147483648.0;
 	}
-
+	*/
 	return(true);
 }
 
@@ -117,8 +123,7 @@ bool		CWVDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		
 		for(int x=0; x<status*ulChannels;x++)
 		{
-			*pBuffer = (float) ((double)(*pData) / m_divider);	
-
+			*pBuffer = (*pData) / m_divider;	
 			pData ++;
 			pBuffer++;
 		}
