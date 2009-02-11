@@ -68,7 +68,7 @@ bool Cm4aAudioSource::Open(LPTSTR szSource)
     unsigned char				*	buffer;
     unsigned int					buffer_size;
     NeAACDecConfigurationPtr		config;
-
+	m_mp4file = NULL;
 	m_hDecoder = faacDecOpen();
 	if(!m_hDecoder)
 	{
@@ -82,21 +82,19 @@ bool Cm4aAudioSource::Open(LPTSTR szSource)
 
     int ret = faacDecSetConfiguration(m_hDecoder, config);
 
-    m_mp4FileHandle			= _wfopen(szSource, TEXT("rb"));
+    m_mp4FileHandle			= _wfopen(szSource, TEXT("rbS"));
+	if(m_mp4FileHandle == NULL)
+		return false;
     m_mp4cb.read			= read_callback;
     m_mp4cb.seek			= seek_callback;
     m_mp4cb.user_data		= m_mp4FileHandle;
 
     m_mp4file = mp4ff_open_read(&m_mp4cb);
     if(!m_mp4file)
-    {
         return false;
-    }
 
 	if((m_mp4track = GetAACTrack(m_mp4file)) < 0)
-	{
 		return false;
-	}
 
 	buffer = NULL;
 	buffer_size = 0;
@@ -127,8 +125,11 @@ bool Cm4aAudioSource::Open(LPTSTR szSource)
 
 bool Cm4aAudioSource::Close()
 {
-	fclose(m_mp4FileHandle);
-	mp4ff_close(m_mp4file);
+	if(m_mp4file)
+	{
+		mp4ff_close(m_mp4file);
+		m_mp4file = NULL;
+	}
 
 	if(m_hDecoder)
 	{
