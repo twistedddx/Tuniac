@@ -315,17 +315,14 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				samplesleft	--;				
 			}			
 
-			for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
+			if(m_FadeState != FADE_NONE)
 			{
-				for(unsigned long ulChan=0; ulChan<m_Channels; ulChan++)
+				for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
 				{
-					if(m_FadeState != FADE_NONE)
+					for(unsigned long ulChan=0; ulChan<m_Channels; ulChan++)
 					{
 						pAudioBuffer[ulSample+ulChan]		*= fVolume;
 					}
-				}
-				if(m_FadeState != FADE_NONE)
-				{
 					fVolume += fVolumeChange;
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
