@@ -67,7 +67,7 @@ LPTSTR	CTuniacVisual::GetPluginName(void)
 
 unsigned long CTuniacVisual::GetFlags(void)
 {
-	return 0;
+	return PLUGINFLAGS_ABOUT;
 }
 
 bool	CTuniacVisual::SetHelper(ITuniacVisHelper *pHelper)
@@ -278,6 +278,7 @@ bool	CTuniacVisual::Render(int w, int h)
 
 bool	CTuniacVisual::About(HWND hWndParent)
 {
+	MessageBox(hWndParent, TEXT("Tuniac included visual. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
