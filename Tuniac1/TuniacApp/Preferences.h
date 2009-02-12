@@ -101,6 +101,7 @@ protected:
 
 	int			m_iVisualFPS;
 	int			m_iCurrentVisual;
+	int			m_bShowVisArt;
 
 	int			m_iFileAssocType;
 
@@ -208,6 +209,8 @@ public:
 	int			GetVisualFPS(void);
 	int			GetCurrentVisual(void);
 	void		SetCurrentVisual(int iVisual);
+	BOOL		GetShowVisArt(void);
+
 
 	TrayIconMode	GetTrayIconMode(void);
 	void		SetTrayIconMode(TrayIconMode eMode);

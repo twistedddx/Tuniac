@@ -149,7 +149,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_WindowArray.AddTail(t);
 
 	//create visual window
-	t = new CVisualWindow;
+	m_VisualWindow = new CVisualWindow;
+	t = m_VisualWindow;
 	m_WindowArray.AddTail(t);
 
 	//create log window
@@ -241,6 +242,12 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	if(m_Preferences.GetFollowCurrentSongMode())
 		m_SourceSelectorWindow->ShowCurrentlyPlaying();
+
+	if(m_Preferences.GetShowVisArt())
+		m_VisualWindow->Show();
+	else
+		m_VisualWindow->Hide();
+
 
 	return true;
 }
@@ -1140,10 +1147,26 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 					for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
 					{
+						//dont hide visual windows when showvisart
+						 if(m_Preferences.GetShowVisArt() && m_ActiveScreen == 0 && item == 1)
+							 continue;
+
+						//resize visual window to full screen
+						if(m_ActiveScreen == 1)
+						{
+							RECT		rcWindowRect;
+							GetClientRect(m_hWnd, &rcWindowRect);
+							SendMessage(m_hWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
+						}
+
 						if(item == m_ActiveScreen)
 							m_WindowArray[item]->Show();
 						else
 							m_WindowArray[item]->Hide();
+
+						//reshow visual window in source view
+						if(m_Preferences.GetShowVisArt() && m_ActiveScreen == 0)
+							tuniacApp.m_VisualWindow->Show();
 					}
 
 					return 0;

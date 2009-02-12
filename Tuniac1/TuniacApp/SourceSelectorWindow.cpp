@@ -537,11 +537,25 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if(m_ulAlbumArtX)
 				{
 					GetClientRect(hDlg, &r);
-					tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
+
+					if(tuniacApp.m_Preferences.GetShowVisArt())
+					{
+						if(!tuniacApp.m_VisualWindow->GetFullscreen())
+						{
+							tuniacApp.m_VisualWindow->SetPos(0, 
+											r.bottom - m_ulAlbumArtX+58,
+											m_ulSeparatorX,
+											m_ulSeparatorX);
+						}
+					}
+					else
+					{
+						tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
 											2, 
 											r.bottom - m_ulAlbumArtX-2,
 											m_ulSeparatorX-2,
 											m_ulSeparatorX-2);
+					}
 				}
 				EndPaint(hDlg, &ps);
 
