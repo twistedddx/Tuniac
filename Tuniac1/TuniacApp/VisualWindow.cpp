@@ -280,11 +280,16 @@ bool CVisualWindow::SetPos(int x, int y, int w, int h)
 	if(m_hWnd)
 	{
 		SetRect(&m_OldSize, x, y, w, h);
-		SetWindowPos(m_hWnd, NULL, x, y, w, h, SWP_NOZORDER);
+		SetWindowPos(m_hWnd, HWND_TOP, x, y, w, h, NULL);
 		return(true);
 	}
 
 	return(false);
+}
+
+bool CVisualWindow::GetFullscreen(void)
+{
+	return m_bFullScreen;
 }
 
 #define VISMENU_BASE			(60000)
