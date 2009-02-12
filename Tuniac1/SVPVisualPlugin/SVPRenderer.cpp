@@ -217,6 +217,7 @@ SVPRenderer::SVPRenderer(void)
 	m_LastHeight		= 0;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
+	iVisRes				= 512;
 
 	TCHAR				szVisualsPath[2048];
 
@@ -272,12 +273,12 @@ bool SVPRenderer::RenderVisual(void)
 		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
 
 		if(m_TheVisual->NeedsVisFX())
-			ChangeBrightnessC_MMX(m_textureData, m_textureData, 512*512*4, -8);
+			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -8);
 
-		return m_TheVisual->Render(m_textureData, TEXSIZE, TEXSIZE, TEXSIZE, &vd);
+		return m_TheVisual->Render(m_textureData, iVisRes, iVisRes, iVisRes, &vd);
 	}
 	else
-		ZeroMemory(m_textureData, TEXSIZE*TEXSIZE*4);
+		ZeroMemory(m_textureData, iVisRes*iVisRes*4);
 
 	return true;
 }
@@ -295,7 +296,7 @@ LPTSTR	SVPRenderer::GetPluginName(void)
 
 unsigned long SVPRenderer::GetFlags(void)
 {
-	return PLUGINFLAGS_CONFIG;
+	return PLUGINFLAGS_CONFIG | PLUGINFLAGS_ABOUT;
 }
 
 bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
@@ -313,12 +314,16 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	CalcRepositionTable();
 
-	m_textureData = (GLubyte*)VirtualAlloc(NULL, TEXSIZE*TEXSIZE*4, MEM_COMMIT, PAGE_READWRITE);
+	DWORD				lpRegType = REG_DWORD;
+	DWORD				iRegSize = sizeof(int);
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisRes, &iRegSize);
+
+	m_textureData = (GLubyte*)VirtualAlloc(NULL, iVisRes*iVisRes*4, MEM_COMMIT, PAGE_READWRITE);
 
 	if(m_VisFilenameArray.GetCount())
 	{
-		DWORD				lpRegType = REG_DWORD;
-		DWORD				iRegSize = sizeof(int);
+		lpRegType = REG_DWORD;
+		iRegSize = sizeof(int);
 		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
 		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
 			m_SelectedVisual = 0;
@@ -453,8 +458,8 @@ bool	SVPRenderer::Render(int w, int h)
 	glTexImage2D(	GL_TEXTURE_2D, 
 					0, 
 					GL_RGB,
-					TEXSIZE, 
-					TEXSIZE, 
+					iVisRes, 
+					iVisRes, 
 					0,
 					GL_BGRA_EXT, 
 					GL_UNSIGNED_BYTE, 
@@ -522,10 +527,26 @@ bool	SVPRenderer::Render(int w, int h)
 
 bool	SVPRenderer::About(HWND hWndParent)
 {
+	MessageBox(hWndParent, TEXT("Sonique Visual Plugin renderer. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 bool	SVPRenderer::Configure(HWND hWndParent)
 {
+	CAutoLock m(&m_RenderLock);
+
+	VirtualFree(m_textureData, 0, MEM_RELEASE);
+
+	if(iVisRes == 512)
+		iVisRes = 640;
+	else if(iVisRes == 640)
+		iVisRes = 768;
+	else
+		iVisRes = 512;
+
+	m_textureData = (GLubyte*)VirtualAlloc(NULL, iVisRes*iVisRes*4, MEM_COMMIT, PAGE_READWRITE);
+	
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisRes, sizeof(int));
+
 	return true;
 }
 
@@ -648,8 +669,8 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 
 			// we need to scale the point to a 512x512 point then send it to the vis
 
-			int visx = (int)(((float)x / (float)m_LastWidth) * 512.0);
-			int visy = (int)(((float)y / (float)m_LastHeight) * 512.0);
+			int visx = (int)(((float)x / (float)m_LastWidth) * iVisRes);
+			int visy = (int)(((float)y / (float)m_LastHeight) * iVisRes);
 
 			if(m_TheVisual)
 				m_TheVisual->Clicked(visx,visy);

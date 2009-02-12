@@ -7,8 +7,6 @@
 #include "Array.h"
 #include "CriticalSection.h"
 
-#define TEXSIZE		512
-
 class SVPRenderer :
 	public ITuniacVisPlugin
 {
@@ -21,6 +19,7 @@ protected:
 
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;
+	int									iVisRes;
 
 	Array<LPTSTR, 4>					m_VisFilenameArray;
 	unsigned long						m_SelectedVisual;

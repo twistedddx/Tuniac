@@ -88,14 +88,14 @@ BOOL SoniqueVisExternal::Render(  void *Video, int width, int height, int pitch,
 	BOOL worked = false;
 
 	if(p_PluginInfo)
-	//try
-	//{
+	try
+	{
 		worked = p_PluginInfo->Render((unsigned long*)Video, width, height, pitch, pVD);
-	//}
-	//catch(...)
-	//{
-	//	return(false);
-	//}
+	}
+	catch(...)
+	{
+		return(false);
+	}
 
 	return(worked);
 };
