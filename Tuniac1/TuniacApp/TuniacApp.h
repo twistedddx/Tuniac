@@ -30,6 +30,7 @@
 #include "PlaylistManager.h"
 
 #include "SourceSelectorWindow.h"
+#include "VisualWindow.h"
 #include "LogWindow.h"
 
 #include "PlayControls.h"
@@ -123,6 +124,7 @@ public:
 	CPlayControls				m_PlayControls;
 
 	CSourceSelectorWindow	*	m_SourceSelectorWindow;
+	CVisualWindow			*	m_VisualWindow;
 	CLogWindow				*	m_LogWindow;
 
 	Array<IWindow *,3>			m_WindowArray;
