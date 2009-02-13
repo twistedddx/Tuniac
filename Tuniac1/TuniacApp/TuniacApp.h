@@ -105,6 +105,8 @@ protected:
 	bool								m_bSavePrefs;
 	bool								m_bSaveML;
 
+	int									m_ActiveScreen;
+
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndParentProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -163,6 +165,8 @@ public:
 	HINSTANCE			getMainInstance(void)	{ return m_hInstance; }
 	HWND				getMainWindow(void)		{ return m_hWnd; }
 	bool				getSavePrefs(void)		{ return m_bSavePrefs; }
+
+	LPTSTR				GetActiveScreenName(void);
 
 	bool				SetStatusText(LPTSTR szStatusText);
 
