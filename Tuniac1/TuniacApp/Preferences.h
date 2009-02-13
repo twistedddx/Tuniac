@@ -101,7 +101,7 @@ protected:
 
 	int			m_iVisualFPS;
 	int			m_iCurrentVisual;
-	int			m_bShowVisArt;
+	BOOL		m_bShowVisArt;
 
 	int			m_iFileAssocType;
 
