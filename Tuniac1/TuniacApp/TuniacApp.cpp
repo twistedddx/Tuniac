@@ -612,6 +612,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				for(unsigned long x=0; x < m_WindowArray.GetCount(); x++)
 				{
+					if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[x]->GetName(), L"Visuals") == 0)
+						continue;
+
 					m_WindowArray[x]->SetPos(	0,
 												playcontrolsrect.bottom,
 												Width,
@@ -1143,16 +1146,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				//clicked a different view in menu
 				if(wCmdID >= MENU_BASE && wCmdID <= (MENU_BASE + m_WindowArray.GetCount()))
 				{
-					unsigned long m_ActiveScreen = wCmdID - MENU_BASE;
+					m_ActiveScreen = wCmdID - MENU_BASE;
 
 					for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
 					{
 						//dont hide visual windows when showvisart
-						 if(m_Preferences.GetShowVisArt() && m_ActiveScreen == 0 && item == 1)
+						 if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
 							 continue;
 
 						//resize visual window to full screen
-						if(m_ActiveScreen == 1)
+						if(wcscmp(GetActiveScreenName(), L"Visuals") == 0)
 						{
 							RECT		rcWindowRect;
 							GetClientRect(m_hWnd, &rcWindowRect);
@@ -1165,7 +1168,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							m_WindowArray[item]->Hide();
 
 						//reshow visual window in source view
-						if(m_Preferences.GetShowVisArt() && m_ActiveScreen == 0)
+						if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
 							tuniacApp.m_VisualWindow->Show();
 					}
 
@@ -1824,6 +1827,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	}
 
 	return(0);
+}
+
+LPTSTR CTuniacApp::GetActiveScreenName(void)
+{
+	return m_WindowArray[m_ActiveScreen]->GetName();
 }
 
 bool CTuniacApp::SetStatusText(LPTSTR szStatusText)
