@@ -86,8 +86,8 @@ public:
 	virtual bool	GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars)		= 0;
 };
 
-typedef Array<int, 100>						IndexArray;
-typedef Array<IPlaylistEntry *, 100>		EntryArray;
+typedef Array<unsigned long, 100>		IndexArray;
+typedef Array<IPlaylistEntry *, 100>	EntryArray;
 
 class IPlaylist
 {

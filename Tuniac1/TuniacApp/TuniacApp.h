@@ -51,6 +51,19 @@
 #define FONT_SIZE_SMALL				3
 #define FONT_SIZE_TINY				4
 
+#define HOTKEY_PLAY					0
+#define HOTKEY_STOP					1
+#define HOTKEY_NEXT					2
+#define HOTKEY_RANDNEXT				3
+#define HOTKEY_PREV					4
+#define HOTKEY_PREVBYHISTORY		5
+#define HOTKEY_VOLUP				6
+#define HOTKEY_VOLDOWN				7
+#define HOTKEY_SEEKFORWARD			8
+#define HOTKEY_SEEKBACK				9
+#define HOTKEY_SHUFFLE				10
+#define HOTKEY_REPEAT				11
+
 #define NOTIFY_UPDATEWINDOWTITLE	10
 #define NOTIFY_PLAYLISTSCHANGED		11
 
@@ -88,19 +101,6 @@ protected:
 	HFONT								m_SmallMediumFont;
 	HFONT								m_SmallFont;
 	HFONT								m_TinyFont;
-
-	ATOM								m_aPlay; 
-	ATOM								m_aStop; 
-	ATOM								m_aNext; 
-	ATOM								m_aRandNext; 
-	ATOM								m_aPrev; 
-	ATOM								m_aPrevByHist;
-	ATOM								m_aVolUp; 
-	ATOM								m_aVolDn; 
-	ATOM								m_aSeekForward; 
-	ATOM								m_aSeekBack; 
-	ATOM								m_aShuffle; 
-	ATOM								m_aRepeat; 
 
 	bool								m_bSavePrefs;
 	bool								m_bSaveML;

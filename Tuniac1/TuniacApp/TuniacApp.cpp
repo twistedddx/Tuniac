@@ -204,17 +204,19 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 							hInstance,
 							this);
 
-	if(bMax)
-		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-
 	//window did not create!
 	if(!m_hWnd)
 		return false;
 
+	if(bMax)
+		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+
 	//set always ontop state
-	CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | (m_Preferences.GetAlwaysOnTop() ? MF_CHECKED : MF_UNCHECKED));
 	if(m_Preferences.GetAlwaysOnTop())
+	{
 		SetWindowPos(getMainWindow(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | MF_CHECKED);
+	}
 
 	//create prefs window
 	TCHAR szPrefPageTitle[64];
@@ -245,9 +247,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	if(m_Preferences.GetShowVisArt())
 		m_VisualWindow->Show();
-	else
-		m_VisualWindow->Hide();
-
 
 	return true;
 }
@@ -927,53 +926,53 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		//our defined hotkeys
 		case WM_HOTKEY:
 			{
-				if(wParam == m_aPlay)
+				if(wParam == HOTKEY_PLAY)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 				}
-				if(wParam == m_aStop)
+				if(wParam == HOTKEY_STOP)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 				}
-				else if(wParam == m_aNext)
+				else if(wParam == HOTKEY_NEXT)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 				}
-				else if(wParam == m_aRandNext)
+				else if(wParam == HOTKEY_RANDNEXT)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
 				}
-				else if(wParam == m_aPrev)
+				else if(wParam == HOTKEY_PREV)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 				}
-				else if(wParam == m_aPrevByHist)
+				else if(wParam == HOTKEY_PREVBYHISTORY)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS_BYHISTORY, 0), 0);
 				}
-				else if(wParam == m_aShuffle)
+				else if(wParam == HOTKEY_SHUFFLE)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0);
 				}
-				else if(wParam == m_aRepeat)
+				else if(wParam == HOTKEY_REPEAT)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
 				}
-				else if(wParam == m_aVolUp)
+				else if(wParam == HOTKEY_VOLUP)
 				{
 					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 0.5f);
 					m_PlayControls.UpdateVolume();
 				}
-				else if(wParam == m_aVolDn)
+				else if(wParam == HOTKEY_VOLDOWN)
 				{
 					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 0.5f);
 					m_PlayControls.UpdateVolume();
 				}
-				else if(wParam == m_aSeekForward)
+				else if(wParam == HOTKEY_SEEKFORWARD)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
 				}
-				else if(wParam == m_aSeekBack)
+				else if(wParam == HOTKEY_SEEKBACK)
 				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
 				}
@@ -1898,35 +1897,22 @@ bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 bool CTuniacApp::RegisterHotkeys(void)
 {
 	//our hotkeys
-	m_aPlay			 = GlobalAddAtom(TEXT("PLAY"));
-	m_aStop			 = GlobalAddAtom(TEXT("STOP"));
-	m_aNext			 = GlobalAddAtom(TEXT("NEXT"));
-	m_aRandNext		 = GlobalAddAtom(TEXT("RANDNEXT"));
-	m_aPrev			 = GlobalAddAtom(TEXT("PREV"));
-	m_aPrevByHist	 = GlobalAddAtom(TEXT("PREVBYHISTORY"));
-	m_aVolUp		 = GlobalAddAtom(TEXT("VOLUP"));
-	m_aVolDn		 = GlobalAddAtom(TEXT("VOLDN"));
-	m_aSeekForward	 = GlobalAddAtom(TEXT("SEEKFW"));
-	m_aSeekBack		 = GlobalAddAtom(TEXT("SEEKBK"));
-	m_aShuffle		 = GlobalAddAtom(TEXT("SHUFTOG"));
-	m_aRepeat		 = GlobalAddAtom(TEXT("REPETOG"));
-
-	if(!RegisterHotKey(m_hWnd, m_aPlay,		MOD_WIN, VK_NUMPAD5))
+	if(!RegisterHotKey(m_hWnd, HOTKEY_PLAY,		MOD_WIN, VK_NUMPAD5))
 		m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
-	RegisterHotKey(m_hWnd, m_aStop,			MOD_WIN, VK_NUMPAD0);
-	RegisterHotKey(m_hWnd, m_aNext,			MOD_WIN, VK_NUMPAD6);
-	RegisterHotKey(m_hWnd, m_aRandNext,		MOD_WIN, VK_NUMPAD9);
-	RegisterHotKey(m_hWnd, m_aPrev,			MOD_WIN, VK_NUMPAD4);
-	RegisterHotKey(m_hWnd, m_aPrevByHist,	MOD_WIN | MOD_CONTROL, VK_NUMPAD4);
+	RegisterHotKey(m_hWnd, HOTKEY_STOP,			MOD_WIN, VK_NUMPAD0);
+	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);
+	RegisterHotKey(m_hWnd, HOTKEY_RANDNEXT,		MOD_WIN, VK_NUMPAD9);
+	RegisterHotKey(m_hWnd, HOTKEY_PREV,			MOD_WIN, VK_NUMPAD4);
+	RegisterHotKey(m_hWnd, HOTKEY_PREVBYHISTORY,	MOD_WIN | MOD_CONTROL, VK_NUMPAD4);
 
-	RegisterHotKey(m_hWnd, m_aVolUp,		MOD_WIN, VK_NUMPAD8);
-	RegisterHotKey(m_hWnd, m_aVolDn,		MOD_WIN, VK_NUMPAD2);
+	RegisterHotKey(m_hWnd, HOTKEY_VOLUP,		MOD_WIN, VK_NUMPAD8);
+	RegisterHotKey(m_hWnd, HOTKEY_VOLDOWN,		MOD_WIN, VK_NUMPAD2);
 
-	RegisterHotKey(m_hWnd, m_aSeekBack,		MOD_WIN, VK_NUMPAD1);
-	RegisterHotKey(m_hWnd, m_aSeekForward,	MOD_WIN, VK_NUMPAD3);
+	RegisterHotKey(m_hWnd, HOTKEY_SEEKBACK,		MOD_WIN, VK_NUMPAD1);
+	RegisterHotKey(m_hWnd, HOTKEY_SEEKFORWARD,	MOD_WIN, VK_NUMPAD3);
 
-	RegisterHotKey(m_hWnd, m_aShuffle,		MOD_WIN, 'S');
-	RegisterHotKey(m_hWnd, m_aRepeat,		MOD_WIN, 'R');
+	RegisterHotKey(m_hWnd, HOTKEY_SHUFFLE,		MOD_WIN, 'S');
+	RegisterHotKey(m_hWnd, HOTKEY_REPEAT,		MOD_WIN, 'R');
 	return true;
 }
 
@@ -2249,7 +2235,7 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 			if(pEntry == NULL)
 				break;
 			else
-				tuniacApp.m_FutureMenu.AddTail((int &)ulIndex);
+				tuniacApp.m_FutureMenu.AddTail((unsigned long &)ulIndex);
 		}
 	}
 }

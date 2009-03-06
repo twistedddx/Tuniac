@@ -645,6 +645,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						bool bReverse = GetMenuState(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 13, MF_BYCOMMAND) & MF_CHECKED ? false : true;
 						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 13, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
 						m_pPlaylist->SetTextFilterReversed(bReverse);
+						m_pPlaylist->ApplyFilter();
 						Update();
 						return TRUE;
 					}
@@ -675,6 +676,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(ulFilterByField != m_pPlaylist->GetTextFilterField())
 					{
 						m_pPlaylist->SetTextFilterField(ulFilterByField);
+						m_pPlaylist->ApplyFilter();
 						Update();
 					}
 					return TRUE;
@@ -733,6 +735,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										if(StrCmpI(tBuffer, m_pPlaylist->GetTextFilter()))
 										{
 											m_pPlaylist->SetTextFilter(tBuffer);
+											m_pPlaylist->ApplyFilter();
 
 											if(lstrlen(tBuffer))
 											{
@@ -780,13 +783,13 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							IndexArray	iaPlayArray;
 							HWND		hListViewWnd	= GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
-							int			iPos			= ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
-							while(-1 != iPos)
+							unsigned long ulPos			= ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
+							while(-1 != ulPos)
 							{
-								iaPlayArray.AddTail(iPos);
-								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED); //get the next selected i
+								iaPlayArray.AddTail(ulPos);
+								ulPos = ListView_GetNextItem(hListViewWnd, ulPos, LVNI_SELECTED); //get the next selected i
 							}
-							for(int i = iaPlayArray.GetCount() - 1; i >= 0; i--)
+							for(unsigned long i = iaPlayArray.GetCount() - 1; i >= 0; i--)
 							{
 								tuniacApp.m_MediaLibrary.m_Queue.Prepend(m_pPlaylist->GetItemAtNormalFilteredIndex(iaPlayArray[i]));
 							}
@@ -831,11 +834,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							{
 								IndexArray	m_DeleteArray;
 								HWND		hListViewWnd	= GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
-								int lPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
-								while(-1 != lPos)
+								unsigned long ulPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
+								while(-1 != ulPos)
 								{
-									m_DeleteArray.AddTail(lPos);
-									lPos = ListView_GetNextItem(hListViewWnd, lPos, LVNI_SELECTED); //get the next selected i
+									m_DeleteArray.AddTail(ulPos);
+									ulPos = ListView_GetNextItem(hListViewWnd, ulPos, LVNI_SELECTED); //get the next selected i
 								}
 								ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
 								m_pPlaylist->DeleteItemArray(m_DeleteArray);
@@ -875,6 +878,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										}
 										tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
 										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 										ListView_SetItemState(hListViewWnd, lPos, 0, LVIS_SELECTED);
 										deletedIndexes++;
 									}
@@ -1135,6 +1139,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										m_pPlaylist->SetTextFilter(szFilter);
 										m_pPlaylist->SetTextFilterField(m_ColumnIDArray[m_iLastClickedSubitem - 1]);
 										m_pPlaylist->SetTextFilterReversed(false);
+										m_pPlaylist->ApplyFilter();
 										SetPlaylistSource(m_ulActivePlaylistIndex);
 									}
 									break;
@@ -1316,12 +1321,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										{
 											IndexArray	m_DeleteArray;
 
-											int lPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
-											while(-1 != lPos)
+											unsigned long ulPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
+											while(-1 != ulPos)
 											{
-												m_DeleteArray.AddTail(lPos);
-
-												lPos = ListView_GetNextItem(hListViewWnd, lPos, LVNI_SELECTED); //get the next selected i
+												m_DeleteArray.AddTail(ulPos);
+												ulPos = ListView_GetNextItem(hListViewWnd, ulPos, LVNI_SELECTED); //get the next selected i
 											}
 											ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
 											m_pPlaylist->DeleteItemArray(m_DeleteArray);
@@ -1608,11 +1612,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								}
 								//rebuild playselected
 								tuniacApp.m_PlaySelected.RemoveAll();
-								int iPos = ListView_GetNextItem(hList, -1, LVNI_SELECTED); //get first selected item
-								while(iPos != -1)
+								unsigned long ulPos = ListView_GetNextItem(hList, -1, LVNI_SELECTED); //get first selected item
+								while(ulPos != -1)
 								{
-									tuniacApp.m_PlaySelected.AddTail(iPos);
-									iPos = ListView_GetNextItem(hList, iPos, LVNI_SELECTED); //get the next selected i
+									tuniacApp.m_PlaySelected.AddTail(ulPos);
+									ulPos = ListView_GetNextItem(hList, ulPos, LVNI_SELECTED); //get the next selected i
 								}
 							}
 							else
@@ -1929,11 +1933,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							ScreenToClient(hListViewWnd, &HitTest.pt);
 
 
-							int lPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
-							while(-1 != lPos)
+							unsigned long ulPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED); //get first selected item
+							while(-1 != ulPos)
 							{
-								m_MoveArray.AddTail(lPos);
-								lPos = ListView_GetNextItem(hListViewWnd, lPos, LVNI_SELECTED); //get the next selected i
+								m_MoveArray.AddTail(ulPos);
+								ulPos = ListView_GetNextItem(hListViewWnd, ulPos, LVNI_SELECTED); //get the next selected i
 							}
 
 							int ItemHit = ListView_HitTest(hListViewWnd, &HitTest);
@@ -2149,13 +2153,13 @@ void	CPlaylistSourceView::DeselectItem(unsigned long ulIndex)
 bool	CPlaylistSourceView::GetSelectedIndexes(IndexArray & indexArray)
 {
 	indexArray.RemoveAll();
-	int iPos = ListView_GetNextItem(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST), -1, LVNI_SELECTED);	
-	if(iPos == -1) return false;
+	unsigned long ulPos = ListView_GetNextItem(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST), -1, LVNI_SELECTED);	
+	if(ulPos == -1) return false;
 
-	while(iPos != -1)
+	while(ulPos != -1)
 	{
-		indexArray.AddTail(iPos);
-		iPos = ListView_GetNextItem(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST), iPos, LVNI_SELECTED);	
+		indexArray.AddTail(ulPos);
+		ulPos = ListView_GetNextItem(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST), ulPos, LVNI_SELECTED);	
 	}
 	return true;
 }
