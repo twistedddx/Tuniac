@@ -1,3 +1,19 @@
+Mar, 2009
+---------
+-Less regenerating playlist filter and shuffle lists in particular at startup.
+-Faster shuffle generation.
+-Shuffle list hopefully wont corrupt now.
+-Hotkeys for apps dont require atoms.
+-Lots of ints changed to unsigned longs so all features support the same max file count.
+
+
+Feb, 2009
+---------
+-add ability to change render resolution in SVP renderer
+-Add ability to have visual for album art
+-Add about window to visuals
+-Update various plugins(better unicode, prevent crash, better etc)
+
 Jan, 2009
 ---------
 -readd trayicon on explorer restart.
