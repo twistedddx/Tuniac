@@ -188,7 +188,5 @@ bool				CLibraryPlaylist::RebuildPlaylist(void)
 		}
 	}
 
-	ApplyFilter();
-
 	return true;
 }

@@ -304,7 +304,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							LVHITTESTINFO	HitTest;
 							HitTest.pt		= pt;
 							ScreenToClient(hListViewWnd, &HitTest.pt);
-							unsigned long				iItemHit = ListView_HitTest(hListViewWnd, &HitTest);
+							unsigned long iItemHit = ListView_HitTest(hListViewWnd, &HitTest);
 							
 							if(iItemHit > 0 && GetVisiblePlaylistIndex() < iItemHit)
 								iItemHit--;
@@ -732,9 +732,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 										if(StrCmpI((LPTSTR)pEntry1->GetField(FIELD_URL), (LPTSTR)pEntry2->GetField(FIELD_URL)) == 0)
 										{
 											if(pEntry1 == pActiveEntry)
-												deleteArray.AddTail((int &)j);
+												deleteArray.AddTail((unsigned long &)j);
 											else
-												deleteArray.AddTail((int &)i);
+												deleteArray.AddTail((unsigned long &)i);
 											break;
 										}
 									}
@@ -817,7 +817,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									{
 										if(((IPlaylistEX *)pDest)->GetItemAtNormalFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtNormalFilteredIndex(i)->GetEntryID())
 										{
-											IA.AddTail((int &)j);
+											IA.AddTail((unsigned long &)j);
 											continue;
 										}
 									}

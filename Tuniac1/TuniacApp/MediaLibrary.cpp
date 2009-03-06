@@ -138,6 +138,7 @@ bool CMediaLibrary::EndAdd(void)
 	}
 
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 
 	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;

@@ -227,19 +227,22 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
 			SubHeader.Filter[127] = L'\0';
 			pPlaylist->SetTextFilter(SubHeader.Filter);
+			pPlaylist->ApplyFilter();
 
 			m_StandardPlaylists.AddTail(pPlaylist);
 			if(PLDH.ActivePlaylist - 1 == ulPlaylist)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
-				pPlaylist->RebuildPlaylistArrays();
 				pPlaylist->SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+				pPlaylist->RebuildPlaylistArrays();
 				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
 				{
 					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
 					CCoreAudio::Instance()->SetSource(pEntry);
 				}
 			}
+
+			pPlaylist->ApplyFilter();
 		}
 
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
@@ -247,11 +250,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
 		PLDH.LibraryFilter[127] = L'\0';
 		m_LibraryPlaylist.SetTextFilter(PLDH.LibraryFilter);
+		m_LibraryPlaylist.ApplyFilter();
 
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
 			m_LibraryPlaylist.SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+			m_LibraryPlaylist.RebuildPlaylistArrays();
 			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 			{
 				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
@@ -259,6 +264,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			}
 			
 		}
+
+		
 	}
 
 	CloseHandle(hFile);
@@ -819,6 +826,7 @@ bool			CPlaylistManager::DeleteCDWithDriveLetter(char cDriveLetter)
 			tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 			SetActivePlaylist(0);
 			m_LibraryPlaylist.RebuildPlaylist();
+			m_LibraryPlaylist.ApplyFilter();
 
 			tuniacApp.m_SourceSelectorWindow->UpdateList();
 
