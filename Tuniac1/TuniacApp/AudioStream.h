@@ -82,6 +82,7 @@ public:
 	bool								m_bEntryPlayed;
 	bool								m_bMixNotify;
 	bool								m_bFinishNotify;
+	bool								m_bIsSeeking;
 
 	unsigned long						m_Channels;
 

@@ -56,10 +56,10 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize) :
 	m_pCallback(NULL),
 	m_BufferInProgress(0),
 	m_pXAudio(pXAudio),
-	m_SamplesOutLastReset(0)
+	m_SamplesOutLastReset(0),
+	m_ulBuffersizeMS(500)
 {
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
-	m_pfAudioBuffer = NULL;
 	m_ulBuffersizeMS = ulBufferSize;
 }
 

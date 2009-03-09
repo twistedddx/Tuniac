@@ -66,28 +66,6 @@ bool CAudioPacketizer::WriteData(float * Data, unsigned long Samples)
 	return true;
 }
 
-bool	CAudioPacketizer::IsBufferAvailable(void)
-{
-	unsigned long BytesAvailable;
-
-	if(IsFinished())
-	{
-		// return true here anyway, because we'll always supply an empty buffer for as long as it takes
-		return true;
-	}
-
-
-	if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
-	{
-		if(BytesAvailable > m_PacketSizeBytes)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 unsigned long CAudioPacketizer::BytesAvailable(void)
 {
 	unsigned long BytesAvailable;
@@ -102,43 +80,86 @@ unsigned long CAudioPacketizer::BytesAvailable(void)
 
 bool	CAudioPacketizer::GetBuffer(float * ToHere)
 {
-	if(IsFinished())
+	unsigned long BytesAvailable = 0;
+	if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
 	{
-		// ok this is the last packet. 
-		//lets read whatever else is in the pipe and fill the rest with zeros
-		// then return true!!
+		if(BytesAvailable >= m_PacketSizeBytes)
+		{
+			unsigned long BytesRead;
+			if(ReadFile(m_hReadEnd, ToHere, m_PacketSizeBytes, &BytesRead, NULL))
+			{
+				/*
+				if(BytesRead != m_PacketSizeBytes)
+				{
+					//we didnt read as much as expected?
+				}
+				*/
+				return true;
+			}
+		}
+		else if(BytesAvailable && IsFinished())
+		{
+			ZeroMemory(ToHere, m_PacketSizeBytes);
 
-		// lets wipe the entire buffer ahead of time then overwrite it at the beginning!
+			unsigned long BytesRead;
+			if(ReadFile(m_hReadEnd, ToHere, BytesAvailable, &BytesRead, NULL))
+			{
+				/*
+				if(BytesRead != BytesAvailable)
+				{
+					//we didnt read as much as expected?
+				}
+				*/
+				return true;
+			}
+		}
+	}
+
+	return false;
+
+/*
+	if(IsBufferAvailable())
+	{
 		ZeroMemory(ToHere, m_PacketSizeBytes);
 
-		unsigned long BytesAvailable;
 		unsigned long BytesRead;
+		if(ReadFile(m_hReadEnd, ToHere, m_PacketSizeBytes, &BytesRead, NULL))
+		{
+			if(BytesRead != m_PacketSizeBytes)
+			{
+				//we didnt read as much as expected?
+			}
+			return true;
+		}
+	}
+	else //if(IsFinished())
+	{
+		// undersize packet
+
+		unsigned long BytesAvailable;
+
 		if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
 		{
 			if(BytesAvailable)
 			{
+				// lets wipe the entire buffer ahead of time then overwrite it at the beginning!
+				ZeroMemory(ToHere, m_PacketSizeBytes);
+
+				unsigned long BytesRead;
 				if(ReadFile(m_hReadEnd, ToHere, BytesAvailable, &BytesRead, NULL))
 				{
-					// ok we read the data now to wipe the rest of the buffer.
+					if(BytesRead != BytesAvailable)
+					{
+						//we didnt read as much as expected?
+					}
+					return true;
 				}
 			}
 		}
-
-		return true;
 	}
-
-	if(IsBufferAvailable())
-	{
-		unsigned long BytesRead;
-
-		if(ReadFile(m_hReadEnd, ToHere, m_PacketSizeBytes, &BytesRead, NULL))
-		{
-			return true;
-		}
-	}
-
-
 	return false;
+*/
+
 }
 
 void CAudioPacketizer::Reset(void)
@@ -167,7 +188,6 @@ bool CAudioPacketizer::AnyMoreBuffer(void)
 			return true;
 		}
 	}
-
 	return false;
 }
 
