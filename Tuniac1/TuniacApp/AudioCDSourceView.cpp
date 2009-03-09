@@ -210,6 +210,8 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 								if(m_pCDPlaylist->SetActiveIndex(lpnmitem->iItem))
 								{
 									IPlaylistEntry * pIPE = m_pCDPlaylist->GetActiveItem();
+									//open for art before opening for decode.
+									tuniacApp.SetArt(pIPE);
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
 										CCoreAudio::Instance()->Play();

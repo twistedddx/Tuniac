@@ -748,8 +748,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 							UpdateQueues();
 
-							SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
-
 							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 						}
 						break;
@@ -773,6 +771,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
+										//open for art before opening for decode.
+										SetArt(pIPE);
 										CCoreAudio::Instance()->TransitionTo(pIPE);
 									}
 								}
@@ -796,6 +796,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
+										//open for art before opening for decode.
+										SetArt(pIPE);
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
 											CCoreAudio::Instance()->Play();
@@ -845,6 +847,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
+									//open for art before opening for decode.
+									SetArt(pIPE);
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
 										CCoreAudio::Instance()->Play();
@@ -1102,6 +1106,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 											pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
 											IPlaylistEntry * pEntry = pPlaylistEX->GetActiveItem();
+											//open for art before opening for decode.
+											SetArt(pEntry);
 											CCoreAudio::Instance()->SetSource(pEntry);
 										}
 
@@ -1209,6 +1215,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 						IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
+						//open for art before opening for decode.
+						SetArt(pEntry);
 						if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
 						{
 							CCoreAudio::Instance()->Play();
@@ -1563,6 +1571,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
+									//open for art before opening for decode.
+									SetArt(pIPE);
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
 										CCoreAudio::Instance()->Play();
@@ -1595,6 +1605,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
+									//open for art before opening for decode.
+									SetArt(pIPE);
 									unsigned long ulState = CCoreAudio::Instance()->GetState();
 									if(CCoreAudio::Instance()->SetSource(pIPE))
 									{
@@ -1635,6 +1647,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
+										//open for art before opening for decode.
+										SetArt(pIPE);
 										unsigned long ulState = CCoreAudio::Instance()->GetState();
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
@@ -2387,13 +2401,18 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 
 bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 {
+	bool bArtSuccess = false;
+
 	if(pIPE)
 	{
-		bool bArtSuccess = false;
+		LPTSTR szArtSource = (LPTSTR)pIPE->GetField(FIELD_URL);
 
-		LPTSTR szSource = (LPTSTR)pIPE->GetField(FIELD_URL);
+		if(StrCmpI(szArtSource, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
+			return false;
 
-		IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szSource);
+		m_AlbumArtPanel.SetCurrentArtSource(szArtSource);
+
+		IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szArtSource);
 		//Attempt art from infomanager(embedded art)
 		if(pManager)
 		{
@@ -2401,7 +2420,7 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 			unsigned long ulSize;
 			TCHAR	szMimeType[128];
 			unsigned long artType;
-			if(pManager->GetAlbumArt(szSource, 0, &art, &ulSize, szMimeType, &artType))
+			if(pManager->GetAlbumArt(szArtSource, 0, &art, &ulSize, szMimeType, &artType))
 			{
 				if(m_AlbumArtPanel.SetSource(art, ulSize, szMimeType))
 					bArtSuccess = true;
@@ -2414,9 +2433,15 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 		{
 			TCHAR		szJPGPath[_MAX_PATH];
 			TCHAR		szPNGPath[_MAX_PATH];
-			StrCpy(szJPGPath, szSource);
+			StrCpy(szJPGPath, szArtSource);
 
 			PathRemoveFileSpec(szJPGPath);
+
+			if(StrCmpI(szJPGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
+				return false;
+
+			m_AlbumArtPanel.SetCurrentArtSource(szJPGPath);
+
 			StrCpy(szPNGPath, szJPGPath);
 
 			PathAppend(szJPGPath, TEXT("folder.jpg"));
@@ -2426,34 +2451,28 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 				bArtSuccess = true;
 			else if(m_AlbumArtPanel.SetSource(szPNGPath))
 				bArtSuccess = true;
-			
-		}
-		//No art found embedded or external. Load default art in tuniac base dir
-		if(!bArtSuccess)
-		{
-			TCHAR szURL[_MAX_PATH];
-			GetModuleFileName(NULL, szURL, _MAX_PATH);
-			PathRemoveFileSpec(szURL);
-			PathAddBackslash(szURL);
-			StrCat(szURL, TEXT("NoAlbumArt.jpg"));
-			m_AlbumArtPanel.SetSource(szURL);
-		}
 
-		m_SourceSelectorWindow->Refresh();
-
-		return bArtSuccess;
+		}
 	}
-	else
+
+	//No art found embedded or external. Load default art in tuniac base dir
+	if(!bArtSuccess)
 	{
 		TCHAR szURL[_MAX_PATH];
 		GetModuleFileName(NULL, szURL, _MAX_PATH);
 		PathRemoveFileSpec(szURL);
-		PathAddBackslash(szURL);
-		StrCat(szURL, TEXT("NoAlbumArt.jpg"));
+
+		if(StrCmpI(szURL, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
+			return false;
+
+		m_AlbumArtPanel.SetCurrentArtSource(szURL);
+
+		PathAppend(szURL, TEXT("NoAlbumArt.jpg"));
+
 		m_AlbumArtPanel.SetSource(szURL);
 	}
 
 	m_SourceSelectorWindow->Refresh();
 
-	return false;
+	return bArtSuccess;
 }

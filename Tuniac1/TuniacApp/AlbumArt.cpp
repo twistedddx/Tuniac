@@ -63,7 +63,8 @@ public:
 };
 
 CAlbumArt::CAlbumArt(void) :
-	m_pBitmapData(NULL)
+	m_pBitmapData(NULL),
+	szCurrentArtSource(NULL)
 {
 	m_ulBitmapWidth		= 100;
 	m_ulBitmapHeight	= 100;
@@ -141,6 +142,15 @@ bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 	return true;
 }
 
+void CAlbumArt::SetCurrentArtSource(LPTSTR szNewArtSource)
+{
+	szCurrentArtSource = szNewArtSource; 
+}
+
+LPTSTR CAlbumArt::GetCurrentArtSource(void)
+{
+	return szCurrentArtSource;
+}
 
 bool CAlbumArt::SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMimeType)
 {

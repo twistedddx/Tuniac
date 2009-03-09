@@ -765,6 +765,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(m_pPlaylist->SetActiveNormalFilteredIndex(m_iLastClickedItem))
 							{
 								IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
+								//open for art before opening for decode.
+								tuniacApp.SetArt(pIPE);
 								if(CCoreAudio::Instance()->SetSource(pIPE))
 								{
 									CCoreAudio::Instance()->Play();
@@ -1525,6 +1527,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
+										//open for art before opening for decode.
+										tuniacApp.SetArt(pIPE);
 										if(CCoreAudio::Instance()->SetSource(pIPE))
 										{
 											CCoreAudio::Instance()->Play();

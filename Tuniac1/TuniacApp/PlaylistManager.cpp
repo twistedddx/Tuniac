@@ -238,6 +238,9 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
 				{
 					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+
+					//dont load art on loadplaylistlibrary as window doesnt exist yet.
+
 					CCoreAudio::Instance()->SetSource(pEntry);
 				}
 			}
@@ -260,6 +263,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 			{
 				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
+				//open for art before opening for decode.
 				CCoreAudio::Instance()->SetSource(pEntry);
 			}
 			

@@ -13,14 +13,19 @@ protected:
 	unsigned long			m_ulBytesPerPixel;
 	unsigned long			m_ulComponents;
 
+	LPTSTR					szCurrentArtSource;
+
 	bool	LoadJpegData(jpeg_decoder_stream & input_stream);
 
 public:
 	CAlbumArt(void);
 	~CAlbumArt(void);
 
-	bool SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMimeType);
-	bool SetSource(LPTSTR szFilename);
+	LPTSTR	GetCurrentArtSource(void);
+	void	SetCurrentArtSource(LPTSTR szNewArtSource);
 
-	bool Draw(HDC hDC, long x, long y, long lWidth, long lHeight);
+	bool	SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMimeType);
+	bool	SetSource(LPTSTR szFilename);
+
+	bool	Draw(HDC hDC, long x, long y, long lWidth, long lHeight);
 };
