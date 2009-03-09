@@ -2,13 +2,13 @@
 
 void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 {
-	__m128 a;
+	__m128 XMM0;
 	unsigned long index = 0;
 	
 	while(len >= 4)
 	{
-		a = _mm_load_ps(&Src[index]);
-		_mm_store_ps(&Dest[index], a);
+		XMM0 = _mm_load_ps(&Src[index]);
+		_mm_store_ps(&Dest[index], XMM0);
 		
 		// increment pointers;
 		index		+= 4;
