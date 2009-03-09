@@ -102,7 +102,7 @@ public:
 
 
 public:
-	CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize = 250);
+	CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize = 500);
 
 	void Destroy();
 

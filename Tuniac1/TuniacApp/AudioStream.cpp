@@ -38,7 +38,7 @@ CAudioStream::CAudioStream()
 	m_bMixNotify	= false;
 	m_bFinishNotify	= false;
 	m_bIsFinished	= false;
-
+	m_bIsSeeking	= false;
 
 
 	fReplayGainTrack	= 1.0f;
@@ -171,18 +171,16 @@ bool			CAudioStream::SetAmpGain(float scale)
 
 int			CAudioStream::ServiceStream(void)
 {
+	if(m_bIsSeeking)
+		return 0;
 
 	if(m_Packetizer.IsFinished())
-	{
 		return -1;
-	}
 
-	
 	if(!pBuffer)
 	{
 		if(!m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
 		{
-			// there are no more buffers to get!!
 			m_Packetizer.Finished();
 			return -1;
 		}
@@ -191,7 +189,7 @@ int			CAudioStream::ServiceStream(void)
 	// we have enough room to write this buffer eh
 	if(pBuffer)
 	{
-		if(ulNumSamples < (m_Packetizer.BytesAvailable()/4))
+		if(ulNumSamples <= (m_Packetizer.BytesAvailable()/4))
 		{
 			CAutoLock t(&m_Lock);
 	
@@ -239,7 +237,6 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 	if(m_Packetizer.AnyMoreBuffer())
 	{
-
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
 			// WE CAN ACTUALLY DO 8 SAMPLES AT ONCE
@@ -328,7 +325,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				}
 			}
 
-/* Intrinsic section above replaces this section
+	/* Intrinsic section above replaces this section
 			for(unsigned long i=0; i<NumSamples; i+=m_Channels)
 			{
 				for(unsigned long chan=0; chan<m_Channels; chan++)
@@ -371,7 +368,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
 			}
-*/
+	*/
 
 			//check if coreaudio has not been notified yet and if we are crossfading
 			if(ulSongLength != LENGTH_UNKNOWN)
@@ -502,7 +499,11 @@ unsigned long	CAudioStream::GetPosition(void)
 
 bool			CAudioStream::SetPosition(unsigned long MS)
 {
+	m_bIsSeeking = true;
+
 	CAutoLock t(&m_Lock);
+
+	m_Output->Stop();
 
 	if(m_FadeState != FADE_NONE)
 	{
@@ -510,19 +511,17 @@ bool			CAudioStream::SetPosition(unsigned long MS)
 		m_FadeState = FADE_NONE;
 	}
 
-	unsigned long Pos = MS;
-
 	bool bReturn = false;
 
-	m_Output->Stop();
-	if(m_pSource->SetPosition(&Pos))
+	if(m_pSource->SetPosition(&MS))
 	{
 		m_Packetizer.Reset();
 		m_Output->Reset();
-		m_ulLastSeekMS = Pos;
-
+		m_ulLastSeekMS = MS;
 		bReturn =  true;
 	}
+
+	m_bIsSeeking = false;
 
 	if(m_PlayState == STATE_PLAYING)
 		m_Output->Start();

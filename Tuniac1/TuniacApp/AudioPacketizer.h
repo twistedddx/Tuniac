@@ -32,7 +32,6 @@ protected:
 
 	bool			m_bFinished;
 
-
 	HANDLE			m_hReadEnd;
 	HANDLE			m_hWriteEnd;
 
@@ -44,7 +43,6 @@ public:
 
 	bool WriteData(float * Data, unsigned long Samples);
 
-	bool IsBufferAvailable(void);
 	unsigned long BytesAvailable(void);
 	bool GetBuffer(float * ToHere);
 

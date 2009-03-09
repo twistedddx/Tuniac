@@ -1,6 +1,6 @@
 #include <xmmintrin.h>
 
-void SSE_CopyFloat(float * Src, float * Dest, unsigned long len)
+void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 {
 	__m128 a;
 	unsigned long index = 0;
@@ -14,7 +14,6 @@ void SSE_CopyFloat(float * Src, float * Dest, unsigned long len)
 		index		+= 4;
 		len			-= 4;
 	}
-	
 	while(len)
 	{
 		Src[index] = Dest[index];			
