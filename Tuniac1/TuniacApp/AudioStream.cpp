@@ -239,6 +239,9 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
+
+#ifdef SSE
+
 			// WE CAN ACTUALLY DO 8 SAMPLES AT ONCE
 			// THEN 4 + whatevers left
 			// + leftover
@@ -310,7 +313,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					
 				offset		++;
 				samplesleft	--;				
-			}			
+			}
 
 			if(m_FadeState != FADE_NONE)
 			{
@@ -325,31 +328,34 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				}
 			}
 
-	/* Intrinsic section above replaces this section
+
+#else
+
+			float fGain;
+			if(bUseAlbumGain && bAlbumHasGain)
+			{
+				fGain = fReplayGainAlbum;
+			}
+			else if(bTrackHasGain && !bUseAlbumGain)
+			{
+				fGain = fReplayGainTrack;
+			}
+			else
+			{
+				fGain = fAmpGain;
+			}
+
+
 			for(unsigned long i=0; i<NumSamples; i+=m_Channels)
 			{
 				for(unsigned long chan=0; chan<m_Channels; chan++)
 				{
-
-					// THIS IS COMPLETELY SSE-ABLE WITH THE CORRECT INTRINSICS
-					// TO DO SSEIFY THIS PLSKTHANKX
-					// is replaygain set?
 					if(bReplayGain)
 					{
-						// replaygain
-						if(bUseAlbumGain && bAlbumHasGain)
-						{
-							pAudioBuffer[i+chan]		*= fReplayGainAlbum;
-						}
-						else if(bTrackHasGain && !bUseAlbumGain)
-						{
-							pAudioBuffer[i+chan]		*= fReplayGainTrack;
-						}
-						else
-						{
-							pAudioBuffer[i+chan]		*= fAmpGain;
-						}
+						//apply gain
+						pAudioBuffer[i+chan]		*= fGain;
 					}
+
 					// and apply the volume
 					pAudioBuffer[i+chan]		*= fVolumeScale;
 
@@ -368,7 +374,8 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					fVolume = max(0.0f, min(fVolume, 1.0f));
 				}
 			}
-	*/
+
+#endif
 
 			//check if coreaudio has not been notified yet and if we are crossfading
 			if(ulSongLength != LENGTH_UNKNOWN)
