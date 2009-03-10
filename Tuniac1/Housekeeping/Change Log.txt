@@ -1,10 +1,19 @@
 Mar, 2009
 ---------
+-Add about windows to flac and m4a plugins.
+-Tweak audio engine
+-Change startup order (neater, allows starting minimized)
+-Add Get/SetMainWindowsMinimized pref
+-Fix playback of end of songs(length of buffer)
+-Fix seek issue (seeks will be more reliable)
+-Less art reloading
+-Try loading art before starting playback
 -Less regenerating playlist filter and shuffle lists in particular at startup.
 -Faster shuffle generation.
 -Shuffle list hopefully wont corrupt now.
 -Hotkeys for apps dont require atoms.
--Lots of ints changed to unsigned longs so all features support the same max file count.
+-Lots of ints changed to unsigned longs so all features support the same max file count. (max files: 4,294,967,295)
+-Tidy up things
 
 
 Feb, 2009
@@ -13,6 +22,7 @@ Feb, 2009
 -Add ability to have visual for album art
 -Add about window to visuals
 -Update various plugins(better unicode, prevent crash, better etc)
+
 
 Jan, 2009
 ---------
@@ -36,6 +46,7 @@ Dec, 2008
 -tidy up about screen
 -standard file i/o interface
 -move flac decoder back to memoryio.
+
 
 Nov, 2008
 ---------
