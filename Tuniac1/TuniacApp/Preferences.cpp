@@ -27,6 +27,7 @@
 
 #define MAINWINDOWPOS			TEXT("MainWindowPos")
 #define MAINWINDOWMAXIMIZED		TEXT("MainWindowMaximized")
+#define MAINWINDOWMINIMIZED		TEXT("MainWindowMinimized")
 #define SOURCEVIEWDIVIDERX		TEXT("SourceViewDividerX")
 #define ACTIVETHEME				TEXT("ActiveTheme")
 
@@ -1159,6 +1160,7 @@ bool CPreferences::DefaultPreferences(void)
 	//m_Theme[0] = L'\0';
 
 	m_bMainWindowMaximized		= FALSE;
+	m_bMainWindowMinimized		= FALSE;
 	m_bMinimizeOnClose			= FALSE;
 	m_bAlwaysOnTop				= FALSE;
 	m_bPauseOnLock				= FALSE;
@@ -1200,7 +1202,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_eRepeatMode				= RepeatNone;
 	m_bShuffleState				= FALSE;
 
-	m_iVisualFPS				= 35;
+	m_iVisualFPS				= 60;
 	m_iCurrentVisual			= 0;
 	m_bShowVisArt				= 0;
 
@@ -1231,6 +1233,14 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bMainWindowMaximized,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						MAINWINDOWMINIMIZED,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bMainWindowMinimized,
 						&Size);
 
 	Size = sizeof(int);
@@ -1546,6 +1556,14 @@ bool CPreferences::SavePreferences(void)
 					REG_DWORD,
 					(LPBYTE)&m_bMainWindowMaximized, 
 					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					MAINWINDOWMINIMIZED, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bMainWindowMinimized, 
+					sizeof(BOOL));
+
 
 	/*
 	Size = (wcslen(m_Theme) + 1) * sizeof(TCHAR);
@@ -2115,6 +2133,16 @@ void	CPreferences::SetMainWindowMaximized(BOOL bMaximized)
 BOOL	CPreferences::GetMainWindowMaximized(void)
 {
 	return m_bMainWindowMaximized;
+}
+
+void	CPreferences::SetMainWindowMinimized(BOOL bMinimized)
+{
+	m_bMainWindowMinimized = bMinimized;
+}
+
+BOOL	CPreferences::GetMainWindowMinimized(void)
+{
+	return m_bMainWindowMinimized;
 }
 
 BOOL	CPreferences::CrossfadingEnabled(void)

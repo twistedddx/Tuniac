@@ -62,6 +62,7 @@ protected:
 	int			m_iSourceViewDividerX;
 
 	BOOL		m_bMainWindowMaximized;
+	BOOL		m_bMainWindowMinimized;
 	BOOL		m_bMinimizeOnClose;
 	BOOL		m_bAlwaysOnTop;
 	BOOL		m_bPauseOnLock;
@@ -159,6 +160,9 @@ public:
 
 	void	SetMainWindowMaximized(BOOL bMaximized);
 	BOOL	GetMainWindowMaximized(void);
+
+	void	SetMainWindowMinimized(BOOL bMinimized);
+	BOOL	GetMainWindowMinimized(void);
 
 	BOOL	CrossfadingEnabled(void);
 
