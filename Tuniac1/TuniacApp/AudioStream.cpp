@@ -31,15 +31,12 @@ CAudioStream::CAudioStream()
 	m_PlayState		= STATE_UNKNOWN;
 	m_FadeState		= FADE_NONE;
 
-
-
 	fVolume			= 1.0f;
 	m_bEntryPlayed	= false;
 	m_bMixNotify	= false;
 	m_bFinishNotify	= false;
 	m_bIsFinished	= false;
 	m_bIsSeeking	= false;
-
 
 	fReplayGainTrack	= 1.0f;
 	fReplayGainAlbum	= 1.0f;
@@ -48,13 +45,10 @@ CAudioStream::CAudioStream()
 
 	bUseAlbumGain	= false;
 
-
 	m_ulLastSeekMS	= 0;
-
 	m_ulCrossfadeTimeMS = 0;
 
-	m_Output	= NULL;
-	
+	m_Output		= NULL;
 	pBuffer			= NULL;
 	ulNumSamples	= 0;
 }
@@ -70,7 +64,6 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	szURL			= szSource;
 	m_pSource		= pSource;
 	m_Output		= pOutput;
-
 
 	if(m_pSource->GetFormat(&srate, &m_Channels))
 	{
@@ -174,9 +167,6 @@ int			CAudioStream::ServiceStream(void)
 	if(m_bIsSeeking)
 		return 0;
 
-	if(m_Packetizer.IsFinished())
-		return -1;
-
 	if(!pBuffer)
 	{
 		if(!m_pSource->GetBuffer(&pBuffer, &ulNumSamples))
@@ -186,9 +176,9 @@ int			CAudioStream::ServiceStream(void)
 		}
 	}
 	
-	// we have enough room to write this buffer eh
 	if(pBuffer)
 	{
+		//check if we have enough room to write this buffer else wait
 		if(ulNumSamples <= (m_Packetizer.BytesAvailable()/4))
 		{
 			CAutoLock t(&m_Lock);
@@ -198,7 +188,7 @@ int			CAudioStream::ServiceStream(void)
 			pBuffer = NULL;
 			ulNumSamples = 0;
 			return 1;
-		}	
+		}
 	}
 	
 	return 0;
@@ -213,17 +203,22 @@ DWORD CAudioStream::serviceThreadStub(void * pData)
 
 DWORD CAudioStream::serviceThread(void)
 {
-	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	//SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 	while(m_bServiceThreadRun)
 	{
 		int ssres = ServiceStream();
 
-		if(ssres==0)
+		//packetizer is finished
+		if(ssres == -1)
+			return 0;
+		//wait (seeking, no room for more buffer)
+		else if(ssres == 0)
 			Sleep(10);
 
-		if(ssres ==-1)
-			return 0;
+		//success
+		//else if(ssres == 1)
+		//	break;
 	}
 
 	return 0;
@@ -408,11 +403,13 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			// TODO: if we have played more than 'x' percent of a song send a last played notification back to our controller
 			// could be a LastFM thing there!!
 
+			//success decode
 			return 1;
 		}
-
+		//packetizer GetBuffer() failed
 		return 0;
 	}
+	//buffer empty
 	else
 	{
 		if(m_Packetizer.IsFinished())
@@ -427,15 +424,15 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFINISHED, NULL);
 					else
 						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
-					return -2;
 				}
-				return -2;
+				//song ended
+				return 0;
 			}
-
+			//buffer empty, packetizer finished but output not finished
 			return -1;
 		}
 	}
-
+	//buffer empty but packetizer not finished
 	return 0;
 }
 

@@ -110,7 +110,15 @@ unsigned long CAudioOutput::ThreadProc(void)
 
 				int getbufferret = m_pCallback->GetBuffer(pOffset, m_BlockSize);
 
-				if(getbufferret == 1)
+				//buffer empty
+				if(getbufferret == 0)
+				{
+					Sleep(10);
+					continue;
+				}
+
+				//success decoding
+				else if(getbufferret == 1)
 				{
 					CAutoLock lock(&m_AudioLock);
 
@@ -144,6 +152,7 @@ unsigned long CAudioOutput::ThreadProc(void)
 					currentDiskReadBuffer++;
 					currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 				}
+				//song ended. buffer empty, packetizer finished and output to be finished
 				else if(getbufferret == -1)
 				{
 					// write an empty end of stream buffer!
@@ -153,15 +162,15 @@ unsigned long CAudioOutput::ThreadProc(void)
 					buf.Flags = XAUDIO2_END_OF_STREAM;
 					m_pSourceVoice->SubmitSourceBuffer( &buf );
 				}
-				else if(getbufferret == -2)
-				{
+				//buffer empty, packetizer finished but output not finished
+				//else if(getbufferret == -1)
+				//{
 					//break;
-					int t=0;
-				}
-				else
-				{
-					int x=0;
-				}
+				//}
+				//else
+				//{
+					//break;
+				//}
 			}
 			else
 			{
