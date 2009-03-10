@@ -72,9 +72,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		{
 			Sleep(100);
 			hOtherWnd = FindWindow(szClassName, NULL);
-			if(!hOtherWnd)
-			{
-			}
 			if(counttry++>100)
 				return(0);
 		}
@@ -158,9 +155,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	t = m_LogWindow;
 	m_WindowArray.AddTail(t);
 
-	//get max state before sizing, which will reset this anyways
-	bool bMax = m_Preferences.GetMainWindowMaximized();
-
 	//theme the tray icon?
 	m_wc.cbSize			= sizeof(WNDCLASSEX); 
 	m_wc.style			= 0;
@@ -208,30 +202,20 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(!m_hWnd)
 		return false;
 
-	if(bMax)
-		SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+	//create tray menu
+	m_TrayMenu = GetSubMenu(LoadMenu(m_hInstance, MAKEINTRESOURCE(IDR_TRAYMENU)), 0);
+	CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+	CheckMenuItem(m_TrayMenu, ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+	CheckMenuRadioItem(GetSubMenu(m_TrayMenu, 3), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
+	EnableMenuItem(GetSubMenu(m_TrayMenu, 3), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
 
-	//set always ontop state
-	if(m_Preferences.GetAlwaysOnTop())
+	m_Taskbar.Initialize(m_hWnd, WM_TRAYICON);
+
+	if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 	{
-		SetWindowPos(getMainWindow(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-		CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | MF_CHECKED);
+		m_Taskbar.Show();
+		m_Taskbar.SetTitle(TEXT("Tuniac"));
 	}
-
-	//create prefs window
-	TCHAR szPrefPageTitle[64];
-	for(unsigned int iPrefPage = 0; iPrefPage < m_Preferences.GetPreferencesPageCount(); iPrefPage++)
-	{
-		if(!m_Preferences.GetPreferencesPageName(iPrefPage, szPrefPageTitle, 64))
-			break;
-        AppendMenu(GetSubMenu(GetSubMenu(m_hPopupMenu, 1), 6), MF_ENABLED, PREFERENCESMENU_BASE + iPrefPage, szPrefPageTitle);
-	}
-
-	//notify that before we created the playlist window
-	PostMessage(getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
-
-	//register our own hotkeys
-	RegisterHotkeys();
 
 	//use any command lines given(initial open only all others in one instance code)
 	COPYDATASTRUCT cds;
@@ -240,13 +224,39 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	cds.lpData = szCommandLine;
 	SendMessage(m_hWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
 
-	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
+	if(m_Preferences.GetMainWindowMaximized())
+	{
+		ShowWindow(m_hWnd, SW_SHOWMAXIMIZED);
+	}
+	else if(m_Preferences.GetMainWindowMinimized())
+	{
+		ShowWindow(m_hWnd, SW_SHOWMINIMIZED);
+		if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
+			ShowWindow(m_hWnd, SW_HIDE);
+	}
+	else
+	{
+		ShowWindow(m_hWnd, SW_SHOWNORMAL);
+	}
 
+	//register our own hotkeys
+	RegisterHotkeys();
+
+	//show where we are upto in the playlist
+	m_SourceSelectorWindow->Show();
+	m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistManager.GetActivePlaylistIndex());
+	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
 	if(m_Preferences.GetFollowCurrentSongMode())
 		m_SourceSelectorWindow->ShowCurrentlyPlaying();
-
 	if(m_Preferences.GetShowVisArt())
 		m_VisualWindow->Show();
+
+	//set always ontop state
+	if(m_Preferences.GetAlwaysOnTop())
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+
+	//notify that before we created the playlist window
+	PostMessage(m_hWnd, WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 
 	return true;
 }
@@ -440,17 +450,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				ReleaseDC(hWnd, hDC);
 
-				m_TrayMenu = GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_TRAYMENU)), 0);
-				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
-				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_SOFTPAUSE, m_SoftPause.bNow ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
-				CheckMenuRadioItem(GetSubMenu(m_TrayMenu, 3), 0, 3, m_Preferences.GetRepeatMode(), MF_BYPOSITION);
-				EnableMenuItem(GetSubMenu(m_TrayMenu, 3), RepeatAllQueued, MF_BYPOSITION | (m_MediaLibrary.m_Queue.GetCount() == 0 ? MF_GRAYED : MF_ENABLED));
+				//get main window menus
+				m_hPopupMenu = GetMenu(hWnd);
 
-				m_Taskbar.Initialize(hWnd, WM_TRAYICON);
+				//remove dummy "Home" menu item
+				DeleteMenu(GetSubMenu(m_hPopupMenu, 3), 0, MF_BYPOSITION);
 
 				for(unsigned long x=0; x<m_WindowArray.GetCount(); x++)
 				{
-					if(!m_WindowArray[x]->CreatePluginWindow(hWnd, m_hInstance))
+					if(m_WindowArray[x]->CreatePluginWindow(hWnd, m_hInstance))
+					{
+						AppendMenu(GetSubMenu(m_hPopupMenu, 3), MF_ENABLED, MENU_BASE+x, m_WindowArray[x]->GetName());
+					}
+					else
 					{
 						MessageBox(hWnd, TEXT("Error Creating Plugin Window."), TEXT("Non Fatal Error..."), MB_OK | MB_ICONSTOP);
 
@@ -460,37 +472,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					}
 				}
 
-				m_WindowArray[0]->Show();
-
-				m_hPopupMenu = GetMenu(hWnd);
-
-				HMENU tMenu = GetSubMenu(m_hPopupMenu, 3);
-				while(GetMenuItemCount(tMenu))
+				//create prefs window
+				TCHAR szPrefPageTitle[64];
+				for(unsigned int iPrefPage = 0; iPrefPage < m_Preferences.GetPreferencesPageCount(); iPrefPage++)
 				{
-					DeleteMenu(tMenu, 0, MF_BYPOSITION);
+					if(!m_Preferences.GetPreferencesPageName(iPrefPage, szPrefPageTitle, 64))
+						break;
+					AppendMenu(GetSubMenu(GetSubMenu(m_hPopupMenu, 1), 6), MF_ENABLED, PREFERENCESMENU_BASE + iPrefPage, szPrefPageTitle);
 				}
-
-				for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
-				{
-					AppendMenu(tMenu, MF_ENABLED, MENU_BASE+item, m_WindowArray[item]->GetName());
-				}
-
-				//show where we are upto in the playlist
-				m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistManager.GetActivePlaylistIndex());
 
 				//create the future menu(right click "next" button)
 				m_hFutureMenu = CreatePopupMenu();
 
-				ShowWindow(hWnd, SW_SHOW);
-
-				if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
-				{
-					m_Taskbar.Show();
-					m_Taskbar.SetTitle(TEXT("Tuniac"));
-				}
-
 				tuniacApp.m_LogWindow->LogMessage(TEXT("Tuniac"), TEXT("Initialization Complete"));
-
 			}
 			break;
 
@@ -523,9 +517,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				//check if minimize to tray on close, still close if holding control key
 				if(m_Preferences.GetMinimizeOnClose() && !(GetKeyState(VK_CONTROL) & 0x8000))
+				{
+					m_Preferences.SetMainWindowMinimized(true);
 					ShowWindow(hWnd, SW_MINIMIZE);
+				}
 				else
+				{
 					DestroyWindow(hWnd);
+				}
 			}
 			break;
 
@@ -591,13 +590,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				if(wParam == SIZE_MINIMIZED)
 				{
+					m_Preferences.SetMainWindowMinimized(true);
 					if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 					{
 						ShowWindow(hWnd, SW_HIDE);
 						//m_Taskbar.Show();
-						break;
+						//break;
 					}
 				}
+				else
+					m_Preferences.SetMainWindowMinimized(false);
 
 				if(wParam==SIZE_MAXIMIZED)
 					m_Preferences.SetMainWindowMaximized(true);
@@ -650,6 +652,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//set menu
 		case WM_MENUSELECT:
 			{
+				CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, m_Preferences.GetAlwaysOnTop() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
+
 				CheckMenuItem(GetSubMenu(m_hPopupMenu, 2), ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 				CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
 
@@ -995,7 +999,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{ 
 
 							bool		bAddingFiles = false, bPlayAddedFiles = false, bQueueAddedFiles = false;
-							bool		bExitAtEnd = false, bWantFocus = false, bForceNoFocus = false;
+							bool		bExitAtEnd = false, bWantFocus = false;
+
 							unsigned long ulMLOldCount = m_MediaLibrary.GetCount();
 							LPWSTR		*szArglist;
 							int			nArgs;
@@ -1052,29 +1057,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									else if(StrCmpI(szArglist[i], TEXT("-togglerepeat")) == 0)
 										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0); 
 
-									else if(StrCmpI(szArglist[i], TEXT("-exit")) == 0)
-									{
-										bExitAtEnd = true;
-										break;
-									}
-
-									else if(StrCmpI(szArglist[i], TEXT("-restore")) == 0)
-									{
-										//TODO: Implement This
-//										m_Taskbar.ShowTrayIcon(FALSE);
-										bWantFocus = true;
-										ShowWindow(hWnd, SW_SHOWNORMAL);
-									}
-
-									else if(StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
-									{
-										//TODO: Implement This
-										//										m_Taskbar.ShowTrayIcon(TRUE);
-										ShowWindow(hWnd, SW_MINIMIZE);
-									}
-									else if(StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
-										bForceNoFocus = true;
-
 									else if(StrCmpI(szArglist[i], TEXT("-dontsaveprefs")) == 0)
 										m_bSavePrefs = false;
 
@@ -1090,6 +1072,33 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									else if(StrCmpI(szArglist[i], TEXT("-dontsaveml")) == 0)
 										m_bSaveML = false;
 
+									else if(StrCmpI(szArglist[i], TEXT("-restore")) == 0)
+									{
+										//TODO: Implement This
+										//m_Taskbar.ShowTrayIcon(FALSE);
+										bWantFocus = true;
+										ShowWindow(hWnd, SW_RESTORE);
+										ShowWindow(hWnd, SW_SHOW);
+									}
+
+									else if(StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
+									{
+										//TODO: Implement This
+										//m_Taskbar.ShowTrayIcon(TRUE);
+										bWantFocus = false;
+										ShowWindow(hWnd, SW_MINIMIZE);
+										if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
+											ShowWindow(m_hWnd, SW_HIDE);
+									}
+
+									else if(StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
+										bWantFocus = false;
+
+									else if(StrCmpI(szArglist[i], TEXT("-exit")) == 0)
+									{
+										bWantFocus = false;
+										bExitAtEnd = true;
+									}
 								}
 
 								if(bAddingFiles) m_MediaLibrary.EndAdd();
@@ -1126,7 +1135,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									}
 								}
 
-								if(bWantFocus && !bForceNoFocus)
+								if(bWantFocus)
 									SetForegroundWindow(hWnd);
 
 								if(bExitAtEnd)
@@ -1163,8 +1172,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						if(wcscmp(GetActiveScreenName(), L"Visuals") == 0)
 						{
 							RECT		rcWindowRect;
-							GetClientRect(m_hWnd, &rcWindowRect);
-							SendMessage(m_hWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
+							GetClientRect(hWnd, &rcWindowRect);
+							SendMessage(hWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
 						}
 
 						if(item == m_ActiveScreen)
@@ -1195,7 +1204,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					{
 						((IPlaylistEX *)pPlaylist)->SetActiveFilteredIndex(0);
 					}
-					SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 					return 0;
 				}
 
@@ -1240,10 +1249,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//show tuniac
 					case ID_APP_SHOW:
 						{
-							bool bMax = m_Preferences.GetMainWindowMaximized();
-							ShowWindow(hWnd, SW_SHOWNORMAL);
-							if(bMax)
-								SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+							m_Preferences.SetMainWindowMinimized(false);
+							ShowWindow(hWnd, SW_RESTORE);
+							ShowWindow(hWnd, SW_SHOW);
 							SetForegroundWindow(hWnd);
 						}
 						break;
@@ -1476,10 +1484,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//edit -> always on top	
 					case ID_EDIT_ALWAYSONTOP:
 						{
-							bool bOnTop = !m_Preferences.GetAlwaysOnTop();
-							CheckMenuItem(GetSubMenu(m_hPopupMenu, 1), ID_EDIT_ALWAYSONTOP, MF_BYCOMMAND | (bOnTop ? MF_CHECKED : MF_UNCHECKED));
-							m_Preferences.SetAlwaysOnTop(bOnTop);
-							SetWindowPos(getMainWindow(), bOnTop ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+							m_Preferences.SetAlwaysOnTop(!m_Preferences.GetAlwaysOnTop());
+							SetWindowPos(hWnd, m_Preferences.GetAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1524,12 +1531,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//if currently playing, PAUSE
 							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 							{
-								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 							}
 							//if not playing, PLAY
 							else
 							{
-								SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 							}
 						}
 						break;
@@ -1588,7 +1595,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_SOFTPAUSE:
 						{
 							m_SoftPause.bNow = !m_SoftPause.bNow;
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1626,7 +1633,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							bool bWasShuffle = m_Preferences.GetShuffleState();
 							m_Preferences.SetShuffleState(!bWasShuffle);
-							SendMessage(getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							m_Preferences.SetShuffleState(bWasShuffle);
 						}
 						break;
@@ -1709,7 +1716,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_TOGGLE_SHUFFLE:
 						{
 							m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1722,7 +1729,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatAll);
 							else if(m_Preferences.GetRepeatMode() == RepeatAll)
 								m_Preferences.SetRepeatMode(RepeatNone);
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1733,7 +1740,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							if(m_Preferences.GetRepeatMode() == RepeatAllQueued)
 							{
 								m_Preferences.SetRepeatMode(RepeatAll);
-								SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 							}
 						}
 						break;
@@ -1742,7 +1749,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_PLAYBACK_CLEARPAUSEAT:
 						{
 							m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1750,7 +1757,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_REPEAT_OFF:
 						{
 							m_Preferences.SetRepeatMode(RepeatNone);
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1758,7 +1765,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_REPEAT_ONETRACK:
 						{
 							m_Preferences.SetRepeatMode(RepeatOne);
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1766,7 +1773,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_REPEAT_ALLTRACKS:
 						{
 							m_Preferences.SetRepeatMode(RepeatAll);
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 
@@ -1774,7 +1781,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case ID_REPEAT_ALLQUEUED:
 						{
 							m_Preferences.SetRepeatMode(RepeatAllQueued);
-							SendMessage(getMainWindow(), WM_MENUSELECT, 0, 0);
+							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 						}
 						break;
 				}
@@ -1802,10 +1809,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//left double click tray icon (restore window)
 					case WM_LBUTTONDBLCLK:
 						{
-							bool bMax = m_Preferences.GetMainWindowMaximized();
-							ShowWindow(hWnd, SW_SHOWNORMAL);
-							if(bMax)
-								SendMessage(m_hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+							m_Preferences.SetMainWindowMinimized(false);
+							ShowWindow(hWnd, SW_RESTORE);
+							ShowWindow(hWnd, SW_SHOW);
 							SetForegroundWindow(hWnd);
 						}
 						break;
@@ -1904,7 +1910,7 @@ LRESULT CALLBACK CTuniacApp::AddOtherProc(HWND hWnd, UINT message, WPARAM wParam
 
 bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 {
-	PostMessage(getMainWindow(), WM_APP, Message, LPARAM(Params));
+	PostMessage(m_hWnd, WM_APP, Message, LPARAM(Params));
 	return true;
 }
 
@@ -2350,7 +2356,7 @@ bool	CTuniacApp::DoSoftPause(void)
 		//reset feature/GUI menu for  feature
 		m_SoftPause.bNow = false;
 		m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-		SendMessage(tuniacApp.getMainWindow(), WM_MENUSELECT, 0, 0);
+		SendMessage(m_hWnd, WM_MENUSELECT, 0, 0);
 		//this will only stop the last stream, not all of them
 		CCoreAudio::Instance()->StopLast();
 		UpdateState();
@@ -2378,7 +2384,7 @@ void	CTuniacApp::UpdateState(void)
 	else if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_STOPPED))
 		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
 
-	SetWindowText(getMainWindow(), szWinTitle);
+	SetWindowText(m_hWnd, szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);
 	m_PlayControls.UpdateState();
 }
