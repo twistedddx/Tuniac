@@ -33,7 +33,7 @@ GUID			Cm4aAudioSourceSupplier::GetPluginID(void)
 
 unsigned long	Cm4aAudioSourceSupplier::GetFlags(void)
 {
-	return 0;
+	return FLAGS_ABOUT;
 }
 
 bool			Cm4aAudioSourceSupplier::About(HWND hParent)
