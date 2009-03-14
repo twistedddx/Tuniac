@@ -43,7 +43,7 @@ CSourceSelectorWindow::CSourceSelectorWindow(void) :
 	m_bSourceAltDrag(false),
 	m_AltDragDest(-1),
 	m_pVisibleView(NULL),
-	m_ulVisiblePlaylistIndex(-1)
+	m_ulVisiblePlaylistIndex(INVALID_PLAYLIST_INDEX)
 {
 	m_ulSeparatorX = tuniacApp.m_Preferences.GetSourceViewDividerX();
 	ToggleAlbumArt(tuniacApp.m_Preferences.GetShowAlbumArt());
@@ -204,7 +204,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				//ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_RADIO)); 
 
 				ListView_SetImageList(GetDlgItem(hDlg, IDC_SOURCESELECTOR), hList, LVSIL_SMALL);
-				ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex);
 			}
 			break;
 
@@ -640,13 +639,14 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								CCoreAudio::Instance()->Reset();
 							}
-
-							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_ulVisiblePlaylistIndex))
+							unsigned long ulIndex = m_ulVisiblePlaylistIndex;
+							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(ulIndex))
 							{
-								if(m_ulVisiblePlaylistIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
-									ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex-1);
+								m_ulVisiblePlaylistIndex = INVALID_PLAYLIST_INDEX;
+								if(ulIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
+									ShowPlaylistAtIndex(ulIndex-1);
 								else
-									ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex);
+									ShowPlaylistAtIndex(ulIndex);
 
 								UpdateList();
 							}
@@ -677,11 +677,15 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel))
 							{
-								if(m_ulVisiblePlaylistIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
-									ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex-1);
-								else
-									ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex);
-
+								if(m_ulVisiblePlaylistIndex == iSel)
+								{
+									unsigned long ulOldActiveIndex = m_ulVisiblePlaylistIndex;
+									m_ulVisiblePlaylistIndex = INVALID_PLAYLIST_INDEX;
+									if(ulOldActiveIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
+										ShowPlaylistAtIndex(ulOldActiveIndex-1);
+									else
+										ShowPlaylistAtIndex(ulOldActiveIndex);
+								}
 								UpdateList();
 							}
 						}
@@ -748,7 +752,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									{
 										if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pActiveEntry)
 										{
-											pPlaylist->SetActiveFilteredIndex(i);
+											pPlaylist->SetActiveNormalFilteredIndex(i);
 											break;
 										}
 									}
@@ -1156,9 +1160,17 @@ bool CSourceSelectorWindow::ShowActiveViewViewOptions(HWND hParentWnd)
 	return false;
 }
 
-bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long index)
+bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 {
-	IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(index);
+	if(m_ulVisiblePlaylistIndex == ulIndex)
+		return true;
+
+	if(ulIndex == INVALID_PLAYLIST_INDEX)
+		return true;
+
+	m_ulVisiblePlaylistIndex = ulIndex;
+
+	IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulIndex);
 	if(pList)
 	{
 		switch(pList->GetPlaylistType())
@@ -1167,7 +1179,7 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long index)
 			case PLAYLIST_TYPE_STANDARDPLAYLIST:
 			case PLAYLIST_TYPE_SMARTPLAYLIST:
 				{
-					m_PlaylistSourceView->SetPlaylistSource(index);
+					m_PlaylistSourceView->SetPlaylistSource(ulIndex);
 					m_pVisibleView = m_PlaylistSourceView;
 				}
 				break;
@@ -1175,14 +1187,14 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long index)
 
 			case PLAYLIST_TYPE_CD:
 				{
-					m_AudioCDSourceView->SetPlaylistSource(index);
+					m_AudioCDSourceView->SetPlaylistSource(ulIndex);
 					m_pVisibleView = m_AudioCDSourceView;
 				}
 				break;
 /*
 			case PLAYLIST_TYPE_RADIO:
 				{
-					m_RadioSourceView->SetPlaylistSource(index);
+					m_RadioSourceView->SetPlaylistSource(ulIndex);
 					m_pVisibleView = m_RadioSourceView;
 				}
 				break;
@@ -1203,7 +1215,6 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long index)
 		}
 
 		m_pVisibleView->Update();
-		m_ulVisiblePlaylistIndex = index;
 		ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), m_ulVisiblePlaylistIndex, LVIS_SELECTED, LVIS_SELECTED);
 	}
 
@@ -1222,15 +1233,8 @@ unsigned long	CSourceSelectorWindow::GetVisiblePlaylistIndex()
 
 void CSourceSelectorWindow::ShowCurrentlyPlaying(void)
 {
-	for(unsigned long x=0; x<tuniacApp.m_PlaylistManager.GetNumPlaylists(); x++)
-	{
-		if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x))
-		{
-			ShowPlaylistAtIndex(x);
-			m_pVisibleView->ShowCurrentItem();
-			break;
-		}
-	}
+	ShowPlaylistAtIndex(tuniacApp.m_PlaylistManager.GetActivePlaylistIndex());
+	m_pVisibleView->ShowCurrentItem();
 }
 
 bool			CSourceSelectorWindow::Refresh()

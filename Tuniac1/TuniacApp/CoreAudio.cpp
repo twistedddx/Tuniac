@@ -397,7 +397,7 @@ unsigned long CCoreAudio::GetChannels(void)
 		return(m_Streams[m_Streams.GetCount()-1]->m_Output->GetChannels());
 	}
 
-	return -1;
+	return INVALID;
 }
 
 unsigned long CCoreAudio::GetSampleRate(void)
@@ -409,7 +409,7 @@ unsigned long CCoreAudio::GetSampleRate(void)
 		return(m_Streams[m_Streams.GetCount()-1]->m_Output->GetSampleRate());
 	}
 
-	return -1;
+	return INVALID;
 }
 
 

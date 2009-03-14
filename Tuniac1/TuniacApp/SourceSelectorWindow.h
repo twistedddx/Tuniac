@@ -84,7 +84,7 @@ public:
 	bool			IsPointInPlaylistSelector(LPPOINT lpPt);
 
 	bool			ShowActiveViewViewOptions(HWND hParentWnd);
-	bool			ShowPlaylistAtIndex(unsigned long index);
+	bool			ShowPlaylistAtIndex(unsigned long ulIndex);
 
 public:
 	void			Destroy(void);
@@ -105,5 +105,5 @@ public:
 	bool			SetPos(int x, int y, int w, int h);
 
 	//Added Mark 7th October
-	void ShowCurrentlyPlaying(void);
+	void			ShowCurrentlyPlaying(void);
 };

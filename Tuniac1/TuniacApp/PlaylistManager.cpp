@@ -48,7 +48,8 @@ bool DriveInMask(ULONG uMask, char Letter)
 }
 
 CPlaylistManager::CPlaylistManager(void) :
-	m_ActivePlaylist(NULL)
+	m_ActivePlaylist(NULL),
+	m_ulActivePlaylistIndex(INVALID_PLAYLIST_INDEX)
 {
 }
 
@@ -86,9 +87,9 @@ bool CPlaylistManager::Initialize(void)
 		return false;
 	}
 
-	SetActivePlaylist(0);
 	m_LibraryPlaylist.RebuildPlaylist();
-	LoadPlaylistLibrary();
+	if(!LoadPlaylistLibrary())
+		SetActivePlaylist(0);
 	return true;
 }
 
@@ -392,6 +393,12 @@ unsigned long	CPlaylistManager::GetNumPlaylists(void)
 
 IPlaylist *		CPlaylistManager::GetPlaylistAtIndex(unsigned long ulIndex)
 {
+	if(m_ulActivePlaylistIndex == ulIndex)
+		return m_ActivePlaylist;
+
+	if(ulIndex == INVALID_PLAYLIST_INDEX)
+		return NULL;
+
 	if(ulIndex == 0)
 	{
 		return & m_LibraryPlaylist;
@@ -427,15 +434,9 @@ IPlaylist * CPlaylistManager::GetActivePlaylist(void)
 	return m_ActivePlaylist;
 }
 
-int	CPlaylistManager::GetActivePlaylistIndex(void)
+unsigned long CPlaylistManager::GetActivePlaylistIndex(void)
 {
-	for(unsigned long x=0; x<GetNumPlaylists(); x++)
-	{
-		if(GetActivePlaylist() == GetPlaylistAtIndex(x))
-			return x;
-	}
-
-	return -1;
+	return m_ulActivePlaylistIndex;
 }
 
 bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
@@ -473,9 +474,13 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 
 bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 {
-	unsigned long ulOldIndex = GetActivePlaylistIndex();
-	if(ulPlaylistNumber == ulOldIndex)
+	if(ulPlaylistNumber == m_ulActivePlaylistIndex)
 		return true;
+
+	if(ulPlaylistNumber == INVALID_PLAYLIST_INDEX)
+		return true;
+
+	m_ulActivePlaylistIndex = ulPlaylistNumber;
 
 	if(m_ActivePlaylist != NULL && m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
@@ -577,6 +582,16 @@ bool CPlaylistManager::MoveStandardPlaylist(unsigned long ulIndex, unsigned long
 			m_StandardPlaylists.InsertBefore(ulStdNewIndex, pSP);
 	}
 
+	//moving active
+	if(ulIndex == m_ulActivePlaylistIndex)
+		m_ulActivePlaylistIndex = ulNewIndex;
+	//old index is after the active and new index is before
+	else if(ulIndex > m_ulActivePlaylistIndex && ulNewIndex <= m_ulActivePlaylistIndex)
+		m_ulActivePlaylistIndex++;
+	//old index is before the active and new is after
+	else if(ulIndex < m_ulActivePlaylistIndex && ulNewIndex > m_ulActivePlaylistIndex)
+		m_ulActivePlaylistIndex--;
+
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 	return true;
 }
@@ -586,31 +601,29 @@ bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
 	if(ulPlaylistNumber == 0)
 		return false;
 
-	ulPlaylistNumber-=1;
-
 	if (IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION)) 
 	{
 
+		if(ulPlaylistNumber == m_ulActivePlaylistIndex)
+			SetActivePlaylist(0);
+
+		else if(ulPlaylistNumber < m_ulActivePlaylistIndex)
+			m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
+
+		ulPlaylistNumber-=1;
+
 		if(ulPlaylistNumber < m_CDPlaylists.GetCount())
 		{	// cd playlist playlist
-			
 			// maybe we can eject here?
-
-			SetActivePlaylist(0);
 			return true;
 		}
 		ulPlaylistNumber -= m_CDPlaylists.GetCount();
 
 		if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
 		{	// standard playlist
-			if(m_StandardPlaylists[ulPlaylistNumber] == GetActivePlaylist())
-			{
-				SetActivePlaylist(0);
-			}
 			delete m_StandardPlaylists[ulPlaylistNumber];
 			m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
 		}
-		ulPlaylistNumber -= m_StandardPlaylists.GetCount();
 
 		PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 		return true;

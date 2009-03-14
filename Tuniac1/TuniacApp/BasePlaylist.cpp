@@ -131,12 +131,14 @@ void				CBasePlaylist::RebuildPlaylistArrays(void)
 	//remake our filtered lists(normal and shuffle) based on new filter
 	g_Rand.RandomInit(GetTickCount());
 
-	m_RandomIndexArray.RemoveAll();
 	m_NormalIndexArray.RemoveAll();
+	m_RandomIndexArray.RemoveAll();
 
-	unsigned long ulCurrentIndex = 0;
 	unsigned long ulCount = 0;
+	unsigned long ulCurrentIndex = 0;
+
 	bool bValid = false;
+	int iStartPos = 0;
 
 	//for each item, if not set as filtered, add
 	for(unsigned long y=0; y<m_PlaylistArray.GetCount(); y++)
@@ -144,26 +146,35 @@ void				CBasePlaylist::RebuildPlaylistArrays(void)
 		if(m_PlaylistArray[y].bFiltered == false)
 		{
 			m_NormalIndexArray.AddTail(y);
-			
+
 			//create shuffle list
-			if(ulCount == 0)
+			if(y == m_ActiveRealIndex)
 			{
-				m_RandomIndexArray.AddTail(y);
+				if(ulCount)
+				{
+					bValid = true;
+					ulCurrentIndex = y;
+				}
+				else
+				{
+					m_RandomIndexArray.AddTail(y);
+					iStartPos = 1;
+					ulCount = 1;
+				}
+				continue;
 			}
-			else if(y == m_ActiveRealIndex)
+			if(ulCount)
 			{
-				bValid = true;
-				ulCurrentIndex = y;
-			}
-			else
-			{
-				unsigned long ulRandNum = g_Rand.IRandom(0, ulCount);
+				unsigned long ulRandNum = g_Rand.IRandom(iStartPos, ulCount);
 				if(ulRandNum == ulCount)
 					m_RandomIndexArray.AddTail(y);
 				else
 					m_RandomIndexArray.InsertBefore(ulRandNum, y);
 			}
-
+			else
+			{
+				m_RandomIndexArray.AddTail(y);
+			}
 			ulCount++;
 		}
 	}
@@ -440,7 +451,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 		return 0;
 	
 	//try to set active as +1 of current active
-	if(ulFilteredIndex <= m_NormalIndexArray.GetCount() - 2)
+	if(ulFilteredIndex < m_NormalIndexArray.GetCount() - 1)
 		return ulFilteredIndex + 1;
 	
 	if(bForceNext)
@@ -465,14 +476,9 @@ IPlaylistEntry	*	CBasePlaylist::GetActiveItem(void)
 unsigned long		CBasePlaylist::GetPlayOrder(unsigned long ulNormalFilteredIndex)
 {
 	if(tuniacApp.m_Preferences.GetShuffleState())
-	{
-		unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(ulNormalFilteredIndex);
-		return RealIndexToRandomFilteredIndex(ulRealIndex);
-	}
+		return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(ulNormalFilteredIndex));
 	else
-	{
 		return ulNormalFilteredIndex;
-	}
 }
 
 
@@ -497,13 +503,13 @@ bool				CBasePlaylist::SetActiveFilteredIndex(unsigned long ulFilteredIndex)
 }
 
 //set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
-bool				CBasePlaylist::SetActiveNormalFilteredIndex(unsigned long ulFilteredIndex)
+bool				CBasePlaylist::SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)
 {
 	//check that index is valid
-	if(!CheckFilteredIndex(ulFilteredIndex))
+	if(!CheckFilteredIndex(ulNormalFilteredIndex))
 		return false;
 
-	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
+	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulNormalFilteredIndex);
 
 	return true;
 }
@@ -562,14 +568,18 @@ IPlaylistEntry *	CBasePlaylist::GetItemAtNormalFilteredIndex(unsigned long ulFil
 //gets real index then returns filtered index for item 
 unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pEntry)
 {
-	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+
+	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[x].pEntry == pEntry)
-		{
 		if(tuniacApp.m_Preferences.GetShuffleState())
-			return RealIndexToRandomFilteredIndex(x);
+		{
+			if(m_PlaylistArray[m_RandomIndexArray[x]].pEntry == pEntry)
+				return x;
+		}
 		else
-			return RealIndexToNormalFilteredIndex(x);
+		{
+			if(m_PlaylistArray[m_NormalIndexArray[x]].pEntry == pEntry)
+				return x;
 		}
 	}
 
@@ -579,14 +589,29 @@ unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pEntry)
 //gets real index then returns filtered index for item 
 unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pEntry)
 {
-	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[x].pEntry == pEntry)
-			return RealIndexToNormalFilteredIndex(x);
+		if(m_PlaylistArray[m_NormalIndexArray[x]].pEntry == pEntry)
+		{
+			return x;
+		}
 	}
 
 	return INVALID_PLAYLIST_INDEX;
 }
+
+//gets real index for item 
+unsigned long		CBasePlaylist::GetRealIndexforItem(IPlaylistEntry	* pEntry)
+{
+	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+	{
+		if(m_PlaylistArray[x].pEntry == pEntry)
+			return x;
+	}
+
+	return INVALID_PLAYLIST_INDEX;
+}
+
 
 bool				CBasePlaylist::SetTextFilter(LPTSTR	szFilterString)
 {
@@ -674,10 +699,8 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 
+	m_ActiveRealIndex = GetRealIndexforItem(pEntry);
 	RebuildPlaylistArrays();
-
-	unsigned long ulNormalFilteredIndex = GetNormalFilteredIndexforItem(pEntry);
-	m_ActiveRealIndex = NormalFilteredIndexToRealIndex(ulNormalFilteredIndex);
 
 	return true;
 }
@@ -797,9 +820,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 						return 1;
 				}
 				else if(pItem2->GetField(FIELD_PLAYCOUNT))
-				{
 					return -1;
-				}
 			}
 			break;
 
@@ -812,30 +833,30 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 		case FIELD_PLAYCOUNT:
 			{
 				if(pItem1->GetField(ulSortBy) > pItem2->GetField(ulSortBy))
-				{
 					return 1;
-				}
 				else if(pItem1->GetField(ulSortBy) < pItem2->GetField(ulSortBy))
-				{
 					return -1;
-				}
 			}
 			break;
-
+/*
+		case FIELD_PLAYORDER:
+			{
+				if(GetPlayOrder(GetNormalFilteredIndexforItem(pItem1)) > GetPlayOrder(GetNormalFilteredIndexforItem(pItem2)))
+					return 1;
+				else if(GetPlayOrder(GetNormalFilteredIndexforItem(pItem1)) < GetPlayOrder(GetNormalFilteredIndexforItem(pItem2)))
+					return -1;
+			}
+			break;
+*/
 		case FIELD_YEAR:
 			{
 				if(pItem1->GetField(FIELD_YEAR) > pItem2->GetField(FIELD_YEAR))
-				{
 					return 1;
-				}
 				else if(pItem1->GetField(FIELD_YEAR) < pItem2->GetField(FIELD_YEAR))
-				{
 					return -1;
-				}
 				return Sort_CompareItems(pItem1, pItem2, FIELD_ALBUM);
 			}
 			break;
-		
 		case FIELD_COMMENT:
 		case FIELD_GENRE:
 		case FIELD_TITLE:
@@ -843,7 +864,6 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 		case FIELD_URL:
 			{
 				return(StrCmpI((LPTSTR)pItem1->GetField(ulSortBy), (LPTSTR)pItem2->GetField(ulSortBy)));
-				
 			}
 			break;
 
@@ -867,13 +887,9 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 				int x = StrCmpI((LPTSTR)pItem1->GetField(FIELD_ARTIST) + iItem1Offset, (LPTSTR)pItem2->GetField(FIELD_ARTIST) + iItem2Offset);
 
 				if(x > 0)
-				{
 					return 1;
-				}
 				else if (x < 0)
-				{
 					return -1;
-				}
 
 				return Sort_CompareItems(pItem1, pItem2, FIELD_ALBUM);
 
@@ -900,13 +916,9 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 				int y = StrCmpI((LPTSTR)pItem1->GetField(FIELD_ALBUM) + iItem1Offset, (LPTSTR)pItem2->GetField(FIELD_ALBUM) + iItem2Offset);
 
 				if(y > 0)
-				{
 					return 1;
-				}
 				else if (y < 0)
-				{
 					return -1;
-				}
 				return Sort_CompareItems(pItem1, pItem2, FIELD_TRACKNUM);
 			}
 			break;
@@ -916,14 +928,10 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 				short * pTrack1 = (short *)pItem1->GetField(FIELD_TRACKNUM);
 				short * pTrack2 = (short *)pItem2->GetField(FIELD_TRACKNUM);
 
-					if(pTrack1[0] > pTrack2[0])
-					{
-						return 1;
-					}
-					else if (pTrack1[0] < pTrack2[0])
-					{
-						return -1;
-					}
+				if(pTrack1[0] > pTrack2[0])
+					return 1;
+				else if (pTrack1[0] < pTrack2[0])
+					return -1;
 			}
 			break;
 	}
@@ -1035,7 +1043,6 @@ bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexAr
 			}
 		}
 	}
-
 
 	ApplyFilter();
 	return true;

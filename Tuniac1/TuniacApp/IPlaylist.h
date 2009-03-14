@@ -113,20 +113,21 @@ public:
 	virtual unsigned long		RealIndexToRandomFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
 	virtual unsigned long		RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
 
-
 	virtual unsigned long		GetNumItems(void)													= 0;
 
 	virtual bool				ApplyFilter(void)													= 0;
-	virtual void				RebuildPlaylistArrays(void)													= 0;
+	virtual void				RebuildPlaylistArrays(void)											= 0;
 
-	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual unsigned long		GetActiveFilteredIndex(void)										= 0;
-	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
+	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual unsigned long		GetActiveNormalFilteredIndex(void)									= 0;
+	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 
 	virtual IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
-	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)			= 0;
+	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pEntry)					= 0;
+	virtual unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pEntry)				= 0;
+	virtual unsigned long		GetRealIndexforItem(IPlaylistEntry * pEntry)						= 0;
 
 	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)			= 0;
 	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;
@@ -152,7 +153,7 @@ public:
 
 	virtual void				SaveOrder(void)			= 0;
 	virtual void				RestoreOrder(void)		= 0;
-	virtual bool				HasSavedOrder(void)							= 0;
+	virtual bool				HasSavedOrder(void)		= 0;
 };
 
 
