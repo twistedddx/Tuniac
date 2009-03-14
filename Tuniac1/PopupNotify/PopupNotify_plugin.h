@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+#include <shellapi.h>
 #include "ITuniacPlugin.h"
 
 class CPopupNotify :
@@ -12,6 +14,7 @@ protected:
 
 	ATOM					m_aHotkeyShow;
 
+	APPBARDATA				m_abd;
 
 	unsigned long			m_ShowTimeMS;
 	unsigned long			m_FadeTimeMS;
@@ -24,6 +27,9 @@ protected:
 	HFONT					m_SmallFontU;
 
 	ITuniacPluginHelper *	m_pHelper;
+
+	BOOL					m_bAllowInhibit;
+	bool					m_bInhibit;
 
 	static LRESULT CALLBACK	WndProcStub(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK		WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

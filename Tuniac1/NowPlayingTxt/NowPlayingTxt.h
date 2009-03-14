@@ -15,6 +15,8 @@ protected:
 
 	ATOM					m_aCopy;
 
+	BOOL					m_bUseMirc;
+
 	ITuniacPluginHelper *	m_pHelper;
 
 	static unsigned long __stdcall	ThreadStub(void * in);

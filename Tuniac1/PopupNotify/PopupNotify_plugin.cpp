@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "PopupNotify_plugin.h"
-#include <stdio.h>
 
 #define POPUPWINDOWCLASS		TEXT("TuniacPlugin_PopupNotify")
 
@@ -8,6 +7,7 @@
 #define ID_TIMER_FADE			(2)
 #define ID_TIMER_PAINT			(3)
 
+static UINT WM_SW_APPBAR = WM_APP + 111;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ulReason, 
@@ -33,6 +33,7 @@ CPopupNotify::CPopupNotify(void)
 {
 	m_ShowTimeMS = 4000;
 	m_FadeTimeMS = 1000;
+	m_bInhibit   = false;
 }
 
 CPopupNotify::~CPopupNotify(void)
@@ -51,7 +52,7 @@ LPTSTR			CPopupNotify::GetPluginName(void)
 
 unsigned long	CPopupNotify::GetFlags(void)
 {
-	return PLUGINFLAGS_ABOUT;
+	return PLUGINFLAGS_ABOUT | PLUGINFLAGS_CONFIG;
 }
 
 bool			CPopupNotify::SetHelper(ITuniacPluginHelper *pHelper)
@@ -124,6 +125,16 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	if(m_hWnd == NULL)
 		return false;
 
+	m_bAllowInhibit = false;
+	DWORD				lpRegType = REG_DWORD;
+	DWORD				iRegSize = sizeof(int);
+	m_pHelper->PreferencesGet(TEXT("AllowInhibit"), &lpRegType, (LPBYTE)&m_bAllowInhibit, &iRegSize);
+
+	m_abd.cbSize = sizeof(APPBARDATA);
+	m_abd.hWnd = m_hWnd;
+	m_abd.uCallbackMessage = WM_SW_APPBAR;
+	SHAppBarMessage(ABM_NEW, &m_abd);
+
 	HDC hDC = GetDC(m_hWnd);
 
 	m_SmallFont = CreateFont(	-MulDiv(8, GetDeviceCaps(hDC, LOGPIXELSY), 72),
@@ -185,7 +196,9 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	
 	UnregisterHotKey(m_hWnd, m_aHotkeyShow);
 	GlobalDeleteAtom(m_aHotkeyShow);
-	
+
+	m_pHelper->PreferencesSet(TEXT("AllowInhibit"), REG_DWORD, (LPBYTE)&m_bAllowInhibit, sizeof(int));
+
 	DestroyWindow(m_hWnd);
 	m_hWnd = NULL;
 	UnregisterClass(POPUPWINDOWCLASS, m_pHelper->GetMainInstance());
@@ -310,8 +323,13 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			}
 			break;
 
-		case WM_HOTKEY:
 		case PLUGINNOTIFY_SONGCHANGE:
+			{
+				if(m_bInhibit)
+					break;
+			}
+		case WM_HOTKEY:
+
 			{
 				KillTimer(m_hWnd, ID_TIMER_HIDE);
 				KillTimer(m_hWnd, ID_TIMER_FADE);
@@ -323,8 +341,16 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 
 		default:
+			if(uMsg == WM_SW_APPBAR)
+			{
+				if(wParam == ABN_FULLSCREENAPP)
+				{
+					if(m_bAllowInhibit)
+						m_bInhibit = (BOOL) lParam; 
+				}
+				break;
+       		}
 			return(DefWindowProc(hWnd, uMsg, wParam, lParam));
-			break;
 	}
 
 	return 0;
@@ -458,5 +484,8 @@ bool			CPopupNotify::About(HWND hWndParent)
 
 bool			CPopupNotify::Configure(HWND hWndParent)
 {
-	return false;
+	m_bAllowInhibit = !m_bAllowInhibit;
+	if(!m_bAllowInhibit)
+		m_bInhibit = false;
+	return true;
 }
