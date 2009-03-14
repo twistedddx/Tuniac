@@ -45,7 +45,7 @@ LPTSTR			CNowPlayingTxt::GetPluginName(void)
 
 unsigned long	CNowPlayingTxt::GetFlags(void)
 {
-	return PLUGINFLAGS_ABOUT;
+	return PLUGINFLAGS_ABOUT | PLUGINFLAGS_CONFIG;
 }
 
 bool			CNowPlayingTxt::SetHelper(ITuniacPluginHelper *pHelper)
@@ -92,6 +92,13 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 	m_aCopy = GlobalAddAtom(TEXT("TUNIACNOWPLAYING_COPY"));
 	RegisterHotKey(NULL, m_aCopy, MOD_WIN, VK_ADD);
 
+
+	m_bUseMirc = false;
+	DWORD				lpRegType = REG_DWORD;
+	DWORD				iRegSize = sizeof(int);
+	m_pHelper->PreferencesGet(TEXT("UseMIRC"), &lpRegType, (LPBYTE)&m_bUseMirc, &iRegSize);
+
+
 	while(!Done)
 	{
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -125,10 +132,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						WriteFile(hOutFile, &szSong, (wcslen(szSong)) * sizeof(TCHAR), &ulBytesWritten, NULL);
 						CloseHandle(hOutFile);
 
-						//we need a real setting for this ;)
-						bool bMirc = 0;
-
-						if (bMirc) {
+						if (m_bUseMirc) {
 							/* eh... this is probably incomplete.  I did not test it as
 							far as using another application that communicates with mIRC at
 							the same time. */
@@ -226,6 +230,8 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 	UnregisterHotKey(NULL, m_aCopy);
 	GlobalDeleteAtom(m_aCopy);
 
+	m_pHelper->PreferencesSet(TEXT("UseMIRC"), REG_DWORD, (LPBYTE)&m_bUseMirc, sizeof(int));
+
 	m_bThreadActive = false;
 	return 0;
 }
@@ -238,5 +244,6 @@ bool			CNowPlayingTxt::About(HWND hWndParent)
 
 bool			CNowPlayingTxt::Configure(HWND hWndParent)
 {
-	return false;
+	m_bUseMirc = !m_bUseMirc;
+	return true;
 }
