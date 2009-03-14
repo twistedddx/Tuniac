@@ -25,6 +25,7 @@
 
 
 #define LENGTH_UNKNOWN	0xffffffff
+#define INVALID			0xffffffff
 
 #define STATE_UNKNOWN	(-1)
 #define STATE_STOPPED	0

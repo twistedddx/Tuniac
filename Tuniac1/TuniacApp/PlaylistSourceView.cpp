@@ -313,7 +313,6 @@ LRESULT CALLBACK CPlaylistSourceView::ViewOptionsWndProc(HWND hDlg, UINT message
 					}
 				}
 				ListView_SetColumnWidth(hListView, 0, LVSCW_AUTOSIZE_USEHEADER);
-
 			}
 			break;
 
@@ -2004,63 +2003,66 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 {
-	if (tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex)->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex);
+	if(pPlaylist)
 	{
-		m_pPlaylist = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex);
-		m_ulActivePlaylistIndex = ulPlaylistIndex;
-		if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
+		if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 		{
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), SW_SHOWNOACTIVATE);
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_SHOWNOACTIVATE);
-
-			SetDlgItemText(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER, m_pPlaylist->GetTextFilter());
-			if(wcslen(m_pPlaylist->GetTextFilter()) < 1)
+			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
+			m_pPlaylist = pPlaylistEX;
+			m_ulActivePlaylistIndex = ulPlaylistIndex;
+			if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
 			{
-				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
-				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), SW_SHOWNOACTIVATE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_SHOWNOACTIVATE);
+
+				SetDlgItemText(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER, m_pPlaylist->GetTextFilter());
+				if(wcslen(m_pPlaylist->GetTextFilter()) < 1)
+				{
+					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
+					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
+				}
+				else
+				{
+					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_SHOWNOACTIVATE);
+					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_SHOWNOACTIVATE);
+				}
+
+				unsigned long ulFilterByField = m_pPlaylist->GetTextFilterField();
+				int iMenuPos = 0;
+				if(ulFilterByField == FIELD_ARTIST)
+					iMenuPos = 2;
+				else if(ulFilterByField == FIELD_ALBUM)
+					iMenuPos = 3;
+				else if(ulFilterByField == FIELD_TITLE)
+					iMenuPos = 4;
+				else if(ulFilterByField == FIELD_GENRE)
+					iMenuPos = 5;
+				else if(ulFilterByField == FIELD_YEAR)
+					iMenuPos = 6;
+				else if(ulFilterByField == FIELD_COMMENT)
+					iMenuPos = 7;
+				else if(ulFilterByField == FIELD_URL)
+					iMenuPos = 9;
+				else if(ulFilterByField == FIELD_FILENAME)
+					iMenuPos = 10;
+				else if(ulFilterByField == FIELD_FILEEXTENSION)
+					iMenuPos = 11;
+
+				CheckMenuRadioItem(m_FilterByFieldMenu, 0, 11, iMenuPos, MF_BYPOSITION);
+
+				CheckMenuItem(m_FilterByFieldMenu, 13, MF_BYPOSITION | (m_pPlaylist->GetTextFilterReversed() ? MF_CHECKED : MF_UNCHECKED));
 			}
 			else
 			{
-				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_SHOWNOACTIVATE);
-				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_SHOWNOACTIVATE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), SW_HIDE);
+				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_HIDE);
 			}
-
-			unsigned long ulFilterByField = m_pPlaylist->GetTextFilterField();
-			int iMenuPos = 0;
-			if(ulFilterByField == FIELD_ARTIST)
-				iMenuPos = 2;
-			else if(ulFilterByField == FIELD_ALBUM)
-				iMenuPos = 3;
-			else if(ulFilterByField == FIELD_TITLE)
-				iMenuPos = 4;
-			else if(ulFilterByField == FIELD_GENRE)
-				iMenuPos = 5;
-			else if(ulFilterByField == FIELD_YEAR)
-				iMenuPos = 6;
-			else if(ulFilterByField == FIELD_COMMENT)
-				iMenuPos = 7;
-			else if(ulFilterByField == FIELD_URL)
-				iMenuPos = 9;
-			else if(ulFilterByField == FIELD_FILENAME)
-				iMenuPos = 10;
-			else if(ulFilterByField == FIELD_FILEEXTENSION)
-				iMenuPos = 11;
-
-			CheckMenuRadioItem(m_FilterByFieldMenu, 0, 11, iMenuPos, MF_BYPOSITION);
-
-			CheckMenuItem(m_FilterByFieldMenu, 13, MF_BYPOSITION | (m_pPlaylist->GetTextFilterReversed() ? MF_CHECKED : MF_UNCHECKED));
+			Update();
 		}
-		else
-		{
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), SW_HIDE);
-			ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_HIDE);
-		}
-
-		Update();
 	}
-
 	return true;
 }
 

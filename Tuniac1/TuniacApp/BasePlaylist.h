@@ -94,16 +94,16 @@ public:
 public:
 	unsigned long		GetNumItems(void);
 
-	bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex);
 	unsigned long		GetActiveFilteredIndex(void);
-
-	bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+	bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex);
 	unsigned long		GetActiveNormalFilteredIndex(void);
+	bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
 
 	IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex);
 	IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
 	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pEntry);
 	unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pEntry);
+	unsigned long		GetRealIndexforItem(IPlaylistEntry * pEntry);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);

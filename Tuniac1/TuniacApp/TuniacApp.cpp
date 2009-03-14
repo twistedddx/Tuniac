@@ -243,13 +243,15 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	RegisterHotkeys();
 
 	//show where we are upto in the playlist
-	m_SourceSelectorWindow->Show();
 	m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistManager.GetActivePlaylistIndex());
 	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
+
 	if(m_Preferences.GetFollowCurrentSongMode())
 		m_SourceSelectorWindow->ShowCurrentlyPlaying();
 	if(m_Preferences.GetShowVisArt())
 		m_VisualWindow->Show();
+
+	m_SourceSelectorWindow->Show();
 
 	//set always ontop state
 	if(m_Preferences.GetAlwaysOnTop())
@@ -257,7 +259,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//notify that before we created the playlist window
 	PostMessage(m_hWnd, WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
-
 	return true;
 }
 
@@ -1467,8 +1468,15 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
 	 						{
+								//dont hide visual windows when showvisart
+								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
+									continue;
  								m_WindowArray[item]->Hide();
 	 						}
+							//reshow visual window in source view
+							if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
+								tuniacApp.m_VisualWindow->Show();
+
 							m_SourceSelectorWindow->Show();
 							m_SourceSelectorWindow->ShowCurrentlyPlaying();
 						}

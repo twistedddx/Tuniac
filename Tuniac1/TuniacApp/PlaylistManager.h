@@ -43,6 +43,7 @@ protected:
 
 public:
 	IPlaylist			*			m_ActivePlaylist;
+	unsigned long					m_ulActivePlaylistIndex;
 
 	CLibraryPlaylist				m_LibraryPlaylist;
 	
@@ -67,10 +68,11 @@ public:
 
 	IPlaylist *		GetPlaylistAtIndex(unsigned long ulIndex);
 	IPlaylist *		GetActivePlaylist(void);
+	unsigned long	GetActivePlaylistIndex(void);
 
 	bool			SetActiveByEntry(IPlaylistEntry * pEntry);
 	bool			SetActivePlaylist(unsigned long ulPlaylistNumber);
-	int				GetActivePlaylistIndex(void);
+
 
 	bool			CreateNewStandardPlaylist(LPTSTR szName);
 	bool			CreateNewStandardPlaylistWithIDs(LPTSTR szName, EntryArray & newIDs);

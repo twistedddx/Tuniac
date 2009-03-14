@@ -34,8 +34,8 @@ public:
 	virtual HINSTANCE	GetMainInstance(void)							= 0;
 	virtual HWND		GetMainWindow(void)								= 0;
 
-	bool				PreferencesGet(LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
-	bool				PreferencesSet(LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData);
+	virtual bool		PreferencesGet(LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData) = 0;
+	virtual bool		PreferencesSet(LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData) = 0;
 };
 
 
