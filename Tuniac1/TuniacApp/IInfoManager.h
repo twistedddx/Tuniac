@@ -18,7 +18,7 @@
 
 	3. This notice may not be removed or altered from any source distribution.
 */
-
+#pragma pack(16)
 #pragma once
 
 #define ITUNIACINFOMANAGER_VERSION		MAKELONG(0, 1)

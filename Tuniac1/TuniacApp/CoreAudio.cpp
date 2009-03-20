@@ -33,6 +33,13 @@
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 #endif
 
+#ifdef SSE
+#include "SSE_Utils.h"
+#define ClearFloat(src, num)  SSE_ClearFloat(src, num)
+#else
+#define ClearFloat(src, num)  ZeroMemory(src, (num) * sizeof(float))
+#endif
+
 // TODO: Derive this from XAudioEngineCallback to let us know if we need to restart XAudio :(
 // TODO: Change AudioStream to have Initialize and Shutdown so we can return audio errors back up the chain!
 
@@ -417,8 +424,9 @@ bool			CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
 	CAutoLock	t(&m_Lock);
 
-	if(m_Streams.GetCount() == 0)
+	if(m_Streams.GetCount() == 0 || GetState() != STATE_PLAYING)
 	{
+		ClearFloat(ToHere, ulNumSamples);
 		return false;
 	}
 	else if(m_Streams.GetCount() == 1)
@@ -430,7 +438,7 @@ bool			CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
 		// multiple streams... MIX THEM!!!
 		float TBuffer[4096];
 
-		ZeroMemory(ToHere, ulNumSamples * sizeof(float));
+		ClearFloat(ToHere, ulNumSamples);
 
 		for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 		{
@@ -485,18 +493,6 @@ float CCoreAudio::GetVolumePercent()
 {
 	return m_fVolume;
 }
-/*
-void CCoreAudio::SetReplayGain(float fReplayGain)
-{
-	bool bReplayGain = false;
-	if(fReplayGain != 0.0f)
-		bReplayGain = true;
-
-
-	if(m_Streams.GetCount())
-		m_Streams[m_Streams.GetCount()-1]->SetReplayGainScale(fReplayGainScale, bReplayGain);
-}
-*/
 
 void CCoreAudio::SetVolumePercent(float fVolume)
 {

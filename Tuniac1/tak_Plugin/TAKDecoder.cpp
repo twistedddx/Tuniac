@@ -56,7 +56,7 @@ bool CTAKDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CTAKDecoder::Close()
+void		CTAKDecoder::Destroy(void)
 {
 	tak_SSD_Destroy (Decoder);
 	if(buffer)
@@ -69,12 +69,6 @@ bool CTAKDecoder::Close()
 		delete [] m_Buffer;
 		m_Buffer = NULL;
 	}
-	return(true);
-}
-
-void		CTAKDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

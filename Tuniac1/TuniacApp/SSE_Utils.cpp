@@ -7,8 +7,8 @@ void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 	
 	while(len >= 4)
 	{
-		XMM0 = _mm_load_ps(&Src[index]);
-		_mm_store_ps(&Dest[index], XMM0);
+		XMM0 = _mm_loadu_ps(&Src[index]);
+		_mm_storeu_ps(&Dest[index], XMM0);
 		
 		// increment pointers;
 		index		+= 4;
@@ -22,16 +22,16 @@ void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 	}
 }
 
-void SSE_ClearFloat(float * Array, int len)
+void SSE_ClearFloat(float * Array, unsigned long len)
 {
-	__m128	m;
+	__m128 XMM0;
 	int index = 0;
 	
-	m = _mm_setzero_ps();
+	XMM0 = _mm_setzero_ps();
 	
 	while(len >=4)
 	{
-		_mm_store_ps(&Array[index], m);
+		_mm_storeu_ps(&Array[index], XMM0);
 		index += 4;
 		len -= 4;
 	}
@@ -44,19 +44,19 @@ void SSE_ClearFloat(float * Array, int len)
 	}
 }
 
-void SSE_AddArrayStore(float * ArrayA, float * ArrayB, float * storage, int len)
+void SSE_AddArrayStore(float * ArrayA, float * ArrayB, float * storage, unsigned long len)
 {
-	__m128 a, b, c;
+	__m128 XMM0, XMM1, XMM2;
 	int index = 0;		
 	
 	while(len >= 4)
 	{
-		a = _mm_load_ps(&ArrayA[index]);
-		b = _mm_load_ps(&ArrayB[index]);
+		XMM0 = _mm_loadu_ps(&ArrayA[index]);
+		XMM1 = _mm_loadu_ps(&ArrayB[index]);
 		
-		c = _mm_add_ps(a, b);
+		XMM2 = _mm_add_ps(XMM0, XMM1);
 		
-		_mm_store_ps(&storage[index], c);
+		_mm_storeu_ps(&storage[index], XMM2);
 		
 		// increment pointers;
 		index+=4;			
@@ -82,20 +82,20 @@ void SSE_AddArrayStore(float * ArrayA, float * ArrayB, float * storage, int len)
  */
 }
 
-void SSE_MulArrayStore(float * ArrayA, float * ArrayB, float * storage, int len)
+void SSE_MulArrayStore(float * ArrayA, float * ArrayB, float * storage, unsigned long len)
 {
-	__m128 a, b, c;
+	__m128 XMM0, XMM1, XMM2;
 	
 	int index = 0;
 
 	while(len >= 4)
 	{
-		a = _mm_load_ps(&ArrayA[index]);
-		b = _mm_load_ps(&ArrayB[index]);
+		XMM0 = _mm_loadu_ps(&ArrayA[index]);
+		XMM1 = _mm_loadu_ps(&ArrayB[index]);
 		
-		c = _mm_mul_ps(a, b);
+		XMM2 = _mm_mul_ps(XMM0, XMM1);
 
-		_mm_store_ps(&storage[index], c);
+		_mm_storeu_ps(&storage[index], XMM2);
 		
 		// increment pointers;
 		index += 4;

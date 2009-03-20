@@ -1,35 +1,9 @@
 #include "StdAfx.h"
+#include <emmintrin.h>
 #include "svprenderer.h"
 #include "Transform.h"
 
-#include <emmintrin.h>
-
 extern HANDLE	hInst;
-
-/*
-					SoniqueVisExternal	*t = new SoniqueVisExternal();
-
-					TCHAR oldFolder[2048];
-
-					GetCurrentDirectory(2048, oldFolder);
-					SetCurrentDirectory(szFolder);
-
-					if(t->LoadFromExternalDLL(temp))
-					{
-						StrCat(temp, TEXT(".ini"));
-
-						char settingsdir[512];
-
-						WideCharToMultiByte(CP_ACP, 0, temp, 512, settingsdir, 512, NULL, NULL);
-
-						t->LoadSettings(settingsdir);
-						m_VisArray.AddTail(t);
-					}
-
-					delete t;
-
-					SetCurrentDirectory(oldFolder);
-*/
 
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
@@ -64,8 +38,8 @@ __m64 Get_m64(__int64 n)
 #if defined (_M_IX86)
 
 void ChangeBrightnessC_MMX(
-    BYTE* pSource, 
-    BYTE* pDest, 
+    unsigned long* pSource, 
+    unsigned long* pDest, 
     int nNumberOfPixels, 
     int nChange)
 {
@@ -241,36 +215,56 @@ bool SVPRenderer::RenderVisual(void)
 {
 	if(m_TheVisual)
 	{
-		VisData vd;
-
 		unsigned long NumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-		if(NumChannels == -1)
+		if(NumChannels == INVALID)
 			return true;
 
-		unsigned long temp = 0;
+		if(NumChannels != ulOldNumChannels)
+		{
+			if(visdata)
+			{
+				VirtualFree(visdata, 0, MEM_RELEASE);
+			}
 
-		float vis[1024*6];
-		this->m_pHelper->GetVisData(vis, 512 * NumChannels);
+			ulOldNumChannels = NumChannels;
+			visdata = (float *)VirtualAlloc(NULL, 512 * NumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+		}
 
+		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
+
+		if(!m_pHelper->GetVisData(visdata, 512 * NumChannels))
+			int x=0;
+
+		unsigned long sample = 0;
+		char tempbuffer;
 		for(int x=0; x<512; x++)
 		{
-			vd.Waveform[0][x] = (signed char)(vis[temp]*127.0f);
+			if(NumChannels == 1)
+			{
+				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*127.0f);
+			}
 
 			if(NumChannels > 1)
 			{
-				vd.Waveform[1][x] = (signed char)(vis[temp+1]*127.0f);
+				vd.Waveform[0][x] = (visdata[sample]*127.0f);
+				vd.Waveform[1][x] = (visdata[sample+1]*127.0f);
 			}
-
-			temp+=NumChannels;
+			sample+=NumChannels;
 		}
 
 		if(m_TheVisual->NeedsSpectrum())
 		{
-			FastFFT_M8(vd.Spectrum[0], (signed char *)vd.Waveform[0]);
+			FastFFT_M8(vd.Spectrum[0], vd.Waveform[0]);
 			if(NumChannels > 1)
-				FastFFT_M8(vd.Spectrum[1], (signed char *)vd.Waveform[1]);
+				FastFFT_M8(vd.Spectrum[1], vd.Waveform[1]);
+			else
+			{
+				for(int x=0; x < 256; x++)
+				{
+					vd.Spectrum[1][x] = vd.Spectrum[0][x];
+				}
+			}
 		}
-		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
 
 		if(m_TheVisual->NeedsVisFX())
 			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -8);
@@ -278,7 +272,7 @@ bool SVPRenderer::RenderVisual(void)
 		return m_TheVisual->Render(m_textureData, iVisRes, iVisRes, iVisRes, &vd);
 	}
 	else
-		ZeroMemory(m_textureData, iVisRes*iVisRes*4);
+		ZeroMemory(m_textureData, iVisRes*iVisRes*sizeof(unsigned long));
 
 	return true;
 }
@@ -286,6 +280,14 @@ bool SVPRenderer::RenderVisual(void)
 
 void	SVPRenderer::Destroy(void)
 {
+	if(visdata)
+	{
+		VirtualFree(visdata, 0, MEM_RELEASE);
+		visdata = NULL;
+	}
+	
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
+
 	delete this;
 }
 
@@ -318,7 +320,10 @@ bool	SVPRenderer::Attach(HDC hDC)
 	DWORD				iRegSize = sizeof(int);
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisRes, &iRegSize);
 
-	m_textureData = (GLubyte*)VirtualAlloc(NULL, iVisRes*iVisRes*4, MEM_COMMIT, PAGE_READWRITE);
+	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+
+	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
+	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 
 	if(m_VisFilenameArray.GetCount())
 	{
@@ -395,20 +400,27 @@ bool	SVPRenderer::Detach()
 {
 	if (m_glRC)												// Do We Have A Rendering Context?
 	{
-		if (!wglMakeCurrent(NULL,NULL))						// Are We Able To Release The DC And RC Contexts?
-		{
-		}
-
-		if (!wglDeleteContext(m_glRC))						// Are We Able To Delete The RC?
-		{
-		}
-
+		wglMakeCurrent(NULL,NULL);					// Are We Able To Release The DC And RC Contexts?
+		wglDeleteContext(m_glRC);					// Are We Able To Delete The RC?
 		m_glRC=NULL;										// Set RC To NULL
 	}
 
-	VirtualFree(m_textureData, 0, MEM_RELEASE);
-
 	m_glDC = NULL;
+
+	if(m_textureData)
+	{
+		VirtualFree(m_textureData, 0, MEM_RELEASE);
+		m_textureData = NULL;
+	}
+
+	if(visdata)
+	{
+		VirtualFree(visdata, 0, MEM_RELEASE);
+		visdata = NULL;
+	}
+	
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
+
 	return true;
 }
 
@@ -418,9 +430,7 @@ bool	SVPRenderer::Render(int w, int h)
 
 	// just to make sure!
 	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
 		return false;									// Return FALSE
-	}
 
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
@@ -534,17 +544,22 @@ bool	SVPRenderer::Configure(HWND hWndParent)
 {
 	CAutoLock m(&m_RenderLock);
 
-	VirtualFree(m_textureData, 0, MEM_RELEASE);
-
-	if(iVisRes == 512)
+	if(m_textureData)
+	{
+		VirtualFree(m_textureData, 0, MEM_RELEASE);
+		m_textureData = NULL;
+	}
+	if(iVisRes == 256)
+		iVisRes = 512;
+	else if(iVisRes == 512)
 		iVisRes = 640;
 	else if(iVisRes == 640)
 		iVisRes = 768;
 	else
-		iVisRes = 512;
+		iVisRes = 256;
 
-	m_textureData = (GLubyte*)VirtualAlloc(NULL, iVisRes*iVisRes*4, MEM_COMMIT, PAGE_READWRITE);
-	
+	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisRes, sizeof(int));
 
 	return true;
@@ -555,13 +570,28 @@ bool	SVPRenderer::Notify(unsigned long Notification)
 	return true;
 }
 
-bool SVPRenderer::SetActiveVisual(int vis)
+bool SVPRenderer::SetActiveVisual(int visindex)
 {
 	CAutoLock m(&m_RenderLock);
 
+	vd.MillSec = 0;
+	for(int i=0; i<2; i++)
+	{
+		for(int x = 0; x < 512; x++)
+		{
+			vd.Waveform[i][x] = 0;
+		}
+	}
+	for(int i=0; i<2; i++)
+	{
+		for(int x = 0; x < 256; x++)
+		{
+			vd.Spectrum[i][x] = 0;
+		}
+	}
+
 	TCHAR	szVisFilename[2048];
 	char settingsdir[2048];
-
 	if(m_TheVisual)
 	{
 		StrCpy(szVisFilename, m_VisFilenameArray[m_SelectedVisual]);
@@ -577,23 +607,23 @@ bool SVPRenderer::SetActiveVisual(int vis)
 
 
 	// set no visual
-	if(vis == -1)
+	if(visindex == -1)
 		return true;
 
 	TCHAR	szPath[2048];
-	StrCpy(szPath, m_VisFilenameArray[vis]);
+	StrCpy(szPath, m_VisFilenameArray[visindex]);
 	PathRemoveFileSpec(szPath);
 	PathAddBackslash(szPath);
 
 	//TCHAR	szVisFilename[2048];
-	StrCpy(szVisFilename, m_VisFilenameArray[vis]);
+	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
 
 	TCHAR oldFolder[2048];
 	GetCurrentDirectory(2048, oldFolder);
 	SetCurrentDirectory(szPath);
 
 	SoniqueVisExternal * newVis = new SoniqueVisExternal();
-	if(newVis->LoadFromExternalDLL(m_VisFilenameArray[vis]))
+	if(newVis->LoadFromExternalDLL(szVisFilename))
 	{
 		StrCat(szVisFilename, TEXT(".ini"));
 		//char settingsdir[2048];
@@ -602,7 +632,7 @@ bool SVPRenderer::SetActiveVisual(int vis)
 		newVis->LoadSettings(settingsdir);
 
 		m_TheVisual = newVis;
-		m_SelectedVisual = vis;
+		m_SelectedVisual = visindex;
 	}
 	else
 	{
@@ -610,8 +640,6 @@ bool SVPRenderer::SetActiveVisual(int vis)
 	}
 
 	SetCurrentDirectory(oldFolder);
-
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 
 	return true;
 }

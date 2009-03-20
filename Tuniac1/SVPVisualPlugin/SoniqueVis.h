@@ -5,13 +5,10 @@
 #define VI_SPECTRUM			0x0002		// set if you need the FFT values 
 #define SONIQUEVISPROC		0x0004		// set if you want to allow Soniques user pref vis to affect your vis
 										//   for example - blur, smoke and zoom
-
-#pragma pack (push, 8)
-
 typedef struct 
 {
 	unsigned long	MillSec;			// Sonique sets this to the time stamp of end this block of data
-	unsigned char	Waveform[2][512];	// Sonique sets this to the PCM data being outputted at this time
+	signed char		Waveform[2][512];	// Sonique sets this to the PCM data being outputted at this time
 	unsigned char	Spectrum[2][256];	// Sonique sets this to a lowfidely version of the spectrum data
 										//   being outputted at this time
 } VisData;
@@ -79,13 +76,11 @@ class SoniqueQueryInterface : public QueryInterface
 	bool QueryInt(char* expression, int* result)
 	{
 		if(strcmp(expression, "currentsonglength") == 0)
-			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@i"), 0);
+			//*result = (int)svprenderer.m_pHelper->GetVariable(Variable_LengthMS)/1000;
 			*result = 1;
-
 		else if(strcmp(expression, "currentsongposition") == 0)
-			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@i"), 0);
+			//*result = (int)m_pHelper->GetVariable(Variable_PositionMS)/1000;
 			*result = 1;
-
 
 		else if(strcmp(expression, "scheme_visual_left") == 0)
 			*result = 1;
@@ -108,11 +103,10 @@ class SoniqueQueryInterface : public QueryInterface
 			return (char*)"Title";
 		/*
 		{
-			TCHAR szSongW[512];
-			char * tempname; 
-			m_pHelper->GetTrackInfo(szSongW, 512, TEXT("@T"), 0);
-			WideCharToMultiByte(CP_UTF8, 0, szSongW, -1, tempname, _MAX_PATH, 0, 0);
-			return tempname;
+			LPTSTR szTitle = (LPTSTR)m_pHelper->GetVariable(Variable_SongTitle);
+			char * mbString = ""; 
+			WideCharToMultiByte(CP_UTF8, 0, szTitle, -1, mbString, _MAX_PATH, 0, 0);
+			return mbString;
 		}
 		*/
 
@@ -120,24 +114,33 @@ class SoniqueQueryInterface : public QueryInterface
 			return (char*)"Author";
 		/*
 		{
-
-			TCHAR szString[512];
+			LPTSTR szArtist = (LPTSTR)m_pHelper->GetVariable(Variable_Artist);
 			char * mbString = ""; 
-			m_pHelper->GetTrackInfo(szString, 512, TEXT("@A"), 0);
-			WideCharToMultiByte(CP_UTF8, 0, szString, -1, mbString, _MAX_PATH, 0, 0);
+			WideCharToMultiByte(CP_UTF8, 0, szArtist, -1, mbString, _MAX_PATH, 0, 0);
 			return mbString;
-
 		}
 		*/
 
 		else if(strcmp(expression, "currentsongfilename") == 0)
-			//return m_pHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
 			return (char*)"Filename";
-
+		/*
+		{
+			LPTSTR szFilename = (LPTSTR)m_pHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
+			char * mbString = ""; 
+			WideCharToMultiByte(CP_UTF8, 0, szFilename, -1, mbString, _MAX_PATH, 0, 0);
+			return mbString;
+		}
+		*/
 		else if(strcmp(expression, "currentsongdisplaystring") == 0)
-			//return m_pHelper->GetTrackInfo(szData, 512, NULL, 0);
 			return (char*)"DisplayString";
-
+		/*
+		{
+			LPTSTR szFilename = (LPTSTR)m_pHelper->GetTrackInfo(szData, 512, NULL, 0);
+			char * mbString = ""; 
+			WideCharToMultiByte(CP_UTF8, 0, szFilename, -1, mbString, _MAX_PATH, 0, 0);
+			return mbString;
+		}
+		*/
 		else if(strcmp(expression, "currentskinname") == 0)
 			return (char*)"Default Skin";
 
@@ -151,7 +154,7 @@ class SoniqueQueryInterface : public QueryInterface
 		//if(String)
 		//	delete String;
 
-		//return;
+		return;
 	}
 };
 
@@ -181,7 +184,7 @@ public:
 	virtual BOOL SaveSettings( char* szFileName );
 	virtual BOOL LoadSettings( char* szFileName );
 
-	virtual BOOL Render(  void *Video, int width, int height, int pitch, VisData* pVD );
+	virtual BOOL Render(unsigned long *Video, int width, int height, int pitch, VisData* pVD );
 
 	void Clicked(int x, int y);
 

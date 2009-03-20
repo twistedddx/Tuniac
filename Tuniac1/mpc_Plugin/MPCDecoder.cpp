@@ -39,14 +39,8 @@ bool CMPCDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CMPCDecoder::Close()
-{
-	return(true);
-}
-
 void		CMPCDecoder::Destroy(void)
 {
-	Close();
 	delete this;
 }
 

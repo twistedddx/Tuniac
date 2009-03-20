@@ -123,7 +123,7 @@ bool Cm4aAudioSource::Open(LPTSTR szSource)
 	return true;
 }
 
-bool Cm4aAudioSource::Close()
+void		Cm4aAudioSource::Destroy(void)
 {
 	if(m_mp4file)
 	{
@@ -137,13 +137,6 @@ bool Cm4aAudioSource::Close()
 		m_hDecoder = NULL;
 	}
 
-	return true;
-}
-
-
-void		Cm4aAudioSource::Destroy(void)
-{
-	this->Close();
 	delete this;
 }
 

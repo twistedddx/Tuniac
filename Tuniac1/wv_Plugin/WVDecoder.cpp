@@ -64,16 +64,10 @@ bool CWVDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CWVDecoder::Close()
+void		CWVDecoder::Destroy(void)
 {
 	wpc = WavpackCloseFile(wpc);
 	wpc = NULL;
-	return(true);
-}
-
-void		CWVDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

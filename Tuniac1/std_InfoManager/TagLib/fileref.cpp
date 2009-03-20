@@ -23,20 +23,24 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <tfile.h>
 #include <tstring.h>
 
 #include "fileref.h"
+#include "asffile.h"
 #include "mpegfile.h"
 #include "vorbisfile.h"
 #include "flacfile.h"
 #include "oggflacfile.h"
 #include "mpcfile.h"
+#include "mp4file.h"
 #include "wavpackfile.h"
 #include "speexfile.h"
 #include "trueaudiofile.h"
-#include "mp4file.h"
-#include "asffile.h"
 #include "aifffile.h"
 #include "wavfile.h"
 
@@ -125,15 +129,21 @@ StringList FileRef::defaultFileExtensions()
   l.append("wv");
   l.append("spx");
   l.append("tta");
-  l.append("aif");
+#ifdef WITH_MP4
   l.append("m4a");
   l.append("m4b");
   l.append("m4p");
   l.append("mp4");
   l.append("3g2");
+#endif
+#ifdef WITH_ASF
   l.append("wma");
+  l.append("asf");
+#endif
+  l.append("aif");
   l.append("aiff");
   l.append("wav");
+
   return l;
 }
 
@@ -204,22 +214,28 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
       return new MPEG::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".OGA")
       return new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(s.substr(s.size() - 5, 5).upper() == ".FLAC")
+      return new FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".MPC")
       return new MPC::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 3, 3).upper() == ".WV")
-      return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".SPX")
       return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".TTA")
-		return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
+      return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
+#ifdef WITH_MP4
     if(s.substr(s.size() - 4, 4).upper() == ".M4A" ||
        s.substr(s.size() - 4, 4).upper() == ".M4B" ||
        s.substr(s.size() - 4, 4).upper() == ".M4P" ||
 	   s.substr(s.size() - 4, 4).upper() == ".MP4" ||
        s.substr(s.size() - 4, 4).upper() == ".3G2")
-	   return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
+      return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
+#endif
+#ifdef WITH_ASF
     if(s.substr(s.size() - 4, 4).upper() == ".WMA")
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(s.substr(s.size() - 4, 4).upper() == ".ASF")
+      return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
+#endif
     if(s.substr(s.size() - 4, 4).upper() == ".AIF")
       return new RIFF::AIFF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(s.substr(s.size() - 4, 4).upper() == ".WAV")
@@ -229,5 +245,6 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
     if(s.substr(s.size() - 3, 3).upper() == ".WV")
       return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
   }
+
   return 0;
 }

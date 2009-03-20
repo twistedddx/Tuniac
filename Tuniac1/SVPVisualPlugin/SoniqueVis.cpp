@@ -80,24 +80,20 @@ char* SoniqueVisExternal::GetName()
 	if( p_PluginInfo )
 		return p_PluginInfo->PluginName; 
 	else 
-		return "BAH";
+		return "SVP renderer";
 };
 
-BOOL SoniqueVisExternal::Render(  void *Video, int width, int height, int pitch, VisData* pVD )
+BOOL SoniqueVisExternal::Render( unsigned long *Video, int width, int height, int pitch, VisData* pVD )
 {
-	BOOL worked = false;
-
-	if(p_PluginInfo)
-	try
+	if( p_PluginInfo )
 	{
-		worked = p_PluginInfo->Render((unsigned long*)Video, width, height, pitch, pVD);
-	}
-	catch(...)
-	{
-		return(false);
+		if(p_PluginInfo->Render(Video, width, height, pitch, pVD))
+		{
+			return(TRUE);
+		}
 	}
 
-	return(worked);
+	return(FALSE);
 };
 
 BOOL SoniqueVisExternal::SaveSettings( char* szFileName )

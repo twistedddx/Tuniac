@@ -591,7 +591,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 				if(m_iActivePlugin != -1)
 				{
 					GetClientRect(m_hWnd, &r);
-					m_VisualArray[m_iActivePlugin].pPlugin->Render(r.right, r.bottom);
+					m_VisualArray[m_iActivePlugin].pPlugin->Render((int)r.right, (int)r.bottom);
 				}
 				else
 				{
@@ -599,7 +599,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 				}
 			}
 
-			WaitForSingleObject(m_hRenderEvent, (unsigned long)(1000.0f / tuniacApp.m_Preferences.GetVisualFPS()) );
+			WaitForSingleObject(m_hRenderEvent, DWORD(1000.0f / tuniacApp.m_Preferences.GetVisualFPS()) );
 		}
 	}
 

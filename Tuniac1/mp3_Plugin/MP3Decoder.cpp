@@ -12,7 +12,6 @@ CMP3Decoder::CMP3Decoder(IAudioSourceHelper * pHelper) :
 
 CMP3Decoder::~CMP3Decoder(void)
 {
-	Close();
 }
 
 unsigned long CMP3Decoder::GetID3HeaderLength(unsigned char * buffer)
@@ -164,7 +163,7 @@ bool CMP3Decoder::Open(LPTSTR szFilename)
 	return GetStreamData();
 }
 
-bool CMP3Decoder::Close(void)
+void		CMP3Decoder::Destroy(void)
 {
 	if(m_pDecoder)
 	{
@@ -178,19 +177,12 @@ bool CMP3Decoder::Close(void)
 		m_hFile = NULL;
 	}
 
-	return false;
-}
-
-void		CMP3Decoder::Destroy(void)
-{
 	if(m_SampleBuffer)
 	{
-		VirtualUnlock(	m_SampleBuffer, 
-						BUFFERSIZE);
+		VirtualUnlock(	m_SampleBuffer, BUFFERSIZE);
 
 		VirtualFree(m_SampleBuffer, 0, MEM_RELEASE);
 	}
-
 	delete this;
 }
 
@@ -240,8 +232,7 @@ bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 													BUFFERSIZE, 
 													MEM_COMMIT, 
 													PAGE_READWRITE);		// allocate audio memory
-			VirtualLock(m_SampleBuffer, 
-						BUFFERSIZE);
+			VirtualLock(m_SampleBuffer, BUFFERSIZE);
 
 		}
 
@@ -253,6 +244,7 @@ bool		CMP3Decoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 			m_Frame.m_Header.Reset();
 			return true;
 		}
+
 
 		*ppBuffer = m_SampleBuffer;
 

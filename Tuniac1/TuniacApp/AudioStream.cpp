@@ -265,7 +265,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			while(samplesleft>=4)
 			{
 				// load XMM0 with 4 samples from the audio buffer
-				XMM0 = _mm_load_ps(((float*)pAudioBuffer)+offset);
+				XMM0 = _mm_loadu_ps(&pAudioBuffer[offset]);
 
 				// if replaygain enabled in prefs
 				if(bReplayGain)
@@ -279,7 +279,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 				XMM0 = _mm_mul_ps(XMM0, XMM1);
 
 				// store XMM0 back to where we loaded it from thanks!
-				_mm_store_ps(((float*)pAudioBuffer)+offset, XMM0);
+				_mm_storeu_ps(&pAudioBuffer[offset], XMM0);
 				
 				offset		+=4;
 				samplesleft	-=4;				
@@ -287,7 +287,7 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			
 			while(samplesleft)
 			{
-				float * pSample = ((float*)pAudioBuffer)+offset;
+				float * pSample = &pAudioBuffer[offset];
 				if(bReplayGain)
 				{
 					if(bUseAlbumGain && bAlbumHasGain)

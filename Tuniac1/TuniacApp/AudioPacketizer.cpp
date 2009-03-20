@@ -24,6 +24,13 @@
 
 #define NiceCloseHandle(handle)  if(handle) { CloseHandle(handle); handle = NULL; }
 
+#ifdef SSE
+#include "SSE_Utils.h"
+#define ClearFloat(src, num)  SSE_ClearFloat(src, num)
+#else
+#define ClearFloat(src, num)  ZeroMemory(src, (num) * sizeof(float))
+#endif
+
 CAudioPacketizer::CAudioPacketizer(void) :
 	m_PacketSize(0),
 	m_hReadEnd(NULL),
@@ -99,7 +106,7 @@ bool	CAudioPacketizer::GetBuffer(float * ToHere)
 		}
 		else if(BytesAvailable && IsFinished())
 		{
-			ZeroMemory(ToHere, m_PacketSizeBytes);
+			ClearFloat(ToHere, m_PacketSize);
 
 			unsigned long BytesRead;
 			if(ReadFile(m_hReadEnd, ToHere, BytesAvailable, &BytesRead, NULL))
@@ -116,50 +123,6 @@ bool	CAudioPacketizer::GetBuffer(float * ToHere)
 	}
 
 	return false;
-
-/*
-	if(IsBufferAvailable())
-	{
-		ZeroMemory(ToHere, m_PacketSizeBytes);
-
-		unsigned long BytesRead;
-		if(ReadFile(m_hReadEnd, ToHere, m_PacketSizeBytes, &BytesRead, NULL))
-		{
-			if(BytesRead != m_PacketSizeBytes)
-			{
-				//we didnt read as much as expected?
-			}
-			return true;
-		}
-	}
-	else //if(IsFinished())
-	{
-		// undersize packet
-
-		unsigned long BytesAvailable;
-
-		if(PeekNamedPipe(m_hReadEnd, NULL, 0, NULL, &BytesAvailable, NULL))
-		{
-			if(BytesAvailable)
-			{
-				// lets wipe the entire buffer ahead of time then overwrite it at the beginning!
-				ZeroMemory(ToHere, m_PacketSizeBytes);
-
-				unsigned long BytesRead;
-				if(ReadFile(m_hReadEnd, ToHere, BytesAvailable, &BytesRead, NULL))
-				{
-					if(BytesRead != BytesAvailable)
-					{
-						//we didnt read as much as expected?
-					}
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-*/
-
 }
 
 void CAudioPacketizer::Reset(void)

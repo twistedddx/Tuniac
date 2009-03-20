@@ -1041,8 +1041,7 @@ static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
         if( ( shfolder_dll = LoadLibrary( _T("SHFolder.dll") ) ) != NULL )
         {
             dSHGetFolderPath =
-                (SHGETFOLDERPATH)GetProcAddress( shfolder_dll,
-                                                 _T("SHGetFolderPathA") );
+                (SHGETFOLDERPATH)GetProcAddress( shfolder_dll, "SHGetFolderPathA" );
         }
 
         if( dSHGetFolderPath != NULL &&

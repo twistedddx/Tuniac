@@ -35,15 +35,9 @@ bool CALACDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CALACDecoder::Close()
-{
-	stream_destroy(stream);
-	return(true);
-}
-
 void		CALACDecoder::Destroy(void)
 {
-	Close();
+	stream_destroy(stream);
 	delete this;
 }
 

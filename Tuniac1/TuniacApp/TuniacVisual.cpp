@@ -22,13 +22,6 @@
 #include "stdafx.h"
 #include "tuniacvisual.h"
 
-#define TIMES	8
-#define DISPLAYSAMPLES	512
-
-static float	Samples[TIMES][DISPLAYSAMPLES];
-static int		Rotator = 0;
-
-
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
 
@@ -135,6 +128,13 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	glEnable(GL_POLYGON_SMOOTH);
 
+	Rotator = 0;
+
+	Samples = (float *)VirtualAlloc(NULL, 
+											TIMES * DISPLAYSAMPLES * sizeof(float), 
+											MEM_COMMIT, 
+											PAGE_READWRITE);		// allocate audio memory
+	VirtualLock(Samples, TIMES * DISPLAYSAMPLES * sizeof(float));
 
 	return true;
 }
@@ -155,6 +155,15 @@ bool	CTuniacVisual::Detach()
 	}
 
 	m_glDC = NULL;
+
+	if(Samples)
+	{
+		VirtualUnlock(Samples, TIMES * DISPLAYSAMPLES * sizeof(float));
+
+		VirtualFree(Samples, 0, MEM_RELEASE);
+
+		Samples = NULL;
+	}
 
 	return true;
 }
@@ -184,7 +193,7 @@ bool	CTuniacVisual::Render(int w, int h)
 
 	}
 
-	if(pHelper->GetVisData(Samples[Rotator], DISPLAYSAMPLES))
+	if(pHelper->GetVisData(&Samples[Rotator*DISPLAYSAMPLES], DISPLAYSAMPLES))
 	{
 		glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
 		glClear (GL_COLOR_BUFFER_BIT);
@@ -235,12 +244,12 @@ bool	CTuniacVisual::Render(int w, int h)
 			glColor4f(0,0,0, alpha);
 			glBegin(GL_QUADS);
 			{
-				for(unsigned int samp=0; samp<DISPLAYSAMPLES-2; samp++)
+				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 				{
 					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight 	- abs(Samples[thisindex][(samp*2)]		* halfheight) );
+					glVertex2f(samp*multiplier,		halfheight 	- abs(Samples[(thisindex*DISPLAYSAMPLES)+samp]		* halfheight) );
 
-					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(Samples[thisindex][(samp*2)+2]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+2]		* halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}
@@ -249,12 +258,12 @@ bool	CTuniacVisual::Render(int w, int h)
 			glColor4f(0,0,0, alpha);
 			glBegin(GL_QUADS);
 			{
-				for(unsigned int samp=0; samp<DISPLAYSAMPLES-2; samp++)
+				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 				{
 					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight + abs(Samples[thisindex][(samp*2)+1]		* halfheight));
+					glVertex2f(samp*multiplier,		halfheight + abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+1]		* halfheight));
 
-					glVertex2f((samp+1)*multiplier,	halfheight + abs(Samples[thisindex][(samp*2)+3]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight + abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+3]		* halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}

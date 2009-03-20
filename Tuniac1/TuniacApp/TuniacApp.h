@@ -38,7 +38,7 @@
 #include "SysEvents.h"
 #include "Taskbar.h"
 #include "History.h"
-#include "CurrentlyPlaying.h"
+//#include "CurrentlyPlaying.h"
 #include "TuniacSkin.h"
 
 #include "PluginManager.h"
@@ -137,7 +137,7 @@ public:
 	CSysEvents					m_SysEvents;
 	CTaskbar					m_Taskbar;
 	CHistory					m_History;
-	CCurrentlyPlaying			m_CurrentlyPlaying;
+	//CCurrentlyPlaying			m_CurrentlyPlaying;
 
 	CTuniacSkin					m_Skin;
 

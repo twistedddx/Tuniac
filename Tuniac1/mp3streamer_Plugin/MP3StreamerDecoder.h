@@ -4,6 +4,8 @@
 #include "FrameSplitter.h"
 #include "Layer3Decoder.h"
 
+#define BUFFERSIZE (2304 * sizeof(float))
+
 class CMP3StreamerDecoder :
 	public IAudioSource
 {
@@ -21,9 +23,11 @@ protected:
 
 	CFrameSplitter				m_Splitter;
 	Frame						m_Frame;
-	IMPEGDecoder		*		m_pDecoder;
+	IMPEGDecoder			*	m_pDecoder;
 
-	float						SampleBuffer[2304];
+	unsigned long				m_LastLayer;
+
+	float					*	m_SampleBuffer;
 
 	TCHAR						m_URL[4096];
 	char						m_Server[1024];

@@ -28,7 +28,6 @@ public:
 
 ;
 	bool Open(LPTSTR szSource);
-	bool Close();
 
 public:
 	void		Destroy(void);
