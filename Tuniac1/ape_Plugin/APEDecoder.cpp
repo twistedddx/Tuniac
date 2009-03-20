@@ -31,7 +31,7 @@ bool CAPEDecoder::Open(LPTSTR szSource)
 	return true;
 }
 
-bool CAPEDecoder::Close()
+void		CAPEDecoder::Destroy(void)
 {
 	delete MACDecompressor;
 
@@ -45,12 +45,6 @@ bool CAPEDecoder::Close()
 		delete [] m_Buffer;
 		m_Buffer = NULL;
 	}
-	return true;
-}
-
-void		CAPEDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

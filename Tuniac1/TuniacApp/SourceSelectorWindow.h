@@ -25,6 +25,7 @@
 
 #include "PlaylistSourceView.h"
 #include "AudioCDSourceView.h"
+//#include "PlayQueueSourceView.h"
 //#include "RadioSourceView.h"
 
 #define SEPERATOR_WIDTH		5

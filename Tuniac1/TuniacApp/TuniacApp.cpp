@@ -31,12 +31,11 @@
 
 #include <strsafe.h>
 
-#include "TuniacApp.h"
+#include "tuniacapp.h"
 #include "resource.h"
 
-#include "VisualWindow.h"
 #include "AboutWindow.h"
-#include ".\tuniacapp.h"
+
 
 #define szClassName			TEXT("TUNIACWINDOWCLASS")
 

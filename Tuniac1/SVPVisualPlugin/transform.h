@@ -88,36 +88,31 @@ void __inline FastFullFFT(Complex *Result, Complex *Samples)
 }
 
 
-void __inline FastFFT_M8( unsigned char* pDest, signed char *pSamples)
+void __inline FastFFT_M8(unsigned char* pDest, signed char *pSamples)
 {
 	static	Complex Result[BLOCKSIZE];
 	int		i;
-	long temp1;
-	long temp2;
-	long temp3;
-	long temp4;
-
 
 	short	*pRT		= RepositionTable;
 	Complex	*pResult	= Result;
 
 	for(i = 0; i < (BLOCKSIZE>>3); i++)
 	{
-		Result[pRT[0]].r = ((float) pSamples[0]) * (float)(0.0625);
+		Result[pRT[0]].r = ((float)pSamples[0]) * 0.0625f;
 		Result[pRT[0]].i = 0.0f;
-		Result[pRT[1]].r = ((float) pSamples[1]) * (float)(0.0625);
+		Result[pRT[1]].r = ((float)pSamples[1]) * 0.0625f;
 		Result[pRT[1]].i = 0.0f;
-		Result[pRT[2]].r = ((float) pSamples[2]) * (float)(0.0625);
+		Result[pRT[2]].r = ((float)pSamples[2]) * 0.0625f;
 		Result[pRT[2]].i = 0.0f;
-		Result[pRT[3]].r = ((float) pSamples[3]) * (float)(0.0625);
+		Result[pRT[3]].r = ((float)pSamples[3]) * 0.0625f;
 		Result[pRT[3]].i = 0.0f;
-		Result[pRT[4]].r = ((float) pSamples[4]) * (float)(0.0625);
+		Result[pRT[4]].r = ((float)pSamples[4]) * 0.0625f;
 		Result[pRT[4]].i = 0.0f;
-		Result[pRT[5]].r = ((float) pSamples[5]) * (float)(0.0625);
+		Result[pRT[5]].r = ((float)pSamples[5]) * 0.0625f;
 		Result[pRT[5]].i = 0.0f;
-		Result[pRT[6]].r = ((float) pSamples[6]) * (float)(0.0625);
+		Result[pRT[6]].r = ((float)pSamples[6]) * 0.0625f;
 		Result[pRT[6]].i = 0.0f;
-		Result[pRT[7]].r = ((float) pSamples[7]) * (float)(0.0625);
+		Result[pRT[7]].r = ((float)pSamples[7]) * 0.0625f;
 		Result[pRT[7]].i = 0.0f;
 
 		pRT			+= 8;
@@ -125,31 +120,29 @@ void __inline FastFFT_M8( unsigned char* pDest, signed char *pSamples)
 	}
 	FastFFT( Result );
 
+	long tempbuffer;
 	for(i = 0; i < (BLOCKSIZE>>3); i++)
 	{
-		temp1 = pResult[0].i;
-		temp2 = pResult[1].i;
-		temp3 = pResult[2].i;
-		temp4 = pResult[3].i;
+		tempbuffer = pResult[0].i;
+		if( tempbuffer < 0 )
+			tempbuffer = -tempbuffer;
+		pDest[0]  = tempbuffer;
 
+		tempbuffer = pResult[1].i;
+		if( tempbuffer < 0 )
+			tempbuffer = -tempbuffer;
+		pDest[1]  = tempbuffer;
 
-		if( temp1 < 0 )
-			temp1 = -temp1;
-		pDest[0]  =(unsigned char) temp1;
-		
+		tempbuffer = pResult[2].i;
+		if( tempbuffer < 0 )
+			tempbuffer = -tempbuffer;
+		pDest[2]  = tempbuffer;
 
-		if( temp2 < 0 )
-			temp2 = -temp2;
-		pDest[1]  =(unsigned char) temp2;
-		
+		tempbuffer = pResult[3].i;
+		if( tempbuffer < 0 )
+			tempbuffer = -tempbuffer;
+		pDest[3]  = tempbuffer;
 
-		if( temp3 < 0 )
-			temp3 = -temp3;
-		pDest[2]  =(unsigned char) temp3;
-		
-		if( temp4 < 0 )
-			temp4 = -temp4;
-		pDest[3]  =(unsigned char) temp4;
 		
 		pDest	+= 4;
 		pResult	+= 4;

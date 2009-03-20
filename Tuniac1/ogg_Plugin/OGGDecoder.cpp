@@ -28,16 +28,10 @@ bool COGGDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool COGGDecoder::Close()
+void		COGGDecoder::Destroy(void)
 {
 	free(m_Buffer);
 	ov_clear(&m_vf);
-	return(true);
-}
-
-void		COGGDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

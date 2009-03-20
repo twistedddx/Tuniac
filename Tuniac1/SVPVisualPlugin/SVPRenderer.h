@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma pack(16)
+
 #include "ituniacvisplugin.h"
 #include <gl/gl.h>
 #include <gl/glu.h>
@@ -17,18 +19,20 @@ protected:
 	HDC									m_glDC;		// Private GDI Device Context
 	HGLRC								m_glRC;		// Permanent Rendering Context
 
-	unsigned long						m_LastWidth;
-	unsigned long						m_LastHeight;
+	int									m_LastWidth;
+	int									m_LastHeight;
 	int									iVisRes;
 
+	VisData								vd;
+	unsigned long					*	m_textureData;
+	float							*	visdata;
+	unsigned long						ulOldNumChannels;
+
+	ITuniacVisHelper				*	m_pHelper;
+
 	Array<LPTSTR, 4>					m_VisFilenameArray;
-	unsigned long						m_SelectedVisual;
-
-	SoniqueVisExternal *				m_TheVisual;
-	ITuniacVisHelper		*			m_pHelper;
-
-	GLuint								m_textureID;
-	GLubyte				*				m_textureData;
+	SoniqueVisExternal				*	m_TheVisual;
+	int									m_SelectedVisual;
 
 	RECT								m_NextVisRect;
 	RECT								m_PrevVisRect;
@@ -37,6 +41,8 @@ protected:
 
     BITMAP								m_ArrowBM;
 	HBITMAP								m_hArrow;
+
+
 
 public:
 	SVPRenderer(void);

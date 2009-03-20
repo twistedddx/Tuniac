@@ -18,7 +18,7 @@
 
 	3. This notice may not be removed or altered from any source distribution.
 */
-
+#pragma pack(16)
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers

@@ -42,8 +42,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="1"
 				DebugInformationFormat="4"
@@ -114,8 +115,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="1"
 				DebugInformationFormat="3"
@@ -192,8 +194,9 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
 				RuntimeLibrary="0"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="false"
 				EnableEnhancedInstructionSet="1"
 			/>
@@ -266,7 +269,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
+				StructMemberAlignment="5"
 				WarningLevel="1"
 				SuppressStartupBanner="true"
 			/>

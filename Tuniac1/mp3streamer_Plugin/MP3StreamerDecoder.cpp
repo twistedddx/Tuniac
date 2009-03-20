@@ -11,7 +11,8 @@ CMP3StreamerDecoder::CMP3StreamerDecoder(LPTSTR	szSource, IAudioSourceHelper * p
 	m_pDecoder(NULL),
 	m_hReadEnd(NULL),
 	m_hWriteEnd(NULL),
-	m_DataInterval(4096)
+	m_DataInterval(4096),
+	m_SampleBuffer(NULL)
 {
 	StrCpy(m_URL, szSource);
 	m_pHelper = pHelper;
@@ -25,6 +26,17 @@ void		CMP3StreamerDecoder::Destroy(void)
 {
 	m_bDie = true;
 	CloseStream();
+	if(m_pDecoder)
+	{
+		delete m_pDecoder;
+		m_pDecoder = NULL;
+	}
+	if(m_SampleBuffer)
+	{
+		VirtualUnlock(	m_SampleBuffer, BUFFERSIZE);
+
+		VirtualFree(m_SampleBuffer, 0, MEM_RELEASE);
+	}
 	delete this;
 }
 
@@ -86,26 +98,49 @@ bool		CMP3StreamerDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSampl
 
 	if(m_Splitter.Process(m_hReadEnd, m_Frame))
 	{
-		if(m_pDecoder == NULL)
+		if((m_Frame.m_Header.GetLayer() != m_LastLayer) || (m_pDecoder == NULL))
 		{
 			switch(m_Frame.m_Header.GetLayer())
 			{
 				case LAYER3:
 					{
+						if(m_pDecoder)
+						{
+							delete m_pDecoder;
+							m_pDecoder = NULL;
+						}
 						m_pDecoder = new CLayer3Decoder();
+						m_LastLayer = LAYER3;
 					}
 					break;
 
 				default:
-					m_pHelper->LogConsoleMessage(TEXT("mp3 decoder"), TEXT("Unsupported Layer!"));
+					m_pHelper->LogConsoleMessage(TEXT("MP3 Decoder"), TEXT("Unsupported Layer (Only Layer 3 supported)."));
 					return false;
 					break;
 			}
 		}
-		if(!m_pDecoder->ProcessFrame(&m_Frame, SampleBuffer, NumSamples))
-			return false;
 
-		*ppBuffer = SampleBuffer;
+		if(!m_SampleBuffer)
+		{
+			m_SampleBuffer = (float *)VirtualAlloc(	NULL, 
+													BUFFERSIZE, 
+													MEM_COMMIT, 
+													PAGE_READWRITE);		// allocate audio memory
+			VirtualLock(m_SampleBuffer, BUFFERSIZE);
+
+		}
+
+		if(!m_pDecoder->ProcessFrame(&m_Frame, m_SampleBuffer, NumSamples))
+		{
+			*ppBuffer	= NULL;
+			*NumSamples = 0;
+
+			m_Frame.m_Header.Reset();
+			return true;
+		}
+
+		*ppBuffer = m_SampleBuffer;
 
 		return(true);
 	}
@@ -118,6 +153,7 @@ bool		CMP3StreamerDecoder::OpenStream()
 	MSG				msg;
 	unsigned long	BytesAvail = 0;
 
+	m_LastLayer = -1;
 
 	m_Release = false;
 	m_bDie = false;

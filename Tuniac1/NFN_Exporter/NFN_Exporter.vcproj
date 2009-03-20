@@ -43,14 +43,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="4"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;NFN_EXPORTER_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="1"
+				StructMemberAlignment="5"
+				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				WarningLevel="3"
+				WarningLevel="1"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -65,8 +67,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -117,13 +120,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="4"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;NFN_EXPORTER_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="1"
+				StructMemberAlignment="5"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -139,8 +144,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -191,15 +197,19 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;NFN_EXPORTER_EXPORTS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
+				RuntimeLibrary="0"
+				StructMemberAlignment="5"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="1"
+				UsePrecompiledHeader="0"
+				WarningLevel="1"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -213,8 +223,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				LinkIncremental="0"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -268,15 +278,18 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;NFN_EXPORTER_EXPORTS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				RuntimeLibrary="0"
+				StructMemberAlignment="5"
+				EnableFunctionLevelLinking="false"
 				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
+				WarningLevel="1"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -290,8 +303,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				LinkIncremental="0"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

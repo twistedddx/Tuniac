@@ -25,8 +25,10 @@
 #ifdef SSE
 #include "SSE_Utils.h"
 #define CopyFloat(dst, src, num)  SSE_CopyFloat(dst, src, num)
+#define ClearFloat(src, num)  SSE_ClearFloat(src, num)
 #else
 #define CopyFloat(dst, src, num)  CopyMemory(dst, src, (num) * sizeof(float))
+#define ClearFloat(src, num)  ZeroMemory(src, (num) * sizeof(float))
 #endif
 
 #define MAX_BUFFER_COUNT		8
@@ -57,7 +59,8 @@ CAudioOutput::CAudioOutput(IXAudio2 * pXAudio, unsigned long ulBufferSize) :
 	m_BufferInProgress(0),
 	m_pXAudio(pXAudio),
 	m_SamplesOutLastReset(0),
-	m_ulBuffersizeMS(500)
+	m_ulBuffersizeMS(500),
+	m_bPlaying(false)
 {
 	ZeroMemory(&m_waveFormatPCMEx, sizeof(m_waveFormatPCMEx));
 	m_ulBuffersizeMS = ulBufferSize;
@@ -162,11 +165,6 @@ unsigned long CAudioOutput::ThreadProc(void)
 					buf.Flags = XAUDIO2_END_OF_STREAM;
 					m_pSourceVoice->SubmitSourceBuffer( &buf );
 				}
-				//buffer empty, packetizer finished but output not finished
-				//else if(getbufferret == -1)
-				//{
-					//break;
-				//}
 				//else
 				//{
 					//break;
@@ -200,9 +198,7 @@ bool CAudioOutput::Initialize(void)
 												1.0f, 
 												this);
 	if(chr != S_OK)
-	{
 		return false;
-	}
 
 	//m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
 		
@@ -420,12 +416,9 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 
 	ulNumSamples = min(m_BlockSize, ulNumSamples);
 
-	if(m_bPlaying)
-	{
-		CopyFloat(	ToHere,
-					&m_pfAudioBuffer[(m_BufferInProgress*m_BlockSize) + offset], 
-					ulNumSamples);
-	}
+	CopyFloat(	ToHere,
+				(float *)m_pfAudioBuffer+((m_BufferInProgress*m_BlockSize) + offset), 
+				ulNumSamples);
 
 	return true;
 }

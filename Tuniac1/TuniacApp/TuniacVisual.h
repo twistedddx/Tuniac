@@ -25,6 +25,9 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 
+#define TIMES	8
+#define DISPLAYSAMPLES	512
+
 class CTuniacVisual :
 	public ITuniacVisPlugin
 {
@@ -33,6 +36,9 @@ protected:
 
 	HDC									m_glDC;		// Private GDI Device Context
 	HGLRC								m_glRC;		// Permanent Rendering Context
+
+	float							*	Samples;
+	int									Rotator;
 
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;

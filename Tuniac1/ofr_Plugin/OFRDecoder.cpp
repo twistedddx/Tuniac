@@ -64,7 +64,7 @@ bool COFRDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool COFRDecoder::Close()
+void		COFRDecoder::Destroy(void)
 {
 	if (decoderInstance != NULL)
 		OptimFROG_destroyInstance(decoderInstance);
@@ -72,12 +72,6 @@ bool COFRDecoder::Close()
 	buffer = NULL;
 	delete [] m_Buffer;
 	m_Buffer = NULL;
-	return(true);
-}
-
-void		COFRDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

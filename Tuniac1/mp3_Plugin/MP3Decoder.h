@@ -1,10 +1,11 @@
 #pragma once
+
 #include "IAudioSource.h"
 
 #include "FrameSplitter.h"
 #include "Layer3Decoder.h"
 
-#define BUFFERSIZE (4096 * sizeof(float))
+#define BUFFERSIZE (2304 * sizeof(float))
 
 class CMP3Decoder :
 	public IAudioSource
@@ -44,7 +45,6 @@ public:
 	~CMP3Decoder(void);
 
 	bool		Open(LPTSTR szFilename);
-	bool		Close(void);
 
 public:
 	void		Destroy(void);

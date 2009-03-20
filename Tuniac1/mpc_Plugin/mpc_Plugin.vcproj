@@ -47,6 +47,7 @@
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
 			/>
@@ -120,6 +121,7 @@
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
 			/>
@@ -195,6 +197,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
+				StructMemberAlignment="5"
 				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
@@ -270,6 +273,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				StructMemberAlignment="5"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

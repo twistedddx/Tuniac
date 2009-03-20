@@ -29,7 +29,6 @@ public:
 	~CWVDecoder(void);
 
 	bool Open(LPTSTR szSource);
-	bool Close();
 
 public:
 	void		Destroy(void);

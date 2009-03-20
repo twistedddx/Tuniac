@@ -48,17 +48,11 @@ bool CTTADecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CTTADecoder::Close()
+void		CTTADecoder::Destroy(void)
 {
 	close_tta_file(&info);
 	delete [] buffer;
 	buffer = NULL;
-	return(true);
-}
-
-void		CTTADecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

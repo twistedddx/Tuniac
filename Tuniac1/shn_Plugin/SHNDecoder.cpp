@@ -159,7 +159,7 @@ bool CshnDecoder::Open(LPTSTR szSource)
 	return(true);
 }
 
-bool CshnDecoder::Close()
+void		CshnDecoder::Destroy(void)
 {
 	delete [] buffer;
 	buffer = NULL;
@@ -167,12 +167,6 @@ bool CshnDecoder::Close()
 	m_Buffer = NULL;
 	ShnPlay_Close(state);
 	ShnPlayUtil_CloseFileStream(stream);
-	return(true);
-}
-
-void		CshnDecoder::Destroy(void)
-{
-	Close();
 	delete this;
 }
 

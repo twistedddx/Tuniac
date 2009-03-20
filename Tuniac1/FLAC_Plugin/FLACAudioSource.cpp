@@ -144,7 +144,6 @@ void		CFLACAudioSource::Destroy(void)
 	}
 
 	m_FileDecoder.SetSource(NULL);
-
 	delete this;
 }
 
