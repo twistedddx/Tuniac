@@ -119,7 +119,7 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	qwBytePos += readBytes;
 
-	unsigned long numSamples = readBytes / info.chans / 2;
+	unsigned long numSamples = readBytes / 4;
 
 	*ppBuffer = m_Buffer;
 
