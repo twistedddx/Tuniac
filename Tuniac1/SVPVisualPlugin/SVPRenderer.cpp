@@ -236,12 +236,11 @@ bool SVPRenderer::RenderVisual(void)
 			int x=0;
 
 		unsigned long sample = 0;
-		char tempbuffer;
 		for(int x=0; x<512; x++)
 		{
 			if(NumChannels == 1)
 			{
-				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*127.0f);
+				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*127.0f+127.0f);
 			}
 
 			if(NumChannels > 1)
