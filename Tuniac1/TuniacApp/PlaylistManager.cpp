@@ -88,7 +88,9 @@ bool CPlaylistManager::Initialize(void)
 	}
 
 	m_LibraryPlaylist.RebuildPlaylist();
-	if(!LoadPlaylistLibrary())
+	LoadPlaylistLibrary();
+	
+	if(GetActivePlaylist() == NULL)
 		SetActivePlaylist(0);
 	return true;
 }

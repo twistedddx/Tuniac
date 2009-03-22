@@ -1234,7 +1234,8 @@ unsigned long	CSourceSelectorWindow::GetVisiblePlaylistIndex()
 void CSourceSelectorWindow::ShowCurrentlyPlaying(void)
 {
 	ShowPlaylistAtIndex(tuniacApp.m_PlaylistManager.GetActivePlaylistIndex());
-	m_pVisibleView->ShowCurrentItem();
+	if(m_pVisibleView)
+		m_pVisibleView->ShowCurrentItem();
 }
 
 bool			CSourceSelectorWindow::Refresh()

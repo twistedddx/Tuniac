@@ -243,7 +243,13 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//show where we are upto in the playlist
 	m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistManager.GetActivePlaylistIndex());
-	SetArt(m_PlaylistManager.GetActivePlaylist()->GetActiveItem());
+	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+	if(pPlaylist)
+	{
+		IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+		if(pEntry)
+			SetArt(pEntry);
+	}
 
 	if(m_Preferences.GetFollowCurrentSongMode())
 		m_SourceSelectorWindow->ShowCurrentlyPlaying();
