@@ -341,6 +341,10 @@
 			UniqueIdentifier="{93455481-89BD-4b04-88EB-625EDE5264FB}"
 			>
 			<File
+				RelativePath=".\Array.h"
+				>
+			</File>
+			<File
 				RelativePath=".\BASSDecoder.h"
 				>
 			</File>

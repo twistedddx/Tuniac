@@ -2,8 +2,9 @@
 
 #include "iaudiosource.h"
 #include <stdio.h>
-
 #include "bass.h"
+
+#define BUFFERSIZE (4096 * sizeof(float))
 
 class CBASSDecoder :
 	public IAudioSource
@@ -12,13 +13,10 @@ protected:
 
 	FILE			*	m_file;
 
-	float				m_Buffer[4096];
-	unsigned char		output_buffer[4096];
+	float			*	m_Buffer;
 
 	HSTREAM				decodehandle;
-
-	QWORD				qwBytePos;
-	QWORD				qwBytes;
+	bool				bIsStream;
 	double				dTime;
 
 	BASS_CHANNELINFO	info;

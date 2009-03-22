@@ -48,57 +48,87 @@ bool			CBASSDecoderPlugin::Configure(HWND hParent)
 
 bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 {
-	for(unsigned int x=0; x<GetNumCommonExts(); x++)
+	if(!PathIsURL(szSource))
 	{
-		if(!StrCmpI(GetCommonExt(x), PathFindExtension(szSource)))
+		for(unsigned int x=0; x<GetNumCommonExts(); x++)
 		{
-			return(true);
+			if(!StrCmpI(GetCommonExt(x), PathFindExtension(szSource)))
+			{
+				return(true);
+			}
 		}
 	}
+	else
+	{
+		if(!StrCmpN(szSource, TEXT("AUDIOCD"), 7))
+			return true;
+
+		// check the correct BASS was loaded
+		if (HIWORD(BASS_GetVersion())!=BASSVERSION)
+		{
+			MessageBox(0,L"An incorrect version of BASS.DLL was loaded",0,MB_ICONERROR);
+			return false;
+		}
+
+		TCHAR				szFilename[_MAX_PATH];
+		TCHAR				szFilePath[_MAX_PATH];
+		WIN32_FIND_DATA		w32fd;
+		HANDLE				hFind;
+
+
+		GetModuleFileName(NULL, szFilePath, _MAX_PATH);
+		PathRemoveFileSpec(szFilePath);
+		PathAddBackslash(szFilePath);
+		StrCat(szFilePath, TEXT("bass"));
+		PathAddBackslash(szFilePath);
+		StrCpy(szFilename, szFilePath);
+		StrCat(szFilename, TEXT("bass*.dll"));
+
+
+		hFind = FindFirstFile(szFilename, &w32fd); 
+		if(hFind != INVALID_HANDLE_VALUE) 
+		{
+			do
+			{
+				if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
+					continue;
+
+				TCHAR szURL[_MAX_PATH];
+
+				StrCpy(szURL, szFilePath);
+				StrCat(szURL, w32fd.cFileName);
+
+				char mbURL[_MAX_PATH]; 	 
+				WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, _MAX_PATH, 0, 0);
+
+				if(!BASS_PluginLoad(mbURL, 0))
+				{
+					int x = BASS_ErrorGetCode();
+					int b = x;
+				}
+
+			} while(FindNextFile(hFind, &w32fd));
+
+			FindClose(hFind); 
+		}
+
+		BASS_Init(0,44100,0,0,NULL);
+		char mbURL[512]; 	 
+		WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
+		HSTREAM decodehandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT, NULL, 0);
+		bool bOK = false;
+		if(decodehandle)
+			bOK = true;
+
+		BASS_StreamFree(decodehandle);
+		BASS_Free();
+		BASS_PluginFree(0);
+
+		return bOK;
+	}
+
 
 	return(false);
-
-/*
-	TCHAR				szFilename[512];
-	WIN32_FIND_DATA		w32fd;
-	HANDLE				hFind;
-
-	GetModuleFileName(NULL, szFilename, 512);
-	PathRemoveFileSpec(szFilename);
-	PathAddBackslash(szFilename);
-	StrCat(szFilename, TEXT("bass*.dll"));
-
-	hFind = FindFirstFile(szFilename, &w32fd); 
-	if(hFind != INVALID_HANDLE_VALUE) 
-	{
-		do
-		{
-			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
-				continue;
-
-			char tempname[_MAX_PATH]; 	 
-			WideCharToMultiByte(CP_UTF8, 0, w32fd.cFileName, -1, tempname, _MAX_PATH, 0, 0);
-
-			HPLUGIN plug;
-			if (plug=BASS_PluginLoad(tempname,0))
-			{
-				const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
-				int a;
-				for (a=0;a<pinfo->formatc;a++)
-				{
-					//from here is wrong pinfo->formats[a].exts is "*.ext1;*.ext2;"
-					LPTSTR supportedext = &pinfo->formats[a].exts[lstrlen(szSource)-4];
-					if(!lstrcmpi(supportedext, fileext))
-					{
-						return(true);
-					}
-				}
-			}
-		} while(FindNextFile(hFind, &w32fd));
-
-		FindClose(hFind); 
-	}
-*/
 }
 
 
@@ -109,16 +139,19 @@ unsigned long	CBASSDecoderPlugin::GetNumCommonExts(void)
 #ifdef COMPILE32BIT
 	count += 8;
 #endif
-
 	return count;
 /*
-	TCHAR				szFilename[512];
+	TCHAR				szFilename[_MAX_PATH];
+	TCHAR				szFilePath[_MAX_PATH];
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
 
-	GetModuleFileName(NULL, szFilename, 512);
-	PathRemoveFileSpec(szFilename);
-	PathAddBackslash(szFilename);
+	GetModuleFileName(NULL, szFilePath, _MAX_PATH);
+	PathRemoveFileSpec(szFilePath);
+	PathAddBackslash(szFilePath);
+	StrCat(szFilePath, TEXT("bass"));
+	PathAddBackslash(szFilePath);
+	StrCpy(szFilename, szFilePath);
 	StrCat(szFilename, TEXT("bass*.dll"));
 
 	hFind = FindFirstFile(szFilename, &w32fd); 
@@ -129,26 +162,31 @@ unsigned long	CBASSDecoderPlugin::GetNumCommonExts(void)
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			char tempname[_MAX_PATH]; 	 
-			WideCharToMultiByte(CP_UTF8, 0, w32fd.cFileName, -1, tempname, _MAX_PATH, 0, 0);
+			TCHAR szURL[_MAX_PATH];
+
+			StrCpy(szURL, szFilePath);
+			StrCat(szURL, w32fd.cFileName);
+
+			char mbURL[_MAX_PATH]; 	 
+			WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, _MAX_PATH, 0, 0);
 
 			HPLUGIN plug;
-			if (plug=BASS_PluginLoad(tempname,0))
+			if (plug=BASS_PluginLoad(mbURL,0))
 			{
-				BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
+				const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
 				count += pinfo->formatc;
+				BASS_PluginFree(0);
 			}
 		} while(FindNextFile(hFind, &w32fd));
 
 		FindClose(hFind); 
 	}
-
-	return count;
 */
 }
 
 LPTSTR			CBASSDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 {
+
 	static LPTSTR exts[] = 
 	{
 		TEXT(".mp3"),
@@ -175,6 +213,76 @@ LPTSTR			CBASSDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 	};
 
 	return exts[ulIndex];
+
+
+/*
+	TCHAR				szFilename[_MAX_PATH];
+	TCHAR				szFilePath[_MAX_PATH];
+	WIN32_FIND_DATA		w32fd;
+	HANDLE				hFind;
+
+
+	GetModuleFileName(NULL, szFilePath, _MAX_PATH);
+	PathRemoveFileSpec(szFilePath);
+	PathAddBackslash(szFilePath);
+	StrCat(szFilePath, TEXT("bass"));
+	PathAddBackslash(szFilePath);
+	StrCpy(szFilename, szFilePath);
+	StrCat(szFilename, TEXT("bass*.dll"));
+
+	hFind = FindFirstFile(szFilename, &w32fd); 
+	if(hFind != INVALID_HANDLE_VALUE) 
+	{
+		do
+		{
+			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
+				continue;
+
+			TCHAR szURL[_MAX_PATH];
+
+			StrCpy(szURL, szFilePath);
+			StrCat(szURL, w32fd.cFileName);
+
+			char mbURL[_MAX_PATH]; 	 
+			WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, _MAX_PATH, 0, 0);
+
+			HPLUGIN plug;
+			if (plug=BASS_PluginLoad(mbURL,0))
+			{
+				const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
+				int a;
+				for (a=0;a<pinfo->formatc;a++)
+				{
+					//pinfo->formats[a].exts is "*.ext1;*.ext2;"
+					const char *extstring = &pinfo->formats[a].exts[1];
+					int pos = 0;
+
+					while(strlen(extstring))
+					{
+						char ext[16] = {NULL};
+						pos = strcspn(extstring, ";");
+						if(pos >= strlen(extstring))
+						{
+							strncpy(ext, extstring, pos);
+							break;
+						}
+						strncpy(ext, extstring, pos);
+						extstring = &extstring[pos+1];
+
+						LPTSTR newext = NULL;
+						MultiByteToWideChar(CP_UTF8, 0, ext, strlen(ext), newext, 16);
+						exts.AddTail(newext);
+					}
+				}
+				BASS_PluginFree(0);
+			}
+			int x = BASS_ErrorGetCode();
+			int b = x;
+		} while(FindNextFile(hFind, &w32fd));
+
+		FindClose(hFind); 
+	}
+	*/
 }
 
 
