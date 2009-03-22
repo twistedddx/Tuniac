@@ -134,10 +134,10 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 
 unsigned long	CBASSDecoderPlugin::GetNumCommonExts(void)
 {
-	unsigned long count = 10;
+	unsigned long count = 14;
 
 #ifdef COMPILE32BIT
-	count += 8;
+	count += 17;
 #endif
 	return count;
 /*
@@ -195,20 +195,35 @@ LPTSTR			CBASSDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 		TEXT(".ogg"),
 		TEXT(".wav"),
 		TEXT(".aif"),
+
+		TEXT(".cda"),
 		TEXT(".ape"),
+		TEXT(".mac"),
 		TEXT(".flac"),
+		TEXT(".fla"),
+		TEXT(".oga"),
 		TEXT(".wma"),
 		TEXT(".wv")
 
 #ifdef COMPILE32BIT
 		,TEXT(".aac")
+		,TEXT(".mp4")
+		,TEXT(".m4a")
 		,TEXT(".ac3")
+		,TEXT(".adx")
 		,TEXT(".alac")
 		,TEXT(".mpc")
+		,TEXT(".mpp")
+		,TEXT(".mp+")
 		,TEXT(".ofr")
+		,TEXT(".ofs")
 		,TEXT(".spx")
 		,TEXT(".tta")
-		,TEXT(".midi")
+		,TEXT(".mid")
+		,TEXT(".kidi")
+		,TEXT(".rmi")
+		,TEXT(".kar")
+
 #endif
 	};
 

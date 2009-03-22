@@ -489,13 +489,14 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 			}
 			break;
-/*
+
 		case WM_LBUTTONDBLCLK:
 			{
-				SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_VIS_FULLSCREEN, 0), 0);
+				//SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_VIS_FULLSCREEN, 0), 0);
+				return(DefWindowProc(hWnd, message, wParam, lParam));
 			}
 			break;
-*/
+
 		default:
 			return(DefWindowProc(hWnd, message, wParam, lParam));
 			break;
@@ -599,7 +600,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 				}
 			}
 
-			WaitForSingleObject(m_hRenderEvent, DWORD(1000.0f / tuniacApp.m_Preferences.GetVisualFPS()) );
+			WaitForSingleObject(m_hRenderEvent, DWORD(25));//(1000.0f / tuniacApp.m_Preferences.GetVisualFPS()) );
 		}
 	}
 
