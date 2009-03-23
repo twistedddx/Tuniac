@@ -15,19 +15,16 @@ protected:
 
 	float			*	m_Buffer;
 
-	HSTREAM				decodehandle;
 	bool				bIsStream;
 	double				dTime;
 
 	BASS_CHANNELINFO	info;
 
-
-
 public:
 	CBASSDecoder(void);
 	~CBASSDecoder(void);
 
-	bool Open(LPTSTR szSource);
+	bool Open(LPTSTR szSource, IAudioSourceHelper * pHelper);
 	bool Close();
 
 public:

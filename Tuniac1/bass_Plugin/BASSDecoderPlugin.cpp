@@ -17,6 +17,7 @@ void			CBASSDecoderPlugin::Destroy(void)
 
 void			CBASSDecoderPlugin::SetHelper(IAudioSourceHelper * pHelper)
 {
+	m_pHelper = pHelper;
 }
 
 LPTSTR			CBASSDecoderPlugin::GetName(void)
@@ -305,7 +306,7 @@ IAudioSource *		CBASSDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFil
 {
 	CBASSDecoder *	pDec = new CBASSDecoder();
 
-	if(!pDec->Open(szSource))
+	if(!pDec->Open(szSource, m_pHelper))
 	{
 		delete pDec;
 		return(NULL);
