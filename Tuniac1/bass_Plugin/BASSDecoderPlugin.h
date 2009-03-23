@@ -4,6 +4,9 @@
 class CBASSDecoderPlugin :
 	public IAudioSourceSupplier
 {
+protected:
+	IAudioSourceHelper *	m_pHelper;
+
 public:
 	CBASSDecoderPlugin(void);
 	~CBASSDecoderPlugin(void);
