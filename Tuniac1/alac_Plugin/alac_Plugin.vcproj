@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
@@ -118,7 +118,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER;DECODER"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
@@ -194,7 +194,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;INFOMANAGER"
 				StructMemberAlignment="5"
 				EnableEnhancedInstructionSet="1"
 			/>
@@ -270,7 +270,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;INFOMANAGER;DECODER"
 				StructMemberAlignment="5"
 			/>
 			<Tool

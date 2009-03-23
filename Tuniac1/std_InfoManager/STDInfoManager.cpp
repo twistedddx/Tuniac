@@ -46,7 +46,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 15;
+	return 19;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -54,9 +54,13 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 	static LPTSTR exts[] = 
 	{
 		TEXT(".flac"),
+		TEXT(".fla"),
 		TEXT(".mp3"),
 		TEXT(".ogg"),
+		TEXT(".oga"),
 		TEXT(".mpc"),
+		TEXT(".mp+"),
+		TEXT(".mpp"),
 		TEXT(".wv"),
 		TEXT(".m4a"),
 		TEXT(".m4b"),
