@@ -43,12 +43,6 @@ class CCoreAudio :
 {
 protected:
 
-	typedef struct
-	{
-		HINSTANCE						hDLL;
-		IAudioSourceSupplier *			pAudioSourceSupplier;
-	} AudioSourceSupplierEntry;
-
 	Array<CAudioStream *, 2>			m_Streams;
 	Array<IAudioSourceSupplier *, 2>	m_AudioSources;
 
