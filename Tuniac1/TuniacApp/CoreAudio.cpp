@@ -496,6 +496,11 @@ float CCoreAudio::GetVolumePercent()
 
 void CCoreAudio::SetVolumePercent(float fVolume)
 {
+	if(fVolume > 100.0f)
+		fVolume = 100.0f;
+	if(fVolume < 0.0f)
+		fVolume = 0.0f;
+
 	m_fVolume = fVolume;
 
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
