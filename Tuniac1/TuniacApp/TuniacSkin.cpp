@@ -70,30 +70,6 @@ static ThemeIcon ThemeIconSet[THEMEICON_MAXICON] =
 		NULL
 	},
 	{
-		TEXT("item-normal.ico"),
-		IDI_THEMEICON_ITEM_NORMAL,
-		16,
-		NULL
-	},
-	{
-		TEXT("item-active.ico"),
-		IDI_THEMEICON_ITEM_ACTIVE,
-		16,
-		NULL
-	},
-	{
-		TEXT("playlist-medialibrary.ico"),
-		IDI_THEMEICON_PLAYLIST_MEDIALIBRARY,
-		32,
-		NULL
-	},
-	{
-		TEXT("playlist-cd.ico"),
-		IDI_THEMEICON_PLAYLIST_CD,
-		32,
-		NULL
-	},
-	{
 		TEXT("playlist-standard.ico"),
 		IDI_THEMEICON_PLAYLIST_STANDARD,
 		32,

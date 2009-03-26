@@ -955,23 +955,12 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 								if(pPE)
 								{
-									TCHAR	FullFilename[2048];
-									TCHAR	Path[2048];
-									LPTSTR	Filename;
-
-									StrCpyN(FullFilename, (LPTSTR)pPE->GetField(FIELD_URL), 2048);
-									StrCpyN(Path, (LPTSTR)pPE->GetField(FIELD_URL), 2048);
-
-									
-									PathRemoveFileSpec(Path);
-									Filename = PathFindFileName(FullFilename);
-
 									LPITEMIDLIST lpItemIDList;
 
 									LPMALLOC	pMalloc;
 									if(SHGetMalloc(&pMalloc) == NOERROR)
 									{
-										if(SHILCreateFromPath(FullFilename, &lpItemIDList, NULL) == S_OK)
+										if(SHILCreateFromPath((LPTSTR)pPE->GetField(FIELD_URL), &lpItemIDList, NULL) == S_OK)
 										{
 											SHOpenFolderAndSelectItems(lpItemIDList, 0, NULL, 0);
 											pMalloc->Free(lpItemIDList);
@@ -1250,7 +1239,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 				switch(lpNotify->code)
 				{
-					//slow click a file entry to edit??
+					//slow click a file entry to edit
 					case LVN_BEGINLABELEDIT:
 						{
 							HWND			hListViewWnd	= lpNotify->hwndFrom;
@@ -1303,7 +1292,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						}
 						break;
 
-						//colum click (sort column)
+						//column click (sort column)
 					case LVN_COLUMNCLICK:
 						{
 							LPNMLISTVIEW pnmv = (LPNMLISTVIEW) lParam;
@@ -1363,7 +1352,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									}
 									break;
 
-									//select all with control + a(why? alt + a does this anyway normally)
+									//select all with control + a
 								case 0x41: // 'A' key
 									{
 										if (GetKeyState(VK_CONTROL))
@@ -1397,54 +1386,50 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case LVN_GETDISPINFO:
 						{
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
-							if(pDispInfo->item.iItem != -1)
+							if(pDispInfo->item.mask & LVIF_IMAGE)
 							{
-								IPlaylistEntry * pEntry = m_pPlaylist->GetItemAtNormalFilteredIndex(pDispInfo->item.iItem);
-
-								if(pEntry)
+								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == m_pPlaylist)
 								{
-									if(pDispInfo->item.mask & LVIF_IMAGE)
+									if(m_pPlaylist->GetActiveNormalFilteredIndex() == pDispInfo->item.iItem)
 									{
-										if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == m_pPlaylist)
-										{
-											if(m_pPlaylist->GetActiveNormalFilteredIndex() == pDispInfo->item.iItem)
-											{
-												pDispInfo->item.iImage = 1;
-											}
-										}
+										pDispInfo->item.iImage = 1;
 									}
+								}
+							}
 
-									if(pDispInfo->item.mask & LVIF_TEXT)
+							if(pDispInfo->item.mask & LVIF_TEXT)
+							{
+								if(pDispInfo->item.iSubItem > 0)
+								{
+									if(m_ColumnIDArray[pDispInfo->item.iSubItem-1] == FIELD_PLAYORDER)
 									{
-										if(pDispInfo->item.iSubItem > 0)
+										if(m_pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 										{
-											if(m_ColumnIDArray[pDispInfo->item.iSubItem-1] == FIELD_PLAYORDER)
-											{
-												if(m_pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-												{
-													IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_pPlaylist;
+											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_pPlaylist;
 
-													unsigned ulPlayOrder = pPlaylistEX->GetPlayOrder(pDispInfo->item.iItem);
+											unsigned ulPlayOrder = pPlaylistEX->GetPlayOrder(pDispInfo->item.iItem);
 
-													if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
-														wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%d"), ulPlayOrder);
-													else
-														wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
-												}
-												else
-												{
-													wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
-												}
-											}
+											if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
+												wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%d"), ulPlayOrder);
 											else
-											{
-												pEntry->GetTextRepresentation(	m_ColumnIDArray[pDispInfo->item.iSubItem-1],
-																				pDispInfo->item.pszText,
-																				pDispInfo->item.cchTextMax);
-											}
+												wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
+										}
+										else
+										{
+											wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
 									}
+									else
+									{
+										IPlaylistEntry * pEntry = m_pPlaylist->GetItemAtNormalFilteredIndex(pDispInfo->item.iItem);
 
+										if(pEntry)
+										{
+											pEntry->GetTextRepresentation(	m_ColumnIDArray[pDispInfo->item.iSubItem-1],
+																		pDispInfo->item.pszText,
+																		pDispInfo->item.cchTextMax);
+										}
+									}
 								}
 							}
 						}
