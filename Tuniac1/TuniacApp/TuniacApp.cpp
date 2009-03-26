@@ -108,7 +108,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	m_SoftPause.bNow = false;
 	m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-	
+
+	m_iFailedSongRetry = 0;
+
 	//fail if we cant start something
 	if(!CCoreAudio::Instance()->Startup())
 		return false;
@@ -740,15 +742,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				switch (wParam)
 				{
-					//Coreaudio was called to setsource
+					//Coreaudio was succesfully called to transitionto
 					case NOTIFY_COREAUDIO_TRANSITIONTO:
 						{
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
 
 							UpdateState();
-
-							//update the new current song on the playlist
 							m_SourceSelectorWindow->UpdateView();
 
 							//focus current song if we are following playback
@@ -848,30 +848,38 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					case NOTIFY_COREAUDIO_PLAYBACKFAILED:
 						{
 							//CoreAudio couldnt open the last song we told it to, try again
-							//we may need to watch how many times this has failed so this doesnt try
-							//to churn through an entire invalid ML
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-							if(pPlaylist->Next())
+							//after 10 failed songs in a row we stop automatically going to the next song
+							if(m_iFailedSongRetry < 10)
 							{
-								//play the song we got
-								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-								if(pIPE)
+								m_iFailedSongRetry++;
+
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+								if(pPlaylist->Next())
 								{
-									//open for art before opening for decode.
-									SetArt(pIPE);
-									if(CCoreAudio::Instance()->SetSource(pIPE))
+									//play the song we got
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
 									{
-										CCoreAudio::Instance()->Play();
+										//open for art before opening for decode.
+										SetArt(pIPE);
+										if(CCoreAudio::Instance()->SetSource(pIPE))
+										{
+											CCoreAudio::Instance()->Play();
+										}
 									}
 								}
+								else
+									//no next song??
+									UpdateState();
+
+								//clear out old streams from crossfades and last song
+								CCoreAudio::Instance()->CheckOldStreams();
 							}
 							else
-								//no next song??
+							{
 								UpdateState();
-
-							//clear out old streams from crossfades and last song
-							CCoreAudio::Instance()->CheckOldStreams();
-
+								m_SourceSelectorWindow->UpdateView();
+							}
 						}
 						break;
 
@@ -890,11 +898,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 								int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
 								pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
-
-								tuniacApp.m_SourceSelectorWindow->UpdateView();
+								
 								UpdateState();
-								tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
-								tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAYED, NULL, NULL);
+								m_SourceSelectorWindow->UpdateView();
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAYED, NULL, NULL);
 							}
 						}
 						break;
@@ -931,6 +939,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has started a song
 					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
 						{
+							m_iFailedSongRetry = 0;
 						}
 						break;
 				}
@@ -2410,11 +2419,12 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 	if(pIPE)
 	{
 		pIPE->SetField(ulFieldID, szTitle);
-		//make sure the source selector window exists we can get here before its created
-		if(tuniacApp.m_SourceSelectorWindow)
-			tuniacApp.m_SourceSelectorWindow->UpdateView();
+
 		UpdateState();
-		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+		//make sure the source selector window exists we can get here before its created
+		//if(tuniacApp.m_SourceSelectorWindow)
+		m_SourceSelectorWindow->UpdateView();
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 	}
 }
 

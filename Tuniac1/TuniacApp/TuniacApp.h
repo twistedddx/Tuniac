@@ -107,6 +107,8 @@ protected:
 
 	int									m_ActiveScreen;
 
+	int									m_iFailedSongRetry;
+
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndParentProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
