@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "bass.h"
 
-#define BUFFERSIZE (4096 * sizeof(float))
+#define BUFFERSIZE (1024 * sizeof(float))
 
 class CBASSDecoder :
 	public IAudioSource
@@ -17,8 +17,10 @@ protected:
 
 	bool				bIsStream;
 	double				dTime;
-
+	bool				bModFile;
 	BASS_CHANNELINFO	info;
+
+	HSTREAM				decodehandle;
 
 public:
 	CBASSDecoder(void);

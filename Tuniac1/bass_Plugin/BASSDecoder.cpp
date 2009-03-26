@@ -1,9 +1,7 @@
 #include "StdAfx.h"
 #include "bassdecoder.h"
 
-HSTREAM decodehandle;
 IAudioSourceHelper *m_pHelper;
-TCHAR				m_URL[512];
 
 CBASSDecoder::CBASSDecoder(void)
 {
@@ -13,9 +11,10 @@ CBASSDecoder::~CBASSDecoder(void)
 {
 }
 
-void DoMeta()
+void DoMeta(HSYNC handle, void *user)
 {
-	char *icy=(char *)BASS_ChannelGetTags(decodehandle,BASS_TAG_ICY);
+	LPTSTR m_URL = (LPTSTR)user;
+	char *icy=(char *)BASS_ChannelGetTags(handle,BASS_TAG_ICY);
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
 	TCHAR szTitle[128];
@@ -36,7 +35,7 @@ void DoMeta()
 			}
 		}
 	}
-	char *meta=(char *)BASS_ChannelGetTags(decodehandle,BASS_TAG_META);
+	char *meta=(char *)BASS_ChannelGetTags(handle,BASS_TAG_META);
 	if(meta)
 	{ // got Shoutcast metadata StreamTitle='title';StreamUrl='http://www.website.com';
 		char *title=strstr(meta,"StreamTitle='");
@@ -58,7 +57,7 @@ void DoMeta()
 	}
 	else
 	{
-		meta=(char *)BASS_ChannelGetTags(decodehandle,BASS_TAG_OGG);
+		meta=(char *)BASS_ChannelGetTags(handle,BASS_TAG_OGG);
 		if(meta)
 		{ // got Icecast/OGG tags
 			const char *artist=NULL,*title=NULL,*p=meta;
@@ -87,65 +86,21 @@ void DoMeta()
 
 void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
-	DoMeta();
+	DoMeta(handle, user);
 }
-
 
 bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 {
-	BASS_Init(0,44100,0,0,NULL);
-
-	// check the correct BASS was loaded
-	if (HIWORD(BASS_GetVersion())!=BASSVERSION)
-	{
-		MessageBox(0,L"An incorrect version of BASS.DLL was loaded",0,MB_ICONERROR);
-		return false;
-	}
-
-	TCHAR				szFilename[_MAX_PATH];
-	TCHAR				szFilePath[_MAX_PATH];
-	WIN32_FIND_DATA		w32fd;
-	HANDLE				hFind;
-
-	GetModuleFileName(NULL, szFilePath, _MAX_PATH);
-	PathRemoveFileSpec(szFilePath);
-	PathAddBackslash(szFilePath);
-	StrCat(szFilePath, TEXT("bass"));
-	PathAddBackslash(szFilePath);
-	StrCpy(szFilename, szFilePath);
-	StrCat(szFilename, TEXT("bass*.dll"));
-
-	hFind = FindFirstFile(szFilename, &w32fd); 
-	if(hFind != INVALID_HANDLE_VALUE) 
-	{
-		do
-		{
-			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
-				continue;
-
-			TCHAR szURL[_MAX_PATH];
-
-			StrCpy(szURL, szFilePath);
-			StrCat(szURL, w32fd.cFileName);
-
-			char mbURL[_MAX_PATH]; 	 
-			WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, _MAX_PATH, 0, 0);
-
-			if(!BASS_PluginLoad(mbURL, 0))
-			{
-				int x = BASS_ErrorGetCode();
-				int b = x;
-			}
-
-		} while(FindNextFile(hFind, &w32fd));
-
-		FindClose(hFind); 
-	}
-
+	bModFile = false;
 	bIsStream = PathIsURL(szSource);
+
 	if(!bIsStream)
 	{
-		decodehandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT);
+		if(!(decodehandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT)))
+		{
+			if(decodehandle = BASS_MusicLoad(FALSE, szSource, 0, 0, BASS_MUSIC_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT|BASS_MUSIC_RAMP|BASS_MUSIC_PRESCAN, 0))
+				bModFile = true;
+		}
 	}
 	else
 	{
@@ -164,12 +119,16 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 			WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
 			decodehandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT|BASS_STREAM_BLOCK, NULL, 0);
 
-			StrCpy(m_URL, szSource);
-			m_pHelper = pHelper;
+			int x = BASS_ErrorGetCode();
+			int b = x;
+			if(decodehandle)
+			{
+				m_pHelper = pHelper;
 
-			DoMeta();
-			BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync,0); // Shoutcast
-			BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync,0); // Icecast/OGG
+				DoMeta(decodehandle, szSource);
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
+			}
 		}
 	}
 
@@ -183,20 +142,19 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 		dTime = BASS_ChannelBytes2Seconds(decodehandle,BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE)) * 1000;
 
 	m_Buffer = (float *)VirtualAlloc(NULL, BUFFERSIZE, MEM_COMMIT, PAGE_READWRITE);
-	VirtualLock(m_Buffer, BUFFERSIZE);
 
 	return(true);
 }
 
 bool CBASSDecoder::Close()
 {
-	BASS_StreamFree(decodehandle);
-	BASS_Free();
-	BASS_PluginFree(0);
+	if(bModFile)
+		BASS_MusicFree(decodehandle);
+	else
+		BASS_StreamFree(decodehandle);
 
 	if(m_Buffer)
 	{
-		VirtualUnlock(m_Buffer, BUFFERSIZE);
 		VirtualFree(m_Buffer, 0, MEM_RELEASE);
 	}
 
@@ -241,8 +199,10 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		return false;
 
 	DWORD readBytes = BASS_ChannelGetData(decodehandle, m_Buffer, BUFFERSIZE);
-
 	unsigned long numSamples = readBytes / sizeof(float);
+
+	if(readBytes != BUFFERSIZE)
+		ZeroMemory(&m_Buffer[numSamples], BUFFERSIZE-readBytes);
 
 	*ppBuffer = m_Buffer;
 

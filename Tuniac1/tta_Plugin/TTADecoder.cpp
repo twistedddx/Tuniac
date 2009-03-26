@@ -21,10 +21,6 @@ bool CTTADecoder::Open(LPTSTR szSource)
 	if(ret < 0)
 		return false;
 
-	ret = player_init(&info);
-	if(ret < 0)
-		return false;
-
 	if(info.BPS == 8)
 	{
 		m_divider = 128.0f;

@@ -1,15 +1,21 @@
 #pragma once
 #include "iaudiosource.h"
+#include "Array.h"
 
 class CBASSDecoderPlugin :
 	public IAudioSourceSupplier
 {
 protected:
-	IAudioSourceHelper *	m_pHelper;
+	IAudioSourceHelper	*	m_pHelper;
+	TCHAR				*	exts[40];
+	unsigned long			count;
 
 public:
 	CBASSDecoderPlugin(void);
 	~CBASSDecoderPlugin(void);
+protected:
+	bool					DoBASSInit();
+
 public:
 	virtual void			Destroy(void);
 

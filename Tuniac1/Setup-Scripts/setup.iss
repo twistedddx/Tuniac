@@ -48,7 +48,7 @@ Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Fl
 Source: ..\x64\Release\*.txt; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\x64\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: not InstallLegacyCheck; Flags: ignoreversion
 Source: ..\x64\Release\plugins\*.dll; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\bass\*.dll; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
+Source: ..\x64\Release\bass\*.dll; DestDir: {app}\bass\; Check: not InstallLegacyCheck; Flags: ignoreversion
   
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
@@ -56,7 +56,7 @@ Source: ..\Win32\Release\*.txt; DestDir: {app}\; Check: InstallLegacyCheck; Flag
 Source: ..\Win32\Release\visuals\*.dll; DestDir: {app}\visuals; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\plugins\*.dll; DestDir: {app}\plugins\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\bass\*.dll; DestDir: {app}\plugins\; Check: InstallLegacyCheck; Flags: ignoreversion
+Source: ..\Win32\Release\bass\*.dll; DestDir: {app}\bass\; Check: InstallLegacyCheck; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"

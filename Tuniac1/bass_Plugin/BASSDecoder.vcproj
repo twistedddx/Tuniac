@@ -45,8 +45,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp;./basslib/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FPM_INTEL;COMPILE32BIT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;COMPILE32BIT"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="4"
 			/>
@@ -119,6 +120,7 @@
 				AdditionalIncludeDirectories="../TuniacApp;./basslib/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="1"
+				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
 				DebugInformationFormat="3"
 			/>
@@ -193,6 +195,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;./basslib/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;COMPILE32BIT"
+				StructMemberAlignment="5"
 				EnableEnhancedInstructionSet="1"
 			/>
 			<Tool
@@ -268,6 +271,7 @@
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp;./basslib/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				StructMemberAlignment="5"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
