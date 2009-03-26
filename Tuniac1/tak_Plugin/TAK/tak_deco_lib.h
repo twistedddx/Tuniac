@@ -18,8 +18,8 @@ extern "C" {
   Software Developement Kit for TAK, (T)om's lossless (A)udio (K)ompressor:
   Decoder library.
 
-  Version:  1.1.0
-  Date:     08-12-21
+  Version:  1.1.1
+  Date:     09-02-13
   Language: C
 
   Copyright 2007 by Thomas Becker, D-49080 Osnabrueck.
@@ -373,6 +373,7 @@ enum tak_ssd_opt {
   tak_ssd_opt_BufferInput       = 0x00000002,
   tak_ssd_opt_SequentialRead    = 0x00000004,
   tak_ssd_opt_SkipDamagedFrames = 0x00000008,
+  tak_ssd_opt_CheckMd5          = 0x00000010,
 };
 
 typedef struct TtakSSDOptions {
