@@ -1,3 +1,16 @@
+Mar, 2009 part b
+---------
+-SSE optimization work
+-svp renderer updates
+-send blank audio data while not playing
+-remove redundent things.
+-BASS lib plugin
+-prevent crash on startup when invalid playlist
+-keep count of failed songs and stop trying after 10 fails in a row
+-prevent setting to high or low volume
+-DirectX March 2009 update
+
+
 Mar, 2009
 ---------
 -Add about windows to flac and m4a plugins.

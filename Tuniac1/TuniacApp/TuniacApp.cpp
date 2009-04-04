@@ -266,6 +266,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//notify that before we created the playlist window
 	PostMessage(m_hWnd, WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
+	//notice of setting song
+	m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
 	return true;
 }
 
@@ -2422,8 +2424,8 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 
 		UpdateState();
 		//make sure the source selector window exists we can get here before its created
-		//if(tuniacApp.m_SourceSelectorWindow)
-		m_SourceSelectorWindow->UpdateView();
+		if(tuniacApp.m_SourceSelectorWindow)
+			m_SourceSelectorWindow->UpdateView();
 		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 	}
 }

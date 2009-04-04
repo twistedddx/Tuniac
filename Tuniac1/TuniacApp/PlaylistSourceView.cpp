@@ -1993,8 +1993,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 			case WM_SHOWACTIVEITEM:
 				{
 					HWND		hListView  = GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
-					ListView_EnsureVisible(hListView, m_pPlaylist->GetActiveNormalFilteredIndex(), FALSE);
-					ListView_SetSelectionMark(hListView, m_pPlaylist->GetActiveNormalFilteredIndex());
+					unsigned long ulActiveIndex = m_pPlaylist->GetActiveNormalFilteredIndex();
+					ListView_EnsureVisible(hListView, ulActiveIndex, FALSE);
+					ListView_SetSelectionMark(hListView, ulActiveIndex);
 				}
 				break;
 
