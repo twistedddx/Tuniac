@@ -40,23 +40,17 @@ Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXMar2009Check; Flags: ignorevers
 Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
+Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
+Source: ..\Housekeeping\gpl.txt; DestDir: {app}\; Flags: ignoreversion
+Source: ..\Housekeeping\lgpl.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
-Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: ..\x64\Release\TuniacApp.exe; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\*.txt; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\plugins\*.dll; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: ..\x64\Release\bass\*.dll; DestDir: {app}\bass\; Check: not InstallLegacyCheck; Flags: ignoreversion
-  
+Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\*.txt; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\visuals\*.dll; DestDir: {app}\visuals; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\importexport\*.dll; DestDir: {app}\importexport\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\plugins\*.dll; DestDir: {app}\plugins\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: ..\Win32\Release\bass\*.dll; DestDir: {app}\bass\; Check: InstallLegacyCheck; Flags: ignoreversion
+Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"

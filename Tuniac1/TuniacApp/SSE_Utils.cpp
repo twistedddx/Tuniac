@@ -7,8 +7,8 @@ void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 	
 	while(len >= 4)
 	{
-		XMM0 = _mm_loadu_ps(&Src[index]);
-		_mm_storeu_ps(&Dest[index], XMM0);
+		XMM0 = _mm_load_ps(&Src[index]);
+		_mm_store_ps(&Dest[index], XMM0);
 		
 		// increment pointers;
 		index		+= 4;
@@ -31,7 +31,7 @@ void SSE_ClearFloat(float * Array, unsigned long len)
 	
 	while(len >=4)
 	{
-		_mm_storeu_ps(&Array[index], XMM0);
+		_mm_store_ps(&Array[index], XMM0);
 		index += 4;
 		len -= 4;
 	}
@@ -51,12 +51,12 @@ void SSE_AddArrayStore(float * ArrayA, float * ArrayB, float * storage, unsigned
 	
 	while(len >= 4)
 	{
-		XMM0 = _mm_loadu_ps(&ArrayA[index]);
-		XMM1 = _mm_loadu_ps(&ArrayB[index]);
+		XMM0 = _mm_load_ps(&ArrayA[index]);
+		XMM1 = _mm_load_ps(&ArrayB[index]);
 		
 		XMM2 = _mm_add_ps(XMM0, XMM1);
 		
-		_mm_storeu_ps(&storage[index], XMM2);
+		_mm_store_ps(&storage[index], XMM2);
 		
 		// increment pointers;
 		index+=4;			
@@ -90,12 +90,12 @@ void SSE_MulArrayStore(float * ArrayA, float * ArrayB, float * storage, unsigned
 
 	while(len >= 4)
 	{
-		XMM0 = _mm_loadu_ps(&ArrayA[index]);
-		XMM1 = _mm_loadu_ps(&ArrayB[index]);
+		XMM0 = _mm_load_ps(&ArrayA[index]);
+		XMM1 = _mm_load_ps(&ArrayB[index]);
 		
 		XMM2 = _mm_mul_ps(XMM0, XMM1);
 
-		_mm_storeu_ps(&storage[index], XMM2);
+		_mm_store_ps(&storage[index], XMM2);
 		
 		// increment pointers;
 		index += 4;
