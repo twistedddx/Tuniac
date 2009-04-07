@@ -8,8 +8,6 @@ SoniqueVisExternal::SoniqueVisExternal()
 {
 	p_PluginInfo	= NULL;
 	m_DllInst		= NULL;
-	bInitialized	= false;
-	crashed			= false;
 }
 
 SoniqueVisExternal::~SoniqueVisExternal()
@@ -19,26 +17,26 @@ SoniqueVisExternal::~SoniqueVisExternal()
 bool SoniqueVisExternal::LoadFromExternalDLL(LPTSTR PluginName)
 {
 	m_DllInst		= LoadLibrary ( PluginName );
-	bool worked = false;
 
 	if( m_DllInst )
 	{
-		QueryModule		= (VisInfo* (*)()) GetProcAddress( m_DllInst, "QueryModule" );
+		QueryModule = (QUERYMODULE)GetProcAddress(m_DllInst, "QueryModule");
 		if(QueryModule)
 		{
-			p_PluginInfo	= QueryModule();
+			p_PluginInfo = (VisInfo*)QueryModule();
+			if(p_PluginInfo)
+			{
+				p_PluginInfo->Initialize();
 
-			p_PluginInfo->Initialize();
+				if (p_PluginInfo->Version > 1) 
+					p_PluginInfo->ReceiveQueryInterface(&QInterface);
 
-			if (p_PluginInfo->Version >= 2) 
-				p_PluginInfo->ReceiveQueryInterface(&QInterface);
-
-
-			return true;
+				return true;
+			}
 		}
 	}
 
-	return worked;
+	return false;
 };
 
 bool SoniqueVisExternal::Shutdown(void)
@@ -68,7 +66,7 @@ void SoniqueVisExternal::DeInit()
 {
 	if( p_PluginInfo )
 	{
-		if (p_PluginInfo->Version >= 1)
+		if (p_PluginInfo->Version > 0)
 		{
 			p_PluginInfo->Deinit();
 		}
@@ -87,10 +85,7 @@ BOOL SoniqueVisExternal::Render( unsigned long *Video, int width, int height, in
 {
 	if( p_PluginInfo )
 	{
-		if(p_PluginInfo->Render(Video, width, height, pitch, pVD))
-		{
-			return(TRUE);
-		}
+		return p_PluginInfo->Render(Video, width, height, pitch, pVD);
 	}
 
 	return(FALSE);
@@ -116,7 +111,7 @@ void SoniqueVisExternal::Clicked(int x, int y)
 {
 	if(p_PluginInfo)
 	{
-		if (p_PluginInfo->Version >= 1)
+		if (p_PluginInfo->Version > 0)
 		{
 			p_PluginInfo->Clicked(x, y, 1);
 		}

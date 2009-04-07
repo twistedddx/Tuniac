@@ -1,10 +1,10 @@
-#ifndef _SONIQUE_VIS_H_
-#define _SONIQUE_VIS_H_
-
 #define VI_WAVEFORM			0x0001		// set if you need the waveform
 #define VI_SPECTRUM			0x0002		// set if you need the FFT values 
 #define SONIQUEVISPROC		0x0004		// set if you want to allow Soniques user pref vis to affect your vis
 										//   for example - blur, smoke and zoom
+
+#pragma pack (push, 8)
+
 typedef struct 
 {
 	unsigned long	MillSec;			// Sonique sets this to the time stamp of end this block of data
@@ -12,14 +12,6 @@ typedef struct
 	unsigned char	Spectrum[2][256];	// Sonique sets this to a lowfidely version of the spectrum data
 										//   being outputted at this time
 } VisData;
-
-/*
-You can pass any of these strings to Query* as expression and be returned a value
-(make sure to free it later if it's a string!):
-
-currentsonglength, currentsongposition, scheme_visual_left, scheme_visual_right, scheme_visual_blend - int
-currentskinname, currentsongfilename, currentsongtitle, currentsongauthor, currengsongdisplaystring - str
-*/
 
 class QueryInterface
 {
@@ -152,25 +144,23 @@ class SoniqueQueryInterface : public QueryInterface
 	void FreeString(char* String)
 	{
 		//if(String)
-		//	delete String;
+		//	free(String);
 
 		return;
 	}
 };
 
+typedef VisInfo* (WINAPI *QUERYMODULE)(void);
+
 class SoniqueVisExternal
 {
 private:
+
 	HINSTANCE				m_DllInst;
 	VisInfo					*p_PluginInfo;
-	bool					bInitialized;
-	char					InitDirectory[MAX_PATH+32];
-
-	bool					crashed;
 
 	SoniqueQueryInterface	QInterface;
-
-	VisInfo* (*QueryModule)(void);
+	QUERYMODULE				QueryModule;
 
 public:
 	SoniqueVisExternal();
@@ -212,4 +202,3 @@ public:
 	}
 };
 
-#endif

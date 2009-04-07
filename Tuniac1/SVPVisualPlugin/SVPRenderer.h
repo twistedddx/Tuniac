@@ -8,6 +8,7 @@
 #include "SoniqueVis.h"
 #include "Array.h"
 #include "CriticalSection.h"
+#include "kiss_fftr.h"
 
 class SVPRenderer :
 	public ITuniacVisPlugin
@@ -42,7 +43,8 @@ protected:
     BITMAP								m_ArrowBM;
 	HBITMAP								m_hArrow;
 
-
+	kiss_fftr_cfg						kiss_cfg;
+	kiss_fft_cpx					*	freq_data;
 
 public:
 	SVPRenderer(void);
