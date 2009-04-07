@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include <emmintrin.h>
 #include "svprenderer.h"
-#include "Transform.h"
 
 extern HANDLE	hInst;
 
@@ -109,8 +108,8 @@ void ChangeBrightnessC_MMX(
 #else
 
 void ChangeBrightnessC_MMX(
-    BYTE* pSource, 
-    BYTE* pDest, 
+    unsigned long* pSource, 
+    unsigned long* pDest, 
     int nNumberOfPixels, 
     int nChange)
 {
@@ -123,7 +122,7 @@ void ChangeBrightnessC_MMX(
 		if(x<0)
 			x=0;
 
-		*pDest = (BYTE)x;
+		*pDest = x;
 
 		pSource++;
 	}
@@ -184,27 +183,6 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 SVPRenderer::SVPRenderer(void)
 {
-	m_glDC			= NULL;
-	m_glRC			= NULL;
-
-	m_LastWidth			= 0;
-	m_LastHeight		= 0;
-	m_SelectedVisual	= 0;
-	m_TheVisual			= NULL;
-	iVisRes				= 512;
-
-	TCHAR				szVisualsPath[2048];
-
-	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
-	PathRemoveFileSpec(szVisualsPath);
-	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("svp"));
-	PathAddBackslash(szVisualsPath);
-
-	AddFolderOfSVP(szVisualsPath);
-
-	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-    ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
 }
 
 SVPRenderer::~SVPRenderer(void)
@@ -232,46 +210,59 @@ bool SVPRenderer::RenderVisual(void)
 
 		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
 
-		if(!m_pHelper->GetVisData(visdata, 512 * NumChannels))
-			int x=0;
+		m_pHelper->GetVisData(visdata, 512 * NumChannels);
 
-		unsigned long sample = 0;
+		int sample = 0;
+		float fSamples[2][512];
 		for(int x=0; x<512; x++)
 		{
 			if(NumChannels == 1)
 			{
-				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*127.0f+127.0f);
+				fSamples[0][x] = fSamples[1][x] = visdata[sample];
+				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*64.0f);
 			}
-
-			if(NumChannels > 1)
+			else
 			{
-				vd.Waveform[0][x] = (visdata[sample]*127.0f);
-				vd.Waveform[1][x] = (visdata[sample+1]*127.0f);
+				fSamples[0][x] = visdata[sample];
+				vd.Waveform[0][x] = (visdata[sample]*64.0f);
+
+				fSamples[1][x] = visdata[sample+1];
+				vd.Waveform[1][x] = (visdata[sample+1]*64.0f);
 			}
 			sample+=NumChannels;
 		}
 
 		if(m_TheVisual->NeedsSpectrum())
 		{
-			FastFFT_M8(vd.Spectrum[0], vd.Waveform[0]);
-			if(NumChannels > 1)
-				FastFFT_M8(vd.Spectrum[1], vd.Waveform[1]);
-			else
+			long tempbuffer = 0;
+			//left
+			kiss_fftr(kiss_cfg, fSamples[0], freq_data);
+			for(int p = 0; p < 256; p++)
 			{
-				for(int x=0; x < 256; x++)
+				tempbuffer = (freq_data[p].r * 4.0f);
+				if(tempbuffer < 0)
+					tempbuffer = -tempbuffer;
+				vd.Spectrum[1][p] = vd.Spectrum[0][p] = tempbuffer;
+			}
+			if(NumChannels > 1)
+			{
+				//right
+				kiss_fftr(kiss_cfg, fSamples[1], freq_data);
+				for(int p = 0; p < 256; p++)
 				{
-					vd.Spectrum[1][x] = vd.Spectrum[0][x];
+					tempbuffer = (freq_data[p].r * 4.0f);
+					if(tempbuffer < 0)
+						tempbuffer = -tempbuffer;
+					vd.Spectrum[1][p] = tempbuffer;
 				}
 			}
 		}
 
 		if(m_TheVisual->NeedsVisFX())
-			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -8);
+			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -16);
 
 		return m_TheVisual->Render(m_textureData, iVisRes, iVisRes, iVisRes, &vd);
 	}
-	else
-		ZeroMemory(m_textureData, iVisRes*iVisRes*sizeof(unsigned long));
 
 	return true;
 }
@@ -279,11 +270,20 @@ bool SVPRenderer::RenderVisual(void)
 
 void	SVPRenderer::Destroy(void)
 {
+	if(m_textureData)
+	{
+		VirtualFree(m_textureData, 0, MEM_RELEASE);
+		m_textureData = NULL;
+	}
+
 	if(visdata)
 	{
 		VirtualFree(visdata, 0, MEM_RELEASE);
 		visdata = NULL;
 	}
+
+	kiss_fft_free(kiss_cfg);
+	free(freq_data);
 	
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 
@@ -308,12 +308,35 @@ bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
+	m_glDC			= NULL;
+	m_glRC			= NULL;
+
+	m_LastWidth			= 0;
+	m_LastHeight		= 0;
+	m_SelectedVisual	= 0;
+	m_TheVisual			= NULL;
+	iVisRes				= 512;
+
+	TCHAR				szVisualsPath[2048];
+
+	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
+	PathRemoveFileSpec(szVisualsPath);
+	PathAddBackslash(szVisualsPath);
+	StrCat(szVisualsPath, TEXT("svp"));
+	PathAddBackslash(szVisualsPath);
+
+	AddFolderOfSVP(szVisualsPath);
+
+	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+    ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
+
+	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
+	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
+
 	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
 
 	m_LastWidth	 = 0;
 	m_LastHeight = 0;
-
-	CalcRepositionTable();
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
@@ -417,9 +440,11 @@ bool	SVPRenderer::Detach()
 		VirtualFree(visdata, 0, MEM_RELEASE);
 		visdata = NULL;
 	}
+
+	kiss_fft_free(kiss_cfg);
+	free(freq_data);
 	
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
-
 	return true;
 }
 
@@ -460,9 +485,7 @@ bool	SVPRenderer::Render(int w, int h)
 	glClear (GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();					// Reset The Modelview Matrix
 
-
-	this->RenderVisual();
-
+	RenderVisual();
 
 	glTexImage2D(	GL_TEXTURE_2D, 
 					0, 
@@ -573,22 +596,6 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 {
 	CAutoLock m(&m_RenderLock);
 
-	vd.MillSec = 0;
-	for(int i=0; i<2; i++)
-	{
-		for(int x = 0; x < 512; x++)
-		{
-			vd.Waveform[i][x] = 0;
-		}
-	}
-	for(int i=0; i<2; i++)
-	{
-		for(int x = 0; x < 256; x++)
-		{
-			vd.Spectrum[i][x] = 0;
-		}
-	}
-
 	TCHAR	szVisFilename[2048];
 	char settingsdir[2048];
 	if(m_TheVisual)
@@ -604,10 +611,13 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		delete t;
 	}
 
-
 	// set no visual
 	if(visindex == -1)
+	{
+		m_TheVisual = NULL;
+		m_SelectedVisual = 0;
 		return true;
+	}
 
 	TCHAR	szPath[2048];
 	StrCpy(szPath, m_VisFilenameArray[visindex]);
@@ -675,8 +685,6 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 				{
 					SetActiveVisual(0);
 				}
-
-
 				return true;
 			}
 			else if(PtInRect(&m_PrevVisRect, pt))
@@ -689,7 +697,6 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 				{
 					SetActiveVisual(m_VisFilenameArray.GetCount()-1);
 				}
-
 				return true;
 			}
 
