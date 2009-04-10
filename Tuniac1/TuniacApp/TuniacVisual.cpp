@@ -50,6 +50,11 @@ CTuniacVisual::~CTuniacVisual(void)
 
 void	CTuniacVisual::Destroy(void)
 {
+	if(Samples)
+	{
+		VirtualFree(Samples, 0, MEM_RELEASE);
+		Samples = NULL;
+	}
 	delete this;
 }
 
@@ -71,15 +76,18 @@ bool	CTuniacVisual::SetHelper(ITuniacVisHelper *pHelper)
 
 bool	CTuniacVisual::Attach(HDC hDC)
 {
-	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
-
 	m_LastWidth	 = 0;
 	m_LastHeight = 0;
+
+	m_glRC = NULL;
+	m_glDC = hDC;
+
+	GLuint		PixelFormat;
 
 	PIXELFORMATDESCRIPTOR pfd ;
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
 	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
-	pfd.nVersion   = 1 ; 
+	pfd.nVersion   = 1; 
 	pfd.dwFlags    =	PFD_DOUBLEBUFFER |
 						PFD_SUPPORT_OPENGL |
 						PFD_DRAW_TO_WINDOW |
@@ -89,79 +97,53 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	pfd.cDepthBits = 32 ;
 	pfd.iLayerType = PFD_MAIN_PLANE ;
 
+	if (!(PixelFormat=ChoosePixelFormat(m_glDC,&pfd)))
+		return false;
 
-	m_glDC = hDC;
+	if(!SetPixelFormat(hDC,PixelFormat,&pfd))
+		return false;
 
-	if (!(PixelFormat=ChoosePixelFormat(m_glDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
-	{
-		return false;								// Return FALSE
-	}
+	if (!(m_glRC=wglCreateContext(m_glDC)))
+		return false;
 
-	if(!SetPixelFormat(hDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
-	{
-		return false;								// Return FALSE
-	}
-
-	if (!(m_glRC=wglCreateContext(m_glDC)))				// Are We Able To Get A Rendering Context?
-	{
-		return false;								// Return FALSE
-	}
-
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
-		return false;								// Return FALSE
-	}
+	if(!wglMakeCurrent(m_glDC, m_glRC))
+		return false;
 
 	setVSync(1);
 
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
-		return false;								// Return FALSE
-	}
+	//if(!wglMakeCurrent(m_glDC, m_glRC))
+	//	return false;
 
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear (GL_COLOR_BUFFER_BIT);
+	glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
+	//glClear (GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);			// Enable Blending
+	glEnable(GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_POLYGON_SMOOTH);
 
 	Rotator = 0;
 
-	Samples = (float *)VirtualAlloc(NULL, 
-											TIMES * DISPLAYSAMPLES * sizeof(float), 
-											MEM_COMMIT, 
-											PAGE_READWRITE);		// allocate audio memory
-	VirtualLock(Samples, TIMES * DISPLAYSAMPLES * sizeof(float));
+	Samples = (float *)VirtualAlloc(NULL, TIMES * DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 
 	return true;
 }
 
 bool	CTuniacVisual::Detach()
 {
-	if (m_glRC)												// Do We Have A Rendering Context?
+	if (m_glRC)
 	{
-		if (!wglMakeCurrent(NULL,NULL))						// Are We Able To Release The DC And RC Contexts?
-		{
-		}
-
-		if (!wglDeleteContext(m_glRC))						// Are We Able To Delete The RC?
-		{
-		}
-
-		m_glRC=NULL;										// Set RC To NULL
+		wglMakeCurrent(NULL,NULL);
+		wglDeleteContext(m_glRC);
+		m_glRC=NULL;
 	}
 
 	m_glDC = NULL;
 
 	if(Samples)
 	{
-		VirtualUnlock(Samples, TIMES * DISPLAYSAMPLES * sizeof(float));
-
 		VirtualFree(Samples, 0, MEM_RELEASE);
-
 		Samples = NULL;
 	}
 
@@ -171,10 +153,8 @@ bool	CTuniacVisual::Detach()
 bool	CTuniacVisual::Render(int w, int h)
 {
 	// just to make sure!
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
-		return false;									// Return FALSE
-	}
+	//if(!wglMakeCurrent(m_glDC, m_glRC))
+	//	return false;
 
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
@@ -186,102 +166,92 @@ bool	CTuniacVisual::Render(int w, int h)
 		glLoadIdentity();
 		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		//glLoadIdentity();
 
-		glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-		glClear (GL_COLOR_BUFFER_BIT);
+		//glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
+		//glClear (GL_COLOR_BUFFER_BIT);
 
+		//glClear (GL_COLOR_BUFFER_BIT);
+		//glLoadIdentity();
 	}
+
+	glClear (GL_COLOR_BUFFER_BIT);
+	//glLoadIdentity();
+
+	//matt gray
+	glBegin(GL_QUAD_STRIP);
+		glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
+		glVertex2f(0,			0);
+
+		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+		glVertex2f(0,			m_LastHeight);
+	
+		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+		glVertex2f(m_LastWidth,	0);
+	
+		glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
+		glVertex2f(m_LastWidth,	m_LastHeight);
+	glEnd();
+
+
+	// draw background grid
+	glColor4f(0,0,0, 0.1f);
+	glBegin(GL_LINES);
+	for(unsigned long x=0; x<m_LastWidth; x+=64)
+	{
+		glVertex2i(x, 0);
+		glVertex2i(x, m_LastHeight);
+	}
+
+	for(unsigned long y=0; y<m_LastHeight; y+=64)
+	{
+		glVertex2i(0,			y);
+		glVertex2i(m_LastWidth, y);
+	}
+	glEnd();
+
 
 	if(pHelper->GetVisData(&Samples[Rotator*DISPLAYSAMPLES], DISPLAYSAMPLES))
 	{
-		glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-		glClear (GL_COLOR_BUFFER_BIT);
-		glLoadIdentity();					// Reset The Modelview Matrix
-
-		glBegin(GL_QUAD_STRIP);
-			glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
-			glVertex2f(0,			0);
-	
-			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-			glVertex2f(0,			m_LastHeight);
-		
-			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-			glVertex2f(m_LastWidth,	0);
-		
-			glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
-			glVertex2f(m_LastWidth,	m_LastHeight);
-		glEnd();
-
-
-		// draw background grid
-		glColor4f(0,0,0, 0.1f);
-		glBegin(GL_LINES);
-			for(unsigned long x=0; x<m_LastWidth; x+=64)
-			{
-				glVertex2i(x, 0);
-				glVertex2i(x, m_LastHeight);
-			}
-
-			for(unsigned long y=0; y<m_LastHeight; y+=64)
-			{
-				glVertex2i(0,			y);
-				glVertex2i(m_LastWidth, y);
-			}
-		glEnd();
-
+		float halfheight = ((float)m_LastHeight / 2.0f);
+		float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
 
 		for(int time=0; time<TIMES; time++)
 		{
-			float halfheight = ((float)m_LastHeight / 2.0f);
-			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
+			float alpha = 0.01 + (((float)time / (float)TIMES) / 2.0f);
 
-			int thisindex = ((Rotator + 1) + time) % TIMES;
-
-
-			float alpha = 0.01 + (((float)time / (float)TIMES) / 3.0f);
-
-			glColor4f(0,0,0, alpha);
+			glColor4f(0,0,0,alpha);
 			glBegin(GL_QUADS);
 			{
 				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 				{
-					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight 	- abs(Samples[(thisindex*DISPLAYSAMPLES)+samp]		* halfheight) );
+					glVertex2f(samp*multiplier, halfheight);
+					glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
 
-					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+2]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+1] * halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}
 			glEnd();
 
-			glColor4f(0,0,0, alpha);
+			glColor4f(0,0,0,alpha);
 			glBegin(GL_QUADS);
 			{
 				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 				{
-					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight + abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+1]		* halfheight));
+					glVertex2f(samp*multiplier, halfheight);
+					glVertex2f(samp*multiplier, halfheight + (Samples[samp+2] * halfheight));
 
-					glVertex2f((samp+1)*multiplier,	halfheight + abs(Samples[(thisindex*DISPLAYSAMPLES)+samp+3]		* halfheight));
+					glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
 					glVertex2f((samp+1)*multiplier,	halfheight);
 				}
 			}
 			glEnd();
 		}
-
-
-
-		Rotator++;
-		Rotator %= TIMES;
-
-		glFinish();
-
-		SwapBuffers(m_glDC);
-
 	}
 
-
+	//glFinish();
+	SwapBuffers(m_glDC);
 	return true;
 }
 
