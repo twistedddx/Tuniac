@@ -183,6 +183,8 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 SVPRenderer::SVPRenderer(void)
 {
+	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
+	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
 }
 
 SVPRenderer::~SVPRenderer(void)
@@ -322,9 +324,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	AddFolderOfSVP(szVisualsPath);
 
-	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
-	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
-
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
@@ -423,9 +422,6 @@ bool	SVPRenderer::Detach()
 		visdata = NULL;
 	}
 
-	kiss_fft_free(kiss_cfg);
-	free(freq_data);
-	
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 	return true;
 }
