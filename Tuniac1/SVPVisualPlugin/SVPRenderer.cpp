@@ -259,7 +259,7 @@ bool SVPRenderer::RenderVisual(void)
 		}
 
 		if(m_TheVisual->NeedsVisFX())
-			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -16);
+			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -24);
 
 		return m_TheVisual->Render(m_textureData, iVisRes, iVisRes, iVisRes, &vd);
 	}
@@ -286,7 +286,6 @@ void	SVPRenderer::Destroy(void)
 	free(freq_data);
 	
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
-
 	delete this;
 }
 
@@ -308,9 +307,6 @@ bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
-	m_glDC			= NULL;
-	m_glRC			= NULL;
-
 	m_LastWidth			= 0;
 	m_LastHeight		= 0;
 	m_SelectedVisual	= 0;
@@ -318,7 +314,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 	iVisRes				= 512;
 
 	TCHAR				szVisualsPath[2048];
-
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
 	PathRemoveFileSpec(szVisualsPath);
 	PathAddBackslash(szVisualsPath);
@@ -327,22 +322,14 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	AddFolderOfSVP(szVisualsPath);
 
-	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-    ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
-
 	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
 	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
 
-	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
-
-	m_LastWidth	 = 0;
-	m_LastHeight = 0;
-
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisRes, &iRegSize);
 
-	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisRes, &iRegSize);
+	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
@@ -358,6 +345,14 @@ bool	SVPRenderer::Attach(HDC hDC)
 		SetActiveVisual(m_SelectedVisual);
 	}
 
+	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+    ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
+
+	m_glRC = NULL;
+	m_glDC = hDC;
+
+	GLuint		PixelFormat;
+
 	PIXELFORMATDESCRIPTOR pfd ;
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
 	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
@@ -371,44 +366,31 @@ bool	SVPRenderer::Attach(HDC hDC)
 	pfd.cDepthBits = 32 ;
 	pfd.iLayerType = PFD_MAIN_PLANE ;
 
+	if (!(PixelFormat=ChoosePixelFormat(m_glDC,&pfd)))
+		return false;
 
-	m_glDC = hDC;
+	if(!SetPixelFormat(hDC,PixelFormat,&pfd))
+		return false;
 
-	if (!(PixelFormat=ChoosePixelFormat(m_glDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
-	{
-		return false;								// Return FALSE
-	}
+	if (!(m_glRC=wglCreateContext(m_glDC)))
+		return false;
 
-	if(!SetPixelFormat(hDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
-	{
-		return false;								// Return FALSE
-	}
-
-	if (!(m_glRC=wglCreateContext(m_glDC)))				// Are We Able To Get A Rendering Context?
-	{
-		return false;								// Return FALSE
-	}
-
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
-		return false;								// Return FALSE
-	}
+	if(!wglMakeCurrent(m_glDC, m_glRC))
+		return false;
 
 	setVSync(1);
 
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-	{
-		return false;								// Return FALSE
-	}
+	//if(!wglMakeCurrent(m_glDC, m_glRC))
+	//	return false;
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear (GL_COLOR_BUFFER_BIT);
+	//glClear (GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);			// Enable Blending
+	glEnable(GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glEnable (GL_TEXTURE_2D); /* enable texture mapping */
+    glEnable (GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP  );
@@ -420,11 +402,11 @@ bool	SVPRenderer::Attach(HDC hDC)
 }
 bool	SVPRenderer::Detach()
 {
-	if (m_glRC)												// Do We Have A Rendering Context?
+	if (m_glRC)
 	{
-		wglMakeCurrent(NULL,NULL);					// Are We Able To Release The DC And RC Contexts?
-		wglDeleteContext(m_glRC);					// Are We Able To Delete The RC?
-		m_glRC=NULL;										// Set RC To NULL
+		wglMakeCurrent(NULL,NULL);
+		wglDeleteContext(m_glRC);
+		m_glRC=NULL;
 	}
 
 	m_glDC = NULL;
@@ -453,8 +435,8 @@ bool	SVPRenderer::Render(int w, int h)
 	CAutoLock m(&m_RenderLock);
 
 	// just to make sure!
-	if(!wglMakeCurrent(m_glDC, m_glRC))					// Try To Activate The Rendering Context
-		return false;									// Return FALSE
+	//if(!wglMakeCurrent(m_glDC, m_glRC))
+	//	return false;
 
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
@@ -478,15 +460,16 @@ bool	SVPRenderer::Render(int w, int h)
 		glLoadIdentity();
 		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		//glLoadIdentity();
 	}
 
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	//glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();					// Reset The Modelview Matrix
+	//glLoadIdentity();
 
 	RenderVisual();
 
+	//the visual
 	glTexImage2D(	GL_TEXTURE_2D, 
 					0, 
 					GL_RGB,
@@ -499,7 +482,9 @@ bool	SVPRenderer::Render(int w, int h)
 
 
 	glColor4f(1,1,1,1);
-	glEnable(GL_TEXTURE_2D);
+
+	//resize the visual to fit window
+	//glEnable(GL_TEXTURE_2D);
 	glBegin (GL_QUADS);
 		glTexCoord2d(0.0, 0.0);
 		glVertex2f( 0.0f,  0.0f);	// Bottom Left Of The Texture and Quad
@@ -511,21 +496,24 @@ bool	SVPRenderer::Render(int w, int h)
 		glVertex2f( m_LastWidth,  0.0f);	// Top Left Of The Texture and Quad
 	glEnd ();
 
+	//arrows
 	if((GetTickCount() - m_LastMove) < 4000)
 	{
 		if((GetTickCount() - m_LastMove) < 2000)
 		{
+			//clear arrow
 			glColor4f(1,1,1,1);
 		}
 		else
 		{
+			//fade arrow
 			int val = (GetTickCount() - m_LastMove) - 2000;
 			float scale = (float) (2000-val) / 2000.0f;
 			glColor4f(1,1,1,scale);
 		}
 
-		glEnable(GL_TEXTURE_2D);
-
+		//load arrow
+		//glEnable(GL_TEXTURE_2D);
 		glTexImage2D(	GL_TEXTURE_2D, 
 						0, 
 						GL_ALPHA,
@@ -536,6 +524,7 @@ bool	SVPRenderer::Render(int w, int h)
 						GL_UNSIGNED_BYTE, 
 						m_ArrowBM.bmBits);
 
+		//left
 		glBegin (GL_QUADS);
 			glTexCoord2d(1.0, 1.0); glVertex2i(m_NextVisRect.left,	m_NextVisRect.top);
 			glTexCoord2d(1.0, 0.0); glVertex2i(m_NextVisRect.left,	m_NextVisRect.bottom);
@@ -543,6 +532,7 @@ bool	SVPRenderer::Render(int w, int h)
 			glTexCoord2d(0.0, 1.0); glVertex2i(m_NextVisRect.right,	m_NextVisRect.top);
 		glEnd();
 
+		//right
 		glBegin (GL_QUADS);
 			glTexCoord2d(0.0, 0.0); glVertex2i(m_PrevVisRect.left,	m_PrevVisRect.top);
 			glTexCoord2d(0.0, 1.0); glVertex2i(m_PrevVisRect.left,	m_PrevVisRect.bottom);
@@ -575,12 +565,10 @@ bool	SVPRenderer::Configure(HWND hWndParent)
 		iVisRes = 512;
 	else if(iVisRes == 512)
 		iVisRes = 640;
-	else if(iVisRes == 640)
-		iVisRes = 768;
 	else
 		iVisRes = 256;
 
-	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
 
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisRes, sizeof(int));
 
@@ -595,6 +583,14 @@ bool	SVPRenderer::Notify(unsigned long Notification)
 bool SVPRenderer::SetActiveVisual(int visindex)
 {
 	CAutoLock m(&m_RenderLock);
+
+	// set no visual
+	if(visindex == -1)
+	{
+		m_TheVisual = NULL;
+		m_SelectedVisual = 0;
+		return true;
+	}
 
 	TCHAR	szVisFilename[2048];
 	char settingsdir[2048];
@@ -611,20 +607,11 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		delete t;
 	}
 
-	// set no visual
-	if(visindex == -1)
-	{
-		m_TheVisual = NULL;
-		m_SelectedVisual = 0;
-		return true;
-	}
-
 	TCHAR	szPath[2048];
 	StrCpy(szPath, m_VisFilenameArray[visindex]);
 	PathRemoveFileSpec(szPath);
 	PathAddBackslash(szPath);
 
-	//TCHAR	szVisFilename[2048];
 	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
 
 	TCHAR oldFolder[2048];
@@ -635,7 +622,6 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	if(newVis->LoadFromExternalDLL(szVisFilename))
 	{
 		StrCat(szVisFilename, TEXT(".ini"));
-		//char settingsdir[2048];
 		WideCharToMultiByte(CP_ACP, 0, szVisFilename, 512, settingsdir, 512, NULL, NULL);
 
 		newVis->LoadSettings(settingsdir);

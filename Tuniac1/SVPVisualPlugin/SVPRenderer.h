@@ -17,8 +17,8 @@ protected:
 
 	CCriticalSection					m_RenderLock;
 
-	HDC									m_glDC;		// Private GDI Device Context
-	HGLRC								m_glRC;		// Permanent Rendering Context
+	HDC									m_glDC;
+	HGLRC								m_glRC;
 
 	int									m_LastWidth;
 	int									m_LastHeight;
