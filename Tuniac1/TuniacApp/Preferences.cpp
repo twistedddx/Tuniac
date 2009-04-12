@@ -240,7 +240,8 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							if(pPrefs->m_bShowAlbumArt && pPrefs->m_bShowVisArt)
 								tuniacApp.m_VisualWindow->Show();
 							else
-								tuniacApp.m_VisualWindow->Hide();
+								if(wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+									tuniacApp.m_VisualWindow->Hide();
 
 							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
 
