@@ -32,13 +32,12 @@ class CTuniacVisual :
 	public ITuniacVisPlugin
 {
 protected:
-	ITuniacVisHelper	*	pHelper;
+	ITuniacVisHelper	*	m_pHelper;
 
 	HDC									m_glDC;		// Private GDI Device Context
 	HGLRC								m_glRC;		// Permanent Rendering Context
 
 	float							*	Samples;
-	int									Rotator;
 
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;
