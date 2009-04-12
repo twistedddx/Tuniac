@@ -54,6 +54,7 @@ Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flag
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
+Root: HKCU; Subkey: "SOFTWARE\MediaScience\Sonique\General Preferences 0.80"; ValueType: string; ValueName: "SoniquePath"; ValueData: "{app}\visuals"
 
 [Icons]
 Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe
