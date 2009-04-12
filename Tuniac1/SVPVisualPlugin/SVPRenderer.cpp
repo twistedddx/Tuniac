@@ -287,7 +287,6 @@ void	SVPRenderer::Destroy(void)
 	kiss_fft_free(kiss_cfg);
 	free(freq_data);
 	
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 	delete this;
 }
 
@@ -313,13 +312,13 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastHeight		= 0;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
-	iVisRes				= 512;
+	iVisRes				= 240;
 
 	TCHAR				szVisualsPath[2048];
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
 	PathRemoveFileSpec(szVisualsPath);
 	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("svp"));
+	StrCat(szVisualsPath, TEXT("vis"));
 	PathAddBackslash(szVisualsPath);
 
 	AddFolderOfSVP(szVisualsPath);
@@ -379,11 +378,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	setVSync(1);
 
-	//if(!wglMakeCurrent(m_glDC, m_glRC))
-	//	return false;
-
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	//glClear (GL_COLOR_BUFFER_BIT);
+	glClear (GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -396,6 +392,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP  );
 
 	m_LastMove = GetTickCount();
+
+	SwapBuffers(m_glDC);
 
 	return true;
 }
@@ -422,17 +420,12 @@ bool	SVPRenderer::Detach()
 		visdata = NULL;
 	}
 
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 	return true;
 }
 
 bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
-
-	// just to make sure!
-	//if(!wglMakeCurrent(m_glDC, m_glRC))
-	//	return false;
 
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
@@ -456,12 +449,10 @@ bool	SVPRenderer::Render(int w, int h)
 		glLoadIdentity();
 		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
 		glMatrixMode(GL_MODELVIEW);
-		//glLoadIdentity();
+		glLoadIdentity();
 	}
 
-	//glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT);
-	//glLoadIdentity();
 
 	RenderVisual();
 
@@ -480,7 +471,6 @@ bool	SVPRenderer::Render(int w, int h)
 	glColor4f(1,1,1,1);
 
 	//resize the visual to fit window
-	//glEnable(GL_TEXTURE_2D);
 	glBegin (GL_QUADS);
 		glTexCoord2d(0.0, 0.0);
 		glVertex2f( 0.0f,  0.0f);	// Bottom Left Of The Texture and Quad
@@ -509,7 +499,6 @@ bool	SVPRenderer::Render(int w, int h)
 		}
 
 		//load arrow
-		//glEnable(GL_TEXTURE_2D);
 		glTexImage2D(	GL_TEXTURE_2D, 
 						0, 
 						GL_ALPHA,
@@ -537,7 +526,7 @@ bool	SVPRenderer::Render(int w, int h)
 		glEnd();
 	}
 
-	glFlush();
+	//glFlush();
 	SwapBuffers(m_glDC);
 
 	return true;
@@ -557,12 +546,12 @@ bool	SVPRenderer::Configure(HWND hWndParent)
 		VirtualFree(m_textureData, 0, MEM_RELEASE);
 		m_textureData = NULL;
 	}
-	if(iVisRes == 256)
+	if(iVisRes == 240)
 		iVisRes = 512;
 	else if(iVisRes == 512)
 		iVisRes = 640;
 	else
-		iVisRes = 256;
+		iVisRes = 240;
 
 	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
 
@@ -603,15 +592,14 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		delete t;
 	}
 
-	TCHAR	szPath[2048];
-	StrCpy(szPath, m_VisFilenameArray[visindex]);
-	PathRemoveFileSpec(szPath);
-	PathAddBackslash(szPath);
+	TCHAR oldFolder[2048];
+	GetCurrentDirectory(2048, oldFolder);
 
 	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
 
-	TCHAR oldFolder[2048];
-	GetCurrentDirectory(2048, oldFolder);
+	TCHAR	szPath[2048];
+	StrCpy(szPath, szVisFilename);
+	PathRemoveFileSpec(szPath);
 	SetCurrentDirectory(szPath);
 
 	SoniqueVisExternal * newVis = new SoniqueVisExternal();
@@ -624,6 +612,7 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 
 		m_TheVisual = newVis;
 		m_SelectedVisual = visindex;
+		m_TheVisual->SetQueryHelper(m_pHelper);
 	}
 	else
 	{
@@ -631,6 +620,8 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	}
 
 	SetCurrentDirectory(oldFolder);
+
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), REG_DWORD, (LPBYTE)&m_SelectedVisual, sizeof(int));
 
 	return true;
 }
