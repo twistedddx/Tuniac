@@ -87,8 +87,7 @@ BOOL SoniqueVisExternal::Render( unsigned long *Video, int width, int height, in
 	{
 		return p_PluginInfo->Render(Video, width, height, pitch, pVD);
 	}
-
-	return(FALSE);
+	return false;
 };
 
 BOOL SoniqueVisExternal::SaveSettings( char* szFileName )

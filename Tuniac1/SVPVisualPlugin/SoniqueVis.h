@@ -63,16 +63,25 @@ typedef struct _VisInfo
 
 #pragma pack (pop, 8)
 
+#include "ituniacvisplugin.h"
 class SoniqueQueryInterface : public QueryInterface
 {
+private:
+	ITuniacVisHelper	*	m_pQueryHelper;
+
+public:
+	void SetQueryHelper(ITuniacVisHelper *pHelper)
+	{
+		m_pQueryHelper = pHelper;
+	}
+
 	bool QueryInt(char* expression, int* result)
 	{
 		if(strcmp(expression, "currentsonglength") == 0)
-			//*result = (int)svprenderer.m_pHelper->GetVariable(Variable_LengthMS)/1000;
-			*result = 1;
+			*result = (int)m_pQueryHelper->GetVariable(Variable_LengthMS);
+
 		else if(strcmp(expression, "currentsongposition") == 0)
-			//*result = (int)m_pHelper->GetVariable(Variable_PositionMS)/1000;
-			*result = 1;
+			*result = (int)m_pQueryHelper->GetVariable(Variable_PositionMS);
 
 		else if(strcmp(expression, "scheme_visual_left") == 0)
 			*result = 1;
@@ -92,47 +101,39 @@ class SoniqueQueryInterface : public QueryInterface
 	char* QueryString(char* expression)
 	{
 		if(strcmp(expression, "currentsongtitle") == 0)
-			return (char*)"Title";
-		/*
 		{
-			LPTSTR szTitle = (LPTSTR)m_pHelper->GetVariable(Variable_SongTitle);
-			char * mbString = ""; 
-			WideCharToMultiByte(CP_UTF8, 0, szTitle, -1, mbString, _MAX_PATH, 0, 0);
+			LPTSTR szTitle = (LPTSTR)m_pQueryHelper->GetVariable(Variable_SongTitle);
+			char mbString[512];
+			WideCharToMultiByte(CP_ACP, 0, szTitle, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
-		*/
 
 		else if(strcmp(expression, "currentsongauthor") == 0)
-			return (char*)"Author";
-		/*
 		{
-			LPTSTR szArtist = (LPTSTR)m_pHelper->GetVariable(Variable_Artist);
-			char * mbString = ""; 
-			WideCharToMultiByte(CP_UTF8, 0, szArtist, -1, mbString, _MAX_PATH, 0, 0);
+			LPTSTR szArtist = (LPTSTR)m_pQueryHelper->GetVariable(Variable_Artist);
+			char mbString[512];
+			WideCharToMultiByte(CP_ACP, 0, szArtist, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
-		*/
 
 		else if(strcmp(expression, "currentsongfilename") == 0)
-			return (char*)"Filename";
-		/*
 		{
-			LPTSTR szFilename = (LPTSTR)m_pHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
-			char * mbString = ""; 
-			WideCharToMultiByte(CP_UTF8, 0, szFilename, -1, mbString, _MAX_PATH, 0, 0);
+			TCHAR szData[512];
+			m_pQueryHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
+			char mbString[512];
+			WideCharToMultiByte(CP_ACP, 0, szData, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
-		*/
+
 		else if(strcmp(expression, "currentsongdisplaystring") == 0)
-			return (char*)"DisplayString";
-		/*
 		{
-			LPTSTR szFilename = (LPTSTR)m_pHelper->GetTrackInfo(szData, 512, NULL, 0);
-			char * mbString = ""; 
-			WideCharToMultiByte(CP_UTF8, 0, szFilename, -1, mbString, _MAX_PATH, 0, 0);
+			TCHAR szData[512];
+			m_pQueryHelper->GetTrackInfo(szData, 512, NULL, 0);
+			char mbString[512];
+			WideCharToMultiByte(CP_ACP, 0, szData, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
-		*/
+
 		else if(strcmp(expression, "currentskinname") == 0)
 			return (char*)"Default Skin";
 
@@ -199,6 +200,12 @@ public:
 
 		}
 		return false;
+	}
+
+	bool SetQueryHelper(ITuniacVisHelper *pHelper)
+	{
+		QInterface.SetQueryHelper(pHelper);
+		return true;
 	}
 };
 
