@@ -42,6 +42,11 @@ void setVSync(int interval=1)
 
 CTuniacVisual::CTuniacVisual(void)
 {
+	m_LastWidth	 = 0;
+	m_LastHeight = 0;
+
+	m_glRC = NULL;
+	m_glDC = NULL;
 }
 
 CTuniacVisual::~CTuniacVisual(void)
@@ -70,7 +75,7 @@ unsigned long CTuniacVisual::GetFlags(void)
 
 bool	CTuniacVisual::SetHelper(ITuniacVisHelper *pHelper)
 {
-	this->pHelper = pHelper;
+	m_pHelper = pHelper;
 	return true;
 }
 
@@ -111,11 +116,8 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	setVSync(1);
 
-	//if(!wglMakeCurrent(m_glDC, m_glRC))
-	//	return false;
-
 	glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-	//glClear (GL_COLOR_BUFFER_BIT);
+	glClear (GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -123,9 +125,9 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	glEnable(GL_POLYGON_SMOOTH);
 
-	Rotator = 0;
+	Samples = (float *)VirtualAlloc(NULL, DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 
-	Samples = (float *)VirtualAlloc(NULL, TIMES * DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+	SwapBuffers(m_glDC);
 
 	return true;
 }
@@ -152,10 +154,6 @@ bool	CTuniacVisual::Detach()
 
 bool	CTuniacVisual::Render(int w, int h)
 {
-	// just to make sure!
-	//if(!wglMakeCurrent(m_glDC, m_glRC))
-	//	return false;
-
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
 		m_LastWidth		= w;
@@ -166,17 +164,10 @@ bool	CTuniacVisual::Render(int w, int h)
 		glLoadIdentity();
 		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
 		glMatrixMode(GL_MODELVIEW);
-		//glLoadIdentity();
-
-		//glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
-		//glClear (GL_COLOR_BUFFER_BIT);
-
-		//glClear (GL_COLOR_BUFFER_BIT);
-		//glLoadIdentity();
+		glLoadIdentity();
 	}
 
 	glClear (GL_COLOR_BUFFER_BIT);
-	//glLoadIdentity();
 
 	//matt gray
 	glBegin(GL_QUAD_STRIP);
@@ -192,7 +183,6 @@ bool	CTuniacVisual::Render(int w, int h)
 		glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
 		glVertex2f(m_LastWidth,	m_LastHeight);
 	glEnd();
-
 
 	// draw background grid
 	glColor4f(0,0,0, 0.1f);
@@ -210,44 +200,38 @@ bool	CTuniacVisual::Render(int w, int h)
 	}
 	glEnd();
 
-
-	if(pHelper->GetVisData(&Samples[Rotator*DISPLAYSAMPLES], DISPLAYSAMPLES))
+	if(m_pHelper->GetVisData(Samples, DISPLAYSAMPLES))
 	{
 		float halfheight = ((float)m_LastHeight / 2.0f);
 		float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
 
-		for(int time=0; time<TIMES; time++)
+		glColor4f(0,0,0,1);
+		glBegin(GL_QUADS);
 		{
-			float alpha = 0.01 + (((float)time / (float)TIMES) / 2.0f);
-
-			glColor4f(0,0,0,alpha);
-			glBegin(GL_QUADS);
+			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 			{
-				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
-				{
-					glVertex2f(samp*multiplier, halfheight);
-					glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
+				glVertex2f(samp*multiplier, halfheight);
+				glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
 
-					glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+1] * halfheight));
-					glVertex2f((samp+1)*multiplier,	halfheight);
-				}
+				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+1] * halfheight));
+				glVertex2f((samp+1)*multiplier,	halfheight);
 			}
-			glEnd();
-
-			glColor4f(0,0,0,alpha);
-			glBegin(GL_QUADS);
-			{
-				for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
-				{
-					glVertex2f(samp*multiplier, halfheight);
-					glVertex2f(samp*multiplier, halfheight + (Samples[samp+2] * halfheight));
-
-					glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
-					glVertex2f((samp+1)*multiplier,	halfheight);
-				}
-			}
-			glEnd();
 		}
+		glEnd();
+
+		glColor4f(0,0,0,1);
+		glBegin(GL_QUADS);
+		{
+			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
+			{
+				glVertex2f(samp*multiplier, halfheight);
+				glVertex2f(samp*multiplier, halfheight + (Samples[samp+2] * halfheight));
+
+				glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
+				glVertex2f((samp+1)*multiplier,	halfheight);
+			}
+		}
+		glEnd();
 	}
 
 	//glFinish();
@@ -275,36 +259,3 @@ bool	CTuniacVisual::MouseFunction(unsigned long function, int x, int y)
 {
 	return true;
 }
-
-/*
-			float halfheight = ((float)m_LastHeight / 2.0f);
-			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
-
-			glColor4f(0,0,0, 0.5f);
-			glBegin(GL_QUADS);
-			{
-				for(unsigned int samp=0; samp<NumSamples-2; samp++)
-				{
-					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight 	- abs(AudioData[(samp*2)]		* halfheight) );
-
-					glVertex2f((samp+1)*multiplier,	halfheight 	- abs(AudioData[(samp*2)+2]		* halfheight));
-					glVertex2f((samp+1)*multiplier,	halfheight);
-				}
-			}
-			glEnd();
-
-			glColor4f(0,0,0, 0.5f);
-			glBegin(GL_QUADS);
-			{
-				for(unsigned int samp=0; samp<NumSamples-2; samp++)
-				{
-					glVertex2f(samp*multiplier,		halfheight);
-					glVertex2f(samp*multiplier,		halfheight + abs(AudioData[(samp*2)+1]		* halfheight));
-
-					glVertex2f((samp+1)*multiplier,	halfheight + abs(AudioData[(samp*2)+3]		* halfheight));
-					glVertex2f((samp+1)*multiplier,	halfheight);
-				}
-			}
-			glEnd();
-*/
