@@ -314,15 +314,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_TheVisual			= NULL;
 	iVisRes				= 240;
 
-	TCHAR				szVisualsPath[2048];
-	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
-	PathRemoveFileSpec(szVisualsPath);
-	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("vis"));
-	PathAddBackslash(szVisualsPath);
-
-	AddFolderOfSVP(szVisualsPath);
-
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
@@ -331,17 +322,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
-
-	if(m_VisFilenameArray.GetCount())
-	{
-		lpRegType = REG_DWORD;
-		iRegSize = sizeof(int);
-		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
-		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
-			m_SelectedVisual = 0;
-
-		SetActiveVisual(m_SelectedVisual);
-	}
 
 	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
     ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
@@ -394,6 +374,26 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastMove = GetTickCount();
 
 	SwapBuffers(m_glDC);
+
+	TCHAR				szVisualsPath[2048];
+	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
+	PathRemoveFileSpec(szVisualsPath);
+	PathAddBackslash(szVisualsPath);
+	StrCat(szVisualsPath, TEXT("vis"));
+	PathAddBackslash(szVisualsPath);
+
+	AddFolderOfSVP(szVisualsPath);
+
+	if(m_VisFilenameArray.GetCount())
+	{
+		lpRegType = REG_DWORD;
+		iRegSize = sizeof(int);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
+		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
+			m_SelectedVisual = 0;
+
+		SetActiveVisual(m_SelectedVisual);
+	}
 
 	return true;
 }
@@ -577,13 +577,13 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		return true;
 	}
 
-	TCHAR	szVisFilename[2048];
-	char settingsdir[2048];
 	if(m_TheVisual)
 	{
-		StrCpy(szVisFilename, m_VisFilenameArray[m_SelectedVisual]);
-		StrCat(szVisFilename, TEXT(".ini"));
-		WideCharToMultiByte(CP_ACP, 0, szVisFilename, 512, settingsdir, 512, NULL, NULL);
+		TCHAR	szOldVisFilename[2048];
+		char settingsdir[2048];
+		StrCpy(szOldVisFilename, m_VisFilenameArray[m_SelectedVisual]);
+		StrCat(szOldVisFilename, TEXT(".ini"));
+		WideCharToMultiByte(CP_ACP, 0, szOldVisFilename, 512, settingsdir, 512, NULL, NULL);
 
 		SoniqueVisExternal * t = m_TheVisual;
 		m_TheVisual = NULL;
@@ -595,6 +595,7 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	TCHAR oldFolder[2048];
 	GetCurrentDirectory(2048, oldFolder);
 
+	TCHAR	szVisFilename[2048];
 	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
 
 	TCHAR	szPath[2048];
@@ -605,11 +606,6 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	SoniqueVisExternal * newVis = new SoniqueVisExternal();
 	if(newVis->LoadFromExternalDLL(szVisFilename))
 	{
-		StrCat(szVisFilename, TEXT(".ini"));
-		WideCharToMultiByte(CP_ACP, 0, szVisFilename, 512, settingsdir, 512, NULL, NULL);
-
-		newVis->LoadSettings(settingsdir);
-
 		m_TheVisual = newVis;
 		m_SelectedVisual = visindex;
 		m_TheVisual->SetQueryHelper(m_pHelper);

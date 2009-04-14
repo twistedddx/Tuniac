@@ -66,15 +66,15 @@ typedef struct _VisInfo
 #include "ituniacvisplugin.h"
 class SoniqueQueryInterface : public QueryInterface
 {
-private:
+public:
 	ITuniacVisHelper	*	m_pQueryHelper;
 
-public:
 	void SetQueryHelper(ITuniacVisHelper *pHelper)
 	{
 		m_pQueryHelper = pHelper;
 	}
 
+private:
 	bool QueryInt(char* expression, int* result)
 	{
 		if(strcmp(expression, "currentsonglength") == 0)
@@ -103,7 +103,7 @@ public:
 		if(strcmp(expression, "currentsongtitle") == 0)
 		{
 			LPTSTR szTitle = (LPTSTR)m_pQueryHelper->GetVariable(Variable_SongTitle);
-			char mbString[512];
+			char * mbString = (char *)malloc(512 * sizeof(char));
 			WideCharToMultiByte(CP_ACP, 0, szTitle, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
@@ -111,7 +111,7 @@ public:
 		else if(strcmp(expression, "currentsongauthor") == 0)
 		{
 			LPTSTR szArtist = (LPTSTR)m_pQueryHelper->GetVariable(Variable_Artist);
-			char mbString[512];
+			char * mbString = (char *)malloc(512 * sizeof(char));
 			WideCharToMultiByte(CP_ACP, 0, szArtist, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
@@ -120,7 +120,7 @@ public:
 		{
 			TCHAR szData[512];
 			m_pQueryHelper->GetTrackInfo(szData, 512, TEXT("@F"), 0);
-			char mbString[512];
+			char * mbString = (char *)malloc(512 * sizeof(char));
 			WideCharToMultiByte(CP_ACP, 0, szData, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
@@ -129,7 +129,7 @@ public:
 		{
 			TCHAR szData[512];
 			m_pQueryHelper->GetTrackInfo(szData, 512, NULL, 0);
-			char mbString[512];
+			char * mbString = (char *)malloc(512 * sizeof(char));
 			WideCharToMultiByte(CP_ACP, 0, szData, 512, mbString, 512, NULL, NULL);
 			return mbString;
 		}
@@ -144,8 +144,8 @@ public:
 
 	void FreeString(char* String)
 	{
-		//if(String)
-		//	free(String);
+		if(String)
+			free(String);
 
 		return;
 	}
