@@ -26,6 +26,12 @@ bool SoniqueVisExternal::LoadFromExternalDLL(LPTSTR PluginName)
 			p_PluginInfo = (VisInfo*)QueryModule();
 			if(p_PluginInfo)
 			{
+				char settingsdir[2048];
+				StrCat(PluginName, TEXT(".ini"));
+				WideCharToMultiByte(CP_ACP, 0, PluginName, 512, settingsdir, 512, NULL, NULL);
+
+				p_PluginInfo->OpenSettings(settingsdir);
+
 				p_PluginInfo->Initialize();
 
 				if (p_PluginInfo->Version > 1) 
