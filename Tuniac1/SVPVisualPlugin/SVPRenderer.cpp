@@ -592,6 +592,23 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		delete t;
 	}
 
+	//freshen up vd. serial experiment lain will crash without
+	vd.MillSec = 0;
+	for(int i=0; i<2; i++)
+	{
+		for(int x = 0; x < 512; x++)
+		{
+			vd.Waveform[i][x] = 0;
+		}
+	}
+	for(int i=0; i<2; i++)
+	{
+		for(int x = 0; x < 256; x++)
+		{
+			vd.Spectrum[i][x] = 0;
+		}
+	}
+
 	TCHAR oldFolder[2048];
 	GetCurrentDirectory(2048, oldFolder);
 
