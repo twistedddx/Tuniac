@@ -23,10 +23,13 @@ protected:
 	int									m_LastWidth;
 	int									m_LastHeight;
 	int									iVisRes;
+	int									iLastVisRes;
+	int									iVisMaxRes;
+	unsigned long					*	m_textureData;
 
 	VisData								vd;
-	unsigned long					*	m_textureData;
 	float							*	visdata;
+	float								fSamples[2][512];
 	unsigned long						ulOldNumChannels;
 
 	ITuniacVisHelper				*	m_pHelper;
@@ -52,7 +55,7 @@ public:
 
 	bool AddFolderOfSVP(LPTSTR	szFolder);
 
-	bool RenderVisual(void);
+	bool RenderVisual(int w, int h);
 	bool SetActiveVisual(int vis);
 
 public:

@@ -184,21 +184,31 @@ public:
 
 	bool NeedsVisFX(void)
 	{
-		if(p_PluginInfo)
-		{
+		//if(p_PluginInfo)
+		//{
 			return (p_PluginInfo->lRequired & SONIQUEVISPROC);
 
-		}
+		//}
 		return false;
 	}
 
 	bool NeedsSpectrum(void)
 	{
-		if(p_PluginInfo)
-		{
+		//if(p_PluginInfo)
+		//{
 			return (p_PluginInfo->lRequired & VI_SPECTRUM);
 
-		}
+		//}
+		return false;
+	}
+
+	bool NeedsWaveform(void)
+	{
+		//if(p_PluginInfo)
+		//{
+			return (p_PluginInfo->lRequired & VI_WAVEFORM);
+
+		//}
 		return false;
 	}
 

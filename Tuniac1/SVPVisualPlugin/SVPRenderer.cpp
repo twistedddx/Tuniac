@@ -191,7 +191,7 @@ SVPRenderer::~SVPRenderer(void)
 {
 }
 
-bool SVPRenderer::RenderVisual(void)
+bool SVPRenderer::RenderVisual(int w, int h)
 {
 	if(m_TheVisual)
 	{
@@ -214,41 +214,57 @@ bool SVPRenderer::RenderVisual(void)
 
 		m_pHelper->GetVisData(visdata, 512 * NumChannels);
 
-		int sample = 0;
-		float fSamples[2][512];
-		for(int x=0; x<512; x++)
+		if(m_TheVisual->NeedsWaveform())
 		{
-			if(NumChannels == 1)
+			int sample = 0;
+			for(int x=0; x<512; x++)
 			{
-				fSamples[0][x] = fSamples[1][x] = visdata[sample];
-				vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*64.0f);
+				if(NumChannels == 1)
+				{
+					vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*64.0f);
+				}
+				else
+				{
+					vd.Waveform[0][x] = (visdata[sample]*64.0f);
+					vd.Waveform[1][x] = (visdata[sample+1]*64.0f);
+				}
+				sample+=NumChannels;
 			}
-			else
-			{
-				fSamples[0][x] = visdata[sample];
-				vd.Waveform[0][x] = (visdata[sample]*64.0f);
-
-				fSamples[1][x] = visdata[sample+1];
-				vd.Waveform[1][x] = (visdata[sample+1]*64.0f);
-			}
-			sample+=NumChannels;
 		}
 
 		if(m_TheVisual->NeedsSpectrum())
 		{
 			long tempbuffer = 0;
-			//left
-			kiss_fftr(kiss_cfg, fSamples[0], freq_data);
-			for(int p = 0; p < 256; p++)
+			if(NumChannels == 1)
 			{
-				tempbuffer = (freq_data[p].r * 4.0f);
-				if(tempbuffer < 0)
-					tempbuffer = -tempbuffer;
-				vd.Spectrum[1][p] = vd.Spectrum[0][p] = tempbuffer;
+				kiss_fftr(kiss_cfg, visdata, freq_data);
+				for(int p = 0; p < 256; p++)
+				{
+					tempbuffer = (freq_data[p].r * 4.0f);
+					if(tempbuffer < 0)
+						tempbuffer = -tempbuffer;
+					vd.Spectrum[1][p] = vd.Spectrum[0][p] = tempbuffer;
+				}
 			}
-			if(NumChannels > 1)
+			else
 			{
-				//right
+				int sample = 0;
+				for(int x=0; x<512; x++)
+				{
+					fSamples[0][x] = visdata[sample];
+					fSamples[1][x] = visdata[sample+1];
+					sample+=NumChannels;
+				}
+				
+				kiss_fftr(kiss_cfg, fSamples[0], freq_data);
+				for(int p = 0; p < 256; p++)
+				{
+					tempbuffer = (freq_data[p].r * 4.0f);
+					if(tempbuffer < 0)
+						tempbuffer = -tempbuffer;
+					vd.Spectrum[0][p] = tempbuffer;
+				}
+
 				kiss_fftr(kiss_cfg, fSamples[1], freq_data);
 				for(int p = 0; p < 256; p++)
 				{
@@ -258,6 +274,21 @@ bool SVPRenderer::RenderVisual(void)
 					vd.Spectrum[1][p] = tempbuffer;
 				}
 			}
+		}
+
+		int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+		iVisRes = min(iVisMaxRes, iVisTempRes);
+
+		if(iVisRes != iLastVisRes)
+		{
+			if(m_textureData)
+			{
+				VirtualFree(m_textureData, 0, MEM_RELEASE);
+				m_textureData = NULL;
+			}
+
+			m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+			iLastVisRes = iVisRes;
 		}
 
 		if(m_TheVisual->NeedsVisFX())
@@ -312,13 +343,13 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastHeight		= 0;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
-	iVisRes				= 240;
+	iLastVisRes			= 0;
+	iVisMaxRes			= 240;
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisRes, &iRegSize);
-	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
@@ -454,7 +485,7 @@ bool	SVPRenderer::Render(int w, int h)
 
 	glClear (GL_COLOR_BUFFER_BIT);
 
-	RenderVisual();
+	RenderVisual(w, h);
 
 	//the visual
 	glTexImage2D(	GL_TEXTURE_2D, 
@@ -539,23 +570,14 @@ bool	SVPRenderer::About(HWND hWndParent)
 }
 bool	SVPRenderer::Configure(HWND hWndParent)
 {
-	CAutoLock m(&m_RenderLock);
-
-	if(m_textureData)
-	{
-		VirtualFree(m_textureData, 0, MEM_RELEASE);
-		m_textureData = NULL;
-	}
-	if(iVisRes == 240)
-		iVisRes = 512;
-	else if(iVisRes == 512)
-		iVisRes = 640;
+	if(iVisMaxRes == 240)
+		iVisMaxRes = 512;
+	else if(iVisMaxRes == 512)
+		iVisMaxRes = 640;
 	else
-		iVisRes = 240;
+		iVisMaxRes = 240;
 
-	m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisRes, sizeof(int));
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
 
 	return true;
 }
