@@ -55,7 +55,7 @@ public:
 
 	bool AddFolderOfSVP(LPTSTR	szFolder);
 
-	bool RenderVisual(int w, int h);
+	bool RenderVisual(void);
 	bool SetActiveVisual(int vis);
 
 public:
