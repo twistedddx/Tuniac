@@ -191,7 +191,7 @@ SVPRenderer::~SVPRenderer(void)
 {
 }
 
-bool SVPRenderer::RenderVisual(int w, int h)
+bool SVPRenderer::RenderVisual(void)
 {
 	if(m_TheVisual)
 	{
@@ -274,21 +274,6 @@ bool SVPRenderer::RenderVisual(int w, int h)
 					vd.Spectrum[1][p] = tempbuffer;
 				}
 			}
-		}
-
-		int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
-		iVisRes = min(iVisMaxRes, iVisTempRes);
-
-		if(iVisRes != iLastVisRes)
-		{
-			if(m_textureData)
-			{
-				VirtualFree(m_textureData, 0, MEM_RELEASE);
-				m_textureData = NULL;
-			}
-
-			m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-			iLastVisRes = iVisRes;
 		}
 
 		if(m_TheVisual->NeedsVisFX())
@@ -485,7 +470,23 @@ bool	SVPRenderer::Render(int w, int h)
 
 	glClear (GL_COLOR_BUFFER_BIT);
 
-	RenderVisual(w, h);
+
+	int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+	iVisRes = min(iVisMaxRes, iVisTempRes);
+
+	if(iVisRes != iLastVisRes)
+	{
+		if(m_textureData)
+		{
+			VirtualFree(m_textureData, 0, MEM_RELEASE);
+			m_textureData = NULL;
+		}
+
+		m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+		iLastVisRes = iVisRes;
+	}
+
+	RenderVisual();
 
 	//the visual
 	glTexImage2D(	GL_TEXTURE_2D, 
