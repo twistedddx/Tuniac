@@ -82,7 +82,7 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 	if(!CanHandle(szSource))
 		return false;
 
-	m_File = _wfopen(szSource, TEXT("rbS"));
+	m_File = _wfopen(szSource, TEXT("rS"));
 
 	if(m_File == NULL)
 		return false;
