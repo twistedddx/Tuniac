@@ -1,14 +1,29 @@
-Mar, 2009 part b
+Apr, 2009
 ---------
--SSE optimization work
--svp renderer updates
+-SVP renderer now can use track info
+-SVP renderer has decent fft/spectrum data for more accurate visuals
+-SVP renderer allocates enough memory (less crashes)
+-set sonique path to Tuniac in installer(for rappa)
+-SVP folder is now "vis" not "svp"(for rappa)
+-lower lowest res(now 240*240) (http://tuniac.com/forum/viewtopic.php?f=7&t=100)
+-update internal tuniac visual to be less ugly
 -send blank audio data while not playing
 -remove redundent things.
 -BASS lib plugin
+-tak 1.1.1
+-SSE optimization work
 -prevent crash on startup when invalid playlist
 -keep count of failed songs and stop trying after 10 fails in a row
 -prevent setting to high or low volume
 -DirectX March 2009 update
+-bug fixes
+
+
+Mar, 2009 part b
+---------
+-configure available for nowplayingtxt(enable output to mirc) and popupnotify(disable during fullscreen). Clicking configure on the plugin will toggle its pref on/off
+-add saving settings for plugins
+-better playlist logic. Shuffle list build, Sort, Startup, faster etc
 
 
 Mar, 2009
