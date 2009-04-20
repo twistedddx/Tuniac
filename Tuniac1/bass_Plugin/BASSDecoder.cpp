@@ -1,6 +1,12 @@
 #include "StdAfx.h"
 #include "bassdecoder.h"
 
+struct myStruct_t
+{
+   wchar_t string[510];
+   DWORD Dword;
+};
+
 IAudioSourceHelper *m_pHelper;
 
 CBASSDecoder::CBASSDecoder(void)
@@ -11,9 +17,14 @@ CBASSDecoder::~CBASSDecoder(void)
 {
 }
 
-void DoMeta(HSYNC handle, void *user)
+void DoMeta(void *user)
 {
-	LPTSTR m_URL = (LPTSTR)user;
+
+	myStruct_t& Struct = *( myStruct_t* )user;
+
+	HSTREAM handle = Struct.Dword;
+	LPTSTR m_URL = Struct.string;
+
 	char *icy=(char *)BASS_ChannelGetTags(handle,BASS_TAG_ICY);
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
@@ -86,7 +97,7 @@ void DoMeta(HSYNC handle, void *user)
 
 void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
-	DoMeta(handle, user);
+	DoMeta(user);
 }
 
 bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
@@ -125,9 +136,14 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 			{
 				m_pHelper = pHelper;
 
-				DoMeta(decodehandle, szSource);
-				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
-				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
+				myStruct_t& StructInst = *( myStruct_t* )szSource;
+				//if( ( strlen( stringThing ) + 1 ) * sizeof( wchar_t ) > sizeof( hackStructInst.hackedstring )
+				//  displayanerrorhere;
+				StructInst.Dword = decodehandle;
+
+				DoMeta(&StructInst);
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, &StructInst); // Shoutcast
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, &StructInst); // Icecast/OGG
 			}
 		}
 	}
