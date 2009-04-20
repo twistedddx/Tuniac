@@ -1,3 +1,10 @@
+Apr, 2009 part b
+---------
+-fix the m3u importer
+-more svp renderer updates
+-add tail slash SoniquePath in installer
+
+
 Apr, 2009
 ---------
 -SVP renderer now can use track info
