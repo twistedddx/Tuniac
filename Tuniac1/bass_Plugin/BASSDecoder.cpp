@@ -1,12 +1,6 @@
 #include "StdAfx.h"
 #include "bassdecoder.h"
 
-struct myStruct_t
-{
-   wchar_t string[510];
-   DWORD Dword;
-};
-
 IAudioSourceHelper *m_pHelper;
 
 CBASSDecoder::CBASSDecoder(void)
@@ -17,14 +11,8 @@ CBASSDecoder::~CBASSDecoder(void)
 {
 }
 
-void DoMeta(void *user)
+void DoMeta(DWORD handle, void *user)
 {
-
-	myStruct_t& Struct = *( myStruct_t* )user;
-
-	HSTREAM handle = Struct.Dword;
-	LPTSTR m_URL = Struct.string;
-
 	char *icy=(char *)BASS_ChannelGetTags(handle,BASS_TAG_ICY);
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
@@ -36,13 +24,13 @@ void DoMeta(void *user)
 			if (!strnicmp(icy,"icy-name:",9))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szArtist, 128);
-				m_pHelper->UpdateStreamTitle(m_URL, szArtist, FIELD_ARTIST);
+				m_pHelper->UpdateStreamTitle((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 
 			if (!strnicmp(icy,"icy-genre:",10))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+10, -1, szGenre, 128);
-				m_pHelper->UpdateStreamTitle(m_URL, szGenre, FIELD_GENRE);
+				m_pHelper->UpdateStreamTitle((LPTSTR)user, szGenre, FIELD_GENRE);
 			}
 		}
 	}
@@ -56,14 +44,14 @@ void DoMeta(void *user)
 			title=strdup(title+13);
 			strchr(title,';')[-1]=0;
 			MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
-			m_pHelper->UpdateStreamTitle(m_URL, szTitle, FIELD_TITLE);
+			m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
 		}
 		if(url && szArtist == NULL)
 		{
 			url=strdup(url+11);
 			strchr(url,';')[-1]=0;
 			MultiByteToWideChar(CP_ACP, 0, url, -1, szArtist, 128);
-			m_pHelper->UpdateStreamTitle(m_URL, szArtist, FIELD_ARTIST);
+			m_pHelper->UpdateStreamTitle((LPTSTR)user, szArtist, FIELD_ARTIST);
 		}
 	}
 	else
@@ -84,12 +72,12 @@ void DoMeta(void *user)
 				char text[100];
 				_snprintf(text,sizeof(text),"%s - %s",artist,title);
 				MultiByteToWideChar(CP_ACP, 0, text, -1, szTitle, 128);
-				m_pHelper->UpdateStreamTitle(m_URL, szTitle, FIELD_TITLE);
+				m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
 			}
 			else if(title  && szTitle == NULL)
 			{
 				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
-				m_pHelper->UpdateStreamTitle(m_URL, szTitle, FIELD_TITLE);
+				m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
 			}
 		}
     }
@@ -97,7 +85,7 @@ void DoMeta(void *user)
 
 void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
-	DoMeta(user);
+	DoMeta(channel, user);
 }
 
 bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
@@ -136,14 +124,9 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 			{
 				m_pHelper = pHelper;
 
-				myStruct_t& StructInst = *( myStruct_t* )szSource;
-				//if( ( strlen( stringThing ) + 1 ) * sizeof( wchar_t ) > sizeof( hackStructInst.hackedstring )
-				//  displayanerrorhere;
-				StructInst.Dword = decodehandle;
-
-				DoMeta(&StructInst);
-				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, &StructInst); // Shoutcast
-				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, &StructInst); // Icecast/OGG
+				DoMeta(decodehandle, szSource);
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
+				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
 			}
 		}
 	}
