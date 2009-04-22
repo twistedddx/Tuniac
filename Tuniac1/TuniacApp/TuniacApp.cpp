@@ -2441,8 +2441,6 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 		if(StrCmpI(szArtSource, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
 			return false;
 
-		m_AlbumArtPanel.SetCurrentArtSource(szArtSource);
-
 		IInfoManager * pManager = m_MediaLibrary.GetInfoManagerForFilename(szArtSource);
 		//Attempt art from infomanager(embedded art)
 		if(pManager)
@@ -2454,7 +2452,10 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 			if(pManager->GetAlbumArt(szArtSource, 0, &art, &ulSize, szMimeType, &artType))
 			{
 				if(m_AlbumArtPanel.SetSource(art, ulSize, szMimeType))
+				{
 					bArtSuccess = true;
+					m_AlbumArtPanel.SetCurrentArtSource(szArtSource);
+				}
 
 				pManager->FreeAlbumArt(art);
 			}
@@ -2468,21 +2469,24 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 
 			PathRemoveFileSpec(szJPGPath);
 
-			if(StrCmpI(szJPGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
-				return false;
-
-			m_AlbumArtPanel.SetCurrentArtSource(szJPGPath);
-
 			StrCpy(szPNGPath, szJPGPath);
 
 			PathAppend(szJPGPath, TEXT("folder.jpg"));
 			PathAppend(szPNGPath, TEXT("folder.png"));
 
-			if(m_AlbumArtPanel.SetSource(szJPGPath))
-				bArtSuccess = true;
-			else if(m_AlbumArtPanel.SetSource(szPNGPath))
-				bArtSuccess = true;
+			if((StrCmpI(szJPGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0) || (StrCmpI(szPNGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0))
+				return false;
 
+			if(m_AlbumArtPanel.SetSource(szJPGPath))
+			{
+				bArtSuccess = true;
+				m_AlbumArtPanel.SetCurrentArtSource(szJPGPath);
+			}
+			else if(m_AlbumArtPanel.SetSource(szPNGPath))
+			{
+				bArtSuccess = true;
+				m_AlbumArtPanel.SetCurrentArtSource(szPNGPath);
+			}
 		}
 	}
 
