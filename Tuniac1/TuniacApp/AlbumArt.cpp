@@ -63,8 +63,7 @@ public:
 };
 
 CAlbumArt::CAlbumArt(void) :
-	m_pBitmapData(NULL),
-	szCurrentArtSource(NULL)
+	m_pBitmapData(NULL)
 {
 	m_ulBitmapWidth		= 100;
 	m_ulBitmapHeight	= 100;
@@ -144,7 +143,10 @@ bool	CAlbumArt::LoadJpegData(jpeg_decoder_stream & input_stream)
 
 void CAlbumArt::SetCurrentArtSource(LPTSTR szNewArtSource)
 {
-	szCurrentArtSource = szNewArtSource; 
+	if(szNewArtSource)
+	{
+		StrCpyN(szCurrentArtSource, szNewArtSource, 511);
+	}
 }
 
 LPTSTR CAlbumArt::GetCurrentArtSource(void)

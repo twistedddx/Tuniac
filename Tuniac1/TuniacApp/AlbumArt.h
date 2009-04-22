@@ -13,7 +13,7 @@ protected:
 	unsigned long			m_ulBytesPerPixel;
 	unsigned long			m_ulComponents;
 
-	LPTSTR					szCurrentArtSource;
+	TCHAR					szCurrentArtSource[512];
 
 	bool	LoadJpegData(jpeg_decoder_stream & input_stream);
 
