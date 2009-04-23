@@ -443,6 +443,9 @@ bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
+	if(!wglMakeCurrent(m_glDC, m_glRC))
+		return false;
+
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
 		m_LastWidth		= w;
@@ -498,8 +501,7 @@ bool	SVPRenderer::Render(int w, int h)
 					GL_BGRA_EXT, 
 					GL_UNSIGNED_BYTE, 
 					m_textureData);
-
-
+	
 	glColor4f(1,1,1,1);
 
 	//resize the visual to fit window
@@ -591,14 +593,6 @@ bool	SVPRenderer::Notify(unsigned long Notification)
 bool SVPRenderer::SetActiveVisual(int visindex)
 {
 	CAutoLock m(&m_RenderLock);
-
-	// set no visual
-	if(visindex == -1)
-	{
-		m_TheVisual = NULL;
-		m_SelectedVisual = 0;
-		return true;
-	}
 
 	if(m_TheVisual)
 	{
