@@ -328,7 +328,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastHeight		= 0;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
-	iLastVisRes			= 0;
+	iLastVisRes			= -1;
 	iVisMaxRes			= 240;
 
 	DWORD				lpRegType = REG_DWORD;
@@ -448,7 +448,10 @@ bool	SVPRenderer::Render(int w, int h)
 
 	//we are minimized.. 
 	if(iVisRes == 0)
-		iVisRes = iLastVisRes;
+		if(iLastVisRes > 0)
+			iVisRes = iLastVisRes;
+		else
+			iVisRes = iVisMaxRes;
 
 	if(iVisRes != iLastVisRes)
 	{
