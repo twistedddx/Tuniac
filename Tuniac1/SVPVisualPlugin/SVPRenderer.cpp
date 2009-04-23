@@ -443,8 +443,24 @@ bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
-	if(!wglMakeCurrent(m_glDC, m_glRC))
-		return false;
+	int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+	iVisRes = min(iVisMaxRes, iVisTempRes);
+
+	//we are minimized.. 
+	if(iVisRes == 0)
+		iVisRes = iLastVisRes;
+
+	if(iVisRes != iLastVisRes)
+	{
+		if(m_textureData)
+		{
+			VirtualFree(m_textureData, 0, MEM_RELEASE);
+			m_textureData = NULL;
+		}
+
+		m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+		iLastVisRes = iVisRes;
+	}
 
 	if((m_LastWidth != w) || (m_LastHeight != h))
 	{
@@ -472,22 +488,6 @@ bool	SVPRenderer::Render(int w, int h)
 	}
 
 	glClear (GL_COLOR_BUFFER_BIT);
-
-
-	int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
-	iVisRes = min(iVisMaxRes, iVisTempRes);
-
-	if(iVisRes != iLastVisRes)
-	{
-		if(m_textureData)
-		{
-			VirtualFree(m_textureData, 0, MEM_RELEASE);
-			m_textureData = NULL;
-		}
-
-		m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-		iLastVisRes = iVisRes;
-	}
 
 	RenderVisual();
 
