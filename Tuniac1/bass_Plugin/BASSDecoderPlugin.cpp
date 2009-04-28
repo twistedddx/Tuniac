@@ -97,21 +97,26 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 					}
 					if(bAddPlugin)
 					{
+						
 						const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
 						for (int a=0;a<pinfo->formatc;a++)
 						{
-							char * extstring = (char *)malloc(strlen(pinfo->formats[a].exts));
-							strcpy(extstring, pinfo->formats[a].exts);
+							int iStrLen = strlen(pinfo->formats[a].exts);
+							char * extstring = (char *)malloc(iStrLen+1);
+							strncpy(extstring, pinfo->formats[a].exts, iStrLen);
+							extstring[iStrLen] = '\0';
 							char * pch = strtok(extstring,"*;");
 							while (pch != NULL)
 							{
-								TCHAR * newext = (TCHAR *)malloc(16 * sizeof(TCHAR));
-								MultiByteToWideChar(CP_UTF8, 0, pch, -1, newext, 16 * sizeof(TCHAR));
+								int iExtLen = strlen(pch);
+								TCHAR * newext = (TCHAR *)malloc((iExtLen+1) * sizeof(TCHAR));
+								MultiByteToWideChar(CP_UTF8, 0, pch, -1, newext, iExtLen+1);
 								exts[count] = (LPWSTR)newext;
 								count++;
 								pch = strtok(NULL, "*;");
 							}
 						}
+						
 					}
 				}
 
