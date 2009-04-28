@@ -58,19 +58,59 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 				HPLUGIN plug;
 				if(plug = BASS_PluginLoad(mbURL, 0))
 				{
-					const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
-					for (int a=0;a<pinfo->formatc;a++)
+					bool bAddPlugin = true;
+					int stringLen = lstrlen(szURL);
+					if(stringLen >= 12)
 					{
-						char * extstring = (char *)malloc(strlen(pinfo->formats[a].exts));
-						strcpy(extstring, pinfo->formats[a].exts);
-						char * pch = strtok(extstring,"*;");
-						while (pch != NULL)
+						LPTSTR	t = &szURL[stringLen-12];
+						if(!lstrcmpi(TEXT("bassmidi.dll"), t))
 						{
-							TCHAR * newext = (TCHAR *)malloc(16 * sizeof(TCHAR));
-							MultiByteToWideChar(CP_UTF8, 0, pch, -1, newext, 16 * sizeof(TCHAR));
-							exts[count] = (LPWSTR)newext;
-							count++;
-							pch = strtok(NULL, "*;");
+
+							TCHAR szSoundFontFilename[_MAX_PATH];
+							StrCpy(szSoundFontFilename, szFilePath);
+							StrCat(szSoundFontFilename, TEXT("*.SF2"));
+
+							WIN32_FIND_DATA		w32fdSoundFont;
+							HANDLE				hFindSoundFont;
+
+							hFind = FindFirstFile(szSoundFontFilename, &w32fdSoundFont); 
+							if(hFind != INVALID_HANDLE_VALUE) 
+							{
+								if(StrCmp(w32fdSoundFont.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
+									continue;
+
+								StrCpy(szSoundFontFilename, szFilePath);
+								StrCat(szSoundFontFilename, w32fdSoundFont.cFileName);
+
+								char mbSoundFontFilename[_MAX_PATH]; 	 
+								WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, _MAX_PATH, 0, 0);
+
+								BASS_SetConfigPtr(BASS_CONFIG_MIDI_DEFFONT, mbSoundFontFilename);
+							}
+							char * soundFont = (char *)BASS_GetConfigPtr(BASS_CONFIG_MIDI_DEFFONT);
+							if(!soundFont)
+							{
+								bAddPlugin = false;
+								BASS_PluginFree(plug);
+							}
+						}
+					}
+					if(bAddPlugin)
+					{
+						const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
+						for (int a=0;a<pinfo->formatc;a++)
+						{
+							char * extstring = (char *)malloc(strlen(pinfo->formats[a].exts));
+							strcpy(extstring, pinfo->formats[a].exts);
+							char * pch = strtok(extstring,"*;");
+							while (pch != NULL)
+							{
+								TCHAR * newext = (TCHAR *)malloc(16 * sizeof(TCHAR));
+								MultiByteToWideChar(CP_UTF8, 0, pch, -1, newext, 16 * sizeof(TCHAR));
+								exts[count] = (LPWSTR)newext;
+								count++;
+								pch = strtok(NULL, "*;");
+							}
 						}
 					}
 				}

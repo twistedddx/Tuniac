@@ -111,6 +111,8 @@ typedef DWORD HPLUGIN;		// Plugin handle
 #define BASS_CONFIG_VERIFY			23
 #define BASS_CONFIG_UPDATETHREADS	24
 
+#define BASS_CONFIG_MIDI_DEFFONT	0x10403
+
 // BASS_SetConfigPtr options
 #define BASS_CONFIG_NET_AGENT		16
 #define BASS_CONFIG_NET_PROXY		17
