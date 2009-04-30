@@ -324,12 +324,13 @@ bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
-	m_LastWidth			= 0;
-	m_LastHeight		= 0;
+	m_LastWidth			= -1;
+	m_LastHeight		= -1;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
 	iLastVisRes			= -1;
 	iVisMaxRes			= 240;
+	bResChange			= true;
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
@@ -443,32 +444,34 @@ bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
-	int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
-	iVisRes = min(iVisMaxRes, iVisTempRes);
-
-	//we are minimized.. 
-	if(iVisRes == 0)
-		if(iLastVisRes > 0)
-			iVisRes = iLastVisRes;
-		else
-			iVisRes = iVisMaxRes;
-
-	if(iVisRes != iLastVisRes)
-	{
-		if(m_textureData)
-		{
-			VirtualFree(m_textureData, 0, MEM_RELEASE);
-			m_textureData = NULL;
-		}
-
-		m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-		iLastVisRes = iVisRes;
-	}
-
-	if((m_LastWidth != w) || (m_LastHeight != h))
+	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 	{
 		m_LastWidth		= w;
 		m_LastHeight	= h;
+
+		int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+		iVisRes = min(iVisMaxRes, iVisTempRes);
+
+		//we are minimized.. 
+		if(iVisRes == 0)
+			if(iLastVisRes > 0)
+				iVisRes = iLastVisRes;
+			else
+				iVisRes = iVisMaxRes;
+
+		if(iVisRes != iLastVisRes)
+		{
+			if(m_textureData)
+			{
+				VirtualFree(m_textureData, 0, MEM_RELEASE);
+				m_textureData = NULL;
+			}
+
+			m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+			iLastVisRes = iVisRes;
+		}
+		bResChange = false;
+
 
 		SetRect(&m_NextVisRect, 
 				w-(64+16),
@@ -583,6 +586,7 @@ bool	SVPRenderer::Configure(HWND hWndParent)
 	else
 		iVisMaxRes = 240;
 
+	bResChange = true;
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
 
 	return true;

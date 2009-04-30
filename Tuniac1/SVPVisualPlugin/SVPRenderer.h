@@ -25,6 +25,7 @@ protected:
 	int									iVisRes;
 	int									iLastVisRes;
 	int									iVisMaxRes;
+	bool								bResChange;
 	unsigned long					*	m_textureData;
 
 	VisData								vd;
