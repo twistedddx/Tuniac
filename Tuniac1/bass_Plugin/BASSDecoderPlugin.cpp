@@ -4,20 +4,19 @@
 
 CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 {
-	count = 12;
-	exts[0] = TEXT(".mp3");
-	exts[1] = TEXT(".mp2");
-	exts[2] = TEXT(".mp1");
-	exts[3] = TEXT(".ogg");
-	exts[4] = TEXT(".wav");
-	exts[5] = TEXT(".aif");
+	exts.AddTail(std::string(".mp3"));
+	exts.AddTail(std::string(".mp2"));
+	exts.AddTail(std::string(".mp1"));
+	exts.AddTail(std::string(".ogg"));
+	exts.AddTail(std::string(".wav"));
+	exts.AddTail(std::string(".aif"));
 
-	exts[6] = TEXT(".mod");
-	exts[7] = TEXT(".it");
-	exts[8] = TEXT(".xm");
-	exts[9] = TEXT(".s3m");
-	exts[10] = TEXT(".mtm");
-	exts[11] = TEXT(".umx");
+	exts.AddTail(std::string(".mod"));
+	exts.AddTail(std::string(".xm"));
+	exts.AddTail(std::string(".it"));
+	exts.AddTail(std::string(".s3m"));
+	exts.AddTail(std::string(".mtm"));
+	exts.AddTail(std::string(".umx"));
 
 	if (HIWORD(BASS_GetVersion())!=BASSVERSION)
 	{
@@ -66,28 +65,32 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 						if(!lstrcmpi(TEXT("bassmidi.dll"), t))
 						{
 
-							TCHAR szSoundFontFilename[_MAX_PATH];
-							StrCpy(szSoundFontFilename, szFilePath);
-							StrCat(szSoundFontFilename, TEXT("*.SF2"));
-
-							WIN32_FIND_DATA		w32fdSoundFont;
-							HANDLE				hFindSoundFont;
-
-							hFind = FindFirstFile(szSoundFontFilename, &w32fdSoundFont); 
-							if(hFind != INVALID_HANDLE_VALUE) 
-							{
-								if(StrCmp(w32fdSoundFont.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
-									continue;
-
-								StrCpy(szSoundFontFilename, szFilePath);
-								StrCat(szSoundFontFilename, w32fdSoundFont.cFileName);
-
-								char mbSoundFontFilename[_MAX_PATH]; 	 
-								WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, _MAX_PATH, 0, 0);
-
-								BASS_SetConfigPtr(BASS_CONFIG_MIDI_DEFFONT, mbSoundFontFilename);
-							}
 							char * soundFont = (char *)BASS_GetConfigPtr(BASS_CONFIG_MIDI_DEFFONT);
+							if(!soundFont)
+							{
+								//creative soundfont not found. attempt to load local soundfont
+								TCHAR szSoundFontFilename[_MAX_PATH];
+								StrCpy(szSoundFontFilename, szFilePath);
+								StrCat(szSoundFontFilename, TEXT("*.SF2"));
+
+								WIN32_FIND_DATA		w32fdSoundFont;
+								HANDLE				hFindSoundFont;
+
+								hFindSoundFont = FindFirstFile(szSoundFontFilename, &w32fdSoundFont); 
+								if(hFindSoundFont != INVALID_HANDLE_VALUE) 
+								{
+
+									StrCpy(szSoundFontFilename, szFilePath);
+									StrCat(szSoundFontFilename, w32fdSoundFont.cFileName);
+
+									char mbSoundFontFilename[_MAX_PATH]; 	 
+									WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, _MAX_PATH, 0, 0);
+
+									BASS_SetConfigPtr(BASS_CONFIG_MIDI_DEFFONT, mbSoundFontFilename);
+									soundFont = (char *)BASS_GetConfigPtr(BASS_CONFIG_MIDI_DEFFONT);
+								}
+							}
+							//check if we now have a sound font loaded either local or creative
 							if(!soundFont)
 							{
 								bAddPlugin = false;
@@ -101,20 +104,16 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 						const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
 						for (int a=0;a<pinfo->formatc;a++)
 						{
-							int iStrLen = strlen(pinfo->formats[a].exts);
-							char * extstring = (char *)malloc(iStrLen+1);
-							strncpy(extstring, pinfo->formats[a].exts, iStrLen);
-							extstring[iStrLen] = '\0';
+							int iStrLen = strlen(pinfo->formats[a].exts) + 1;
+							char * extstring = (char *)malloc(iStrLen);
+							strncpy(extstring, pinfo->formats[a].exts, (iStrLen));
 							char * pch = strtok(extstring,"*;");
 							while (pch != NULL)
 							{
-								int iExtLen = strlen(pch);
-								TCHAR * newext = (TCHAR *)malloc((iExtLen+1) * sizeof(TCHAR));
-								MultiByteToWideChar(CP_UTF8, 0, pch, -1, newext, iExtLen+1);
-								exts[count] = (LPWSTR)newext;
-								count++;
+								exts.AddTail(std::string(pch));
 								pch = strtok(NULL, "*;");
 							}
+							free(extstring);
 						}
 						
 					}
@@ -131,8 +130,6 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 
 CBASSDecoderPlugin::~CBASSDecoderPlugin(void)
 {
-	BASS_Free();
-	BASS_PluginFree(0);
 }
 
 
@@ -144,6 +141,8 @@ bool			CBASSDecoderPlugin::DoBASSInit()
 
 void			CBASSDecoderPlugin::Destroy(void)
 {
+	BASS_Free();
+	BASS_PluginFree(0);
 	delete this;
 }
 
@@ -226,12 +225,12 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 
 unsigned long	CBASSDecoderPlugin::GetNumCommonExts(void)
 {
-	return count;
+	return exts.GetCount();
 }
 
 LPTSTR			CBASSDecoderPlugin::GetCommonExt(unsigned long ulIndex)
 {
-	return exts[ulIndex];
+	return (LPTSTR)exts[ulIndex].c_str();
 }
 
 

@@ -1,14 +1,14 @@
 #pragma once
 #include "iaudiosource.h"
 #include "Array.h"
+#include <vector>
 
 class CBASSDecoderPlugin :
 	public IAudioSourceSupplier
 {
 protected:
 	IAudioSourceHelper	*	m_pHelper;
-	TCHAR				*	exts[40];
-	unsigned long			count;
+	Array<std::string, 12>		exts;
 
 public:
 	CBASSDecoderPlugin(void);
