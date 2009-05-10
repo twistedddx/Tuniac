@@ -236,14 +236,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			if(PLDH.ActivePlaylist - 1 == ulPlaylist)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
-				pPlaylist->SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+				if(!pPlaylist->SetActiveNormalFilteredIndex(PLDH.ActiveIndex))
+					pPlaylist->SetActiveNormalFilteredIndex(0);
 				pPlaylist->RebuildPlaylistArrays();
 				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
 				{
 					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
-
-					//dont load art on loadplaylistlibrary as window doesnt exist yet.
-
 					CCoreAudio::Instance()->SetSource(pEntry);
 				}
 			}
@@ -261,12 +259,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
-			m_LibraryPlaylist.SetActiveNormalFilteredIndex(PLDH.ActiveIndex);
+			if(!m_LibraryPlaylist.SetActiveNormalFilteredIndex(PLDH.ActiveIndex))
+				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			m_LibraryPlaylist.RebuildPlaylistArrays();
 			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 			{
 				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
-				//open for art before opening for decode.
 				CCoreAudio::Instance()->SetSource(pEntry);
 			}
 			
