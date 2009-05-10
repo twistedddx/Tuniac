@@ -293,6 +293,17 @@ int String::find(const String &s, int offset) const
     return -1;
 }
 
+int String::rfind(const String &s, int offset) const
+{
+  wstring::size_type position =
+    d->data.rfind(s.d->data, offset == -1 ? wstring::npos : offset);
+
+  if(position != wstring::npos)
+    return position;
+  else
+    return -1;
+}
+
 bool String::startsWith(const String &s) const
 {
   if(s.length() > length())
@@ -560,6 +571,8 @@ String &String::operator+=(wchar_t c)
 
 String &String::operator+=(char c)
 {
+  detach();
+
   d->data += uchar(c);
   return *this;
 }
