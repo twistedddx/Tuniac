@@ -251,6 +251,15 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
 		if(pEntry)
 			SetArt(pEntry);
+		else
+		{
+			TCHAR szURL[_MAX_PATH];
+			GetModuleFileName(NULL, szURL, _MAX_PATH);
+			PathRemoveFileSpec(szURL);
+			m_AlbumArtPanel.SetCurrentArtSource(szURL);
+			PathAppend(szURL, TEXT("NoAlbumArt.jpg"));
+			m_AlbumArtPanel.SetSource(szURL);
+		}
 	}
 
 	if(m_Preferences.GetFollowCurrentSongMode())
