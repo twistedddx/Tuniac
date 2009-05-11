@@ -4,19 +4,19 @@
 
 CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 {
-	exts.AddTail(std::string(".mp3"));
-	exts.AddTail(std::string(".mp2"));
-	exts.AddTail(std::string(".mp1"));
-	exts.AddTail(std::string(".ogg"));
-	exts.AddTail(std::string(".wav"));
-	exts.AddTail(std::string(".aif"));
+	exts.AddTail(std::wstring(L".mp3"));
+	exts.AddTail(std::wstring(L".mp2"));
+	exts.AddTail(std::wstring(L".mp1"));
+	exts.AddTail(std::wstring(L".ogg"));
+	exts.AddTail(std::wstring(L".wav"));
+	exts.AddTail(std::wstring(L".aif"));
 
-	exts.AddTail(std::string(".mod"));
-	exts.AddTail(std::string(".xm"));
-	exts.AddTail(std::string(".it"));
-	exts.AddTail(std::string(".s3m"));
-	exts.AddTail(std::string(".mtm"));
-	exts.AddTail(std::string(".umx"));
+	exts.AddTail(std::wstring(L".mod"));
+	exts.AddTail(std::wstring(L".xm"));
+	exts.AddTail(std::wstring(L".it"));
+	exts.AddTail(std::wstring(L".s3m"));
+	exts.AddTail(std::wstring(L".mtm"));
+	exts.AddTail(std::wstring(L".umx"));
 
 	if (HIWORD(BASS_GetVersion())!=BASSVERSION)
 	{
@@ -110,7 +110,11 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 							char * pch = strtok(extstring,"*;");
 							while (pch != NULL)
 							{
-								exts.AddTail(std::string(pch));
+								int iExtLen = strlen(pch)+1;
+								TCHAR * newext = (TCHAR *)malloc((iExtLen) * sizeof(TCHAR));
+								MultiByteToWideChar(CP_ACP, 0, pch, iExtLen, newext, iExtLen);
+								exts.AddTail(std::wstring(newext));
+								free(newext);
 								pch = strtok(NULL, "*;");
 							}
 							free(extstring);
