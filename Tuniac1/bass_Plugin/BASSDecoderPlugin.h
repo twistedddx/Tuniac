@@ -8,7 +8,7 @@ class CBASSDecoderPlugin :
 {
 protected:
 	IAudioSourceHelper	*	m_pHelper;
-	Array<std::string, 12>		exts;
+	Array<std::wstring, 12>		exts;
 
 public:
 	CBASSDecoderPlugin(void);
