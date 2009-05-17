@@ -1286,6 +1286,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										//todo bits: per column tag writing?
 										//tuniacApp.m_MediaLibrary.WriteFileTags(pEntry, m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText);
 										tuniacApp.m_MediaLibrary.WriteFileTags(pEntry);
+										//update title bar etc
+										tuniacApp.UpdateTitles();
 									}
 								}
 							}
@@ -1357,6 +1359,38 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if (GetKeyState(VK_CONTROL))
 											ListView_SetItemState(hListViewWnd, -1, LVIS_SELECTED ,LVIS_SELECTED);
+									}
+									break;
+
+									//arrow up
+								case VK_UP:
+									{
+										if(tuniacApp.m_Preferences.GetArtOnSelection())
+										{
+											int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
+											if(iPos == -1)
+												break;
+
+											IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos-1);
+											if(pIPE)
+												tuniacApp.SetArt(pIPE);
+										}
+									}
+									break;
+
+									//arrow down
+								case VK_DOWN:
+									{
+										if(tuniacApp.m_Preferences.GetArtOnSelection())
+										{
+											int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
+											if(iPos == -1)
+												break;
+
+											IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos+1);
+											if(pIPE)
+												tuniacApp.SetArt(pIPE);
+										}
 									}
 									break;
 
