@@ -2400,8 +2400,22 @@ bool	CTuniacApp::DoSoftPause(void)
 	return false;
 }
 
-//update taskbar and titlebar
+
 void	CTuniacApp::UpdateState(void)
+{
+	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
+
+	if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_PLAYING))
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+	else if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_STOPPED))
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+
+	UpdateTitles();
+	m_PlayControls.UpdateState();
+}
+
+//update taskbar and titlebar
+void	CTuniacApp::UpdateTitles(void)
 {
 	//set title of window/tray
 	TCHAR szWinTitle[512];
@@ -2412,14 +2426,8 @@ void	CTuniacApp::UpdateState(void)
 	else
 		wnsprintf(szWinTitle, 512, TEXT("Tuniac"));
 
-	if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_PLAYING))
-		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
-	else if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_STOPPED))
-		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
-
 	SetWindowText(m_hWnd, szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);
-	m_PlayControls.UpdateState();
 }
 
 //update streamtitle eg for mp3 streams
@@ -2431,7 +2439,7 @@ void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long u
 	{
 		pIPE->SetField(ulFieldID, szTitle);
 
-		UpdateState();
+		UpdateTitles();
 		//make sure the source selector window exists we can get here before its created
 		if(tuniacApp.m_SourceSelectorWindow)
 			m_SourceSelectorWindow->UpdateView();
