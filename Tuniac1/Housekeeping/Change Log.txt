@@ -1,5 +1,25 @@
+May, 2009
+---------
+-update titles after track edit. Split updatestate and updatetitles. key down/up art changing
+-set default art if no valid active song
+-if previous active song is invalid, set index 0 as current
+-taglib svn catchup
+-add bass_tak.dll. Disable decoding abilities in tak_Plugin.dll so it's now just an info manager (part of my ongoing effort to make anything that goes wrong someone elses problem)
+-if the current active song on startup is invalid, index 0(the first song) will be set as active.
+-minor updates
+
 Apr, 2009 part b
 ---------
+-this may be able to load the default Creative midi soundfonts from system32. It is untested. Let me know plz
+-prevent crash due to not checking if strings are null terminated etc
+-add basscd.dll in for win32, oops
+-add bassmidi.dll, midi files will now work if you put a soundfont (.SF2) in your \Tuniac\bass\ folder. (Tuniac 32bit only)
+-updated bass_ac3.dll to prevent adding jpg files to your ML incorrectly.
+-updated bass_ofr.dll to prevent potential threading issue
+-updated bass_mpc.dll to support v8 files and add experimental streaming support
+-dont set zero memory for visuals when minimized
+-fix albumart issue
+-fix stream title updating
 -fix the m3u importer
 -more svp renderer updates
 -add tail slash SoniquePath in installer
