@@ -376,11 +376,12 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	setVSync(1);
 
-	//visual texture
-	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
     glEnable (GL_TEXTURE_2D);
+
+	//visual texture
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
@@ -391,9 +392,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	//arrow texture
 	glBindTexture(GL_TEXTURE_2D, 1);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_ALPHA_TEST);
-    glEnable (GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
@@ -407,6 +405,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 					GL_ALPHA, 
 					GL_UNSIGNED_BYTE, 
 					m_ArrowBM.bmBits);
+
 
 
 	SwapBuffers(m_glDC);
@@ -599,7 +598,7 @@ bool	SVPRenderer::Render(int w, int h)
 		glEnd();
 	}
 	
-	//glFlush();
+	glFlush();
 	SwapBuffers(m_glDC);
 
 	return true;
