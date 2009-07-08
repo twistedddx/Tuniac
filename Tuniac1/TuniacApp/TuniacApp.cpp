@@ -283,7 +283,17 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 bool CTuniacApp::Shutdown()
 {
 	//close tuniac
-	m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
+
+	//save if allowed
+	m_PlaylistManager.Shutdown(m_bSaveML);
+	m_MediaLibrary.Shutdown(m_bSaveML);
+
+	//save prefs if allowed
+	if(m_bSavePrefs)
+	{
+		m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
+		m_Preferences.SavePreferences();
+	}
 
 	m_SysEvents.Shutdown();
 	m_PluginManager.Shutdown();
@@ -307,15 +317,7 @@ bool CTuniacApp::Shutdown()
 		}
 	}
 
-	//save if allowed
-	m_PlaylistManager.Shutdown(m_bSaveML);
-	m_MediaLibrary.Shutdown(m_bSaveML);
-
 	m_Taskbar.Shutdown();
-
-	//save prefs if allowed
-	if(m_bSavePrefs)
-		m_Preferences.SavePreferences();
 
 	CoUninitialize();
 	return true;
@@ -528,6 +530,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				DestroyMenu(m_hFutureMenu);
 
 				PostQuitMessage(0);
+			}
+			break;
+
+			//a shutdown is in progress
+		case WM_ENDSESSION:
+			{
+				if(wParam)
+					DestroyWindow(hWnd);
 			}
 			break;
 
