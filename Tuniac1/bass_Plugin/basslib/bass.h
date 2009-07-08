@@ -1,6 +1,6 @@
 /*
 	BASS 2.4 C/C++ header file
-	Copyright (c) 1999-2008 Un4seen Developments Ltd.
+	Copyright (c) 1999-2009 Un4seen Developments Ltd.
 
 	See the BASS.CHM file for more detailed documentation
 */
@@ -8,10 +8,10 @@
 #ifndef BASS_H
 #define BASS_H
 
-#ifdef _WIN32 // Windows
+#ifdef _WIN32
 #include <wtypes.h>
 typedef unsigned __int64 QWORD;
-#else // OSX
+#else
 #include <stdint.h>
 #define WINAPI
 #define CALLBACK
@@ -22,8 +22,10 @@ typedef uint64_t QWORD;
 #ifndef __OBJC__
 typedef int BOOL;
 #endif
+#ifndef TRUE
 #define TRUE 1
 #define FALSE 0
+#endif
 #define LOBYTE(a) (BYTE)(a)
 #define HIBYTE(a) (BYTE)((a)>>8)
 #define LOWORD(a) (WORD)(a)
@@ -36,8 +38,8 @@ typedef int BOOL;
 extern "C" {
 #endif
 
-#define BASSVERSION 0x204	// API version
-#define BASSVERSIONTEXT "2.4"
+#define BASSVERSION			0x204	// API version
+#define BASSVERSIONTEXT		"2.4"
 
 #ifndef BASSDEF
 #define BASSDEF(f) WINAPI f
@@ -112,7 +114,6 @@ typedef DWORD HPLUGIN;		// Plugin handle
 #define BASS_CONFIG_UPDATETHREADS	24
 
 #define BASS_CONFIG_MIDI_DEFFONT	0x10403
-
 // BASS_SetConfigPtr options
 #define BASS_CONFIG_NET_AGENT		16
 #define BASS_CONFIG_NET_PROXY		17
@@ -310,6 +311,7 @@ typedef struct {
 #define BASS_CTYPE_STREAM_MP2	0x10004
 #define BASS_CTYPE_STREAM_MP3	0x10005
 #define BASS_CTYPE_STREAM_AIFF	0x10006
+#define BASS_CTYPE_STREAM_CA	0x10007
 #define BASS_CTYPE_STREAM_WAV	0x40000 // WAVE flag, LOWORD=codec
 #define BASS_CTYPE_STREAM_WAV_PCM	0x50001
 #define BASS_CTYPE_STREAM_WAV_FLOAT	0x50003
@@ -354,7 +356,6 @@ typedef struct BASS_3DVECTOR {
 #define BASS_3DALG_FULL		2
 #define BASS_3DALG_LIGHT	3
 
-#ifdef _WIN32
 // EAX environments, use with BASS_SetEAXParameters
 enum
 {
@@ -415,7 +416,6 @@ enum
 #define EAX_PRESET_DRUGGED         EAX_ENVIRONMENT_DRUGGED,0.875F,8.392F,1.388F
 #define EAX_PRESET_DIZZY           EAX_ENVIRONMENT_DIZZY,0.139F,17.234F,0.666F
 #define EAX_PRESET_PSYCHOTIC       EAX_ENVIRONMENT_PSYCHOTIC,0.486F,7.563F,0.806F
-#endif
 
 typedef DWORD (CALLBACK STREAMPROC)(HSTREAM handle, void *buffer, DWORD length, void *user);
 /* User stream callback function. NOTE: A stream function should obviously be as quick
@@ -555,10 +555,12 @@ RETURN : TRUE = continue recording, FALSE = stop */
 #define BASS_TAG_META		5	// ICY metadata : ANSI string
 #define BASS_TAG_VENDOR		9	// OGG encoder : UTF-8 string
 #define BASS_TAG_LYRICS3	10	// Lyric3v2 tag : ASCII string
+#define BASS_TAG_CA_CODEC	11	// CoreAudio codec info : TAG_CA_CODEC structure
 #define BASS_TAG_RIFF_INFO	0x100 // RIFF "INFO" tags : series of null-terminated ANSI strings
 #define BASS_TAG_RIFF_BEXT	0x101 // RIFF/BWF Broadcast Audio Extension tags : TAG_BEXT structure
 #define BASS_TAG_MUSIC_NAME		0x10000	// MOD music name : ANSI string
 #define BASS_TAG_MUSIC_MESSAGE	0x10001	// MOD message : ANSI string
+#define BASS_TAG_MUSIC_ORDERS	0x10002	// MOD order list : BYTE array of pattern numbers
 #define BASS_TAG_MUSIC_INST		0x10100	// + instrument #, MOD instrument name : ANSI string
 #define BASS_TAG_MUSIC_SAMPLE	0x10300	// + sample #, MOD sample name : ANSI string
 
@@ -602,9 +604,17 @@ typedef struct {
 #pragma warning(pop)
 #endif
 
+// CoreAudio codec info structure
+typedef struct {
+	DWORD ftype;					// file format
+	DWORD atype;					// audio format
+	const char *name;				// description
+} TAG_CA_CODEC;
+
 // BASS_ChannelGetLength/GetPosition/SetPosition modes
 #define BASS_POS_BYTE			0		// byte position
 #define BASS_POS_MUSIC_ORDER	1		// order.row position, MAKELONG(order,row)
+#define BASS_POS_DECODE			0x10000000 // flag: get the decoding (not playing) position
 
 // BASS_RecordSetInput flags
 #define BASS_INPUT_OFF		0x10000
@@ -728,7 +738,7 @@ void *BASSDEF(BASS_GetConfigPtr)(DWORD option);
 DWORD BASSDEF(BASS_GetVersion)();
 int BASSDEF(BASS_ErrorGetCode)();
 BOOL BASSDEF(BASS_GetDeviceInfo)(DWORD device, BASS_DEVICEINFO *info);
-#ifdef _WIN32
+#if defined(_WIN32)
 BOOL BASSDEF(BASS_Init)(int device, DWORD freq, DWORD flags, HWND win, const GUID *dsguid);
 #else
 BOOL BASSDEF(BASS_Init)(int device, DWORD freq, DWORD flags, void *win, void *dsguid);
