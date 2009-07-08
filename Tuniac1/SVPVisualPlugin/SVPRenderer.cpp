@@ -329,7 +329,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
 	iLastVisRes			= -1;
-	iVisMaxRes			= 240;
+	iVisMaxRes			= 128;
 	bResChange			= true;
 
 	DWORD				lpRegType = REG_DWORD;
@@ -340,6 +340,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 
+	m_LastMove = GetTickCount();
 	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
     ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
 
@@ -375,20 +376,38 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	setVSync(1);
 
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear (GL_COLOR_BUFFER_BIT);
-
+	//visual texture
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glDisable(GL_ALPHA_TEST);
     glEnable (GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP  );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP  );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+	//for arrow blending
+	glEnable(GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	m_LastMove = GetTickCount();
+	//arrow texture
+	glBindTexture(GL_TEXTURE_2D, 1);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
+    glEnable (GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+	glTexImage2D(	GL_TEXTURE_2D, 
+					0, 
+					GL_ALPHA,
+					m_ArrowBM.bmWidth, 
+					m_ArrowBM.bmHeight, 
+					0,
+					GL_ALPHA, 
+					GL_UNSIGNED_BYTE, 
+					m_ArrowBM.bmBits);
+
 
 	SwapBuffers(m_glDC);
 
@@ -446,18 +465,33 @@ bool	SVPRenderer::Render(int w, int h)
 
 	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 	{
+
 		m_LastWidth		= w;
 		m_LastHeight	= h;
 
-		int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
-		iVisRes = min(iVisMaxRes, iVisTempRes);
-
 		//we are minimized.. 
-		if(iVisRes == 0)
+		if((h == 0) || (w == 0))
+		{
 			if(iLastVisRes > 0)
 				iVisRes = iLastVisRes;
 			else
 				iVisRes = iVisMaxRes;
+		}
+		else
+		{
+			int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+
+			//power of 2
+			iVisTempRes--;
+			iVisTempRes |= iVisTempRes >> 1;
+			iVisTempRes |= iVisTempRes >> 2;
+			iVisTempRes |= iVisTempRes >> 4;
+			iVisTempRes |= iVisTempRes >> 8;
+			iVisTempRes |= iVisTempRes >> 16;
+			iVisTempRes++;
+
+			iVisRes = min(iVisMaxRes, iVisTempRes);
+		}
 
 		if(iVisRes != iLastVisRes)
 		{
@@ -471,7 +505,6 @@ bool	SVPRenderer::Render(int w, int h)
 			iLastVisRes = iVisRes;
 		}
 		bResChange = false;
-
 
 		SetRect(&m_NextVisRect, 
 				w-(64+16),
@@ -488,84 +521,84 @@ bool	SVPRenderer::Render(int w, int h)
 		glViewport(0,0,w,h);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
+		gluOrtho2D(0, (float)w, (float)h, 0);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-	}
 
-	glClear (GL_COLOR_BUFFER_BIT);
+		//create texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glTexImage2D(	GL_TEXTURE_2D, 
+							0, 
+							GL_RGB,
+							iVisRes, 
+							iVisRes, 
+							0,
+							GL_BGRA_EXT, 
+							GL_UNSIGNED_BYTE, 
+							0);
+	}
 
 	RenderVisual();
 
-	//the visual
-	glTexImage2D(	GL_TEXTURE_2D, 
-					0, 
-					GL_RGB,
-					iVisRes, 
-					iVisRes, 
-					0,
-					GL_BGRA_EXT, 
-					GL_UNSIGNED_BYTE, 
-					m_textureData);
-	
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor4f(1,1,1,1);
 
-	//resize the visual to fit window
+	//update texture
+	glTexSubImage2D(GL_TEXTURE_2D,
+					0,
+					0,
+					0,
+					iVisRes,
+					iVisRes,
+					GL_BGRA_EXT,
+					GL_UNSIGNED_BYTE,
+					m_textureData);
+
 	glBegin (GL_QUADS);
-		glTexCoord2d(0.0, 0.0);
-		glVertex2f( 0.0f,  0.0f);	// Bottom Left Of The Texture and Quad
-		glTexCoord2d(0.0, 1.0);
-		glVertex2f( 0.0f,  m_LastHeight);	// Bottom Right Of The Texture and Quad
-		glTexCoord2d(1.0, 1.0);
-		glVertex2f( m_LastWidth, m_LastHeight);	// Top Right Of The Texture and Quad
-		glTexCoord2d(1.0, 0.0);
-		glVertex2f( m_LastWidth,  0.0f);	// Top Left Of The Texture and Quad
+		glTexCoord2f(0, 0);
+		glVertex2f(0, 0);	// Bottom Left Of The Texture and Quad
+		glTexCoord2f(0, 1);
+		glVertex2f(0, m_LastHeight);	// Bottom Right Of The Texture and Quad
+		glTexCoord2f(1, 1);
+		glVertex2f(m_LastWidth, m_LastHeight);	// Top Right Of The Texture and Quad
+		glTexCoord2f(1, 0);
+		glVertex2f(m_LastWidth, 0);	// Top Left Of The Texture and Quad
 	glEnd ();
 
 	//arrows
 	if((GetTickCount() - m_LastMove) < 4000)
 	{
+		glBindTexture(GL_TEXTURE_2D, 1);
 		if((GetTickCount() - m_LastMove) < 2000)
 		{
 			//clear arrow
-			glColor4f(1,1,1,1);
+			glColor4f(1, 1, 1, 1);
 		}
 		else
 		{
 			//fade arrow
 			int val = (GetTickCount() - m_LastMove) - 2000;
 			float scale = (float) (2000-val) / 2000.0f;
-			glColor4f(1,1,1,scale);
+			glColor4f(1, 1, 1, scale);
 		}
-
-		//load arrow
-		glTexImage2D(	GL_TEXTURE_2D, 
-						0, 
-						GL_ALPHA,
-						m_ArrowBM.bmWidth, 
-						m_ArrowBM.bmHeight, 
-						0,
-						GL_ALPHA, 
-						GL_UNSIGNED_BYTE, 
-						m_ArrowBM.bmBits);
-
+		
 		//left
 		glBegin (GL_QUADS);
-			glTexCoord2d(1.0, 1.0); glVertex2i(m_NextVisRect.left,	m_NextVisRect.top);
-			glTexCoord2d(1.0, 0.0); glVertex2i(m_NextVisRect.left,	m_NextVisRect.bottom);
-			glTexCoord2d(0.0, 0.0); glVertex2i(m_NextVisRect.right, m_NextVisRect.bottom);
-			glTexCoord2d(0.0, 1.0); glVertex2i(m_NextVisRect.right,	m_NextVisRect.top);
+			glTexCoord2f(1, 1); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
+			glTexCoord2f(1, 0); glVertex2f(m_NextVisRect.left,	m_NextVisRect.bottom);
+			glTexCoord2f(0, 0); glVertex2f(m_NextVisRect.right,	m_NextVisRect.bottom);
+			glTexCoord2f(0, 1); glVertex2f(m_NextVisRect.right,	m_NextVisRect.top);
 		glEnd();
 
 		//right
 		glBegin (GL_QUADS);
-			glTexCoord2d(0.0, 0.0); glVertex2i(m_PrevVisRect.left,	m_PrevVisRect.top);
-			glTexCoord2d(0.0, 1.0); glVertex2i(m_PrevVisRect.left,	m_PrevVisRect.bottom);
-			glTexCoord2d(1.0, 1.0); glVertex2i(m_PrevVisRect.right, m_PrevVisRect.bottom);
-			glTexCoord2d(1.0, 0.0); glVertex2i(m_PrevVisRect.right,	m_PrevVisRect.top);
+			glTexCoord2f(0, 0); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.top);
+			glTexCoord2f(0, 1); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.bottom);
+			glTexCoord2f(1, 1); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.bottom);
+			glTexCoord2f(1, 0); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.top);
 		glEnd();
 	}
-
+	
 	//glFlush();
 	SwapBuffers(m_glDC);
 
@@ -579,12 +612,17 @@ bool	SVPRenderer::About(HWND hWndParent)
 }
 bool	SVPRenderer::Configure(HWND hWndParent)
 {
-	if(iVisMaxRes == 240)
+	//crap(many in laptops) and old gpus require the res to be a power of 2 for glTexImage2D!
+	if(iVisMaxRes == 128)
+		iVisMaxRes = 240;
+	else if(iVisMaxRes == 240)
+		iVisMaxRes = 256;
+	else if(iVisMaxRes == 256)
 		iVisMaxRes = 512;
 	else if(iVisMaxRes == 512)
 		iVisMaxRes = 640;
 	else
-		iVisMaxRes = 240;
+		iVisMaxRes = 128;
 
 	bResChange = true;
 	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
@@ -709,7 +747,6 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 				}
 				return true;
 			}
-
 
 			// we need to scale the point to a 512x512 point then send it to the vis
 
