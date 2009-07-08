@@ -867,7 +867,7 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 100));
+				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 150));
 				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETPOS,	TRUE, pPrefs->m_iVisualFPS);
 
 				TCHAR	tstr[32];
