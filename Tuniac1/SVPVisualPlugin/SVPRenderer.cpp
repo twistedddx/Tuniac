@@ -389,6 +389,15 @@ bool	SVPRenderer::Attach(HDC hDC)
 	//for arrow blending
 	glEnable(GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glTexImage2D(	GL_TEXTURE_2D, 
+						0, 
+						GL_RGB,
+						iVisRes, 
+						iVisRes, 
+						0,
+						GL_BGRA_EXT, 
+						GL_UNSIGNED_BYTE, 
+						0);
 
 	//arrow texture
 	glBindTexture(GL_TEXTURE_2D, 1);
