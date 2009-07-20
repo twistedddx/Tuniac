@@ -6,12 +6,12 @@
  * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
  *                                                                  *
  * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2001             *
- * by the XIPHOPHORUS Company http://www.xiph.org/                  *
+ * by the Xiph.Org Foundation http://www.xiph.org/                  *
  *                                                                  *
  ********************************************************************
 
  function: vorbis encode-engine setup
- last mod: $Id: vorbisenc.h,v 1.2 2006/02/28 21:36:23 twistedddx Exp $
+ last mod: $Id: vorbisenc.h 16037 2009-05-26 21:10:58Z xiphmont $
 
  ********************************************************************/
 
@@ -26,34 +26,34 @@ extern "C"
 #include "codec.h"
 
 extern int vorbis_encode_init(vorbis_info *vi,
-			      long channels,
-			      long rate,
+                              long channels,
+                              long rate,
 
-			      long max_bitrate,
-			      long nominal_bitrate,
-			      long min_bitrate);
+                              long max_bitrate,
+                              long nominal_bitrate,
+                              long min_bitrate);
 
 extern int vorbis_encode_setup_managed(vorbis_info *vi,
-				       long channels,
-				       long rate,
+                                       long channels,
+                                       long rate,
 
-				       long max_bitrate,
-				       long nominal_bitrate,
-				       long min_bitrate);
+                                       long max_bitrate,
+                                       long nominal_bitrate,
+                                       long min_bitrate);
 
 extern int vorbis_encode_setup_vbr(vorbis_info *vi,
-				  long channels,
-				  long rate,
+                                  long channels,
+                                  long rate,
 
-				  float quality /* quality level from 0. (lo) to 1. (hi) */
-				  );
+                                  float quality /* quality level from 0. (lo) to 1. (hi) */
+                                  );
 
 extern int vorbis_encode_init_vbr(vorbis_info *vi,
-				  long channels,
-				  long rate,
+                                  long channels,
+                                  long rate,
 
-				  float base_quality /* quality level from 0. (lo) to 1. (hi) */
-				  );
+                                  float base_quality /* quality level from 0. (lo) to 1. (hi) */
+                                  );
 
 extern int vorbis_encode_setup_init(vorbis_info *vi);
 
