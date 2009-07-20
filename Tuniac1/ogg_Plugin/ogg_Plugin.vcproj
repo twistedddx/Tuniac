@@ -351,14 +351,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\ogg_SDK\vorbis\codec.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\ogg\ogg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\OGGDecoder.h"
 				>
 			</File>
@@ -371,15 +363,29 @@
 				>
 			</File>
 			<File
-				RelativePath="..\ogg_SDK\ogg\os_types.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="vorbis"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+			<File
+				RelativePath="..\ogg_SDK\vorbis\codec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\ogg_SDK\ogg\ogg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\ogg_SDK\ogg\os_types.h"
 				>
 			</File>
 			<File
@@ -390,36 +396,38 @@
 				RelativePath="..\ogg_SDK\vorbis\vorbisfile.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-			<File
-				RelativePath="..\ogg_SDK\ogg_static.lib"
+			<Filter
+				Name="32bit"
 				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\ogg_static64.lib"
+				<File
+					RelativePath="..\ogg_SDK\32bit\libogg_static.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\32bit\libvorbis_static.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\32bit\libvorbisfile_static.lib"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="64bit"
 				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\vorbis_static.lib"
-				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\vorbis_static64.lib"
-				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\vorbisfile_static.lib"
-				>
-			</File>
-			<File
-				RelativePath="..\ogg_SDK\vorbisfile_static64.lib"
-				>
-			</File>
+				<File
+					RelativePath="..\ogg_SDK\64bit\libogg_static.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\64bit\libvorbis_static.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\ogg_SDK\64bit\libvorbisfile_static.lib"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
