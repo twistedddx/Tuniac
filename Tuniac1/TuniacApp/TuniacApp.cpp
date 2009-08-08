@@ -96,6 +96,18 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	m_hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_MAINWINDOWACCEL));
 
+	/*
+	HKEY		hCPUKey;
+	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\SYSTEM\\CentralProcessor\\3", 0, KEY_QUERY_VALUE, &hCPUKey) == ERROR_SUCCESS)
+		m_iCPUCount = 4;
+	else if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\SYSTEM\\CentralProcessor\\2", 0, KEY_QUERY_VALUE, &hCPUKey) == ERROR_SUCCESS)
+		m_iCPUCount = 3;
+	else if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\SYSTEM\\CentralProcessor\\1", 0, KEY_QUERY_VALUE, &hCPUKey) == ERROR_SUCCESS)
+		m_iCPUCount = 2;
+	else
+		m_iCPUCount = 1;
+	*/
+
 	//these are used for the portable switch to force not saving to disk
 	m_bSavePrefs = true;
 	m_bSaveML = true;
@@ -277,6 +289,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	PostMessage(m_hWnd, WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 	//notice of setting song
 	m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+
 	return true;
 }
 
@@ -537,7 +550,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		case WM_ENDSESSION:
 			{
 				if(wParam)
-					DestroyWindow(hWnd);
+					//DestroyWindow(hWnd);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FILE_FORCESAVEMEDIALIBRARY, 0), 0);
 			}
 			break;
 
