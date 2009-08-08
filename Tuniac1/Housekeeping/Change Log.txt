@@ -1,3 +1,7 @@
+July 2009
+---------
+-svp renderer update
+
 May, 2009
 ---------
 -update titles after track edit. Split updatestate and updatetitles. key down/up art changing
