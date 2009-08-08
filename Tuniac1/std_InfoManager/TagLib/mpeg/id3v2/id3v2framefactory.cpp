@@ -31,6 +31,7 @@
 
 #include "id3v2framefactory.h"
 #include "id3v2synchdata.h"
+#include "id3v1genres.h"
 
 #include "frames/attachedpictureframe.h"
 #include "frames/commentsframe.h"
@@ -182,7 +183,15 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
     return f;
   }
 
-  // Relative Volume Adjustment (frames 4.11)
+  // ID3v2.2 Attached Picture
+
+	if(frameID == "PIC") {
+    AttachedPictureFrame *f = new AttachedPictureFrameV22(data, header);
+    d->setTextEncoding(f);
+    return f;
+  }
+
+	// Relative Volume Adjustment (frames 4.11)
 
   if(frameID == "RVA2")
     return new RelativeVolumeFrame(data, header);
@@ -292,7 +301,6 @@ bool FrameFactory::updateFrame(Frame::Header *header) const
     convertFrame("IPL", "TIPL", header);
     convertFrame("MCI", "MCDI", header);
     convertFrame("MLL", "MLLT", header);
-    convertFrame("PIC", "APIC", header);
     convertFrame("POP", "POPM", header);
     convertFrame("REV", "RVRB", header);
     convertFrame("SLT", "SYLT", header);
@@ -394,26 +402,31 @@ void FrameFactory::convertFrame(const char *from, const char *to,
 
 void FrameFactory::updateGenre(TextIdentificationFrame *frame) const
 {
-  StringList fields;
-  String s = frame->toString();
+  StringList fields = frame->fieldList();
+  StringList newfields;
 
-  while(s.startsWith("(")) {
+  for(StringList::Iterator it = fields.begin(); it != fields.end(); ++it) {
+    String s = *it;
+    int end = s.find(")");
 
-    int closing = s.find(")");
-
-    if(closing < 0)
-      break;
-
-    fields.append(s.substr(1, closing - 1));
-
-    s = s.substr(closing + 1);
+    if(s.startsWith("(") && end > 0) {
+      // "(12)Genre"
+      String text = s.substr(end + 1);
+      int number = s.substr(1, end - 1).toInt();
+      if (number > 0 && number <= 255 && !(ID3v1::genre(number) == text))
+        newfields.append(s.substr(1, end - 1));
+      if (!text.isEmpty())
+        newfields.append(text);
+    }
+    else {
+      // "Genre" or "12"
+      newfields.append(s);
+    }
   }
 
-  if(!s.isEmpty())
-    fields.append(s);
-
-  if(fields.isEmpty())
+  if(newfields.isEmpty())
     fields.append(String::null);
 
-  frame->setText(fields);
+  frame->setText(newfields);
+
 }
