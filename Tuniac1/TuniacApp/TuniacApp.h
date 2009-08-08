@@ -108,6 +108,7 @@ protected:
 	int									m_ActiveScreen;
 
 	int									m_iFailedSongRetry;
+	//int									m_iCPUCount;
 
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
