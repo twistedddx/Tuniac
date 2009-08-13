@@ -398,6 +398,10 @@
 				RelativePath="..\ape_SDK\SmartPtr.h"
 				>
 			</File>
+			<File
+				RelativePath="..\ape_SDK\WindowsEnvironment.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
