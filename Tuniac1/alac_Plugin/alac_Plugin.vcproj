@@ -389,6 +389,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\alac_decoder\stdint_win.h"
+				>
+			</File>
+			<File
 				RelativePath=".\alac_decoder\stream.c"
 				>
 			</File>
