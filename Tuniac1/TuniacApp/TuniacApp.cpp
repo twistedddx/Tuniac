@@ -297,28 +297,6 @@ bool CTuniacApp::Shutdown()
 {
 	//close tuniac
 
-	//save if allowed
-	m_PlaylistManager.Shutdown(m_bSaveML);
-	m_MediaLibrary.Shutdown(m_bSaveML);
-
-	//save prefs if allowed
-	if(m_bSavePrefs)
-	{
-		m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
-		m_Preferences.SavePreferences();
-	}
-
-	m_SysEvents.Shutdown();
-	m_PluginManager.Shutdown();
-
-    while(m_WindowArray.GetCount())
-	{
-		m_WindowArray[0]->Destroy();
-		m_WindowArray.RemoveAt(0);
-	}
-
-	CCoreAudio::Instance()->Shutdown();
-
 	//if allowed to save pl+ml, check if %appdata%/Tuniac needs to be created
 	if(m_bSaveML)
 	{
@@ -330,9 +308,32 @@ bool CTuniacApp::Shutdown()
 		}
 	}
 
+	//save if allowed
+	m_PlaylistManager.Shutdown(m_bSaveML);
+	m_MediaLibrary.Shutdown(m_bSaveML);
+
+	m_SysEvents.Shutdown();
+	m_PluginManager.Shutdown();
+
+    while(m_WindowArray.GetCount())
+	{
+		m_WindowArray[0]->Destroy();
+		m_WindowArray.RemoveAt(0);
+	}
+
+	//save prefs if allowed
+	if(m_bSavePrefs)
+	{
+		m_Preferences.SetVolumePercent(CCoreAudio::Instance()->GetVolumePercent());
+		m_Preferences.SavePreferences();
+	}
+
+	CCoreAudio::Instance()->Shutdown();
+
 	m_Taskbar.Shutdown();
 
 	CoUninitialize();
+
 	return true;
 }
 
