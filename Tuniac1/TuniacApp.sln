@@ -52,6 +52,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shn_Plugin", "shn_Plugin\sh
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bass_Plugin", "bass_Plugin\BASSDecoder.vcproj", "{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinampVisualPlugin", "WinampVisualPlugin\WinampVisualPlugin.vcproj", "{EFA8E165-C0CD-49D5-B858-8FEB86A9AE43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -86,10 +88,8 @@ Global
 		{63870483-72AA-4286-829C-ACDD048B00F8}.Release|x64.Build.0 = Release|x64
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Debug|x64.ActiveCfg = Debug|x64
-		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Debug|x64.Build.0 = Debug|x64
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|Win32.ActiveCfg = Release|Win32
 		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|x64.ActiveCfg = Release|x64
-		{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}.Release|x64.Build.0 = Release|x64
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Debug|x64.ActiveCfg = Debug|x64
 		{62528D67-C778-4582-8C41-7A99E2C3527D}.Release|Win32.ActiveCfg = Release|Win32
@@ -226,6 +226,10 @@ Global
 		{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}.Release|Win32.Build.0 = Release|Win32
 		{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}.Release|x64.ActiveCfg = Release|x64
 		{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}.Release|x64.Build.0 = Release|x64
+		{EFA8E165-C0CD-49D5-B858-8FEB86A9AE43}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EFA8E165-C0CD-49D5-B858-8FEB86A9AE43}.Debug|x64.ActiveCfg = Debug|x64
+		{EFA8E165-C0CD-49D5-B858-8FEB86A9AE43}.Release|Win32.ActiveCfg = Release|Win32
+		{EFA8E165-C0CD-49D5-B858-8FEB86A9AE43}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
