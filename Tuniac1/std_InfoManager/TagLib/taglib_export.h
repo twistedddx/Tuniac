@@ -26,7 +26,7 @@
 #ifndef TAGLIB_EXPORT_H
 #define TAGLIB_EXPORT_H
 
-#if defined(_WIN32) || defined(_WIN64)
+#if !defined(TAGLIB_STATIC) && (defined(_WIN32) || defined(_WIN64))
 #ifdef MAKE_TAGLIB_LIB
 #define TAGLIB_EXPORT __declspec(dllexport)
 #else
@@ -36,6 +36,6 @@
 #define TAGLIB_EXPORT
 #endif
 
-//#include "taglib_config.h"
+#include "taglib_config.h"
 
 #endif

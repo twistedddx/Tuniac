@@ -35,7 +35,7 @@ Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
 
-Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXMar2009Check; Flags: ignoreversion
+Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXAug2009Check; Flags: ignoreversion
 
 Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
@@ -63,7 +63,7 @@ Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: desktopicon
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.4...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist; Check: DXMar2009Check
+Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.5...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist; Check: DXAug2009Check
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
@@ -201,11 +201,11 @@ begin
     Result := '32Bit';
 end;
 
-function DXMar2009Check: Boolean;
+function DXAug2009Check: Boolean;
 var
-  XAudio: String;
+  XAudio2: String;
 begin
-  if RegQueryStringValue( HKCR, 'CLSID\{03219e78-5bc3-44d1-b92e-f63d89cc6526}', '', XAudio ) then
+  if RegQueryStringValue( HKCR, 'CLSID\{4c9b6dde-6809-46e6-a278-9b6a97588670}', '', XAudio2 ) then
     Result := false
   else
     Result := true;
