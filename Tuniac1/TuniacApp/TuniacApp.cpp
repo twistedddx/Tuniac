@@ -2367,7 +2367,7 @@ void	CTuniacApp::UpdateQueues(void)
 		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 
 		IPlaylistEntry * pIPE = pPlaylistEX->GetActiveItem();
-		unsigned long ulIndex = pPlaylistEX->GetActiveFilteredIndex();
+		unsigned long ulIndex = pPlaylistEX->GetActiveNormalFilteredIndex();
 
 		//add history
 		if (pIPE)

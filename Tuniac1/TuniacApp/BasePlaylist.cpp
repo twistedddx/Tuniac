@@ -370,7 +370,10 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 
 			//if we are checking the current song, the next song is our playselected
 			if(ulFilteredIndex == ulActiveIndex )
-				return tuniacApp.m_PlaySelected[0];
+				if(tuniacApp.m_Preferences.GetShuffleState())
+					return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[0]));
+				else
+					return tuniacApp.m_PlaySelected[0];
 
 			//see if found within m_PlaySelected 0 thru GetCount - 1
 			unsigned long ulFound = -1;
@@ -389,7 +392,11 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 
 			//if found we want it's next
 			if(ulFound != -1)
-				return tuniacApp.m_PlaySelected[ulFound + 1];
+				if(tuniacApp.m_Preferences.GetShuffleState())
+					return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[ulFound + 1]));
+				else
+					return tuniacApp.m_PlaySelected[ulFound + 1];
+					
 		}
 	}
 
