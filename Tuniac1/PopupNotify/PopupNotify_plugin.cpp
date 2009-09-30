@@ -241,7 +241,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				{
         			KillTimer(m_hWnd, ID_TIMER_HIDE);
 					if(m_FadeTimeMS > 50)
-						SetTimer(m_hWnd, ID_TIMER_FADE, m_FadeTimeMS / 10, NULL);
+						SetTimer(m_hWnd, ID_TIMER_FADE, m_FadeTimeMS / 50, NULL);
 					else
 						ShowWindow(m_hWnd, SW_HIDE);
 				}
@@ -256,7 +256,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 					}
 					else
 					{
-						m_Alpha -= 25;
+						m_Alpha -= 5;
 						SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha, LWA_ALPHA);
 					}
 				}
