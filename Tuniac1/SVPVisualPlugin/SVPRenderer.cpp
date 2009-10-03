@@ -203,11 +203,13 @@ bool SVPRenderer::RenderVisual(void)
 		{
 			if(visdata)
 			{
-				VirtualFree(visdata, 0, MEM_RELEASE);
+				//VirtualFree(visdata, 0, MEM_RELEASE);
+				_aligned_free(visdata);
 			}
 
 			ulOldNumChannels = NumChannels;
-			visdata = (float *)VirtualAlloc(NULL, 512 * NumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+			//visdata = (float *)VirtualAlloc(NULL, 512 * NumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+			visdata = (float*)_aligned_malloc(512 * NumChannels * sizeof(float), 16);
 		}
 
 		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
@@ -290,13 +292,15 @@ void	SVPRenderer::Destroy(void)
 {
 	if(m_textureData)
 	{
-		VirtualFree(m_textureData, 0, MEM_RELEASE);
+		//VirtualFree(m_textureData, 0, MEM_RELEASE);
+		free(m_textureData);
 		m_textureData = NULL;
 	}
 
 	if(visdata)
 	{
-		VirtualFree(visdata, 0, MEM_RELEASE);
+		//VirtualFree(visdata, 0, MEM_RELEASE);
+		_aligned_free(visdata);
 		visdata = NULL;
 	}
 
@@ -338,7 +342,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-	visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+	//visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
 
 	m_LastMove = GetTickCount();
 	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
@@ -454,13 +459,15 @@ bool	SVPRenderer::Detach()
 
 	if(m_textureData)
 	{
-		VirtualFree(m_textureData, 0, MEM_RELEASE);
+		//VirtualFree(m_textureData, 0, MEM_RELEASE);
+		free(m_textureData);
 		m_textureData = NULL;
 	}
 
 	if(visdata)
 	{
-		VirtualFree(visdata, 0, MEM_RELEASE);
+		//VirtualFree(visdata, 0, MEM_RELEASE);
+		_aligned_free(visdata);
 		visdata = NULL;
 	}
 
@@ -505,11 +512,13 @@ bool	SVPRenderer::Render(int w, int h)
 		{
 			if(m_textureData)
 			{
-				VirtualFree(m_textureData, 0, MEM_RELEASE);
+				//VirtualFree(m_textureData, 0, MEM_RELEASE);
+				free(m_textureData);
 				m_textureData = NULL;
 			}
 
-			m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+			//m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
+			m_textureData = (unsigned long*)malloc(iVisRes*iVisRes*iVisRes*sizeof(unsigned long));
 			iLastVisRes = iVisRes;
 		}
 		bResChange = false;

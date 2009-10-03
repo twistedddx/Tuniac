@@ -140,7 +140,8 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 	if(!bIsStream)
 		dTime = BASS_ChannelBytes2Seconds(decodehandle,BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE)) * 1000;
 
-	m_Buffer = (float *)VirtualAlloc(NULL, BUFFERSIZE, MEM_COMMIT, PAGE_READWRITE);
+	//m_Buffer = (float *)VirtualAlloc(NULL, BUFFERSIZE, MEM_COMMIT, PAGE_READWRITE);
+	m_Buffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
 
 	return(true);
 }
@@ -154,7 +155,8 @@ bool CBASSDecoder::Close()
 
 	if(m_Buffer)
 	{
-		VirtualFree(m_Buffer, 0, MEM_RELEASE);
+		//VirtualFree(m_Buffer, 0, MEM_RELEASE);
+		_aligned_free(m_Buffer);
 	}
 
 	return(true);

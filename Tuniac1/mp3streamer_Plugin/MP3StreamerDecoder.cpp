@@ -33,9 +33,9 @@ void		CMP3StreamerDecoder::Destroy(void)
 	}
 	if(m_SampleBuffer)
 	{
-		VirtualUnlock(	m_SampleBuffer, BUFFERSIZE);
-
-		VirtualFree(m_SampleBuffer, 0, MEM_RELEASE);
+		//VirtualUnlock(	m_SampleBuffer, BUFFERSIZE);
+		//VirtualFree(m_SampleBuffer, 0, MEM_RELEASE);
+		_aligned_free(m_SampleBuffer);
 	}
 	delete this;
 }
@@ -121,15 +121,16 @@ bool		CMP3StreamerDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSampl
 			}
 		}
 
-		if(!m_SampleBuffer)
-		{
-			m_SampleBuffer = (float *)VirtualAlloc(	NULL, 
-													BUFFERSIZE, 
-													MEM_COMMIT, 
-													PAGE_READWRITE);		// allocate audio memory
-			VirtualLock(m_SampleBuffer, BUFFERSIZE);
+		//if(!m_SampleBuffer)
+		//{
+			//m_SampleBuffer = (float *)VirtualAlloc(	NULL, 
+			//										BUFFERSIZE, 
+			//										MEM_COMMIT, 
+			//										PAGE_READWRITE);		// allocate audio memory
+			//VirtualLock(m_SampleBuffer, BUFFERSIZE);
+		//	m_SampleBuffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
 
-		}
+		//}
 
 		if(!m_pDecoder->ProcessFrame(&m_Frame, m_SampleBuffer, NumSamples))
 		{
@@ -163,6 +164,16 @@ bool		CMP3StreamerDecoder::OpenStream()
 
 	if(!CreatePipe(&m_hReadEnd, &m_hWriteEnd, NULL, m_NetworkBufferSize))
 		return(false);
+
+	if(!m_SampleBuffer)
+	{
+		//m_SampleBuffer = (float *)VirtualAlloc(	NULL, 
+		//										BUFFERSIZE, 
+		//										MEM_COMMIT, 
+		//										PAGE_READWRITE);		// allocate audio memory
+		//VirtualLock(m_SampleBuffer, BUFFERSIZE);
+		m_SampleBuffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
+	}
 
 	m_hThread = CreateThread(	NULL,
 								16384,

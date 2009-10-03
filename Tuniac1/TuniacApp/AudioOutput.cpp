@@ -201,14 +201,14 @@ bool CAudioOutput::Initialize(void)
 		return false;
 
 	//m_pfAudioBuffer = (float*)malloc((m_BlockSizeBytes) * (MAX_BUFFER_COUNT+1));
-		
-	m_pfAudioBuffer = (float *)VirtualAlloc(NULL, 
-											(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY), 
-											MEM_COMMIT, 
-											PAGE_READWRITE);		// allocate audio memory
-	VirtualLock(m_pfAudioBuffer, 
-				(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
+	//m_pfAudioBuffer = (float *)VirtualAlloc(NULL, 
+	//										(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY), 
+	//										MEM_COMMIT, 
+	//										PAGE_READWRITE);		// allocate audio memory
 
+	//VirtualLock(m_pfAudioBuffer, (m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
+
+	m_pfAudioBuffer = (float*)_aligned_malloc((m_BlockSizeBytes) * (MAX_BUFFER_MEMORY), 16);
 
 	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
@@ -251,12 +251,11 @@ bool CAudioOutput::Shutdown(void)
 
 	if(m_pfAudioBuffer)
 	{
-//		free(m_pfAudioBuffer);
-		VirtualUnlock(	m_pfAudioBuffer, 
-						(m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
+		//free(m_pfAudioBuffer);
+		//VirtualUnlock(	m_pfAudioBuffer, (m_BlockSizeBytes) * (MAX_BUFFER_MEMORY));
+		//VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
 
-		VirtualFree(m_pfAudioBuffer, 0, MEM_RELEASE);
-
+		_aligned_free(m_pfAudioBuffer);
 		m_pfAudioBuffer = NULL;
 	}
 
