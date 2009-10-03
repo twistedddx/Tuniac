@@ -4,7 +4,7 @@
 
 CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 {
-	exts.AddTail(std::wstring(L".mp3"));
+	//exts.AddTail(std::wstring(L".mp3"));
 	exts.AddTail(std::wstring(L".mp2"));
 	exts.AddTail(std::wstring(L".mp1"));
 	exts.AddTail(std::wstring(L".ogg"));

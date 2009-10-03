@@ -7,8 +7,8 @@ void SSE_CopyFloat(float * Dest, float * Src, unsigned long len)
 	
 	while(len >= 4)
 	{
-		XMM0 = _mm_loadu_ps(&Src[index]);
-		_mm_storeu_ps(&Dest[index], XMM0);
+		XMM0 = _mm_load_ps(&Src[index]);
+		_mm_store_ps(&Dest[index], XMM0);
 		
 		// increment pointers;
 		index		+= 4;
@@ -31,7 +31,7 @@ void SSE_ClearFloat(float * Array, unsigned long len)
 	
 	while(len >=4)
 	{
-		_mm_storeu_ps(&Array[index], XMM0);
+		_mm_store_ps(&Array[index], XMM0);
 		index += 4;
 		len -= 4;
 	}

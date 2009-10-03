@@ -1,4 +1,13 @@
-July 2009
+Sep, 2009
+---------
+-BASS AAC, ALAC and MIDI x64
+-lib updates - taglib 1.6, ape 4.06, tak 1.1.2, mpc, alac 0.2.0, ogg
+-Fix shutdown preference and library saving
+-Directx August 2009 - XAudio 2.5
+-Fix play selected
+-smoother popup notify fadeout
+
+Jul, 2009
 ---------
 -svp renderer update
 

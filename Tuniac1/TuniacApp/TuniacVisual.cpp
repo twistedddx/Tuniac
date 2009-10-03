@@ -57,7 +57,8 @@ void	CTuniacVisual::Destroy(void)
 {
 	if(Samples)
 	{
-		VirtualFree(Samples, 0, MEM_RELEASE);
+		//VirtualFree(Samples, 0, MEM_RELEASE);
+		_aligned_free(Samples);
 		Samples = NULL;
 	}
 	delete this;
@@ -127,7 +128,8 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	glEnable(GL_POLYGON_SMOOTH);
 
-	Samples = (float *)VirtualAlloc(NULL, DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+	//Samples = (float *)VirtualAlloc(NULL, DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
+	Samples = (float*)_aligned_malloc(DISPLAYSAMPLES * sizeof(float), 16);
 
 	SwapBuffers(m_glDC);
 
@@ -147,7 +149,8 @@ bool	CTuniacVisual::Detach()
 
 	if(Samples)
 	{
-		VirtualFree(Samples, 0, MEM_RELEASE);
+		//VirtualFree(Samples, 0, MEM_RELEASE);
+		_aligned_free(Samples);
 		Samples = NULL;
 	}
 
