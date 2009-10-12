@@ -183,6 +183,11 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 SVPRenderer::SVPRenderer(void)
 {
+	m_textureData = NULL;
+	visdata = NULL;
+	m_glRC = NULL;
+	m_glDC = NULL;
+
 	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
 	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
 }
