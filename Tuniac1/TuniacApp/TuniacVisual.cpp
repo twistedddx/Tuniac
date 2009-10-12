@@ -192,13 +192,13 @@ bool	CTuniacVisual::Render(int w, int h)
 	// draw background grid
 	glColor4f(0,0,0, 0.1f);
 	glBegin(GL_LINES);
-	for(unsigned long x=0; x<m_LastWidth; x+=64)
+	for(unsigned long x=0; x<m_LastWidth; x+=(m_LastWidth/10))
 	{
 		glVertex2i(x, 0);
 		glVertex2i(x, m_LastHeight);
 	}
 
-	for(unsigned long y=0; y<m_LastHeight; y+=64)
+	for(unsigned long y=0; y<m_LastHeight; y+=(m_LastWidth/10))
 	{
 		glVertex2i(0,			y);
 		glVertex2i(m_LastWidth, y);
@@ -218,7 +218,7 @@ bool	CTuniacVisual::Render(int w, int h)
 				glVertex2f(samp*multiplier, halfheight);
 				glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
 
-				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+1] * halfheight));
+				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
 				glVertex2f((samp+1)*multiplier,	halfheight);
 			}
 		}
@@ -227,10 +227,10 @@ bool	CTuniacVisual::Render(int w, int h)
 		glColor4f(0,0,0,1);
 		glBegin(GL_QUADS);
 		{
-			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
+			for(unsigned int samp=1; samp<DISPLAYSAMPLES-3; samp++)
 			{
 				glVertex2f(samp*multiplier, halfheight);
-				glVertex2f(samp*multiplier, halfheight + (Samples[samp+2] * halfheight));
+				glVertex2f(samp*multiplier, halfheight + (Samples[samp+1] * halfheight));
 
 				glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
 				glVertex2f((samp+1)*multiplier,	halfheight);
