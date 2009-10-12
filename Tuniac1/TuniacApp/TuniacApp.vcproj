@@ -414,6 +414,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OffsetTimer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\picopng.cpp"
 				>
 			</File>
@@ -664,6 +668,10 @@
 			</File>
 			<File
 				RelativePath=".\ntddstor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OffsetTimer.h"
 				>
 			</File>
 			<File

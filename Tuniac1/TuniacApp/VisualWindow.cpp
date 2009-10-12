@@ -600,7 +600,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 				}
 			}
 
-			WaitForSingleObject(m_hRenderEvent, DWORD(1000.0f / tuniacApp.m_Preferences.GetVisualFPS()));
+			WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000.0f/tuniacApp.m_Preferences.GetVisualFPS()));
 		}
 	}
 
