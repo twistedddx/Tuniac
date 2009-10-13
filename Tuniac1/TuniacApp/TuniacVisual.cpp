@@ -193,13 +193,13 @@ bool	CTuniacVisual::Render(int w, int h)
 	// draw background grid
 	glColor4f(0,0,0, 0.1f);
 	glBegin(GL_LINES);
-	for(unsigned long x=0; x<m_LastWidth; x+=64)
+	for(unsigned long x=0; x<m_LastWidth; x+=m_LastWidth/10)
 	{
 		glVertex2i(x, 0);
 		glVertex2i(x, m_LastHeight);
 	}
 
-	for(unsigned long y=0; y<m_LastHeight; y+=64)
+	for(unsigned long y=0; y<m_LastHeight; y+=m_LastHeight/10)
 	{
 		glVertex2i(0,			y);
 		glVertex2i(m_LastWidth, y);
@@ -212,29 +212,29 @@ bool	CTuniacVisual::Render(int w, int h)
 		float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
 
 		glColor4f(0,0,0,1);
-		glBegin(GL_QUADS);
+		glBegin(GL_QUAD_STRIP);
 		{
-			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
+			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp+=2)
 			{
-				glVertex2f(samp*multiplier, halfheight);
-				glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
+				glVertex2f((samp*(multiplier/4)), halfheight);
+				glVertex2f((samp*(multiplier/4)), halfheight + (Samples[samp] * halfheight));
 
-				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
-				glVertex2f((samp+1)*multiplier,	halfheight);
+				//glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
+				//glVertex2f((samp+1)*multiplier,	halfheight);
 			}
 		}
 		glEnd();
 
 		glColor4f(0,0,0,1);
-		glBegin(GL_QUADS);
+		glBegin(GL_QUAD_STRIP);
 		{
-			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
+			for(unsigned int samp=1; samp<DISPLAYSAMPLES-3; samp+=2)
 			{
-				glVertex2f(samp*multiplier, halfheight);
-				glVertex2f(samp*multiplier, halfheight + (Samples[samp+1] * halfheight));
+				glVertex2f((m_LastWidth/2)+(samp*(multiplier/4)), halfheight);
+				glVertex2f((m_LastWidth/2)+(samp*(multiplier/4)), halfheight + (Samples[samp] * halfheight));
 
-				glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
-				glVertex2f((samp+1)*multiplier,	halfheight);
+				//glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
+				//glVertex2f((samp+1)*multiplier,	halfheight);
 			}
 		}
 		glEnd();
