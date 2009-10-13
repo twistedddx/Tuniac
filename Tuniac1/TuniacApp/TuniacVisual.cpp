@@ -173,7 +173,7 @@ bool	CTuniacVisual::Render(int w, int h)
 		glLoadIdentity();
 	}
 
-	glClear (GL_COLOR_BUFFER_BIT);
+	//glClear (GL_COLOR_BUFFER_BIT);
 
 	//matt gray
 	glBegin(GL_QUAD_STRIP);
@@ -219,7 +219,7 @@ bool	CTuniacVisual::Render(int w, int h)
 				glVertex2f(samp*multiplier, halfheight);
 				glVertex2f(samp*multiplier, halfheight - (Samples[samp] * halfheight ));
 
-				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+1] * halfheight));
+				glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
 				glVertex2f((samp+1)*multiplier,	halfheight);
 			}
 		}
@@ -231,7 +231,7 @@ bool	CTuniacVisual::Render(int w, int h)
 			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp++)
 			{
 				glVertex2f(samp*multiplier, halfheight);
-				glVertex2f(samp*multiplier, halfheight + (Samples[samp+2] * halfheight));
+				glVertex2f(samp*multiplier, halfheight + (Samples[samp+1] * halfheight));
 
 				glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
 				glVertex2f((samp+1)*multiplier,	halfheight);
