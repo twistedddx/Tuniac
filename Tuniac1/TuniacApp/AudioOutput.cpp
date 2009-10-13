@@ -326,7 +326,11 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 	
 		unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
-		m_BlockSize			=	samplesperms	* (m_ulBuffersizeMS / MAX_BUFFER_COUNT);												// so 3*100ms buffers pls
+		m_BlockSize			=	samplesperms	* (m_ulBuffersizeMS / MAX_BUFFER_COUNT);	// so 3*100ms buffers pls
+
+		while(m_BlockSize % 16)
+			m_BlockSize++;
+
 		m_BlockSizeBytes	=	m_BlockSize		* sizeof(float);
 
 		m_Interval = (m_ulBuffersizeMS / MAX_BUFFER_COUNT) / 2;
@@ -411,12 +415,12 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 
 	// ok lets clamp offset so it can't gobeyond the end of the buffer
 
-	offset = min(offset, m_BlockSize);
+	offset = (min(offset, m_BlockSize) & 0xfffffff0);
 
 	ulNumSamples = min(m_BlockSize, ulNumSamples);
 
 	CopyFloat(	ToHere,
-				(float *)m_pfAudioBuffer+((m_BufferInProgress*m_BlockSize) + offset), 
+				(float *)m_pfAudioBuffer+((m_BufferInProgress*m_BlockSize) + (offset)), 
 				ulNumSamples);
 
 	return true;
