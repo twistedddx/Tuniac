@@ -436,17 +436,18 @@ bool			CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
 	else
 	{
 		// multiple streams... MIX THEM!!!
-		float TBuffer[4096];
+		float * fMixBuffer;
+		fMixBuffer = (float*)_aligned_malloc(ulNumSamples * sizeof(float), 16);
 
 		ClearFloat(ToHere, ulNumSamples);
 
 		for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 		{
-			if(m_Streams[x]->GetVisData(TBuffer, ulNumSamples))
+			if(m_Streams[x]->GetVisData(fMixBuffer, ulNumSamples))
 			{
 				for(unsigned long samp = 0; samp < ulNumSamples; samp++)
 				{
-					ToHere[samp] += TBuffer[samp] / m_Streams.GetCount();
+					ToHere[samp] += fMixBuffer[samp] / m_Streams.GetCount();
 				}
 			}
 		}
