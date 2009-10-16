@@ -284,9 +284,9 @@ bool SVPRenderer::RenderVisual(void)
 		}
 
 		if(m_TheVisual->NeedsVisFX())
-			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisRes*iVisRes*4, -24);
+			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisResWidth*iVisResHeight*4, -24);
 
-		return m_TheVisual->Render(m_textureData, iVisRes, iVisRes, iVisRes, &vd);
+		return m_TheVisual->Render(m_textureData, iVisResWidth, iVisResHeight, iVisResWidth, &vd);
 	}
 
 	return true;
@@ -337,14 +337,17 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastHeight		= -1;
 	m_SelectedVisual	= 0;
 	m_TheVisual			= NULL;
-	iLastVisRes			= -1;
-	iVisMaxRes			= 128;
+	iVisResHeight		= 128;
+	iVisResWidth		= 128;
+	iAllowNonPowerOf2	= 0;
 	bResChange			= true;
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
+
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 	//visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
@@ -402,8 +405,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 	glTexImage2D(	GL_TEXTURE_2D, 
 						0, 
 						GL_RGB,
-						iVisRes, 
-						iVisRes, 
+						iVisResWidth,
+						iVisResHeight,
 						0,
 						GL_BGRA_EXT, 
 						GL_UNSIGNED_BYTE, 
@@ -485,36 +488,42 @@ bool	SVPRenderer::Render(int w, int h)
 
 	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 	{
-
-		m_LastWidth		= w;
-		m_LastHeight	= h;
-
 		//we are minimized.. 
 		if((h == 0) || (w == 0))
 		{
-			if(iLastVisRes > 0)
-				iVisRes = iLastVisRes;
+			if(m_LastHeight > 0)
+				iVisResHeight = m_LastHeight;
 			else
-				iVisRes = iVisMaxRes;
+				iVisResHeight = iVisMaxRes;
+
+			if(m_LastWidth > 0)
+				iVisResWidth = m_LastWidth;
+			else
+				iVisResWidth = iVisMaxRes;
 		}
 		else
 		{
-			int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+			if(iAllowNonPowerOf2 == 0)
+			{
+				int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
 
-			//power of 2
-			iVisTempRes--;
-			iVisTempRes |= iVisTempRes >> 1;
-			iVisTempRes |= iVisTempRes >> 2;
-			iVisTempRes |= iVisTempRes >> 4;
-			iVisTempRes |= iVisTempRes >> 8;
-			iVisTempRes |= iVisTempRes >> 16;
-			iVisTempRes++;
+				//power of 2
+				iVisTempRes--;
+				iVisTempRes |= iVisTempRes >> 1;
+				iVisTempRes |= iVisTempRes >> 2;
+				iVisTempRes |= iVisTempRes >> 4;
+				iVisTempRes |= iVisTempRes >> 8;
+				iVisTempRes |= iVisTempRes >> 16;
+				iVisTempRes++;
+	
+				iVisResHeight = iVisResWidth = min(iVisMaxRes, iVisTempRes);
+			}
+			else
+			{
+				iVisResHeight = min(h, iVisMaxRes);
+				iVisResWidth = min(w, iVisMaxRes);
+			}
 
-			iVisRes = min(iVisMaxRes, iVisTempRes);
-		}
-
-		if(iVisRes != iLastVisRes)
-		{
 			if(m_textureData)
 			{
 				//VirtualFree(m_textureData, 0, MEM_RELEASE);
@@ -523,10 +532,8 @@ bool	SVPRenderer::Render(int w, int h)
 			}
 
 			//m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-			m_textureData = (unsigned long*)malloc(iVisRes*iVisRes*iVisRes*sizeof(unsigned long));
-			iLastVisRes = iVisRes;
+			m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*iVisResWidth*sizeof(unsigned long));
 		}
-		bResChange = false;
 
 		SetRect(&m_NextVisRect, 
 				w-(64+16),
@@ -550,14 +557,21 @@ bool	SVPRenderer::Render(int w, int h)
 		//create texture
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glTexImage2D(	GL_TEXTURE_2D, 
-							0, 
-							GL_RGB,
-							iVisRes, 
-							iVisRes, 
 							0,
-							GL_BGRA_EXT, 
-							GL_UNSIGNED_BYTE, 
+							GL_RGB,
+							iVisResWidth,
+							iVisResHeight,
+							0,
+							GL_BGRA_EXT,
+							GL_UNSIGNED_BYTE,
 							0);
+
+		bResChange = false;
+
+		m_LastWidth		= w;
+		m_LastHeight	= h;
+
+
 	}
 
 	RenderVisual();
@@ -570,8 +584,8 @@ bool	SVPRenderer::Render(int w, int h)
 					0,
 					0,
 					0,
-					iVisRes,
-					iVisRes,
+					iVisResWidth,
+					iVisResHeight,
 					GL_BGRA_EXT,
 					GL_UNSIGNED_BYTE,
 					m_textureData);
@@ -580,11 +594,11 @@ bool	SVPRenderer::Render(int w, int h)
 		glTexCoord2f(0, 0);
 		glVertex2f(0, 0);	// Bottom Left Of The Texture and Quad
 		glTexCoord2f(0, 1);
-		glVertex2f(0, m_LastHeight);	// Bottom Right Of The Texture and Quad
+		glVertex2f(0, h);	// Bottom Right Of The Texture and Quad
 		glTexCoord2f(1, 1);
-		glVertex2f(m_LastWidth, m_LastHeight);	// Top Right Of The Texture and Quad
+		glVertex2f(w, h);	// Top Right Of The Texture and Quad
 		glTexCoord2f(1, 0);
-		glVertex2f(m_LastWidth, 0);	// Top Left Of The Texture and Quad
+		glVertex2f(w, 0);	// Top Left Of The Texture and Quad
 	glEnd ();
 
 	//arrows
@@ -636,13 +650,23 @@ bool	SVPRenderer::Configure(HWND hWndParent)
 {
 	//crap(many in laptops) and old gpus require the res to be a power of 2 for glTexImage2D!
 	if(iVisMaxRes == 128)
-		iVisMaxRes = 240;
+	{
+		if(iAllowNonPowerOf2)
+			iVisMaxRes = 240;
+		else
+			iVisMaxRes = 256;
+	}
 	else if(iVisMaxRes == 240)
 		iVisMaxRes = 256;
 	else if(iVisMaxRes == 256)
 		iVisMaxRes = 512;
 	else if(iVisMaxRes == 512)
-		iVisMaxRes = 640;
+	{
+		if(iAllowNonPowerOf2)
+			iVisMaxRes = 640;
+		else
+			iVisMaxRes = 128;
+	}
 	else
 		iVisMaxRes = 128;
 
@@ -772,8 +796,8 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 
 			// we need to scale the point to a 512x512 point then send it to the vis
 
-			int visx = (int)(((float)x / (float)m_LastWidth) * iVisRes);
-			int visy = (int)(((float)y / (float)m_LastHeight) * iVisRes);
+			int visx = (int)(((float)x / (float)m_LastWidth) * iVisResWidth);
+			int visy = (int)(((float)y / (float)m_LastHeight) * iVisResHeight);
 
 			if(m_TheVisual)
 				m_TheVisual->Clicked(visx,visy);
