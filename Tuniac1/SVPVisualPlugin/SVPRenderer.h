@@ -22,9 +22,10 @@ protected:
 
 	int									m_LastWidth;
 	int									m_LastHeight;
-	int									iVisRes;
-	int									iLastVisRes;
+	int									iVisResHeight;
+	int									iVisResWidth;
 	int									iVisMaxRes;
+	int									iAllowNonPowerOf2;
 	bool								bResChange;
 	unsigned long					*	m_textureData;
 
