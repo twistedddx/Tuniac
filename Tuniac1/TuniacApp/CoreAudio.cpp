@@ -431,27 +431,36 @@ bool			CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
 	}
 	else if(m_Streams.GetCount() == 1)
 	{
-		return(m_Streams[0]->GetVisData(ToHere, ulNumSamples));
+		if(!m_Streams[0]->IsFinished())
+		{
+			return(m_Streams[0]->GetVisData(ToHere, ulNumSamples));
+		}
 	}
 	else
 	{
 		// multiple streams... MIX THEM!!!
-		float * fMixBuffer;
+		float * fMixBuffer = NULL;
 		fMixBuffer = (float*)_aligned_malloc(ulNumSamples * sizeof(float), 16);
 
 		ClearFloat(ToHere, ulNumSamples);
 
 		for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 		{
-			if(m_Streams[x]->GetVisData(fMixBuffer, ulNumSamples))
+			if(!m_Streams[x]->IsFinished())
 			{
-				for(unsigned long samp = 0; samp < ulNumSamples; samp++)
+				if(m_Streams[x]->GetVisData(fMixBuffer, ulNumSamples))
 				{
-					ToHere[samp] += fMixBuffer[samp] / m_Streams.GetCount();
+					for(unsigned long samp = 0; samp < ulNumSamples; samp++)
+					{
+						ToHere[samp] += fMixBuffer[samp] / m_Streams.GetCount();
+					}
 				}
 			}
 		}
-
+		if(fMixBuffer)
+		{
+			_aligned_free(fMixBuffer);
+		}
 		return true;
 	}
 
@@ -477,10 +486,13 @@ IAudioSourceSupplier * CCoreAudio::GetPluginAtIndex(unsigned long ulIndex)
 
 void CCoreAudio::CheckOldStreams(void)
 {
+	
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
 		if(m_Streams[x]->IsFinished())
 		{
+			CAutoLock	t(&m_Lock);
+
 			m_Streams[x]->Destroy();
 			m_Streams.RemoveAt(x);
 
