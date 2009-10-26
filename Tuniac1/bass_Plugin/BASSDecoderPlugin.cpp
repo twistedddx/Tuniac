@@ -4,26 +4,26 @@
 
 CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 {
-	//exts.AddTail(std::wstring(L".mp3"));
-	exts.AddTail(std::wstring(L".mp2"));
-	exts.AddTail(std::wstring(L".mp1"));
-	exts.AddTail(std::wstring(L".ogg"));
-	exts.AddTail(std::wstring(L".wav"));
-	exts.AddTail(std::wstring(L".aif"));
-
-	exts.AddTail(std::wstring(L".mod"));
-	exts.AddTail(std::wstring(L".xm"));
-	exts.AddTail(std::wstring(L".it"));
-	exts.AddTail(std::wstring(L".s3m"));
-	exts.AddTail(std::wstring(L".mtm"));
-	exts.AddTail(std::wstring(L".umx"));
-
 	if (HIWORD(BASS_GetVersion())!=BASSVERSION)
 	{
 		MessageBox(0,L"An incorrect version of BASS.DLL was loaded",0,MB_ICONERROR);
 	}
 	else
 	{
+		//exts.AddTail(std::wstring(L".mp3"));
+		exts.AddTail(std::wstring(L".mp2"));
+		exts.AddTail(std::wstring(L".mp1"));
+		exts.AddTail(std::wstring(L".ogg"));
+		exts.AddTail(std::wstring(L".wav"));
+		exts.AddTail(std::wstring(L".aif"));
+
+		exts.AddTail(std::wstring(L".mo3"));
+		exts.AddTail(std::wstring(L".mod"));
+		exts.AddTail(std::wstring(L".xm"));
+		exts.AddTail(std::wstring(L".it"));
+		exts.AddTail(std::wstring(L".s3m"));
+		exts.AddTail(std::wstring(L".mtm"));
+		exts.AddTail(std::wstring(L".umx"));
 
 		TCHAR				szFilename[_MAX_PATH];
 		TCHAR				szFilePath[_MAX_PATH];
@@ -119,10 +119,8 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 							}
 							free(extstring);
 						}
-						
 					}
 				}
-
 			} while(FindNextFile(hFind, &w32fd));
 
 			FindClose(hFind); 
