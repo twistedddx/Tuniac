@@ -51,8 +51,8 @@ CCoreAudio::CCoreAudio(void) :
 	m_pXAudio(NULL),
 	m_pMasteringVoice(NULL),
 	m_bReplayGainEnabled(true),
-	m_bUseAlbumGain(false)
-
+	m_bUseAlbumGain(false),
+	fMixBuffer(NULL)
 {
 }
 
@@ -66,6 +66,9 @@ bool			CCoreAudio::Startup()
 	//
 	// FIRST INITIALIZE XAUDIO
 	//
+
+	fMixBuffer = (float*)_aligned_malloc(4096 * sizeof(float), 16);
+
 	if(FAILED(XAudio2Create(&m_pXAudio)))
 	{
 		//booo we dont have an XAudio2 object!
@@ -171,6 +174,11 @@ bool			CCoreAudio::Shutdown(void)
 		m_pXAudio->UnregisterForCallbacks(this);
 		m_pXAudio->StopEngine();
 		SAFE_RELEASE(m_pXAudio);
+	}
+
+	if(fMixBuffer)
+	{
+		_aligned_free(fMixBuffer);
 	}
 
 	return true;
@@ -420,51 +428,47 @@ unsigned long CCoreAudio::GetSampleRate(void)
 }
 
 
-bool			CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
+unsigned long CCoreAudio::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
 	CAutoLock	t(&m_Lock);
 
+	ClearFloat(ToHere, ulNumSamples);
+
 	if(m_Streams.GetCount() == 0 || GetState() != STATE_PLAYING)
 	{
-		ClearFloat(ToHere, ulNumSamples);
-		return false;
+		return 0;
 	}
 	else if(m_Streams.GetCount() == 1)
 	{
-		if(!m_Streams[0]->IsFinished())
-		{
+		if(m_Streams[0]->IsFinished())
+			return 0;
+		else
 			return(m_Streams[0]->GetVisData(ToHere, ulNumSamples));
-		}
 	}
 	else
 	{
 		// multiple streams... MIX THEM!!!
-		float * fMixBuffer = NULL;
-		fMixBuffer = (float*)_aligned_malloc(ulNumSamples * sizeof(float), 16);
-
-		ClearFloat(ToHere, ulNumSamples);
+		int ulMaxSamples = 0;
+		ClearFloat(fMixBuffer, ulNumSamples);
 
 		for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 		{
 			if(!m_Streams[x]->IsFinished())
 			{
-				if(m_Streams[x]->GetVisData(fMixBuffer, ulNumSamples))
+				int ulSamples = m_Streams[x]->GetVisData(fMixBuffer, ulNumSamples);
+				if(ulSamples)
 				{
-					for(unsigned long samp = 0; samp < ulNumSamples; samp++)
+					ulMaxSamples = max(ulSamples, ulMaxSamples);
+					for(unsigned long samp = 0; samp < ulSamples; samp++)
 					{
 						ToHere[samp] += fMixBuffer[samp] / m_Streams.GetCount();
 					}
 				}
 			}
 		}
-		if(fMixBuffer)
-		{
-			_aligned_free(fMixBuffer);
-		}
-		return true;
+		return ulMaxSamples;
 	}
-
-	return false;
+	return 0;
 }
 
 

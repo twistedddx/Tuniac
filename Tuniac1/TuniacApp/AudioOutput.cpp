@@ -404,7 +404,7 @@ __int64 CAudioOutput::GetSamplesOut(void)
 	return state.SamplesPlayed - m_SamplesOutLastReset;
 }
 
-bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
+unsigned long CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 {
 	unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
@@ -423,5 +423,5 @@ bool CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSamples)
 				(float *)m_pfAudioBuffer+((m_BufferInProgress*m_BlockSize) + (offset)), 
 				ulNumSamples);
 
-	return true;
+	return ulNumSamples;
 }

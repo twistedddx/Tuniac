@@ -56,6 +56,7 @@ protected:
 
 	float								m_fVolume;
 	float								m_fAmpGain;
+	float					*			fMixBuffer;
 	bool								m_bReplayGainEnabled;
 	bool								m_bUseAlbumGain;
 
@@ -84,7 +85,7 @@ public:
 	unsigned long		GetChannels(void);
 	unsigned long		GetSampleRate(void);
 
-	bool				GetVisData(float * ToHere, unsigned long ulNumSamples);
+	unsigned long		GetVisData(float * ToHere, unsigned long ulNumSamples);
 
 	unsigned long		GetNumPlugins(void);
 	IAudioSourceSupplier * GetPluginAtIndex(unsigned long ulIndex);

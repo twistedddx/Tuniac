@@ -607,7 +607,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 	return(0);
 }
 
-bool	CVisualWindow::GetVisData(float * pWaveformData, unsigned long ulNumSamples)
+unsigned long CVisualWindow::GetVisData(float * pWaveformData, unsigned long ulNumSamples)
 {
 	return CCoreAudio::Instance()->GetVisData(pWaveformData, ulNumSamples);
 }

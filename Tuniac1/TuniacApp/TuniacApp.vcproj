@@ -198,7 +198,7 @@
 				RuntimeLibrary="0"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="false"
-				EnableEnhancedInstructionSet="1"
+				EnableEnhancedInstructionSet="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -215,6 +215,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
 				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
 			/>
