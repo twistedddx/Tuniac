@@ -32,7 +32,10 @@ protected:
 	VisData								vd;
 	float							*	visdata;
 	float								fSamples[2][512];
+
+	unsigned long						ulNumChannels;
 	unsigned long						ulOldNumChannels;
+	unsigned long						ulSamples;
 
 	ITuniacVisHelper				*	m_pHelper;
 
