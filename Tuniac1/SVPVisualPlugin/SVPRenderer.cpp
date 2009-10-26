@@ -200,11 +200,11 @@ bool SVPRenderer::RenderVisual(void)
 {
 	if(m_TheVisual)
 	{
-		unsigned long NumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-		if(NumChannels == INVALID)
+		ulNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
+		if(ulNumChannels == INVALID)
 			return true;
 
-		if(NumChannels != ulOldNumChannels)
+		if(ulNumChannels != ulOldNumChannels)
 		{
 			if(visdata)
 			{
@@ -212,21 +212,21 @@ bool SVPRenderer::RenderVisual(void)
 				_aligned_free(visdata);
 			}
 
-			ulOldNumChannels = NumChannels;
+			ulOldNumChannels = ulNumChannels;
 			//visdata = (float *)VirtualAlloc(NULL, 512 * NumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
-			visdata = (float*)_aligned_malloc(512 * NumChannels * sizeof(float), 16);
+			visdata = (float*)_aligned_malloc(512 * ulNumChannels * sizeof(float), 16);
 		}
 
 		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
 
-		m_pHelper->GetVisData(visdata, 512 * NumChannels);
+		m_pHelper->GetVisData(visdata, 512 * ulNumChannels);
 
 		if(m_TheVisual->NeedsWaveform())
 		{
 			int sample = 0;
 			for(int x=0; x<512; x++)
 			{
-				if(NumChannels == 1)
+				if(ulNumChannels == 1)
 				{
 					vd.Waveform[0][x] = vd.Waveform[1][x] = (visdata[sample]*64.0f);
 				}
@@ -235,14 +235,14 @@ bool SVPRenderer::RenderVisual(void)
 					vd.Waveform[0][x] = (visdata[sample]*64.0f);
 					vd.Waveform[1][x] = (visdata[sample+1]*64.0f);
 				}
-				sample+=NumChannels;
+				sample+=ulNumChannels;
 			}
 		}
 
 		if(m_TheVisual->NeedsSpectrum())
 		{
 			long tempbuffer = 0;
-			if(NumChannels == 1)
+			if(ulNumChannels == 1)
 			{
 				kiss_fftr(kiss_cfg, visdata, freq_data);
 				for(int p = 0; p < 256; p++)
@@ -260,7 +260,7 @@ bool SVPRenderer::RenderVisual(void)
 				{
 					fSamples[0][x] = visdata[sample];
 					fSamples[1][x] = visdata[sample+1];
-					sample+=NumChannels;
+					sample+=ulNumChannels;
 				}
 				
 				kiss_fftr(kiss_cfg, fSamples[0], freq_data);
