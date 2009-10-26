@@ -88,7 +88,7 @@ public:
 	bool			GetFullscreen(void);
 
 public:
-	bool	GetVisData(float * pWaveformData, unsigned long ulNumSamples);
+	unsigned long	GetVisData(float * pWaveformData, unsigned long ulNumSamples);
 	void *	GetVariable(Variable eVar);
 
 	bool	GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);

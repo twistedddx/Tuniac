@@ -30,7 +30,7 @@
 class ITuniacVisHelper
 {
 public:
-	virtual bool	GetVisData(float * pWaveformData, unsigned long ulNumSamples) = 0;
+	virtual unsigned long	GetVisData(float * pWaveformData, unsigned long ulNumSamples) = 0;
 
 	virtual void *	GetVariable(Variable eVar) = 0;
 

@@ -153,7 +153,7 @@ public:
 
 	__int64 GetSamplesOut(void);
 
-	bool GetVisData(float * ToHere, unsigned long ulNumSamples);
+	unsigned long GetVisData(float * ToHere, unsigned long ulNumSamples);
 
 	bool StreamFinished(void)
 	{

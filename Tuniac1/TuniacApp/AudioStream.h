@@ -128,7 +128,7 @@ public:
 	bool			Start(void);
 	bool			Stop(void);
 
-	bool			GetVisData(float * ToHere, unsigned long ulNumSamples);
+	unsigned long	GetVisData(float * ToHere, unsigned long ulNumSamples);
 
 	void			SetCrossfadePoint(unsigned long ulCrossfadeTimeMS) { m_ulCrossfadeTimeMS = ulCrossfadeTimeMS; }
 };
