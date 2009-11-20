@@ -632,6 +632,41 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 					case IDC_SOURCE_DELPLAYLIST:
 						{
+							//multiple delete
+							HWND hSourceViewWnd = GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR);
+							int iPos = ListView_GetNextItem(hSourceViewWnd, -1, LVNI_SELECTED);
+							if(iPos == -1)
+								break;
+
+							IndexArray	m_DeleteArray;
+							while(iPos != -1)
+							{
+								if(iPos != 0)
+									m_DeleteArray.AddTail((unsigned long &)iPos);
+
+								iPos = ListView_GetNextItem(hSourceViewWnd, iPos, LVNI_SELECTED);
+							}
+
+							bool bConfirm = 1;
+							for(unsigned long i = m_DeleteArray.GetCount(); i > 0; i--)
+							{
+								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_DeleteArray[i - 1]))
+								{
+									CCoreAudio::Instance()->Reset();
+									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+									ShowPlaylistAtIndex(0);
+								}
+
+								if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_DeleteArray[i - 1], bConfirm))
+								{
+									bConfirm = 0;
+									UpdateList();
+								}
+							}
+							ShowPlaylistAtIndex(0);
+
+/*
+//single delete
 							if(m_ulVisiblePlaylistIndex == 0)
 								break;
 
@@ -650,6 +685,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								UpdateList();
 							}
+*/
 						}
 						break;
 
@@ -675,7 +711,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								CCoreAudio::Instance()->Reset();
 							}
 
-							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel))
+							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel, true))
 							{
 								if(m_ulVisiblePlaylistIndex == iSel)
 								{
@@ -895,7 +931,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 											CCoreAudio::Instance()->Reset();
 										}
 
-										if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_ulVisiblePlaylistIndex))
+										if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_ulVisiblePlaylistIndex, true))
 										{
 											if(m_ulVisiblePlaylistIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
 												ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex-1);

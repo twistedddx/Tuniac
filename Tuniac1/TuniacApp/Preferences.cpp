@@ -57,6 +57,7 @@
 
 #define DATEADDED 				TEXT("DateAdded")
 #define PLAYLISTSORTING			TEXT("PlaylistSorting")
+#define AUTOADDPLAYLIST			TEXT("AutoAddPlaylist")
 
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
@@ -780,7 +781,7 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_SETCHECK, pPrefs->m_bSetDateAddedToFileCreationTime ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_SETCHECK, pPrefs->m_bPlaylistSorting ? BST_CHECKED : BST_UNCHECKED, 0);
-
+				SendDlgItemMessage(hDlg, IDC_LIBRARY_AUTOADDPLAYLIST, BM_SETCHECK, pPrefs->m_bAutoAddPlaylist ? BST_CHECKED : BST_UNCHECKED, 0);
 
 			}
 			break;
@@ -802,6 +803,14 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_GETCHECK, 0, 0);
 							pPrefs->m_bPlaylistSorting = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+
+					case IDC_LIBRARY_AUTOADDPLAYLIST:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_AUTOADDPLAYLIST, BM_GETCHECK, 0, 0);
+							pPrefs->m_bAutoAddPlaylist = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
 
@@ -1173,6 +1182,7 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_bSetDateAddedToFileCreationTime = FALSE;
 	m_bPlaylistSorting			= FALSE;
+	m_bAutoAddPlaylist			= TRUE;
 
 	wnsprintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
 	wnsprintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
@@ -1397,6 +1407,14 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bPlaylistSorting,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						AUTOADDPLAYLIST,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bAutoAddPlaylist,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1764,6 +1782,13 @@ bool CPreferences::SavePreferences(void)
 					NULL,
 					REG_DWORD,
 					(LPBYTE)&m_bPlaylistSorting,
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					AUTOADDPLAYLIST,
+					NULL,
+					REG_DWORD,
+					(LPBYTE)&m_bAutoAddPlaylist,
 					sizeof(BOOL));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -2377,4 +2402,9 @@ BOOL		CPreferences::GetDateAddedToFileCreationTime(void)
 BOOL		CPreferences::GetCanPlaylistsSort(void)
 {
 	return m_bPlaylistSorting;
+}
+
+BOOL		CPreferences::GetAutoAddPlaylists(void)
+{
+	return m_bAutoAddPlaylist;
 }

@@ -322,14 +322,15 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 				{
 					playlistEntries.AddTail(pPE);
 				}
-
 			} while(pImporter->ImportUrl(szFilename, 512));
 
-
-			TCHAR	szFileTitle[128];
-			GetFileTitle(szSource, szFileTitle, 128);
-			tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFileTitle, playlistEntries);
-			tuniacApp.m_SourceSelectorWindow->UpdateList();
+			if(tuniacApp.m_Preferences.GetAutoAddPlaylists())
+			{
+				TCHAR	szFileTitle[128];
+				GetFileTitle(szSource, szFileTitle, 128);
+				tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFileTitle, playlistEntries);
+				tuniacApp.m_SourceSelectorWindow->UpdateList();
+			}
 		}
 		pImporter->EndImport();
 	}

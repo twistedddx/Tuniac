@@ -1422,10 +1422,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 								{
-									if(!m_MediaLibrary.AddItem(szAddBuffer))
-									{
-										MessageBeep(-1);
-									}
+									m_MediaLibrary.AddItem(szAddBuffer);
 									m_MediaLibrary.EndAdd();
 								}
 							}
