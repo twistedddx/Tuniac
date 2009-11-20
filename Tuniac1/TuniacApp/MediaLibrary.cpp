@@ -266,6 +266,10 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 {
 	if(GetItemByURL(szURL))
+		return false;
+
+	//if its a playlist file import it
+	if(m_ImportExport.Import(szURL))
 		return true;
 
 	//decoders are more vital than infomanagers
@@ -343,9 +347,6 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			return true;
 		}
 	}
-	if(m_ImportExport.Import(szURL))
-		return true;
-
 	return false;
 }
 

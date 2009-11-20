@@ -596,12 +596,18 @@ bool CPlaylistManager::MoveStandardPlaylist(unsigned long ulIndex, unsigned long
 	return true;
 }
 
-bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
+bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber, bool bConfirm)
 {
 	if(ulPlaylistNumber == 0)
 		return false;
 
-	if (IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION)) 
+	bool bOK = 0;
+	if(bConfirm == 0)
+		bOK = 1;
+	else if(IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
+		bOK = 1;
+
+	if(bOK) 
 	{
 
 		if(ulPlaylistNumber == m_ulActivePlaylistIndex)
