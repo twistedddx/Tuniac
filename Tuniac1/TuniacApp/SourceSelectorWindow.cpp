@@ -654,16 +654,25 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								{
 									CCoreAudio::Instance()->Reset();
 									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
-									ShowPlaylistAtIndex(0);
 								}
 
 								if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_DeleteArray[i - 1], bConfirm))
 								{
 									bConfirm = 0;
+
+									if(m_ulVisiblePlaylistIndex == m_DeleteArray[i - 1])
+									{
+										unsigned long ulOldActiveIndex = m_ulVisiblePlaylistIndex;
+										m_ulVisiblePlaylistIndex = INVALID_PLAYLIST_INDEX;
+										if(ulOldActiveIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
+											ShowPlaylistAtIndex(ulOldActiveIndex-1);
+										else
+											ShowPlaylistAtIndex(ulOldActiveIndex);
+									}
+
 									UpdateList();
 								}
 							}
-							ShowPlaylistAtIndex(0);
 
 /*
 //single delete
@@ -703,12 +712,15 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					case ID_REMOVE:
 						{
 							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
-							if(iSel < 0) break;
-							if(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel)->GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY) break;
+
+							//invalid or ML
+							if(iSel <= 0)
+								break;
 
 							if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel))
 							{
-								CCoreAudio::Instance()->Reset();
+									CCoreAudio::Instance()->Reset();
+									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
 							}
 
 							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel, true))
