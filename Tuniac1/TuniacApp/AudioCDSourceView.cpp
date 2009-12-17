@@ -210,13 +210,17 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 								if(m_pCDPlaylist->SetActiveIndex(lpnmitem->iItem))
 								{
 									IPlaylistEntry * pIPE = m_pCDPlaylist->GetActiveItem();
-									//open for art before opening for decode.
-									tuniacApp.SetArt(pIPE);
-									if(CCoreAudio::Instance()->SetSource(pIPE))
+									if(pIPE)
 									{
-										CCoreAudio::Instance()->Play();
-										tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+										tuniacApp.m_SoftPause.bNow = false;
+										//open for art before opening for decode.
+										tuniacApp.SetArt(pIPE);
+										if(CCoreAudio::Instance()->SetSource(pIPE))
+										{
+											CCoreAudio::Instance()->Play();
+											tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
+										}
 									}
 								}
 

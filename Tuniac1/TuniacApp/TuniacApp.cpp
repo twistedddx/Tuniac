@@ -1275,13 +1275,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 						IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
-						//open for art before opening for decode.
-						SetArt(pEntry);
-						if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
+						if(pEntry)
 						{
-							CCoreAudio::Instance()->Play();
-							pPlaylistEX->SetActiveFilteredIndex(ulIndex);
-							m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+							tuniacApp.m_SoftPause.bNow = false;
+							//open for art before opening for decode.
+							SetArt(pEntry);
+							if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
+							{
+								CCoreAudio::Instance()->Play();
+								pPlaylistEX->SetActiveFilteredIndex(ulIndex);
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+							}
 						}
 					}
 				}
@@ -1633,6 +1637,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
+									tuniacApp.m_SoftPause.bNow = false;
 									//open for art before opening for decode.
 									SetArt(pIPE);
 									if(CCoreAudio::Instance()->SetSource(pIPE))
@@ -1667,6 +1672,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
+									tuniacApp.m_SoftPause.bNow = false;
 									//open for art before opening for decode.
 									SetArt(pIPE);
 									unsigned long ulState = CCoreAudio::Instance()->GetState();
@@ -1709,6 +1715,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
+										tuniacApp.m_SoftPause.bNow = false;
 										//open for art before opening for decode.
 										SetArt(pIPE);
 										unsigned long ulState = CCoreAudio::Instance()->GetState();

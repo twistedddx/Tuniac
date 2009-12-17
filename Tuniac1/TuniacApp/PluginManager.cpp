@@ -384,6 +384,7 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 		if(pEntry == NULL)
 			return false;
 
+		tuniacApp.m_SoftPause.bNow = false;
 		//open for art before opening for decode.
 		tuniacApp.SetArt(pEntry);
 		unsigned long ulState = CCoreAudio::Instance()->GetState();

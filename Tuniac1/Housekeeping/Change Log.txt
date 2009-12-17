@@ -1,3 +1,13 @@
+Oct, 2009
+---------
+-byte alignment of code
+-turn on SSE optimizations
+-more accurate visual FPS control
+-fix crashes caused by visuals. SVP renderer, internal vis and internal core audio code changes.
+-Add pref for AllowNonPowerOf2. Allows non power of 2 resolutions in SVP renderer. Set "HKEY_CURRENT_USER\Software\Tuniac\visuals\SVPRenderer" DWORD "AllowNonPowerOf2" 1
+-GetVisData now returns usable sample count with extra samples simply returned as 0
+-minor changes
+
 Sep, 2009
 ---------
 -BASS AAC, ALAC and MIDI x64

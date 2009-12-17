@@ -138,6 +138,7 @@ bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 	bool bOK = false;
 	if(pIPE)
 	{
+		tuniacApp.m_SoftPause.bNow = false;
 		//open for art before opening for decode.
 		tuniacApp.SetArt(pIPE);
 		if(CCoreAudio::Instance()->SetSource(pIPE))
