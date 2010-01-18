@@ -819,12 +819,12 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(GetVisiblePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IPlaylistEX * pPlaylist = (IPlaylistEX *)GetVisiblePlaylist();
-								IPlaylistEntry * pEntry;
+								IPlaylistEntry * pIPE;
 								EntryArray exportArray;
 								for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry = pPlaylist->GetItemAtNormalFilteredIndex(i);
-									exportArray.AddTail(pEntry);
+									pIPE = pPlaylist->GetItemAtNormalFilteredIndex(i);
+									exportArray.AddTail(pIPE);
 								}
 								tuniacApp.m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
 							}

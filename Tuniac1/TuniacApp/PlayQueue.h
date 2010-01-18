@@ -38,10 +38,10 @@ public:
 
 	IPlaylistEntry *	GetItemAtIndex(unsigned long ulIndex);
 
-	bool				Prepend(IPlaylistEntry * pEntry);
-	bool				Append(IPlaylistEntry * pEntry);
+	bool				Prepend(IPlaylistEntry * pIPE);
+	bool				Append(IPlaylistEntry * pIPE);
 
 	bool				Remove(int iIndex);
-	bool				RemoveItem(IPlaylistEntry * pEntry);
+	bool				RemoveItem(IPlaylistEntry * pIPE);
 	void				Clear(void);
 };

@@ -35,7 +35,7 @@ protected:
 	bool				m_bDirty;
 
 public:
-	CMediaLibraryPlaylistEntry(LibraryEntry * pEntry);
+	CMediaLibraryPlaylistEntry(LibraryEntry * pIPE);
 	~CMediaLibraryPlaylistEntry(void);
 
 	unsigned long GetEntryID(void);

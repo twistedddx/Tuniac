@@ -59,7 +59,6 @@
 extern CTuniacApp		tuniacApp;
 extern CRandom			g_Rand;
 
-
 // utility macros
 #define TESTFLAG(dwField, dwBits)   (((dwField)&(dwBits)) ? TRUE : FALSE)
 

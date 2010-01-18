@@ -565,14 +565,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\debug.h"
-				>
-			</File>
-			<File
-				RelativePath=".\devioctl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DoubleBuffer.h"
 				>
 			</File>

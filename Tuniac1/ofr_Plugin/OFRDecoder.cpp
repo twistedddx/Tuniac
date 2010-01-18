@@ -2,6 +2,8 @@
 
 #include "ofrdecoder.h"
 
+//#include <intrin.h>
+
 COFRDecoder::COFRDecoder(void)
 {
 }
@@ -113,9 +115,51 @@ bool		COFRDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
     if (pointsRetrieved <= 0)
         return false;
 
+/*
+	*NumSamples = pointsRetrieved*iInfo.channels;
+
+	int len = pointsRetrieved*iInfo.channels;
+	int index = 0;
+
+	__m64 * psrc = (__m64 *)buffer;
+	__m128 XMM0, XMM1;
+
+	XMM1 = _mm_load1_ps(&m_divider);
+
+	while(len >= 4)
+	{
+		XMM0 = _mm_cvtpi16_ps(psrc[index]);
+		XMM0 = _mm_div_ps(XMM0, XMM1);
+
+		_mm_store_ps(&m_Buffer[index], XMM0);
+
+		index+=4;			
+		len -= 4;
+	}
+	while(len)
+	{
+		//XMM0 = _mm_cvtpi16_ss(psrc[index]); //doesnt exist :(
+		float * pSample = (float *)buffer[index];
+		XMM0 = _mm_load1_ps(&pSample[index]);
+		XMM0 = _mm_div_ss(XMM0, XMM1);
+
+		_mm_store_ss(&m_Buffer[index], XMM0);
+
+		index++;			
+		len--;
+	}
+
+_mm_cvtpu8_ps
+_mm_cvtpi8_ps
+_mm_cvtpu16_ps
+_mm_cvtpi16_ps
+_mm_cvtpi32_ps
+_mm_div_ps
+
+*/
 	short * pData = (short *)buffer;
 	float * pBuffer = m_Buffer;
-		
+
 	for(int x=0; x<pointsRetrieved*iInfo.channels; x++)
 	{
 		*pBuffer = (*pData) / m_divider;	
@@ -124,8 +168,8 @@ bool		COFRDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	}
 	*ppBuffer = m_Buffer;
 
-
 	*NumSamples = pointsRetrieved*iInfo.channels;
+
 
 	return true;
 }

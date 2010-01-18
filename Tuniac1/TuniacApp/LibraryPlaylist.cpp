@@ -51,7 +51,7 @@ unsigned long		CLibraryPlaylist::GetRealCount(void)
 
 unsigned long		CLibraryPlaylist::GetIDAtRealIndex(unsigned long ulIndex)
 {
-	return m_PlaylistArray[ulIndex].pEntry->GetEntryID();
+	return m_PlaylistArray[ulIndex].pIPE->GetEntryID();
 }
 
 bool				CLibraryPlaylist::AddEntryToPlaylist(IPlaylistEntry * lpPLE)
@@ -96,7 +96,7 @@ bool				CLibraryPlaylist::DeleteItemArray(IndexArray &	indexArray)
 
 		unsigned long ulRealIndex;
 		ulRealIndex = indexArray[0];
-		IPlaylistEntry * pEntry = m_PlaylistArray[ulRealIndex].pEntry;
+		IPlaylistEntry * pIPE = m_PlaylistArray[ulRealIndex].pIPE;
 
 		if(m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
 		{
@@ -114,25 +114,25 @@ bool				CLibraryPlaylist::DeleteItemArray(IndexArray &	indexArray)
 			}
 		}
 
-		if(PathIsURL((LPTSTR)pEntry->GetField(FIELD_URL)))
+		if(PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
 		{
 			bIsURL = true;
 		}
 
 		if((bRemoveFromDisk) && (!bIsURL))
 		{
-			StrCpy(szCopyPtr, (LPTSTR)pEntry->GetField(FIELD_URL));
+			StrCpy(szCopyPtr, (LPTSTR)pIPE->GetField(FIELD_URL));
 			szCopyPtr = &szCopyPtr[lstrlen(szCopyPtr)+1];
 		}
 
 		for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 		{
-			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereIDEquals(pEntry->GetEntryID());
+			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereIDEquals(pIPE->GetEntryID());
 		}
 
 		m_PlaylistArray.RemoveAt(ulRealIndex);
 
-		tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
+		tuniacApp.m_MediaLibrary.RemoveItem(pIPE);
 		indexArray.RemoveAt(0);
 		loop ++;
 	}
@@ -169,7 +169,7 @@ bool				CLibraryPlaylist::RebuildPlaylist(void)
 
 		for(unsigned long y = 0; y<m_PlaylistArray.GetCount(); y++)
 		{
-			if(t->GetEntryID() == m_PlaylistArray[y].pEntry->GetEntryID())
+			if(t->GetEntryID() == m_PlaylistArray[y].pIPE->GetEntryID())
 			{
 				bFound = true;
 				break;
@@ -181,7 +181,7 @@ bool				CLibraryPlaylist::RebuildPlaylist(void)
 			PlaylistEntry PE;
 
 			PE.bFiltered	= false;
-			PE.pEntry		= t;
+			PE.pIPE		= t;
 
 			m_PlaylistArray.AddTail(PE);
 			m_SortType		= SORTED_UNSORTED;

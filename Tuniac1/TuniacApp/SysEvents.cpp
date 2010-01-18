@@ -25,7 +25,6 @@
 
 #include "CoreAudio.h"
 
-
 CSysEvents::CSysEvents(void)
 {
 }

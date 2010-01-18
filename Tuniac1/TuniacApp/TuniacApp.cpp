@@ -260,9 +260,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 	if(pPlaylist)
 	{
-		IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
-		if(pEntry)
-			SetArt(pEntry);
+		IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+		if(pIPE)
+			SetArt(pIPE);
 		else
 		{
 			TCHAR szURL[_MAX_PATH];
@@ -817,9 +817,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										//open for art before opening for decode.
-										SetArt(pIPE);
-										CCoreAudio::Instance()->TransitionTo(pIPE);
+										tuniacApp.PlayEntry(pIPE, true, true, true);
 									}
 								}
 								//else
@@ -842,12 +840,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										//open for art before opening for decode.
-										SetArt(pIPE);
-										if(CCoreAudio::Instance()->SetSource(pIPE))
-										{
-											CCoreAudio::Instance()->Play();
-										}
+										tuniacApp.PlayEntry(pIPE, true, true, true);
 									}
 								}
 								else
@@ -896,12 +889,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										//open for art before opening for decode.
-										SetArt(pIPE);
-										if(CCoreAudio::Instance()->SetSource(pIPE))
-										{
-											CCoreAudio::Instance()->Play();
-										}
+										tuniacApp.PlayEntry(pIPE, true, true, true);
 									}
 								}
 								else
@@ -942,8 +930,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							}
 						}
 						break;
-
-
 
 					//playlistmanager changed it's view
 					case NOTIFY_PLAYLISTSCHANGED:
@@ -1165,12 +1151,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
 											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 											pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
-											IPlaylistEntry * pEntry = pPlaylistEX->GetActiveItem();
-											//open for art before opening for decode.
-											SetArt(pEntry);
-											CCoreAudio::Instance()->SetSource(pEntry);
+											IPlaylistEntry * pIPE = pPlaylistEX->GetActiveItem();
+											tuniacApp.PlayEntry(pIPE, false, false, true);
 										}
-
 									}
 									SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 								}
@@ -1273,19 +1256,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 					{
 						IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-						IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
+						IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
-						if(pEntry)
+						if(pIPE)
 						{
-							tuniacApp.m_SoftPause.bNow = false;
-							//open for art before opening for decode.
-							SetArt(pEntry);
-							if(pEntry && CCoreAudio::Instance()->SetSource(pEntry))
-							{
-								CCoreAudio::Instance()->Play();
-								pPlaylistEX->SetActiveFilteredIndex(ulIndex);
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-							}
+							tuniacApp.PlayEntry(pIPE, true, true, true);
 						}
 					}
 				}
@@ -1637,14 +1612,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
-									tuniacApp.m_SoftPause.bNow = false;
-									//open for art before opening for decode.
-									SetArt(pIPE);
-									if(CCoreAudio::Instance()->SetSource(pIPE))
-									{
-										CCoreAudio::Instance()->Play();
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-									}
+									tuniacApp.PlayEntry(pIPE, true, true, true);
 								}
 							}
 
@@ -1675,15 +1643,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									tuniacApp.m_SoftPause.bNow = false;
 									//open for art before opening for decode.
 									SetArt(pIPE);
-									unsigned long ulState = CCoreAudio::Instance()->GetState();
-									if(CCoreAudio::Instance()->SetSource(pIPE))
-									{
-										if(ulState == STATE_PLAYING)
-											CCoreAudio::Instance()->Play();
 
-										//notify plugins of change of state
-										m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-									}
+									PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
 								}
 							}
 						}
@@ -1706,7 +1667,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							if(CCoreAudio::Instance()->GetPosition() < 3500)
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
 								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
 								if(pPlaylist->Previous())
@@ -1714,20 +1674,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									//play the current song
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
-									{
-										tuniacApp.m_SoftPause.bNow = false;
-										//open for art before opening for decode.
-										SetArt(pIPE);
-										unsigned long ulState = CCoreAudio::Instance()->GetState();
-										if(CCoreAudio::Instance()->SetSource(pIPE))
-										{
-											if(ulState == STATE_PLAYING)
-												CCoreAudio::Instance()->Play();
-
-											//notify plugins of change of state
-											m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-										}
-									}
+										tuniacApp.PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
 								}
 								//no valid previous song(start of playlist?), simply rewind
 								else
@@ -1739,6 +1686,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//past start of song, simply rewind
 							else
 							{
+								CCoreAudio::Instance()->Stop();
 								CCoreAudio::Instance()->SetPosition(0);
 							}
 						}
@@ -2259,8 +2207,8 @@ IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 		if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 		{
 			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[iFromCurrent]);
-			return pEntry;
+			IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[iFromCurrent]);
+			return pIPE;
 		}
 	}
 	return NULL;
@@ -2312,9 +2260,9 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 			if(ulIndex == INVALID_PLAYLIST_INDEX)
 				break;
 
-			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
+			IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
 
-			if(pEntry == NULL)
+			if(pIPE == NULL)
 				break;
 			else
 				tuniacApp.m_FutureMenu.AddTail((unsigned long &)ulIndex);
@@ -2341,12 +2289,12 @@ void	CTuniacApp::RebuildFutureMenu(void)
 		if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 		{
 			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-			IPlaylistEntry * pEntry = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[i]);
+			IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(tuniacApp.m_FutureMenu[i]);
 
 			//format info of file
-			FormatSongInfo(szDetail, 52, pEntry, m_Preferences.GetListFormatString(), true);
+			FormatSongInfo(szDetail, 52, pIPE, m_Preferences.GetListFormatString(), true);
 			EscapeMenuItemString(szDetail, szItem, 52);
-			FormatSongInfo(szTime, 12, pEntry, TEXT("\t[@I]"), true);
+			FormatSongInfo(szTime, 12, pIPE, TEXT("\t[@I]"), true);
 			StringCbCatN(szItem, 128, szTime, 24);
 
 			//add menu item
@@ -2434,10 +2382,13 @@ void	CTuniacApp::UpdateState(void)
 {
 	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
 
-	if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_PLAYING))
-		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
-	else if(pIPE && (CCoreAudio::Instance()->GetState() == STATE_STOPPED))
-		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+	if(pIPE)
+	{
+		if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+		else if(CCoreAudio::Instance()->GetState() == STATE_STOPPED)
+			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
+	}
 
 	UpdateTitles();
 	m_PlayControls.UpdateState();
@@ -2556,4 +2507,29 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 	m_SourceSelectorWindow->Refresh();
 
 	return bArtSuccess;
+}
+
+bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bManual, bool bSetArt)
+{
+	if(bManual)
+		m_SoftPause.bNow = false;
+
+	//open for art before opening for decode.
+	if(bSetArt)
+		SetArt(pIPE);
+
+	if(CCoreAudio::Instance()->SetSource(pIPE))
+	{
+		if(bStart)
+			CCoreAudio::Instance()->Play();
+
+		if(bManual)
+			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+
+		//tuniacApp.m_PlaylistManager.SetActiveByEntry(pIPE);
+		//tuniacApp.m_SourceSelectorWindow->UpdateView();
+
+		return true;
+	}
+	return false;
 }
