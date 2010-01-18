@@ -851,6 +851,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									CCoreAudio::Instance()->Reset();
 								}
+								Update();
 							}
 						}
 						break;
@@ -897,7 +898,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
 
-							tuniacApp.m_SourceSelectorWindow->UpdateView();
+							Update();
 						}
 						break;
 
@@ -1335,6 +1336,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											{
 												CCoreAudio::Instance()->Reset();
 											}
+											Update();
 										}
 									}
 									break;
@@ -1993,7 +1995,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 					SetRectEmpty(&m_draggedItemRect);
 					SetCursor(::LoadCursor(NULL, IDC_ARROW));
-					tuniacApp.m_SourceSelectorWindow->UpdateView();
+					Update();
 				}
 			}
 			break;
