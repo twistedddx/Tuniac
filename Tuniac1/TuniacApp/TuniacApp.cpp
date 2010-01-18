@@ -2526,9 +2526,6 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bManual, boo
 		if(bManual)
 			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
 
-		//tuniacApp.m_PlaylistManager.SetActiveByEntry(pIPE);
-		//tuniacApp.m_SourceSelectorWindow->UpdateView();
-
 		return true;
 	}
 	return false;
