@@ -241,8 +241,11 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				pPlaylist->RebuildPlaylistArrays();
 				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
 				{
-					IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
-					CCoreAudio::Instance()->SetSource(pEntry);
+					IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+					if(pIPE)
+					{
+						tuniacApp.PlayEntry(pIPE, false, false, false);
+					}
 				}
 			}
 
@@ -264,8 +267,11 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			m_LibraryPlaylist.RebuildPlaylistArrays();
 			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
 			{
-				IPlaylistEntry * pEntry = m_LibraryPlaylist.GetActiveItem();
-				CCoreAudio::Instance()->SetSource(pEntry);
+				IPlaylistEntry * pIPE = m_LibraryPlaylist.GetActiveItem();
+				if(pIPE)
+				{
+					tuniacApp.PlayEntry(pIPE, false, false, false);
+				}
 			}
 			
 		}
@@ -439,7 +445,7 @@ unsigned long CPlaylistManager::GetActivePlaylistIndex(void)
 	return m_ulActivePlaylistIndex;
 }
 
-bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
+bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 {
 	bool bOk= false;
 	if(m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -447,7 +453,7 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 		IPlaylistEX * pPlaylist = (IPlaylistEX *)m_ActivePlaylist;
 		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 		{
-			if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pEntry)
+			if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pIPE)
 			{
 				bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
 			}
@@ -457,19 +463,13 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pEntry)
 	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)GetPlaylistAtIndex(0);
 	for (unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
 	{
-		if(pPlaylistEX->GetItemAtNormalFilteredIndex(i) == pEntry)
+		if(pPlaylistEX->GetItemAtNormalFilteredIndex(i) == pIPE)
 		{
 			bOk = pPlaylistEX->SetActiveNormalFilteredIndex(i);
 		}
 	}
-
-	if(bOk)
-	{
-		CCoreAudio::Instance()->Play();
-		tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-	}
 	//we failed to find our song (its filtered out?)
-	return false;
+	return bOk;
 }
 
 bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)

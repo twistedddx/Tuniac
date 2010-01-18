@@ -85,8 +85,8 @@ bool			CPLS_Import::BeginImport(LPTSTR szSource)
 		return false;
 
 	m_Current = 0;
-	StrNCpy(m_Source, szSource, 512);
-	StrNCpy(m_BaseDir, m_Source, 512);
+	StrNCpy(m_Source, szSource, MAX_PATH);
+	StrNCpy(m_BaseDir, m_Source, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -103,10 +103,10 @@ bool			CPLS_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 	if(!m_StartedImport)
 		return false;
 
-	TCHAR szBuffer[512];
+	TCHAR szBuffer[MAX_PATH];
 	TCHAR szVarName[32];
 	wnsprintf(szVarName, 32, L"File%d", m_Current);
-	GetPrivateProfileString(L"playlist", szVarName, NULL, szBuffer, 512, m_Source);
+	GetPrivateProfileString(L"playlist", szVarName, NULL, szBuffer, MAX_PATH, m_Source);
 
 	if(szBuffer && wcslen(szBuffer) > 2)
 	{
@@ -204,8 +204,8 @@ bool			CPLS_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 	m_Current = 0;
 	m_Version2 = true;
 
-	StrNCpy(m_Source, szSource, 512);
-	StrNCpy(m_BaseDir, m_Source, 512);
+	StrNCpy(m_Source, szSource, MAX_PATH);
+	StrNCpy(m_BaseDir, m_Source, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -221,12 +221,12 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 	TCHAR szVarName[32];
 	wnsprintf(szVarName, 32, L"File%d", ++m_Current);
 
-	TCHAR szData[512];
+	TCHAR szData[MAX_PATH];
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		StrCpyN(szData, libraryEntry.szURL + wcslen(m_BaseDir), 512);
+		StrCpyN(szData, libraryEntry.szURL + wcslen(m_BaseDir), MAX_PATH);
 	else
-		StrCpyN(szData, libraryEntry.szURL, 512);
+		StrCpyN(szData, libraryEntry.szURL, MAX_PATH);
 
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;

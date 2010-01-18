@@ -35,7 +35,7 @@ protected:
 	typedef struct
 	{
 		bool				bFiltered;
-		IPlaylistEntry *	pEntry;
+		IPlaylistEntry *	pIPE;
 	} PlaylistEntry;
 
 	Array<PlaylistEntry, 100>				m_PlaylistArray;
@@ -101,9 +101,9 @@ public:
 
 	IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex);
 	IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
-	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pEntry);
-	unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pEntry);
-	unsigned long		GetRealIndexforItem(IPlaylistEntry * pEntry);
+	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pIPE);
+	unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pIPE);
+	unsigned long		GetRealIndexforItem(IPlaylistEntry * pIPE);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);

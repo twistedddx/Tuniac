@@ -20,7 +20,7 @@
 */
 
 #include "stdafx.h"
-#include ".\playcontrols.h"
+#include "playcontrols.h"
 
 #include "DoubleBuffer.h"
 
@@ -32,7 +32,6 @@
 #define NEW_BUTTON_WIDTH	32
 #define NEW_BUTTON_HEIGHT	24
 #define NEW_BUTTON_SEP		4
-
 
 #define LEFTSIDE	175
 
@@ -461,8 +460,6 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				PAINTSTRUCT ps;
 				RECT		r;
 
-				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength();
-
 				GetClientRect(hWnd, &r);
 
 				HDC		hDC = BeginPaint(hWnd, &ps);
@@ -499,9 +496,12 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				InflateRect(&SeekRect, -3, -3);
 
 				float Width = SeekRect.right - SeekRect.left;
-				float Progress = (float)CCoreAudio::Instance()->GetPosition() / (float)ulSongLength;
 
-				SeekRect.right = ((Width) * Progress) + SeekRect.left;
+				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition() / 1000;
+				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength() / 1000;
+				float fProgress = (float)ulPosition / (float)ulSongLength;
+
+				SeekRect.right = ((Width) * fProgress) + SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetSysColorBrush(COLOR_3DSHADOW));
 
 				RECT TimeRect;
@@ -511,8 +511,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				TCHAR tstr[256];
 
-				unsigned long Time = CCoreAudio::Instance()->GetPosition() / 1000;
-				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
+				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (ulPosition / 60) / 60, (ulPosition / 60) % 60, ulPosition % 60);
 
 				SetRect(&TimeRect, 
 						SeekRect.left - 48, 
@@ -526,11 +525,9 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				Time = ulSongLength;
-				if(Time != LENGTH_UNKNOWN)
+				if(ulSongLength != LENGTH_UNKNOWN)
 				{
-					Time /= 1000;
-					wsprintf(tstr, TEXT("%01d:%02d:%02d"), (Time / 60) / 60, (Time / 60) % 60, Time % 60);
+					wsprintf(tstr, TEXT("%01d:%02d:%02d"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
 
 					SetRect(&TimeRect, 
 							m_SeekRect.right +2, 
@@ -561,12 +558,12 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							38);
 
 				IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-				IPlaylistEntry * pEntry = pPlaylist->GetActiveItem();
+				IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 
-				if(pEntry)
+				if(pIPE)
 				{
-					LPTSTR  szTitle		= (LPTSTR)pEntry->GetField(FIELD_TITLE);
-					LPTSTR	szArtist	= (LPTSTR)pEntry->GetField(FIELD_ARTIST);
+					LPTSTR  szTitle		= (LPTSTR)pIPE->GetField(FIELD_TITLE);
+					LPTSTR	szArtist	= (LPTSTR)pIPE->GetField(FIELD_ARTIST);
 
 					if(szTitle == NULL)
 						szTitle = TEXT("No Song Loaded");

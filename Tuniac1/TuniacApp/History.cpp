@@ -42,15 +42,15 @@ bool		CHistory::Shutdown()
 	return true;
 }
 
-void		CHistory::AddItem(IPlaylistEntry * pEntry)
+void		CHistory::AddItem(IPlaylistEntry * pIPE)
 {
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return;
 
-	if(m_History.GetCount() > 0 && m_History[0] == pEntry)
+	if(m_History.GetCount() > 0 && m_History[0] == pIPE)
 		return;
 
-	if(m_History.GetCount() > 1 && m_History[1] == pEntry)
+	if(m_History.GetCount() > 1 && m_History[1] == pIPE)
 	{
 		m_History.RemoveAt(1);
 		DeleteMenu(m_hMenu, 1, MF_BYPOSITION);
@@ -60,10 +60,10 @@ void		CHistory::AddItem(IPlaylistEntry * pEntry)
 	TCHAR szTime[16];
 	TCHAR szItem[128];
 
-	tuniacApp.FormatSongInfo(szDetail, 112, pEntry, tuniacApp.m_Preferences.GetListFormatString(), false);
+	tuniacApp.FormatSongInfo(szDetail, 112, pIPE, tuniacApp.m_Preferences.GetListFormatString(), false);
 	tuniacApp.EscapeMenuItemString(szDetail, szItem, 112);
 
-	tuniacApp.FormatSongInfo(szTime, 16, pEntry, TEXT("\t[@I]"), false);
+	tuniacApp.FormatSongInfo(szTime, 16, pIPE, TEXT("\t[@I]"), false);
 	StrCatN(szItem, szTime, 128);
 
 	InsertMenu(m_hMenu, 0, MF_BYPOSITION, HISTORYMENU_BASE, szItem);
@@ -71,7 +71,7 @@ void		CHistory::AddItem(IPlaylistEntry * pEntry)
 	while(GetMenuItemCount(m_hMenu) > tuniacApp.m_Preferences.GetHistoryListSize())
 		DeleteMenu(m_hMenu, tuniacApp.m_Preferences.GetHistoryListSize(), MF_BYPOSITION);
 
-	m_History.AddHead(pEntry);
+	m_History.AddHead(pIPE);
 	while(m_History.GetCount() > tuniacApp.m_Preferences.GetHistoryListSize())
 		m_History.RemoveTail();
 
@@ -88,14 +88,14 @@ void		CHistory::AddItem(IPlaylistEntry * pEntry)
 	}
 }
 
-bool		CHistory::RemoveItem(IPlaylistEntry * pEntry)
+bool		CHistory::RemoveItem(IPlaylistEntry * pIPE)
 {
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return false;
 
 	for(unsigned long i = 0; i < m_History.GetCount(); i++)
 	{
-		if(m_History[i] == pEntry)
+		if(m_History[i] == pIPE)
 		{
 			m_History.RemoveAt(i);
 			DeleteMenu(m_hMenu, i, MF_BYPOSITION);
@@ -135,26 +135,12 @@ bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 		}
 	}
 
-	bool bOK = false;
 	if(pIPE)
 	{
-		tuniacApp.m_SoftPause.bNow = false;
-		//open for art before opening for decode.
-		tuniacApp.SetArt(pIPE);
-		if(CCoreAudio::Instance()->SetSource(pIPE))
-		{
-			bOK = true;
-			//SetActiveByEntry will fail if the played song is filtered out
-			//this in turn means the active song for infomational stuff never changed
-			//leaving plugins/windowtitle/playcontrol bar all on last song
-			tuniacApp.m_PlaylistManager.SetActiveByEntry(pIPE);
-			CCoreAudio::Instance()->Play();
-			tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-		}
-		tuniacApp.m_SourceSelectorWindow->UpdateView();
-
+		tuniacApp.PlayEntry(pIPE, true, true, true);
+		return true;
 	}
-	return bOK;
+	return false;
 }
 
 IPlaylistEntry * CHistory::GetHistoryItem(unsigned long ulIndex)

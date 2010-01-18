@@ -20,7 +20,7 @@
 */
 
 #include "StdAfx.h"
-#include ".\visualwindow.h"
+#include "visualwindow.h"
 
 #include "resource.h"
 
@@ -609,7 +609,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 
 unsigned long CVisualWindow::GetVisData(float * pWaveformData, unsigned long ulNumSamples)
 {
-	return CCoreAudio::Instance()->GetVisData(pWaveformData, ulNumSamples);
+	return false;//CCoreAudio::Instance()->GetVisData(pWaveformData, ulNumSamples);
 }
 
 void *	CVisualWindow::GetVariable(Variable eVar)
@@ -634,20 +634,20 @@ bool	CVisualWindow::SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD d
 void	CVisualWindow::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
 { // szFormat=NULL to use full format from preferences
 
-	IPlaylistEntry * pEntry = NULL;
+	IPlaylistEntry * pIPE = NULL;
 
 	memset(szDest, L'\0', iDestSize);
 	if(iFromCurrent == 0)
 	{
 		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		pEntry = pPlaylist->GetActiveItem();
+		pIPE = pPlaylist->GetActiveItem();
 	}
 	else
-		pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
+		pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
 
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return;
 
-	tuniacApp.FormatSongInfo(szDest, iDestSize, pEntry, szFormat == NULL ? tuniacApp.m_Preferences.GetPluginFormatString() : szFormat, true);
+	tuniacApp.FormatSongInfo(szDest, iDestSize, pIPE, szFormat == NULL ? tuniacApp.m_Preferences.GetPluginFormatString() : szFormat, true);
 }

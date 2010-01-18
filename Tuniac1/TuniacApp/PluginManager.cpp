@@ -325,10 +325,10 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				IPlaylist * pList = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 				if(pList)
 				{
-					IPlaylistEntry * pEntry = pList->GetActiveItem();
+					IPlaylistEntry * pIPE = pList->GetActiveItem();
 					
-					if(pEntry)
-						return (void *)pEntry->GetField(FIELD_TITLE);
+					if(pIPE)
+						return (void *)pIPE->GetField(FIELD_TITLE);
 				}
 			}
 			break;
@@ -338,10 +338,10 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				IPlaylist * pList = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 				if(pList)
 				{
-					IPlaylistEntry * pEntry = pList->GetActiveItem();
+					IPlaylistEntry * pIPE = pList->GetActiveItem();
 					
-					if(pEntry)
-						return (void *)pEntry->GetField(FIELD_ARTIST);
+					if(pIPE)
+						return (void *)pIPE->GetField(FIELD_ARTIST);
 				}
 			}
 			break;
@@ -352,22 +352,22 @@ void *			CPluginManager::GetVariable(Variable eVar)
 void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
 { // szFormat=NULL to use full format from preferences
 
-	IPlaylistEntry * pEntry = NULL;
+	IPlaylistEntry * pIPE = NULL;
 
 	memset(szDest, L'\0', iDestSize);
 	if(iFromCurrent == 0)
 	{
 		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		pEntry = pPlaylist->GetActiveItem();
+		pIPE = pPlaylist->GetActiveItem();
 	}
 	else
-		pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
+		pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
 
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return;
 
-	tuniacApp.FormatSongInfo(szDest, iDestSize, pEntry, szFormat == NULL ? tuniacApp.m_Preferences.GetPluginFormatString() : szFormat, true);
+	tuniacApp.FormatSongInfo(szDest, iDestSize, pIPE, szFormat == NULL ? tuniacApp.m_Preferences.GetPluginFormatString() : szFormat, true);
 }
 
 bool			CPluginManager::Navigate(int iFromCurrent)
@@ -380,24 +380,11 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 	}
 	else if(iFromCurrent > 0)
 	{
-		IPlaylistEntry * pEntry = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
-		if(pEntry == NULL)
+		IPlaylistEntry * pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
+		if(pIPE)
+			tuniacApp.PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
+		else
 			return false;
-
-		tuniacApp.m_SoftPause.bNow = false;
-		//open for art before opening for decode.
-		tuniacApp.SetArt(pEntry);
-		unsigned long ulState = CCoreAudio::Instance()->GetState();
-		if(!CCoreAudio::Instance()->SetSource(pEntry))
-			return false;
-
-		if(ulState == STATE_PLAYING)
-		{
-			CCoreAudio::Instance()->Play();
-			PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-		}
-		
-		tuniacApp.m_PlaylistManager.SetActiveByEntry(pEntry);
 	}
 	else
 	{

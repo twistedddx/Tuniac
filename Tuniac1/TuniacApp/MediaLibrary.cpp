@@ -228,14 +228,14 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	libraryEntry.dwPlayCount = 0;
 	libraryEntry.dwKind = ENTRY_KIND_URL;
 
-	CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
-	pEntry->SetEntryID(dwEntryID);
-	m_MediaLibrary.AddTail(pEntry);
+	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
+	pIPE->SetEntryID(dwEntryID);
+	m_MediaLibrary.AddTail(pIPE);
 
 	//create or add to Streams playlist
 	IPlaylistEntry	*	pPE = NULL;
 	EntryArray playlistEntries;
-	pPE = pEntry;
+	pPE = pIPE;
 	if(pPE)
 	{
 		playlistEntries.AddTail(pPE);
@@ -337,10 +337,10 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			}
 
 
-			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
+			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pEntry->SetEntryID(dwEntryID);
-			m_MediaLibrary.AddTail(pEntry);
+			pIPE->SetEntryID(dwEntryID);
+			m_MediaLibrary.AddTail(pIPE);
 
 			AddingFilesIncrement(false);
 
@@ -390,16 +390,16 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 	return true;
 }
 
-bool			CMediaLibrary::RemoveItem(IPlaylistEntry * pEntry)
+bool			CMediaLibrary::RemoveItem(IPlaylistEntry * pIPE)
 {
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return false;
 
-	m_Queue.RemoveItem(pEntry);
-	tuniacApp.m_History.RemoveItem(pEntry);
+	m_Queue.RemoveItem(pIPE);
+	tuniacApp.m_History.RemoveItem(pIPE);
 	for(unsigned long x=0; x<m_MediaLibrary.GetCount(); x++)
 	{
-		if(m_MediaLibrary[x] == pEntry)
+		if(m_MediaLibrary[x] == pIPE)
 		{
 			delete m_MediaLibrary[x];
 			m_MediaLibrary.RemoveAt(x);
@@ -501,8 +501,8 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 	if(ulMLIndex > GetCount())
 		return false;
 
-	CMediaLibraryPlaylistEntry *	pEntry = GetItemByIndex(ulMLIndex);
-	LPTSTR szURL = (LPTSTR)pEntry->GetField(FIELD_URL);
+	CMediaLibraryPlaylistEntry *	pIPE = GetItemByIndex(ulMLIndex);
+	LPTSTR szURL = (LPTSTR)pIPE->GetField(FIELD_URL);
 
 	//stream
 	if(PathIsURL(szURL))
@@ -553,13 +553,13 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			//we could do dwEntryID = GetCount() - ulMLIndex; while(GetItemByID(dwEntryID)){ dwEntryID++ } to "compact" the entryID's again
 			//if UpdateIndex was called backwards through the list, fastest i can think of but still what would the speed be with 30,000 files?
 			//I could see this growing out of control eventually I suppose with a well hacked up ML
-			unsigned long dwEntryID = pEntry->GetEntryID();
+			unsigned long dwEntryID = pIPE->GetEntryID();
 
-			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&libraryEntry);
+			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pEntry->SetEntryID(dwEntryID);
+			pIPE->SetEntryID(dwEntryID);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
-			m_MediaLibrary.InsertBefore(ulMLIndex, pEntry);
+			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
 
 			return true;
 		}
@@ -569,9 +569,9 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 
 //todo bits: per column tag writing?
 //bool CMediaLibrary::WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData)
-bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pEntry)
+bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pIPE)
 {
-	LibraryEntry * libEnt = GetItemByID(pEntry->GetEntryID())->GetLibraryEntry();
+	LibraryEntry * libEnt = GetItemByID(pIPE->GetEntryID())->GetLibraryEntry();
 	// let the info manager get the format specific stuff here!
 	for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
 	{
@@ -663,9 +663,9 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				break;
 			}
 
-			CMediaLibraryPlaylistEntry * pEntry = new CMediaLibraryPlaylistEntry(&MLE);
-			pEntry->SetEntryID(TempID);
-			m_MediaLibrary.AddTail(pEntry);			
+			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&MLE);
+			pIPE->SetEntryID(TempID);
+			m_MediaLibrary.AddTail(pIPE);			
 		}
 
 		if(bOK)

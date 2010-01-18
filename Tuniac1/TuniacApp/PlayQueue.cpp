@@ -42,17 +42,17 @@ IPlaylistEntry *	CPlayQueue::GetItemAtIndex(unsigned long ulIndex)
 	return m_Queue[ulIndex];
 }
 
-bool				CPlayQueue::Prepend(IPlaylistEntry * pEntry)
+bool				CPlayQueue::Prepend(IPlaylistEntry * pIPE)
 {
-	if(pEntry)
-		m_Queue.AddHead(pEntry);
+	if(pIPE)
+		m_Queue.AddHead(pIPE);
 	return true;
 }
 
-bool				CPlayQueue::Append(IPlaylistEntry * pEntry)
+bool				CPlayQueue::Append(IPlaylistEntry * pIPE)
 {
-	if(pEntry)
-		m_Queue.AddTail(pEntry);
+	if(pIPE)
+		m_Queue.AddTail(pIPE);
 	return true;
 }
 
@@ -65,14 +65,14 @@ bool				CPlayQueue::Remove(int iIndex)
 	return true;
 }
 
-bool				CPlayQueue::RemoveItem(IPlaylistEntry * pEntry)
+bool				CPlayQueue::RemoveItem(IPlaylistEntry * pIPE)
 {
-	if(pEntry == NULL)
+	if(pIPE == NULL)
 		return false;
 
 	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
-		if(m_Queue[i] == pEntry)
+		if(m_Queue[i] == pIPE)
 		{
 			m_Queue.RemoveAt(i);
 			return true;

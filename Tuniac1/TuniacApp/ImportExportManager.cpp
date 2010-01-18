@@ -36,10 +36,10 @@ bool			CImportExportManager::Initialize(void)
 {
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
-	TCHAR				szBase[512];
-	TCHAR				szSearchFilename[512];
+	TCHAR				szBase[MAX_PATH];
+	TCHAR				szSearchFilename[MAX_PATH];
 
-	GetModuleFileName(NULL, szBase, 512);
+	GetModuleFileName(NULL, szBase, MAX_PATH);
 	PathRemoveFileSpec(szBase);
 	PathAddBackslash(szBase);
 	StrCat(szBase, TEXT("importexport"));
@@ -56,7 +56,7 @@ bool			CImportExportManager::Initialize(void)
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			TCHAR szFilename[512];
+			TCHAR szFilename[MAX_PATH];
 			StrCpy(szFilename, szBase);
 			StrCat(szFilename, w32fd.cFileName);
 
@@ -262,9 +262,9 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 	bool bOK = false;
 	bool bStreamList = false;
 	CMediaLibraryPlaylistEntry * pStreamEntry;
-	TCHAR szFilename[512];
+	TCHAR szFilename[MAX_PATH];
 
-	if(pImporter->BeginImport(szSource) && pImporter->ImportUrl(szFilename, 512))
+	if(pImporter->BeginImport(szSource) && pImporter->ImportUrl(szFilename, MAX_PATH))
 	{
 		bOK = true;
 		bStreamList = PathIsURL(szFilename);
@@ -295,7 +295,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 				
 				for(int i = 1; i < LIBENTRY_MAX_URLS; i++)
 				{
-					if(!pImporter->ImportUrl(pStreamEntry->GetLibraryEntry()->szURL[i], 512))
+					if(!pImporter->ImportUrl(pStreamEntry->GetLibraryEntry()->szURL[i], MAX_PATH))
 						break;
 				}
 				
@@ -322,7 +322,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 				{
 					playlistEntries.AddTail(pPE);
 				}
-			} while(pImporter->ImportUrl(szFilename, 512));
+			} while(pImporter->ImportUrl(szFilename, MAX_PATH));
 
 			if(tuniacApp.m_Preferences.GetAutoAddPlaylists())
 			{
@@ -339,8 +339,8 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 
 bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 {
-	TCHAR szFilename[512];
-	ZeroMemory(&szFilename, sizeof(TCHAR) * 512);
+	TCHAR szFilename[MAX_PATH];
+	ZeroMemory(&szFilename, sizeof(TCHAR) * MAX_PATH);
 	if(szSource == NULL)
 	{
 
@@ -376,7 +376,7 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.lpstrFile = szFilename;
-		ofn.nMaxFile = 512;
+		ofn.nMaxFile = MAX_PATH;
 		ofn.lpstrFilter = szFilters;
 		ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
 		ofn.hwndOwner = tuniacApp.getMainWindow();
@@ -385,12 +385,12 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 			return false;
 
 
-		StrCpyN(szFilename, ofn.lpstrFile, 512);
+		StrCpyN(szFilename, ofn.lpstrFile, MAX_PATH);
 
 		if(ofn.nFilterIndex >= 1 && ofn.nFilterIndex <= m_ExportExtensions.GetCount())
 		{
 			if(!CanExport(szFilename))
-				StrCatN(szFilename, m_ExportExtensions[ofn.nFilterIndex - 1].szExt, 512);
+				StrCatN(szFilename, m_ExportExtensions[ofn.nFilterIndex - 1].szExt, MAX_PATH);
 		}
 		szSource = szFilename;
 
@@ -413,14 +413,14 @@ bool			CImportExportManager::ExportTo(ITuniacExportPlugin * pExporter, LPTSTR sz
 	if(pExporter->BeginExport(szSource, entryArray.GetCount()))
 	{
 		LibraryEntry LE;
-		CMediaLibraryPlaylistEntry * pEntry;
+		CMediaLibraryPlaylistEntry * pIPE;
 
 		for(unsigned long i = 0; i < entryArray.GetCount(); i++)
 		{
-			pEntry = tuniacApp.m_MediaLibrary.GetItemByID(entryArray[i]->GetEntryID());
-			if(pEntry != NULL)
+			pIPE = tuniacApp.m_MediaLibrary.GetItemByID(entryArray[i]->GetEntryID());
+			if(pIPE != NULL)
 			{
-				CopyMemory(&LE, pEntry->GetLibraryEntry(), sizeof(LE));
+				CopyMemory(&LE, pIPE->GetLibraryEntry(), sizeof(LE));
 				pExporter->ExportEntry(LE);
 			}
 		}

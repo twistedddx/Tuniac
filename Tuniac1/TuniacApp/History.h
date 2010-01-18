@@ -39,9 +39,9 @@ public:
 	bool		Initialize();
 	bool		Shutdown();
 
-	void		AddItem(IPlaylistEntry * pEntry);
+	void		AddItem(IPlaylistEntry * pIPE);
 	
-	bool		RemoveItem(IPlaylistEntry * pEntry);
+	bool		RemoveItem(IPlaylistEntry * pIPE);
 	void		Clear(void);
 	
 	void		PopupMenu(int x, int y);

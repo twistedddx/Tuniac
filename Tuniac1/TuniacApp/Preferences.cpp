@@ -821,15 +821,15 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							{
 								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(ulMLIndex))
 								{
-									IPlaylistEntry * pEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(ulMLIndex);
-									unsigned long ulEntryID = pEntry->GetEntryID();
+									IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByIndex(ulMLIndex);
+									unsigned long ulEntryID = pIPE->GetEntryID();
 									for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
 									{
 										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
 										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
 										pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
 									}
-									tuniacApp.m_MediaLibrary.RemoveItem(pEntry);
+									tuniacApp.m_MediaLibrary.RemoveItem(pIPE);
 									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 								}

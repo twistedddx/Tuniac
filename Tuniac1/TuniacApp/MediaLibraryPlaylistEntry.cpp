@@ -22,9 +22,9 @@
 #include "stdafx.h"
 #include ".\medialibraryplaylistentry.h"
 
-CMediaLibraryPlaylistEntry::CMediaLibraryPlaylistEntry(LibraryEntry * pEntry)
+CMediaLibraryPlaylistEntry::CMediaLibraryPlaylistEntry(LibraryEntry * pIPE)
 {
-	CopyMemory(&m_LibraryEntry, pEntry, sizeof(LibraryEntry));
+	CopyMemory(&m_LibraryEntry, pIPE, sizeof(LibraryEntry));
 	m_bDirty = false;
 }
 

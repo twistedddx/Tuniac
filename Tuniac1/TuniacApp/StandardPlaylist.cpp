@@ -45,5 +45,5 @@ unsigned long		CStandardPlaylist::GetRealCount(void)
 
 unsigned long		CStandardPlaylist::GetIDAtRealIndex(unsigned long ulRealIndex)
 {
-	return m_PlaylistArray[ulRealIndex].pEntry->GetEntryID();
+	return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 }

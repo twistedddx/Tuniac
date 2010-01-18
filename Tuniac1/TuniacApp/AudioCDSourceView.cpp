@@ -212,15 +212,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 									IPlaylistEntry * pIPE = m_pCDPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										tuniacApp.m_SoftPause.bNow = false;
-										//open for art before opening for decode.
-										tuniacApp.SetArt(pIPE);
-										if(CCoreAudio::Instance()->SetSource(pIPE))
-										{
-											CCoreAudio::Instance()->Play();
-											tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-
-										}
+										tuniacApp.PlayEntry(pIPE, true, true, true);
 									}
 								}
 
@@ -234,9 +226,9 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
 							if(pDispInfo->item.iItem != -1)
 							{
-								IPlaylistEntry * pEntry = m_pCDPlaylist->GetItemAtIndex(pDispInfo->item.iItem);
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetItemAtIndex(pDispInfo->item.iItem);
 
-								if(pEntry)
+								if(pIPE)
 								{
 									if(pDispInfo->item.mask & LVIF_IMAGE)
 									{
@@ -253,25 +245,25 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 									{
 										if(pDispInfo->item.iSubItem == 1)
 										{
-											pEntry->GetTextRepresentation(	FIELD_TRACKNUM,
+											pIPE->GetTextRepresentation(	FIELD_TRACKNUM,
 																			pDispInfo->item.pszText,
 																			pDispInfo->item.cchTextMax);
 										}
 										else if(pDispInfo->item.iSubItem == 2)
 										{
-											pEntry->GetTextRepresentation(	FIELD_PLAYBACKTIME,
+											pIPE->GetTextRepresentation(	FIELD_PLAYBACKTIME,
 																			pDispInfo->item.pszText,
 																			pDispInfo->item.cchTextMax);
 										}
 										else if(pDispInfo->item.iSubItem == 3)
 										{
-											pEntry->GetTextRepresentation(	FIELD_ARTIST,
+											pIPE->GetTextRepresentation(	FIELD_ARTIST,
 																			pDispInfo->item.pszText,
 																			pDispInfo->item.cchTextMax);
 										}
 										else if(pDispInfo->item.iSubItem == 4)
 										{
-											pEntry->GetTextRepresentation(	FIELD_TITLE,
+											pIPE->GetTextRepresentation(	FIELD_TITLE,
 																			pDispInfo->item.pszText,
 																			pDispInfo->item.cchTextMax);
 										}

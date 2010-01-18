@@ -125,9 +125,9 @@ public:
 
 	virtual IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
-	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pEntry)					= 0;
-	virtual unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pEntry)				= 0;
-	virtual unsigned long		GetRealIndexforItem(IPlaylistEntry * pEntry)						= 0;
+	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pIPE)					= 0;
+	virtual unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pIPE)				= 0;
+	virtual unsigned long		GetRealIndexforItem(IPlaylistEntry * pIPE)						= 0;
 
 	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)			= 0;
 	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;

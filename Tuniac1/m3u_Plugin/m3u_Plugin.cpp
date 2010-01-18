@@ -87,7 +87,7 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 	if(m_File == NULL)
 		return false;
 	
-	StrNCpy(m_BaseDir, szSource, 512);
+	StrNCpy(m_BaseDir, szSource, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 	return true;
@@ -117,8 +117,8 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 			if(!PathIsURL(szDest) && PathIsRelative(szDest))
 			{
-				TCHAR szTemp[512];
-				StrNCpy(szTemp, szDest, 512);
+				TCHAR szTemp[MAX_PATH];
+				StrNCpy(szTemp, szDest, MAX_PATH);
 				wnsprintf(szDest, iDestSize, TEXT("%s%s"), m_BaseDir, szTemp);
 			}
 			return true;
@@ -203,7 +203,7 @@ bool			CM3U_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 	
 	m_ExtendedM3U = true;
 
-	StrNCpy(m_BaseDir, szSource, 512);
+	StrNCpy(m_BaseDir, szSource, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -223,9 +223,9 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 	TCHAR szData[512];
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		wnsprintf(szData, 512, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
+		wnsprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
 	else
-		wnsprintf(szData, 512, TEXT("%s"), libraryEntry.szURL);
+		wnsprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL);
 
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);

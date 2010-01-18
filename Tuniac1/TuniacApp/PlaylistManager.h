@@ -70,7 +70,7 @@ public:
 	IPlaylist *		GetActivePlaylist(void);
 	unsigned long	GetActivePlaylistIndex(void);
 
-	bool			SetActiveByEntry(IPlaylistEntry * pEntry);
+	bool			SetActiveByEntry(IPlaylistEntry * pIPE);
 	bool			SetActivePlaylist(unsigned long ulPlaylistNumber);
 
 

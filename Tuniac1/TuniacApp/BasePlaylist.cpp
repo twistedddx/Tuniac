@@ -59,7 +59,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 			//default filter(FIELD_MAXFIELD) is any title, artist and album matches
 			if(m_ulTextFilterField == FIELD_MAXFIELD)
 			{
-				if(StrStrI((LPTSTR)m_PlaylistArray[x].pEntry->GetField(FIELD_TITLE), m_szTextFilter))
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_TITLE), m_szTextFilter))
 				{
 					//Toggles the filteredness if matched.
 					//Watch if was "filtered true" already before as mentioned, making it now false again
@@ -68,13 +68,13 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
-				if(StrStrI((LPTSTR)m_PlaylistArray[x].pEntry->GetField(FIELD_ARTIST), m_szTextFilter))
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_ARTIST), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
 				}
 
-				if(StrStrI((LPTSTR)m_PlaylistArray[x].pEntry->GetField(FIELD_ALBUM), m_szTextFilter))
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_ALBUM), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
@@ -90,7 +90,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 					|| m_ulTextFilterField == FIELD_FILENAME
 					|| m_ulTextFilterField == FIELD_FILEEXTENSION)
 			{
-				if(StrStrI((LPTSTR)m_PlaylistArray[x].pEntry->GetField(m_ulTextFilterField), m_szTextFilter))
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(m_ulTextFilterField), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
@@ -99,7 +99,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 
 			else
 			{
-				m_PlaylistArray[x].pEntry->GetTextRepresentation(m_ulTextFilterField, szTemp, 512);
+				m_PlaylistArray[x].pIPE->GetTextRepresentation(m_ulTextFilterField, szTemp, 512);
 
 				//reverse filter selected, this will inverse the current filter
 				if (StrCmpI(m_szTextFilter, szTemp) == 0)
@@ -476,7 +476,7 @@ IPlaylistEntry	*	CBasePlaylist::GetActiveItem(void)
 	if(m_ActiveRealIndex == INVALID_PLAYLIST_INDEX)
 		return NULL;
 
-	return m_PlaylistArray[m_ActiveRealIndex].pEntry;
+	return m_PlaylistArray[m_ActiveRealIndex].pIPE;
 }
 
 //play order is simply the order of m_NormalIndexArray/m_RandomIndexArray 
@@ -553,7 +553,7 @@ IPlaylistEntry *	CBasePlaylist::GetItemAtFilteredIndex(unsigned long ulFilteredI
 	
 	if(ulRealIndex != INVALID_PLAYLIST_INDEX)
 	{
-		return m_PlaylistArray[ulRealIndex].pEntry;
+		return m_PlaylistArray[ulRealIndex].pIPE;
 	}
 
 	return NULL;
@@ -566,26 +566,26 @@ IPlaylistEntry *	CBasePlaylist::GetItemAtNormalFilteredIndex(unsigned long ulFil
 
 	if(ulRealIndex != INVALID_PLAYLIST_INDEX)
 	{
-		return m_PlaylistArray[ulRealIndex].pEntry;
+		return m_PlaylistArray[ulRealIndex].pIPE;
 	}
 
 	return NULL;
 }
 
 //gets real index then returns filtered index for item 
-unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pEntry)
+unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pIPE)
 {
 
 	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
 	{
 		if(tuniacApp.m_Preferences.GetShuffleState())
 		{
-			if(m_PlaylistArray[m_RandomIndexArray[x]].pEntry == pEntry)
+			if(m_PlaylistArray[m_RandomIndexArray[x]].pIPE == pIPE)
 				return x;
 		}
 		else
 		{
-			if(m_PlaylistArray[m_NormalIndexArray[x]].pEntry == pEntry)
+			if(m_PlaylistArray[m_NormalIndexArray[x]].pIPE == pIPE)
 				return x;
 		}
 	}
@@ -594,11 +594,11 @@ unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pEntry)
 }
 
 //gets real index then returns filtered index for item 
-unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pEntry)
+unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pIPE)
 {
 	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[m_NormalIndexArray[x]].pEntry == pEntry)
+		if(m_PlaylistArray[m_NormalIndexArray[x]].pIPE == pIPE)
 		{
 			return x;
 		}
@@ -608,11 +608,11 @@ unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pEn
 }
 
 //gets real index for item 
-unsigned long		CBasePlaylist::GetRealIndexforItem(IPlaylistEntry	* pEntry)
+unsigned long		CBasePlaylist::GetRealIndexforItem(IPlaylistEntry	* pIPE)
 {
 	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[x].pEntry == pEntry)
+		if(m_PlaylistArray[x].pIPE == pIPE)
 			return x;
 	}
 
@@ -661,10 +661,10 @@ void			CBasePlaylist::GetFieldFilteredList(EntryArray & entryArray, unsigned lon
 	TCHAR szTemp[512];
 	for(unsigned long x = 0; x < m_PlaylistArray.GetCount(); x++)
 	{
-		m_PlaylistArray[x].pEntry->GetTextRepresentation(ulFieldID, szTemp, 512);
+		m_PlaylistArray[x].pIPE->GetTextRepresentation(ulFieldID, szTemp, 512);
 		if (bReverse ? StrCmpI(szFilterString, szTemp) != 0 : StrCmpI(szFilterString, szTemp) == 0)
 		{
-			entryArray.AddTail(m_PlaylistArray[x].pEntry);
+			entryArray.AddTail(m_PlaylistArray[x].pIPE);
 		}
 	}
 }
@@ -702,11 +702,11 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	{
 	  return false;
 	}
-	IPlaylistEntry * pEntry = GetActiveItem();
+	IPlaylistEntry * pIPE = GetActiveItem();
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 
-	m_ActiveRealIndex = GetRealIndexforItem(pEntry);
+	m_ActiveRealIndex = GetRealIndexforItem(pIPE);
 	RebuildPlaylistArrays();
 
 	return true;
@@ -729,7 +729,7 @@ void CBasePlaylist::Sort_Merge (unsigned long head, unsigned long tail, Playlist
 {
    // because the two lists are always sequential we can create the boundary point by finding the middle
    unsigned long mid = (head+tail)/2;
-   int order = Sort_CompareItems (m_PlaylistArray[mid].pEntry, m_PlaylistArray[mid+1].pEntry, ulSortBy);
+   int order = Sort_CompareItems (m_PlaylistArray[mid].pIPE, m_PlaylistArray[mid+1].pIPE, ulSortBy);
    
    // only merge if not already in order
    // i.e. largest of left list is bigger than smallest of right list if normal order
@@ -759,7 +759,7 @@ void CBasePlaylist::Sort_Merge (unsigned long head, unsigned long tail, Playlist
 				// if both lists contain items
 				if (i <= mid && j <= tail)
 				{
-				 order = Sort_CompareItems (m_PlaylistArray[i].pEntry, m_PlaylistArray[j].pEntry, ulSortBy);
+				 order = Sort_CompareItems (m_PlaylistArray[i].pIPE, m_PlaylistArray[j].pIPE, ulSortBy);
 				   // put the smallest of the two into the scratch list if not reverse
 				   // IMPORTANT: if they are equal put the sequential first one into scratch list
 				   // otherwise this sort will no longer be stable
@@ -956,7 +956,7 @@ bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
 
 	for(unsigned long x=0; x<entryArray.GetCount(); x++)
 	{
-		PE.pEntry		= entryArray[x];
+		PE.pIPE		= entryArray[x];
 		m_PlaylistArray.AddTail(PE);
 	}
 
@@ -1010,7 +1010,7 @@ bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexAr
 	for(unsigned long x=0; x<indexArray.GetCount(); x++)
 	{
 		unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(indexArray[x]);
-		theEntries.AddTail(m_PlaylistArray[ulRealIndex].pEntry);
+		theEntries.AddTail(m_PlaylistArray[ulRealIndex].pIPE);
 
 		if((indexArray[x] <= ToIndex) && (ToIndex > 0))
 			ToIndex--;
@@ -1033,7 +1033,7 @@ bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexAr
 	for(unsigned long id = 0; id < theEntries.GetCount(); id ++)
 	{
 		PlaylistEntry	PLE;
-		PLE.pEntry		= theEntries[id];
+		PLE.pIPE		= theEntries[id];
 
 		m_PlaylistArray.InsertBefore(ToIndex + id, PLE);
 		if(m_ActiveRealIndex >= ToIndex + id)
@@ -1061,7 +1061,7 @@ bool				CBasePlaylist::DeleteAllItemsWhereIDEquals(unsigned long ID)
 
 	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[x].pEntry->GetEntryID() == ID)
+		if(m_PlaylistArray[x].pIPE->GetEntryID() == ID)
 		{
 			unsigned long t = RealIndexToNormalFilteredIndex(x);
 			indexesToDelete.AddTail((unsigned long &)t);
@@ -1080,8 +1080,8 @@ bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
 		return false;
 	
 	PlaylistEntry PE;
-	unsigned long ulEntry = m_PlaylistArray[ulRealIndex].pEntry->GetEntryID();
-	PE.pEntry = tuniacApp.m_MediaLibrary.GetItemByID(ulEntry);
+	unsigned long ulEntry = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
+	PE.pIPE = tuniacApp.m_MediaLibrary.GetItemByID(ulEntry);
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
 	return true;
@@ -1101,7 +1101,7 @@ void				CBasePlaylist::SaveOrder(void)
 	unsigned long id;
 	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
 	{
-		id = m_PlaylistArray[x].pEntry->GetEntryID();
+		id = m_PlaylistArray[x].pIPE->GetEntryID();
 		m_SavedPlaylistArray.AddTail(id);
 	}
 }
@@ -1116,7 +1116,7 @@ void				CBasePlaylist::RestoreOrder(void)
 		PE.bFiltered	= false;
 		for(unsigned long x=0; x<m_SavedPlaylistArray.GetCount(); x++)
 		{
-			PE.pEntry = tuniacApp.m_MediaLibrary.GetItemByID(m_SavedPlaylistArray[x]);
+			PE.pIPE = tuniacApp.m_MediaLibrary.GetItemByID(m_SavedPlaylistArray[x]);
 			m_PlaylistArray.AddTail(PE);
 		}
 		ApplyFilter();

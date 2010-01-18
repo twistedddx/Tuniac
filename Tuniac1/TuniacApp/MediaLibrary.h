@@ -71,12 +71,12 @@ public:
 	bool					BeginAdd(unsigned long ulNumItems);
 	bool					EndAdd(void);
 	bool					AddItem(LPTSTR szItemToAdd);
-	bool					RemoveItem(IPlaylistEntry *			pEntry);
+	bool					RemoveItem(IPlaylistEntry *			pIPE);
 
 	bool					UpdateMLIndex(unsigned long	ulMLIndex);
 //todo bits: per column tag writing?
 //	bool					WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData);
-	bool					WriteFileTags(IPlaylistEntry * pEntry);
+	bool					WriteFileTags(IPlaylistEntry * pIPE);
 
 	CMediaLibraryPlaylistEntry *	GetItemByIndex(unsigned long	ulIndex);
 	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);
