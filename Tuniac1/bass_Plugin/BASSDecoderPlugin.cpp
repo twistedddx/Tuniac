@@ -10,7 +10,7 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 	}
 	else
 	{
-		//exts.AddTail(std::wstring(L".mp3"));
+		exts.AddTail(std::wstring(L".mp3"));
 		exts.AddTail(std::wstring(L".mp2"));
 		exts.AddTail(std::wstring(L".mp1"));
 		exts.AddTail(std::wstring(L".ogg"));
@@ -182,6 +182,14 @@ bool			CBASSDecoderPlugin::Configure(HWND hParent)
 
 bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 {
+	/*
+	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szSource)))
+	{
+		return false;
+	}
+	*/
+
+
 	HSTREAM testhandle;
 
 	bool bMod = false;
