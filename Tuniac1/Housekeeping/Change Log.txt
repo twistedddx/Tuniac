@@ -1,5 +1,26 @@
+Jan, 2010
+---------
+-standardize name of playlist entry in code. New standard PlayEntry() function. Less updating the screen. Tidy up some code. Fix buffer overflow for m3u and pls plugins(now match ML url max size of 260 chars aka MAX_PATH). Catch up on project files.
+-Correctly update the view when an item is removed.
+-Tak 2.0.0
+-wavpack svn update
+-bass dll update
+
+Dec, 2009
+---------
+-Softpause feature to auto cancel on manual track change.
+
+Nov, 2009
+---------
+-Pref for auto adding playlists on import. Allow multiple playlist deletes for "delete" button.
+-Small update to playlist delete code
+-Increase max playlist count
+
 Oct, 2009
 ---------
+-Do not add supported extensions unless BASS successfully started
+-return usable sample count for GetVisData functions. Any extra samples requested will simply be 0.
+-link to static taglib lib
 -byte alignment of code
 -turn on SSE optimizations
 -more accurate visual FPS control
