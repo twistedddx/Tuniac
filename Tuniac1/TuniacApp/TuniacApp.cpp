@@ -1681,7 +1681,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									if(pIPE)
 										tuniacApp.PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
 								}
-								//no valid previous song(start of playlist?), simply rewind
+								//no valid previous song?, simply rewind
 								else
 								{
 									CCoreAudio::Instance()->Stop();
