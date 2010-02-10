@@ -28,6 +28,7 @@
 
 #include "TuniacMemoryFileIO.h"
 #include "TuniacStandardFileIO.h"
+#include "TuniacHTTPFileIO.h"
 
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
@@ -198,7 +199,6 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 
 	for(unsigned long x=0; x<m_AudioSources.GetCount(); x++)
 	{
-
 		if(m_AudioSources[x]->CanHandle(szSource))
 		{
 			CAudioStream * pStream;
@@ -230,6 +230,17 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					break;
 			}
 
+			if(m_AudioSources[x]->GetFlags() & FLAGS_PROVIDEHTTPFILEIO)
+			{
+				CTuniacHTTPFileIO * pIO = new CTuniacHTTPFileIO();
+
+				if(pIO->Open(szSource))
+					pFileIO = pIO;
+
+
+				if(!pFileIO)
+					break;
+			}
 
 			IAudioSource * pSource = m_AudioSources[x]->CreateAudioSource(szSource, pFileIO);
 			if(pSource)

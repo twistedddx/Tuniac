@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib Ws2_32.lib"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib Ws2_32.lib"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -213,7 +213,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib Ws2_32.lib"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -289,7 +289,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib comctl32.lib winmm.lib opengl32.lib glu32.lib Ws2_32.lib"
 				SuppressStartupBanner="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -492,6 +492,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TuniacHTTPFileIO.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacMemoryFileIO.cpp"
 				>
 			</File>
@@ -570,6 +574,10 @@
 			</File>
 			<File
 				RelativePath=".\FileAssoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\generaldefs.h"
 				>
 			</File>
 			<File
@@ -709,6 +717,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ringbuffer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SharedMemorySongInfo.h"
 				>
 			</File>
@@ -726,6 +738,10 @@
 			</File>
 			<File
 				RelativePath=".\StdAfx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdint.h"
 				>
 			</File>
 			<File
@@ -749,6 +765,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TuniacHTTPFileIO.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TuniacMemoryFileIO.h"
 				>
 			</File>
@@ -758,6 +778,10 @@
 			</File>
 			<File
 				RelativePath=".\TuniacStandardFileIO.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tuniacthread.h"
 				>
 			</File>
 			<File

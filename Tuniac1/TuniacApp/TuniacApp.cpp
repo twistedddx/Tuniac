@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 
+#include <winsock2.h>
 #include <windows.h>
 #include <shellapi.h>
 #include <shobjidl.h>
@@ -93,6 +94,11 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	CoInitialize(NULL);
 	InitCommonControls();
+
+	WORD w = MAKEWORD(1,1);
+	WSADATA wsadata;
+	::WSAStartup(w, &wsadata); 
+
 
 	m_hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_MAINWINDOWACCEL));
 
@@ -331,6 +337,8 @@ bool CTuniacApp::Shutdown()
 	CCoreAudio::Instance()->Shutdown();
 
 	m_Taskbar.Shutdown();
+
+	::WSACleanup();
 
 	CoUninitialize();
 
@@ -817,7 +825,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										tuniacApp.PlayEntry(pIPE, true, true, true);
+										SetArt(pIPE); 	 
+										CCoreAudio::Instance()->TransitionTo(pIPE);
 									}
 								}
 								//else
@@ -1640,10 +1649,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 								if(pIPE)
 								{
-									tuniacApp.m_SoftPause.bNow = false;
-									//open for art before opening for decode.
-									SetArt(pIPE);
-
 									PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
 								}
 							}
