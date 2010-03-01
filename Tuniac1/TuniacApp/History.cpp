@@ -137,6 +137,11 @@ bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
 
 	if(pIPE)
 	{
+		if(tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+		{
+			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetActivePlaylist();
+			pPlaylistEX->SetActiveNormalFilteredIndex(pPlaylistEX->GetNormalFilteredIndexforItem(pIPE));
+		}
 		tuniacApp.PlayEntry(pIPE, true, true, true);
 		return true;
 	}

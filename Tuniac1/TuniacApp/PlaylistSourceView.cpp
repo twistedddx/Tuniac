@@ -851,6 +851,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									CCoreAudio::Instance()->Reset();
 								}
+								tuniacApp.RebuildFutureMenu();
 								Update();
 							}
 						}
@@ -897,7 +898,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								}
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
-
+							tuniacApp.RebuildFutureMenu();
 							Update();
 						}
 						break;
@@ -1336,6 +1337,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											{
 												CCoreAudio::Instance()->Reset();
 											}
+											tuniacApp.RebuildFutureMenu();
 											Update();
 										}
 									}
@@ -1995,6 +1997,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 					SetRectEmpty(&m_draggedItemRect);
 					SetCursor(::LoadCursor(NULL, IDC_ARROW));
+					tuniacApp.RebuildFutureMenu();
 					Update();
 				}
 			}
@@ -2077,6 +2080,7 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), SW_HIDE);
 				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_HIDE);
 			}
+			tuniacApp.RebuildFutureMenu();
 			Update();
 		}
 	}

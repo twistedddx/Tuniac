@@ -122,6 +122,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 	}
 
 	RebuildPlaylistArrays();
+	tuniacApp.RebuildFutureMenu();
 
 	return true;
 }

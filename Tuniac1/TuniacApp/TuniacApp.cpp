@@ -792,6 +792,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//check if we were set to stop at this next song
 							tuniacApp.DoSoftPause();
 
+							RebuildFutureMenu();
 							UpdateState();
 							m_SourceSelectorWindow->UpdateView();
 
@@ -932,7 +933,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
 								pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
 								
-								UpdateState();
 								m_SourceSelectorWindow->UpdateView();
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAYED, NULL, NULL);
@@ -1269,6 +1269,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 						if(pIPE)
 						{
+							pPlaylistEX->SetActiveFilteredIndex(ulIndex);
 							tuniacApp.PlayEntry(pIPE, true, true, true);
 						}
 					}
@@ -2205,8 +2206,6 @@ bool	CTuniacApp::EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned 
 
 IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 {
-	BuildFuturePlaylistArray();
-
 	if(iFromCurrent >= 0 && iFromCurrent < tuniacApp.m_FutureMenu.GetCount())
 	{
 		if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -2222,6 +2221,9 @@ IPlaylistEntry *		CTuniacApp::GetFuturePlaylistEntry(int iFromCurrent)
 void			CTuniacApp::BuildFuturePlaylistArray(void)
 {
 	tuniacApp.m_FutureMenu.RemoveAll();
+
+	if(!m_PlaylistManager.GetActivePlaylist())
+		return;
 
 	if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
@@ -2385,6 +2387,9 @@ bool	CTuniacApp::DoSoftPause(void)
 
 void	CTuniacApp::UpdateState(void)
 {
+	UpdateTitles();
+	m_PlayControls.UpdateState();
+
 	IPlaylistEntry * pIPE = m_PlaylistManager.GetActivePlaylist()->GetActiveItem();
 
 	if(pIPE)
@@ -2394,9 +2399,6 @@ void	CTuniacApp::UpdateState(void)
 		else if(CCoreAudio::Instance()->GetState() == STATE_STOPPED)
 			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPAUSE, NULL, NULL);
 	}
-
-	UpdateTitles();
-	m_PlayControls.UpdateState();
 }
 
 //update taskbar and titlebar

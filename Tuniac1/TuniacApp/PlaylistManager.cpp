@@ -47,9 +47,7 @@ bool DriveInMask(ULONG uMask, char Letter)
 	return false;
 }
 
-CPlaylistManager::CPlaylistManager(void) :
-	m_ActivePlaylist(NULL),
-	m_ulActivePlaylistIndex(INVALID_PLAYLIST_INDEX)
+CPlaylistManager::CPlaylistManager(void)
 {
 }
 
@@ -87,11 +85,12 @@ bool CPlaylistManager::Initialize(void)
 		return false;
 	}
 
+	//m_ActivePlaylist = 0;
+	m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
+
 	m_LibraryPlaylist.RebuildPlaylist();
 	LoadPlaylistLibrary();
-	
-	if(GetActivePlaylist() == NULL)
-		SetActivePlaylist(0);
+
 	return true;
 }
 
