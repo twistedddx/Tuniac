@@ -159,7 +159,6 @@ LRESULT CALLBACK CPlayControls::NextWndProc(HWND hWnd, UINT message, WPARAM wPar
 	{
 		case WM_RBUTTONDOWN:
 			{
-				tuniacApp.RebuildFutureMenu();
 				POINT p;
 				GetCursorPos(&p);
 				TrackPopupMenu(tuniacApp.GetFutureMenu(), TPM_RIGHTBUTTON, p.x, p.y, 0, tuniacApp.getMainWindow(), NULL);
