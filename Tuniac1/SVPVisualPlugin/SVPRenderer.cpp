@@ -284,7 +284,7 @@ bool SVPRenderer::RenderVisual(void)
 		}
 
 		if(m_TheVisual->NeedsVisFX())
-			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisResWidth*iVisResHeight*4, -24);
+			ChangeBrightnessC_MMX(m_textureData, m_textureData, iVisResWidth*iVisResHeight, -24);
 
 		return m_TheVisual->Render(m_textureData, iVisResWidth, iVisResHeight, iVisResWidth, &vd);
 	}
@@ -503,7 +503,12 @@ bool	SVPRenderer::Render(int w, int h)
 		}
 		else
 		{
-			if(iAllowNonPowerOf2 == 0)
+			if(iAllowNonPowerOf2)
+			{
+				iVisResHeight = min(h, iVisMaxRes);
+				iVisResWidth = min(w, iVisMaxRes);
+			}
+			else
 			{
 				int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
 
@@ -518,11 +523,6 @@ bool	SVPRenderer::Render(int w, int h)
 	
 				iVisResHeight = iVisResWidth = min(iVisMaxRes, iVisTempRes);
 			}
-			else
-			{
-				iVisResHeight = min(h, iVisMaxRes);
-				iVisResWidth = min(w, iVisMaxRes);
-			}
 
 			if(m_textureData)
 			{
@@ -532,7 +532,7 @@ bool	SVPRenderer::Render(int w, int h)
 			}
 
 			//m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-			m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*iVisResWidth*sizeof(unsigned long));
+			m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*sizeof(unsigned long));
 		}
 
 		SetRect(&m_NextVisRect, 
@@ -591,21 +591,22 @@ bool	SVPRenderer::Render(int w, int h)
 					m_textureData);
 
 	glBegin (GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex2f(0, 0);	// Bottom Left Of The Texture and Quad
-		glTexCoord2f(0, 1);
-		glVertex2f(0, h);	// Bottom Right Of The Texture and Quad
-		glTexCoord2f(1, 1);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
+		glTexCoord2f(1.0f, 1.0f);
 		glVertex2f(w, h);	// Top Right Of The Texture and Quad
-		glTexCoord2f(1, 0);
-		glVertex2f(w, 0);	// Top Left Of The Texture and Quad
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
 	glEnd ();
 
 	//arrows
-	if((GetTickCount() - m_LastMove) < 4000)
+	m_iElaspedTime = GetTickCount() - m_LastMove;
+	if(m_iElaspedTime < 4000)
 	{
 		glBindTexture(GL_TEXTURE_2D, 1);
-		if((GetTickCount() - m_LastMove) < 2000)
+		if(m_iElaspedTime < 2000)
 		{
 			//clear arrow
 			glColor4f(1, 1, 1, 1);
@@ -613,8 +614,8 @@ bool	SVPRenderer::Render(int w, int h)
 		else
 		{
 			//fade arrow
-			int val = (GetTickCount() - m_LastMove) - 2000;
-			float scale = (float) (2000-val) / 2000.0f;
+			int val = m_iElaspedTime - 2000;
+			float scale = (float) (2000 - val) / 2000.0f;
 			glColor4f(1, 1, 1, scale);
 		}
 		
@@ -635,7 +636,7 @@ bool	SVPRenderer::Render(int w, int h)
 		glEnd();
 	}
 	
-	glFlush();
+	//glFlush();
 	SwapBuffers(m_glDC);
 
 	return true;

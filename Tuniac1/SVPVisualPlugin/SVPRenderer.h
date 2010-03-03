@@ -48,6 +48,8 @@ protected:
 
 	unsigned long						m_LastMove;
 
+	int									m_iElaspedTime;
+
     BITMAP								m_ArrowBM;
 	HBITMAP								m_hArrow;
 
