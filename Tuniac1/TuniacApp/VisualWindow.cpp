@@ -535,7 +535,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 {
 	MSG					msg;
 	bool				Done = false;
-
+	RECT				r;
 	while(!Done)
 	{
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -586,8 +586,6 @@ unsigned long CVisualWindow::ThreadProc(void)
 		{
 			if(::IsWindowVisible(m_hWnd) && !IsIconic(GetParent(m_hWnd)))
 			{
-				RECT r;
-
 				CAutoLock t(&m_RenderLock);
 				if(m_iActivePlugin != -1)
 				{
@@ -599,8 +597,7 @@ unsigned long CVisualWindow::ThreadProc(void)
 					FillRect(m_WindowDC, &r, (HBRUSH)GetStockObject(BLACK_BRUSH));
 				}
 			}
-
-			WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000.0f/tuniacApp.m_Preferences.GetVisualFPS()));
+			WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000 / tuniacApp.m_Preferences.GetVisualFPS()));
 		}
 	}
 

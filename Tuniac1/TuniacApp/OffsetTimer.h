@@ -4,7 +4,9 @@ class COffsetTimer
 {
 protected:
 
-	unsigned long	dwLastCall;
+	DWORD	dwTickCount;
+	DWORD	dwLastCall;
+	DWORD	dwDifference;
 
 public:
 	COffsetTimer(void);

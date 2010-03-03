@@ -14,14 +14,14 @@ COffsetTimer::~COffsetTimer(void)
 
 unsigned long COffsetTimer::MSToSleepSinceLastCall(unsigned long dwMS)
 {
-	int difference = ((long long)GetTickCount() - (long long)dwLastCall);
+	dwTickCount = GetTickCount();
 
-	dwLastCall = GetTickCount();
+	dwDifference = (dwTickCount - dwLastCall);
 
-	if(difference >= dwMS)
+	dwLastCall = dwTickCount;
+
+	if(dwDifference >= dwMS)
 		return 0;
 	else
-		return dwMS - difference;
-
-	return 0;
+		return dwMS - dwDifference;
 }
