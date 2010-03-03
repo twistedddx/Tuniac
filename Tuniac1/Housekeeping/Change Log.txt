@@ -1,3 +1,16 @@
+Mar, 2010
+---------
+-DirectX Feb 2010
+-Correct texture size in svp plugin and a few less memory allocations
+-Fix updating after track change from history and future menus. Change in logic of when to rebuild future menu.
+
+Feb, 2010
+---------
+-Make previous and next functions loop playlist when at either end
+-Add HTTP File IO
+-Fix crossfade broken in last update
+-remove an extra SetArt()
+
 Jan, 2010
 ---------
 -standardize name of playlist entry in code. New standard PlayEntry() function. Less updating the screen. Tidy up some code. Fix buffer overflow for m3u and pls plugins(now match ML url max size of 260 chars aka MAX_PATH). Catch up on project files.
