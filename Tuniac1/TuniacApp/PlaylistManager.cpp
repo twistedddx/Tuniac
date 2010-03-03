@@ -85,7 +85,7 @@ bool CPlaylistManager::Initialize(void)
 		return false;
 	}
 
-	//m_ActivePlaylist = 0;
+	m_ActivePlaylist = 0;
 	m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
 
 	m_LibraryPlaylist.RebuildPlaylist();
