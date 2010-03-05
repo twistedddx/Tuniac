@@ -3,8 +3,10 @@
 #pragma pack(16)
 
 #include "ituniacvisplugin.h"
+
 #include <gl/gl.h>
 #include <gl/glu.h>
+
 #include "SoniqueVis.h"
 #include "Array.h"
 #include "CriticalSection.h"
@@ -17,8 +19,15 @@ protected:
 
 	CCriticalSection					m_RenderLock;
 
-	HDC									m_glDC;
+	bool								bOpenGL;
+
+	HDC									m_hDC;
+
 	HGLRC								m_glRC;
+
+	HDC									m_gdiDC;
+	HBITMAP								visBMP;
+	HBITMAP								hBitmap;
 
 	int									m_LastWidth;
 	int									m_LastHeight;

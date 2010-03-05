@@ -101,7 +101,7 @@ BOOL SoniqueVisExternal::SaveSettings( char* szFileName )
 	if( p_PluginInfo )
 		return p_PluginInfo->SaveSettings(szFileName);
 
-	return(FALSE);
+	return false;
 };
 
 BOOL SoniqueVisExternal::LoadSettings( char* szFileName )
@@ -109,7 +109,7 @@ BOOL SoniqueVisExternal::LoadSettings( char* szFileName )
 	if( p_PluginInfo )
 		return p_PluginInfo->OpenSettings(szFileName);
 
-	return(FALSE);
+	return false;
 };
 
 void SoniqueVisExternal::Clicked(int x, int y)

@@ -3,7 +3,7 @@
 #include "svprenderer.h"
 
 extern HANDLE	hInst;
-
+/*
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
 
@@ -21,7 +21,7 @@ void setVSync(int interval=1)
 			wglSwapIntervalEXT(interval);
 	}
 }
-
+*/
 __m64 Get_m64(__int64 n)
 {
     union __m64__m64
@@ -58,8 +58,8 @@ void ChangeBrightnessC_MMX(
         c |= b;
     }
 
-    // 8 pixels are processed in one loop
-    int nNumberOfLoops = nNumberOfPixels / 8;
+    // 2 pixels are processed in one loop
+    int nNumberOfLoops = nNumberOfPixels / 2;
 
     __m64* pIn = (__m64*) pSource;          // input pointer
     __m64* pOut = (__m64*) pDest;           // output pointer
@@ -75,14 +75,14 @@ void ChangeBrightnessC_MMX(
     {
         for ( int i = 0; i < nNumberOfLoops; i++ )
         {
-            tmp = _m_paddusb(*pIn, nChange64); // Unsigned addition 
+            tmp = _mm_adds_pu8(*pIn, nChange64); // Unsigned addition 
                                                  // with saturation.
                                                  // tmp = *pIn + nChange64
                                                  // for each byte
 
             *pOut = tmp;
 
-            pIn++;                               // next 8 pixels
+            pIn++;                               // next 2 pixels
             pOut++;
         }
     }
@@ -97,7 +97,7 @@ void ChangeBrightnessC_MMX(
 
             *pOut = tmp;
 
-            pIn++;                                      // next 8 pixels
+            pIn++;                               // next 2 pixels
             pOut++;
         }
     }
@@ -129,6 +129,41 @@ void ChangeBrightnessC_MMX(
 }
 
 #endif
+
+SVPRenderer::SVPRenderer(void)
+{
+	m_textureData = NULL;
+	visdata = NULL;
+
+	m_hDC = NULL;
+	m_glRC = NULL;
+
+	m_gdiDC = NULL;
+	visBMP = NULL;
+
+	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
+	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
+}
+
+SVPRenderer::~SVPRenderer(void)
+{
+}
+
+LPTSTR	SVPRenderer::GetPluginName(void)
+{
+	return TEXT("Sonique SVP Visual Plugin");
+}
+
+unsigned long SVPRenderer::GetFlags(void)
+{
+	return PLUGINFLAGS_CONFIG | PLUGINFLAGS_ABOUT;
+}
+
+bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
+{
+	m_pHelper = pHelper;
+	return true;
+}
 
 bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 {
@@ -180,20 +215,194 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 	return true;
 }
 
-
-SVPRenderer::SVPRenderer(void)
+bool	SVPRenderer::Attach(HDC hDC)
 {
-	m_textureData = NULL;
-	visdata = NULL;
-	m_glRC = NULL;
-	m_glDC = NULL;
+	bOpenGL				= true;
 
-	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
-	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
+	m_LastWidth			= -1;
+	m_LastHeight		= -1;
+	m_SelectedVisual	= 0;
+	m_TheVisual			= NULL;
+	iVisResHeight		= 128;
+	iVisResWidth		= 128;
+	iAllowNonPowerOf2	= 0;
+	bResChange			= true;
+
+	DWORD				lpRegType = REG_DWORD;
+	DWORD				iRegSize = sizeof(int);
+
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
+
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
+
+	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
+
+	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
+
+	m_LastMove = GetTickCount();
+
+	if(bOpenGL)
+	{
+		m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+		::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
+
+		m_glRC = NULL;
+		m_hDC = hDC;
+
+		GLuint		PixelFormat;
+
+		PIXELFORMATDESCRIPTOR pfd ;
+		memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
+		pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
+		pfd.nVersion   = 1 ; 
+		pfd.dwFlags    =	PFD_DOUBLEBUFFER |
+							PFD_SUPPORT_OPENGL |
+							PFD_DRAW_TO_WINDOW |
+							PFD_GENERIC_ACCELERATED;
+		pfd.iPixelType = PFD_TYPE_RGBA;
+		pfd.cColorBits = 24 ;
+		pfd.cDepthBits = 32 ;
+		pfd.iLayerType = PFD_MAIN_PLANE ;
+
+		if (!(PixelFormat=ChoosePixelFormat(m_hDC,&pfd)))
+			return false;
+
+		if(!SetPixelFormat(hDC,PixelFormat,&pfd))
+			return false;
+
+		if (!(m_glRC=wglCreateContext(m_hDC)))
+			return false;
+
+		if(!wglMakeCurrent(m_hDC, m_glRC))
+			return false;
+
+		//setVSync(1);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_ALPHA_TEST);
+		glEnable (GL_TEXTURE_2D);
+
+		//visual texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+		//for arrow blending
+		glEnable(GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glTexImage2D(	GL_TEXTURE_2D, 
+							0, 
+							GL_RGB,
+							iVisResWidth,
+							iVisResHeight,
+							0,
+							GL_BGRA_EXT, 
+							GL_UNSIGNED_BYTE, 
+							0);
+
+		//arrow texture
+		glBindTexture(GL_TEXTURE_2D, 1);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+		glTexImage2D(	GL_TEXTURE_2D, 
+						0, 
+						GL_ALPHA,
+						m_ArrowBM.bmWidth, 
+						m_ArrowBM.bmHeight, 
+						0,
+						GL_ALPHA, 
+						GL_UNSIGNED_BYTE, 
+						m_ArrowBM.bmBits);
+
+
+
+		SwapBuffers(m_hDC);
+	}
+	else
+	{
+		m_gdiDC=CreateCompatibleDC(0);
+	}
+
+	TCHAR szVisualsPath[2048];
+	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
+	PathRemoveFileSpec(szVisualsPath);
+	PathAddBackslash(szVisualsPath);
+	StrCat(szVisualsPath, TEXT("vis"));
+	PathAddBackslash(szVisualsPath);
+
+	AddFolderOfSVP(szVisualsPath);
+
+	if(m_VisFilenameArray.GetCount())
+	{
+		lpRegType = REG_DWORD;
+		iRegSize = sizeof(int);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
+		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
+			m_SelectedVisual = 0;
+
+		SetActiveVisual(m_SelectedVisual);
+	}
+
+	return true;
 }
 
-SVPRenderer::~SVPRenderer(void)
+bool	SVPRenderer::Detach()
 {
+	if(bOpenGL)
+	{
+		if (m_glRC)
+		{
+			wglMakeCurrent(NULL,NULL);
+			wglDeleteContext(m_glRC);
+			m_glRC=NULL;
+		}
+		m_hDC = NULL;
+	}
+	else
+	{
+		if(visBMP)
+			DeleteObject(visBMP);
+
+		if(m_gdiDC)
+			DeleteDC(m_gdiDC);
+	}
+
+	if(m_textureData)
+	{
+		free(m_textureData);
+		m_textureData = NULL;
+	}
+
+	if(visdata)
+	{
+		_aligned_free(visdata);
+		visdata = NULL;
+	}
+
+	return true;
+}
+
+void	SVPRenderer::Destroy(void)
+{
+	if(m_textureData)
+	{
+		free(m_textureData);
+		m_textureData = NULL;
+	}
+
+	if(visdata)
+	{
+		_aligned_free(visdata);
+		visdata = NULL;
+	}
+
+	kiss_fft_free(kiss_cfg);
+	free(freq_data);
+	
+	delete this;
 }
 
 bool SVPRenderer::RenderVisual(void)
@@ -208,12 +417,10 @@ bool SVPRenderer::RenderVisual(void)
 		{
 			if(visdata)
 			{
-				//VirtualFree(visdata, 0, MEM_RELEASE);
 				_aligned_free(visdata);
 			}
 
 			ulOldNumChannels = ulNumChannels;
-			//visdata = (float *)VirtualAlloc(NULL, 512 * NumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 			visdata = (float*)_aligned_malloc(512 * ulNumChannels * sizeof(float), 16);
 		}
 
@@ -292,248 +499,41 @@ bool SVPRenderer::RenderVisual(void)
 	return true;
 }
 
-
-void	SVPRenderer::Destroy(void)
-{
-	if(m_textureData)
-	{
-		//VirtualFree(m_textureData, 0, MEM_RELEASE);
-		free(m_textureData);
-		m_textureData = NULL;
-	}
-
-	if(visdata)
-	{
-		//VirtualFree(visdata, 0, MEM_RELEASE);
-		_aligned_free(visdata);
-		visdata = NULL;
-	}
-
-	kiss_fft_free(kiss_cfg);
-	free(freq_data);
-	
-	delete this;
-}
-
-LPTSTR	SVPRenderer::GetPluginName(void)
-{
-	return TEXT("Sonique SVP Visual Plugin");
-}
-
-unsigned long SVPRenderer::GetFlags(void)
-{
-	return PLUGINFLAGS_CONFIG | PLUGINFLAGS_ABOUT;
-}
-
-bool	SVPRenderer::SetHelper(ITuniacVisHelper *pHelper)
-{
-	m_pHelper = pHelper;
-	return true;
-}
-
-bool	SVPRenderer::Attach(HDC hDC)
-{
-	m_LastWidth			= -1;
-	m_LastHeight		= -1;
-	m_SelectedVisual	= 0;
-	m_TheVisual			= NULL;
-	iVisResHeight		= 128;
-	iVisResWidth		= 128;
-	iAllowNonPowerOf2	= 0;
-	bResChange			= true;
-
-	DWORD				lpRegType = REG_DWORD;
-	DWORD				iRegSize = sizeof(int);
-
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
-
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
-
-	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-	//visdata = (float *)VirtualAlloc(NULL, 512 * ulOldNumChannels * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
-	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
-
-	m_LastMove = GetTickCount();
-	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-    ::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
-
-	m_glRC = NULL;
-	m_glDC = hDC;
-
-	GLuint		PixelFormat;
-
-	PIXELFORMATDESCRIPTOR pfd ;
-	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
-	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
-	pfd.nVersion   = 1 ; 
-	pfd.dwFlags    =	PFD_DOUBLEBUFFER |
-						PFD_SUPPORT_OPENGL |
-						PFD_DRAW_TO_WINDOW |
-						PFD_GENERIC_ACCELERATED;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 24 ;
-	pfd.cDepthBits = 32 ;
-	pfd.iLayerType = PFD_MAIN_PLANE ;
-
-	if (!(PixelFormat=ChoosePixelFormat(m_glDC,&pfd)))
-		return false;
-
-	if(!SetPixelFormat(hDC,PixelFormat,&pfd))
-		return false;
-
-	if (!(m_glRC=wglCreateContext(m_glDC)))
-		return false;
-
-	if(!wglMakeCurrent(m_glDC, m_glRC))
-		return false;
-
-	setVSync(1);
-
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_ALPHA_TEST);
-    glEnable (GL_TEXTURE_2D);
-
-	//visual texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
-	//for arrow blending
-	glEnable(GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glTexImage2D(	GL_TEXTURE_2D, 
-						0, 
-						GL_RGB,
-						iVisResWidth,
-						iVisResHeight,
-						0,
-						GL_BGRA_EXT, 
-						GL_UNSIGNED_BYTE, 
-						0);
-
-	//arrow texture
-	glBindTexture(GL_TEXTURE_2D, 1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
-	glTexImage2D(	GL_TEXTURE_2D, 
-					0, 
-					GL_ALPHA,
-					m_ArrowBM.bmWidth, 
-					m_ArrowBM.bmHeight, 
-					0,
-					GL_ALPHA, 
-					GL_UNSIGNED_BYTE, 
-					m_ArrowBM.bmBits);
-
-
-
-	SwapBuffers(m_glDC);
-
-	TCHAR				szVisualsPath[2048];
-	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
-	PathRemoveFileSpec(szVisualsPath);
-	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("vis"));
-	PathAddBackslash(szVisualsPath);
-
-	AddFolderOfSVP(szVisualsPath);
-
-	if(m_VisFilenameArray.GetCount())
-	{
-		lpRegType = REG_DWORD;
-		iRegSize = sizeof(int);
-		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
-		if(m_SelectedVisual >= m_VisFilenameArray.GetCount())
-			m_SelectedVisual = 0;
-
-		SetActiveVisual(m_SelectedVisual);
-	}
-
-	return true;
-}
-bool	SVPRenderer::Detach()
-{
-	if (m_glRC)
-	{
-		wglMakeCurrent(NULL,NULL);
-		wglDeleteContext(m_glRC);
-		m_glRC=NULL;
-	}
-
-	m_glDC = NULL;
-
-	if(m_textureData)
-	{
-		//VirtualFree(m_textureData, 0, MEM_RELEASE);
-		free(m_textureData);
-		m_textureData = NULL;
-	}
-
-	if(visdata)
-	{
-		//VirtualFree(visdata, 0, MEM_RELEASE);
-		_aligned_free(visdata);
-		visdata = NULL;
-	}
-
-	return true;
-}
-
 bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
 	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 	{
-		//we are minimized.. 
-		if((h == 0) || (w == 0))
+		if(iAllowNonPowerOf2)
 		{
-			if(m_LastHeight > 0)
-				iVisResHeight = m_LastHeight;
-			else
-				iVisResHeight = iVisMaxRes;
-
-			if(m_LastWidth > 0)
-				iVisResWidth = m_LastWidth;
-			else
-				iVisResWidth = iVisMaxRes;
+			iVisResHeight = min(h, iVisMaxRes);
+			iVisResWidth = min(w, iVisMaxRes);
 		}
 		else
 		{
-			if(iAllowNonPowerOf2)
-			{
-				iVisResHeight = min(h, iVisMaxRes);
-				iVisResWidth = min(w, iVisMaxRes);
-			}
-			else
-			{
-				int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
+			int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
 
-				//power of 2
-				iVisTempRes--;
-				iVisTempRes |= iVisTempRes >> 1;
-				iVisTempRes |= iVisTempRes >> 2;
-				iVisTempRes |= iVisTempRes >> 4;
-				iVisTempRes |= iVisTempRes >> 8;
-				iVisTempRes |= iVisTempRes >> 16;
-				iVisTempRes++;
-	
-				iVisResHeight = iVisResWidth = min(iVisMaxRes, iVisTempRes);
-			}
+			//power of 2
+			iVisTempRes--;
+			iVisTempRes |= iVisTempRes >> 1;
+			iVisTempRes |= iVisTempRes >> 2;
+			iVisTempRes |= iVisTempRes >> 4;
+			iVisTempRes |= iVisTempRes >> 8;
+			iVisTempRes |= iVisTempRes >> 16;
+			iVisTempRes++;
 
-			if(m_textureData)
-			{
-				//VirtualFree(m_textureData, 0, MEM_RELEASE);
-				free(m_textureData);
-				m_textureData = NULL;
-			}
+			iVisResHeight = iVisResWidth = min(iVisMaxRes, iVisTempRes);
 
-			//m_textureData = (unsigned long*)VirtualAlloc(NULL, iVisRes*iVisRes*iVisRes*sizeof(unsigned long), MEM_COMMIT, PAGE_READWRITE);
-			m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*sizeof(unsigned long));
 		}
+
+		if(m_textureData)
+		{
+			free(m_textureData);
+			m_textureData = NULL;
+		}
+
+		m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*sizeof(unsigned long));
 
 		SetRect(&m_NextVisRect, 
 				w-(64+16),
@@ -547,138 +547,129 @@ bool	SVPRenderer::Render(int w, int h)
 				(16)+64,
 				h-(64+16)+64);
 
-		glViewport(0,0,w,h);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluOrtho2D(0, (float)w, (float)h, 0);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		if(bOpenGL)
+		{
+			glViewport(0,0,w,h);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluOrtho2D(0, (float)w, (float)h, 0);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
 
-		//create texture
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glTexImage2D(	GL_TEXTURE_2D, 
-							0,
-							GL_RGB,
-							iVisResWidth,
-							iVisResHeight,
-							0,
-							GL_BGRA_EXT,
-							GL_UNSIGNED_BYTE,
-							0);
+			//create texture
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glTexImage2D(	GL_TEXTURE_2D, 
+								0,
+								GL_RGB,
+								iVisResWidth,
+								iVisResHeight,
+								0,
+								GL_BGRA_EXT,
+								GL_UNSIGNED_BYTE,
+								0);
+		}
+		else
+		{
+			if(visBMP)
+				DeleteObject(visBMP);
+
+			BITMAPINFO bi={0};
+			bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
+			bi.bmiHeader.biWidth=iVisResWidth;
+			bi.bmiHeader.biHeight=-iVisResHeight;
+			bi.bmiHeader.biPlanes=1;
+			bi.bmiHeader.biBitCount=32;
+			visBMP = CreateDIBSection(0,&bi,DIB_RGB_COLORS,(void**)&m_textureData,0,0);
+			hBitmap = (HBITMAP)SelectObject(m_gdiDC,visBMP);
+		}
 
 		bResChange = false;
 
 		m_LastWidth		= w;
 		m_LastHeight	= h;
-
-
 	}
 
 	RenderVisual();
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glColor4f(1,1,1,1);
-
-	//update texture
-	glTexSubImage2D(GL_TEXTURE_2D,
-					0,
-					0,
-					0,
-					iVisResWidth,
-					iVisResHeight,
-					GL_BGRA_EXT,
-					GL_UNSIGNED_BYTE,
-					m_textureData);
-
-	glBegin (GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(w, h);	// Top Right Of The Texture and Quad
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
-	glEnd ();
-
-	//arrows
-	m_iElaspedTime = GetTickCount() - m_LastMove;
-	if(m_iElaspedTime < 4000)
+	if(bOpenGL)
 	{
-		glBindTexture(GL_TEXTURE_2D, 1);
-		if(m_iElaspedTime < 2000)
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		//update texture
+		glTexSubImage2D(GL_TEXTURE_2D,
+						0,
+						0,
+						0,
+						iVisResWidth,
+						iVisResHeight,
+						GL_BGRA_EXT,
+						GL_UNSIGNED_BYTE,
+						m_textureData);
+
+		glBegin (GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f(w, h);	// Top Right Of The Texture and Quad
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
+		glEnd ();
+
+		//arrows
+		m_iElaspedTime = GetTickCount() - m_LastMove;
+		if(m_iElaspedTime < 4000)
 		{
-			//clear arrow
-			glColor4f(1, 1, 1, 1);
-		}
-		else
-		{
-			//fade arrow
-			int val = m_iElaspedTime - 2000;
-			float scale = (float) (2000 - val) / 2000.0f;
-			glColor4f(1, 1, 1, scale);
+			glBindTexture(GL_TEXTURE_2D, 1);
+			if(m_iElaspedTime < 2000)
+			{
+				//clear arrow
+				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			else
+			{
+				//fade arrow
+				int val = m_iElaspedTime - 2000;
+				float scale = (2000.0f - (float)val) / 2000.0f;
+				glColor4f(1.0f, 1.0f, 1.0f, scale);
+			}
+			
+			//left
+			glBegin (GL_QUADS);
+				glTexCoord2f(1.0f, 1.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
+				glTexCoord2f(1.0f, 0.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.bottom);
+				glTexCoord2f(0.0f, 0.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.bottom);
+				glTexCoord2f(0.0f, 1.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.top);
+			glEnd();
+
+			//right
+			glBegin (GL_QUADS);
+				glTexCoord2f(0.0f, 0.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.top);
+				glTexCoord2f(0.0f, 1.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.bottom);
+				glTexCoord2f(1.0f, 1.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.bottom);
+				glTexCoord2f(1.0f, 0.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.top);
+			glEnd();
 		}
 		
-		//left
-		glBegin (GL_QUADS);
-			glTexCoord2f(1, 1); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
-			glTexCoord2f(1, 0); glVertex2f(m_NextVisRect.left,	m_NextVisRect.bottom);
-			glTexCoord2f(0, 0); glVertex2f(m_NextVisRect.right,	m_NextVisRect.bottom);
-			glTexCoord2f(0, 1); glVertex2f(m_NextVisRect.right,	m_NextVisRect.top);
-		glEnd();
-
-		//right
-		glBegin (GL_QUADS);
-			glTexCoord2f(0, 0); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.top);
-			glTexCoord2f(0, 1); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.bottom);
-			glTexCoord2f(1, 1); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.bottom);
-			glTexCoord2f(1, 0); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.top);
-		glEnd();
-	}
-	
-	//glFlush();
-	SwapBuffers(m_glDC);
-
-	return true;
-}
-
-bool	SVPRenderer::About(HWND hWndParent)
-{
-	MessageBox(hWndParent, TEXT("Sonique Visual Plugin renderer. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
-	return true;
-}
-bool	SVPRenderer::Configure(HWND hWndParent)
-{
-	//crap(many in laptops) and old gpus require the res to be a power of 2 for glTexImage2D!
-	if(iVisMaxRes == 128)
-	{
-		if(iAllowNonPowerOf2)
-			iVisMaxRes = 240;
-		else
-			iVisMaxRes = 256;
-	}
-	else if(iVisMaxRes == 240)
-		iVisMaxRes = 256;
-	else if(iVisMaxRes == 256)
-		iVisMaxRes = 512;
-	else if(iVisMaxRes == 512)
-	{
-		if(iAllowNonPowerOf2)
-			iVisMaxRes = 640;
-		else
-			iVisMaxRes = 128;
+		SwapBuffers(m_hDC);
 	}
 	else
-		iVisMaxRes = 128;
+	{
+		/*StretchDIBits(m_hDC,
+			//destination
+			0, 0, w, h,
+			//source
+			0, 0, iVisResWidth, iVisResHeight,
+			//image
+			visBMP, &bi ,DIB_RGB_COLORS, SRCCOPY);
+			
 
-	bResChange = true;
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
+		BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, m_gdiDC, 0,0, SRCCOPY);
+		*/
+	}
 
-	return true;
-}
-
-bool	SVPRenderer::Notify(unsigned long Notification)
-{
 	return true;
 }
 
@@ -805,5 +796,46 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 		}
 	}
 
+	return true;
+}
+
+bool	SVPRenderer::Configure(HWND hWndParent)
+{
+	//crap(many in laptops) and old gpus require the res to be a power of 2 for glTexImage2D!
+	if(iVisMaxRes == 128)
+	{
+		if(iAllowNonPowerOf2)
+			iVisMaxRes = 240;
+		else
+			iVisMaxRes = 256;
+	}
+	else if(iVisMaxRes == 240)
+		iVisMaxRes = 256;
+	else if(iVisMaxRes == 256)
+		iVisMaxRes = 512;
+	else if(iVisMaxRes == 512)
+	{
+		if(iAllowNonPowerOf2)
+			iVisMaxRes = 640;
+		else
+			iVisMaxRes = 128;
+	}
+	else
+		iVisMaxRes = 128;
+
+	bResChange = true;
+	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
+
+	return true;
+}
+
+bool	SVPRenderer::Notify(unsigned long Notification)
+{
+	return true;
+}
+
+bool	SVPRenderer::About(HWND hWndParent)
+{
+	MessageBox(hWndParent, TEXT("Sonique Visual Plugin renderer. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
