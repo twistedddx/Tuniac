@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib gdiplus.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"

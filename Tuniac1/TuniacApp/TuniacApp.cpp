@@ -57,7 +57,7 @@ CTuniacApp::~CTuniacApp()
 bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 {
 	//load tuniac
-	SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+	//SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
 	m_hInstance = hInstance;
 
@@ -1692,7 +1692,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							//past start of song, simply rewind
 							else
 							{
-								CCoreAudio::Instance()->Stop();
 								CCoreAudio::Instance()->SetPosition(0);
 							}
 						}
