@@ -225,6 +225,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_TheVisual			= NULL;
 	iVisResHeight		= 128;
 	iVisResWidth		= 128;
+	iVisMaxRes			= 128;
 	iAllowNonPowerOf2	= 0;
 	bResChange			= true;
 
@@ -240,6 +241,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
 
 	m_LastMove = GetTickCount();
+	m_hDC = hDC;
 
 	if(bOpenGL)
 	{
@@ -247,7 +249,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 		::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
 
 		m_glRC = NULL;
-		m_hDC = hDC;
 
 		GLuint		PixelFormat;
 
@@ -267,7 +268,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 		if (!(PixelFormat=ChoosePixelFormat(m_hDC,&pfd)))
 			return false;
 
-		if(!SetPixelFormat(hDC,PixelFormat,&pfd))
+		if(!SetPixelFormat(m_hDC,PixelFormat,&pfd))
 			return false;
 
 		if (!(m_glRC=wglCreateContext(m_hDC)))
@@ -291,15 +292,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 		//for arrow blending
 		glEnable(GL_BLEND);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glTexImage2D(	GL_TEXTURE_2D, 
-							0, 
-							GL_RGB,
-							iVisResWidth,
-							iVisResHeight,
-							0,
-							GL_BGRA_EXT, 
-							GL_UNSIGNED_BYTE, 
-							0);
 
 		//arrow texture
 		glBindTexture(GL_TEXTURE_2D, 1);
@@ -359,7 +351,6 @@ bool	SVPRenderer::Detach()
 			wglDeleteContext(m_glRC);
 			m_glRC=NULL;
 		}
-		m_hDC = NULL;
 	}
 	else
 	{
@@ -369,6 +360,7 @@ bool	SVPRenderer::Detach()
 		if(m_gdiDC)
 			DeleteDC(m_gdiDC);
 	}
+	m_hDC = NULL;
 
 	if(m_textureData)
 	{
@@ -573,7 +565,6 @@ bool	SVPRenderer::Render(int w, int h)
 			if(visBMP)
 				DeleteObject(visBMP);
 
-			BITMAPINFO bi={0};
 			bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
 			bi.bmiHeader.biWidth=iVisResWidth;
 			bi.bmiHeader.biHeight=-iVisResHeight;
@@ -657,17 +648,17 @@ bool	SVPRenderer::Render(int w, int h)
 	}
 	else
 	{
-		/*StretchDIBits(m_hDC,
+		StretchDIBits(m_hDC,
 			//destination
 			0, 0, w, h,
 			//source
 			0, 0, iVisResWidth, iVisResHeight,
 			//image
-			visBMP, &bi ,DIB_RGB_COLORS, SRCCOPY);
+			m_gdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
 			
 
-		BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, m_gdiDC, 0,0, SRCCOPY);
-		*/
+		//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, m_gdiDC, 0,0, SRCCOPY);
+		
 	}
 
 	return true;
@@ -836,6 +827,6 @@ bool	SVPRenderer::Notify(unsigned long Notification)
 
 bool	SVPRenderer::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Sonique Visual Plugin renderer. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Sonique SVP renderer. Tony Million & Brett Hoyle 2010"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }

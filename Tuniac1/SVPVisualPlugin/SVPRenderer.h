@@ -28,7 +28,7 @@ protected:
 	HDC									m_gdiDC;
 	HBITMAP								visBMP;
 	HBITMAP								hBitmap;
-
+	BITMAPINFO							bi;
 	int									m_LastWidth;
 	int									m_LastHeight;
 	int									iVisResHeight;
