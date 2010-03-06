@@ -1685,7 +1685,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								//no valid previous song?, simply rewind
 								else
 								{
-									CCoreAudio::Instance()->Stop();
 									CCoreAudio::Instance()->SetPosition(0);
 								}
 							}
