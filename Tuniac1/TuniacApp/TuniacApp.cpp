@@ -1175,6 +1175,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										{
 											m_MediaLibrary.m_Queue.Append((IPlaylistEntry *)m_MediaLibrary.GetItemByIndex(i));
 										}
+										RebuildFutureMenu();
 									}
 								}
 
@@ -2355,6 +2356,7 @@ void	CTuniacApp::UpdateQueues(void)
 						tuniacApp.m_MediaLibrary.m_Queue.Append(pIPE);
 				}
 			}
+			RebuildFutureMenu();
 		}
 	}
 }

@@ -790,6 +790,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								tuniacApp.m_MediaLibrary.m_Queue.Prepend(m_pPlaylist->GetItemAtNormalFilteredIndex(iaPlayArray[i-1]));
 							}
 							iaPlayArray.RemoveAll();
+							tuniacApp.RebuildFutureMenu();
 						}
 						break;
 
@@ -808,6 +809,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								tuniacApp.m_MediaLibrary.m_Queue.Append(m_pPlaylist->GetItemAtNormalFilteredIndex((unsigned long &)iPos));
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
+							tuniacApp.RebuildFutureMenu();
 						}
 						break;
 
@@ -1011,6 +1013,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									tuniacApp.m_MediaLibrary.m_Queue.Append(entryArray[i]);
 								}
 							}
+							tuniacApp.RebuildFutureMenu();
 						}
 						break;
 
