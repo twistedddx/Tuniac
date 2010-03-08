@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib gdiplus.lib"
+				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib glew32s.lib gdiplus.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -193,7 +193,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../TuniacApp"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502;GLEW_STATIC"
 				StructMemberAlignment="5"
 				EnableEnhancedInstructionSet="2"
 			/>
@@ -208,7 +208,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="shlwapi.lib opengl32.lib glu32.lib glew32s.lib gdiplus.lib"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
