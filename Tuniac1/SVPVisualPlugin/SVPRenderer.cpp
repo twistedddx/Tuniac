@@ -2,6 +2,8 @@
 #include <emmintrin.h>
 #include "svprenderer.h"
 
+ULONG_PTR m_gdiplusToken = 0;
+
 extern HANDLE	hInst;
 /*
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
@@ -132,14 +134,18 @@ void ChangeBrightnessC_MMX(
 
 SVPRenderer::SVPRenderer(void)
 {
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
 	m_textureData = NULL;
 	visdata = NULL;
 
 	m_hDC = NULL;
 	m_glRC = NULL;
 
-	m_gdiDC = NULL;
-	visBMP = NULL;
+	hgdiDC = NULL;
+	hVisBMP = NULL;
+	hOldVisBMP = NULL;
 
 	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
 	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
@@ -147,6 +153,7 @@ SVPRenderer::SVPRenderer(void)
 
 SVPRenderer::~SVPRenderer(void)
 {
+	Gdiplus::GdiplusShutdown(m_gdiplusToken);
 }
 
 LPTSTR	SVPRenderer::GetPluginName(void)
@@ -217,7 +224,8 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
-	bOpenGL				= true;
+	iUseOpenGL			= 1;
+	iUsePBO				= 0;
 
 	m_LastWidth			= -1;
 	m_LastHeight		= -1;
@@ -236,6 +244,11 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
 
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), &lpRegType, (LPBYTE)&iUseOpenGL, &iRegSize);
+
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
+
+
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 
 	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
@@ -243,7 +256,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_LastMove = GetTickCount();
 	m_hDC = hDC;
 
-	if(bOpenGL)
+	if(iUseOpenGL)
 	{
 		m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 		::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
@@ -277,14 +290,25 @@ bool	SVPRenderer::Attach(HDC hDC)
 		if(!wglMakeCurrent(m_hDC, m_glRC))
 			return false;
 
+		if(iUsePBO)
+		{
+			GLenum err = glewInit();
+			if (GLEW_OK != err)
+				return false;
+
+			glGenBuffers(1, pboIds);
+		}
+
 		//setVSync(1);
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_LIGHTING);
 		glEnable (GL_TEXTURE_2D);
 
 		//visual texture
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
@@ -313,10 +337,6 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 		SwapBuffers(m_hDC);
 	}
-	else
-	{
-		m_gdiDC=CreateCompatibleDC(0);
-	}
 
 	TCHAR szVisualsPath[2048];
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
@@ -343,8 +363,11 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 bool	SVPRenderer::Detach()
 {
-	if(bOpenGL)
+	if(iUseOpenGL)
 	{
+		if(iUsePBO)
+			glDeleteBuffers(1, pboIds);
+
 		if (m_glRC)
 		{
 			wglMakeCurrent(NULL,NULL);
@@ -354,11 +377,16 @@ bool	SVPRenderer::Detach()
 	}
 	else
 	{
-		if(visBMP)
-			DeleteObject(visBMP);
 
-		if(m_gdiDC)
-			DeleteDC(m_gdiDC);
+
+		if(hOldVisBMP)
+			SelectObject(hgdiDC, hOldVisBMP);
+
+		if(hVisBMP)
+			DeleteObject(hVisBMP);
+
+		if(hgdiDC)
+			DeleteDC(hgdiDC);
 	}
 	m_hDC = NULL;
 
@@ -446,7 +474,8 @@ bool SVPRenderer::RenderVisual(void)
 				kiss_fftr(kiss_cfg, visdata, freq_data);
 				for(int p = 0; p < 256; p++)
 				{
-					tempbuffer = (freq_data[p].r * 4.0f);
+					//tempbuffer = (freq_data[p].r * 4.0f);
+					tempbuffer = min(255,freq_data[p].r*4.0f);
 					if(tempbuffer < 0)
 						tempbuffer = -tempbuffer;
 					vd.Spectrum[1][p] = vd.Spectrum[0][p] = tempbuffer;
@@ -465,7 +494,8 @@ bool SVPRenderer::RenderVisual(void)
 				kiss_fftr(kiss_cfg, fSamples[0], freq_data);
 				for(int p = 0; p < 256; p++)
 				{
-					tempbuffer = (freq_data[p].r * 4.0f);
+					//tempbuffer = (freq_data[p].r * 4.0f);
+					tempbuffer = min(255,freq_data[p].r*4.0f);
 					if(tempbuffer < 0)
 						tempbuffer = -tempbuffer;
 					vd.Spectrum[0][p] = tempbuffer;
@@ -474,7 +504,8 @@ bool SVPRenderer::RenderVisual(void)
 				kiss_fftr(kiss_cfg, fSamples[1], freq_data);
 				for(int p = 0; p < 256; p++)
 				{
-					tempbuffer = (freq_data[p].r * 4.0f);
+					//tempbuffer = (freq_data[p].r * 4.0f);
+					tempbuffer = min(255,freq_data[p].r*4.0f);
 					if(tempbuffer < 0)
 						tempbuffer = -tempbuffer;
 					vd.Spectrum[1][p] = tempbuffer;
@@ -519,6 +550,9 @@ bool	SVPRenderer::Render(int w, int h)
 
 		}
 
+		if(iVisResWidth < 0 || iVisResHeight < 0)
+			return false;
+
 		if(m_textureData)
 		{
 			free(m_textureData);
@@ -539,7 +573,7 @@ bool	SVPRenderer::Render(int w, int h)
 				(16)+64,
 				h-(64+16)+64);
 
-		if(bOpenGL)
+		if(iUseOpenGL)
 		{
 			glViewport(0,0,w,h);
 			glMatrixMode(GL_PROJECTION);
@@ -548,8 +582,14 @@ bool	SVPRenderer::Render(int w, int h)
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 
-			//create texture
+			//bind texture
 			glBindTexture(GL_TEXTURE_2D, 0);
+			if(iUsePBO)
+			{
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
+				glBufferData(GL_PIXEL_UNPACK_BUFFER, iVisResWidth*iVisResHeight*sizeof(unsigned long), 0, GL_STREAM_DRAW);
+			}
+
 			glTexImage2D(	GL_TEXTURE_2D, 
 								0,
 								GL_RGB,
@@ -562,16 +602,23 @@ bool	SVPRenderer::Render(int w, int h)
 		}
 		else
 		{
-			if(visBMP)
-				DeleteObject(visBMP);
+			if(hOldVisBMP)
+				SelectObject(hgdiDC, hOldVisBMP);
+
+			if(hVisBMP)
+				DeleteObject(hVisBMP);
+
+			if(hgdiDC)
+				DeleteDC(hgdiDC);
 
 			bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
 			bi.bmiHeader.biWidth=iVisResWidth;
 			bi.bmiHeader.biHeight=-iVisResHeight;
 			bi.bmiHeader.biPlanes=1;
 			bi.bmiHeader.biBitCount=32;
-			visBMP = CreateDIBSection(0,&bi,DIB_RGB_COLORS,(void**)&m_textureData,0,0);
-			hBitmap = (HBITMAP)SelectObject(m_gdiDC,visBMP);
+			hVisBMP = CreateDIBSection(0, &bi, DIB_RGB_COLORS, (void**)&m_textureData, 0, 0);
+			hgdiDC=CreateCompatibleDC(0);
+			hOldVisBMP = (HBITMAP)SelectObject(hgdiDC, hVisBMP);
 		}
 
 		bResChange = false;
@@ -582,21 +629,37 @@ bool	SVPRenderer::Render(int w, int h)
 
 	RenderVisual();
 
-	if(bOpenGL)
+	if(iUseOpenGL)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
+		
 		//update texture
-		glTexSubImage2D(GL_TEXTURE_2D,
-						0,
-						0,
-						0,
-						iVisResWidth,
-						iVisResHeight,
-						GL_BGRA_EXT,
-						GL_UNSIGNED_BYTE,
-						m_textureData);
+		if(iUsePBO)
+		{
+			glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, iVisResWidth*iVisResHeight*sizeof(unsigned long), m_textureData);
+			glTexSubImage2D(GL_TEXTURE_2D,
+							0,
+							0,
+							0,
+							iVisResWidth,
+							iVisResHeight,
+							GL_BGRA_EXT,
+							GL_UNSIGNED_BYTE,
+							0);
+		}
+		else
+		{
+			glTexSubImage2D(GL_TEXTURE_2D,
+							0,
+							0,
+							0,
+							iVisResWidth,
+							iVisResHeight,
+							GL_BGRA_EXT,
+							GL_UNSIGNED_BYTE,
+							m_textureData);
+		}
 
 		glBegin (GL_QUADS);
 			glTexCoord2f(0.0f, 0.0f);
@@ -654,11 +717,10 @@ bool	SVPRenderer::Render(int w, int h)
 			//source
 			0, 0, iVisResWidth, iVisResHeight,
 			//image
-			m_gdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
-			
+			hgdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
 
-		//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, m_gdiDC, 0,0, SRCCOPY);
-		
+		//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, hgdiDC, 0,0, SRCCOPY);
+		UpdateWindow(WindowFromDC(m_hDC));
 	}
 
 	return true;

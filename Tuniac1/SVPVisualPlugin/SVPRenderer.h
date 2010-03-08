@@ -4,8 +4,10 @@
 
 #include "ituniacvisplugin.h"
 
-#include <gl/gl.h>
-#include <gl/glu.h>
+#include <GL/glew.h>
+
+#include <gdiplus.h>
+using namespace Gdiplus;
 
 #include "SoniqueVis.h"
 #include "Array.h"
@@ -19,16 +21,19 @@ protected:
 
 	CCriticalSection					m_RenderLock;
 
-	bool								bOpenGL;
+	int									iUseOpenGL;
+	int									iUsePBO;
 
 	HDC									m_hDC;
 
 	HGLRC								m_glRC;
+	unsigned int						pboIds[1];
 
-	HDC									m_gdiDC;
-	HBITMAP								visBMP;
-	HBITMAP								hBitmap;
+	HDC									hgdiDC;
+	HBITMAP								hVisBMP;
+	HBITMAP								hOldVisBMP;
 	BITMAPINFO							bi;
+
 	int									m_LastWidth;
 	int									m_LastHeight;
 	int									iVisResHeight;
