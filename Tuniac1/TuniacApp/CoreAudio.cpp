@@ -411,7 +411,7 @@ unsigned long	CCoreAudio::GetLength(void)
 		return(m_Streams[m_Streams.GetCount()-1]->GetLength());
 	}
 
-	return LENGTH_UNKNOWN;
+	return 0;
 }
 
 unsigned long CCoreAudio::GetChannels(void)
