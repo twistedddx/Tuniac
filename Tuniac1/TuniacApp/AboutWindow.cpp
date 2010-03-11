@@ -55,7 +55,7 @@ CAboutWindow::~CAboutWindow(void)
 bool CAboutWindow::Show(void)
 {
 	//DialogBox(	NULL, MAKEINTRESOURCE(IDD_ABOUTBOX), tuniacApp.getMainWindow(), (DLGPROC)AboutProc);
-	m_hAboutDlg = CreateDialogW(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), tuniacApp.getMainWindow(), (DLGPROC)AboutProc);
+	m_hAboutDlg = CreateDialog(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), tuniacApp.getMainWindow(), (DLGPROC)AboutProc);
 	if(m_hAboutDlg)
 	{
 		TCHAR szBuild[128];

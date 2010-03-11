@@ -285,14 +285,27 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 //will set m_ActiveRealIndex to the previous song and return that songs index or -1 if it fails
 bool				CBasePlaylist::Previous(void)
 {
-		unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
-		
-		if(ulActiveFilteredIndex == 0)
-			//first song goto end
+	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
+
+	if(ulActiveFilteredIndex == 0)
+	{
+		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 			return SetActiveFilteredIndex(m_NormalIndexArray.GetCount() - 1);
 		else
-			//try to set active as -1 of current active
-			return SetActiveFilteredIndex(ulActiveFilteredIndex - 1);
+			return -1;
+	}
+
+	unsigned long ulFilteredIndex;
+
+	//check if we are repeatingall and play last song in list
+	if( ulActiveFilteredIndex == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll )
+		//m_NormalIndexArray/m_RandomIndexArray should always be the same length
+		ulFilteredIndex = m_NormalIndexArray.GetCount() - 1;
+	else
+		//try to set active as -1 of current active
+		ulFilteredIndex = ulActiveFilteredIndex - 1;
+	
+	return SetActiveFilteredIndex(ulFilteredIndex);
 }
 
 //will set m_ActiveRealIndex to the next song and return that songs index or -1 if it fails
@@ -445,9 +458,9 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 
 ///////////////// normal logic
 
-	//we are at the last song, the next song is the first song
+	//we are at the last song, there is no next song
 	//m_NormalIndexArray/m_RandomIndexArray should be the same length
-	if(ulFilteredIndex == (m_NormalIndexArray.GetCount() - 1))
+	if(ulFilteredIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 		return 0;
 	
 	//try to set active as +1 of current active
