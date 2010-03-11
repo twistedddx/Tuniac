@@ -1,6 +1,184 @@
 #include "StdAfx.h"
 #include <emmintrin.h>
 #include "svprenderer.h"
+#include "resource.h"
+
+LRESULT CALLBACK SVPRenderer::WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if(uMsg == WM_INITDIALOG)
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+
+	SVPRenderer * pSVPRenderer = (SVPRenderer *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	return(pSVPRenderer->WndProc(hDlg, uMsg, wParam, lParam));
+}
+
+LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{ 
+	SVPRenderer * pSVPRenderer = (SVPRenderer *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+
+    switch (uMsg) 
+    { 
+		case WM_INITDIALOG:
+			{
+				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+				pSVPRenderer = (SVPRenderer *)lParam;
+
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_USEOPENGL, BM_SETCHECK, pSVPRenderer->iUseOpenGL ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_USEPBO, BM_SETCHECK, pSVPRenderer->iUsePBO ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_USEMAPPEDPBO, BM_SETCHECK, pSVPRenderer->iUseMappedPBO ? BST_CHECKED : BST_UNCHECKED, 0);
+				
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_USEGDI, BM_SETCHECK, pSVPRenderer->iUseOpenGL ? BST_UNCHECKED : BST_CHECKED, 0);
+
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_ALLOWNONPOWEROF2, BM_SETCHECK, pSVPRenderer->iAllowNonPowerOf2 ? BST_CHECKED : BST_UNCHECKED, 0);
+
+
+				if(!pSVPRenderer->iUseOpenGL || !pSVPRenderer->bPBOSupport)
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEPBO), false);
+					EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), false);
+				}
+
+				if(!pSVPRenderer->iUsePBO)
+					EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), false);
+
+				if(!pSVPRenderer->bNonPowerOf2Support)
+					EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_ALLOWNONPOWEROF2), false);
+
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("128*128"));
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("256*256"));
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("512*512"));
+				if(pSVPRenderer->iAllowNonPowerOf2)
+				{
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("240*240"));
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
+				}
+
+				int curres = 0;
+				if(pSVPRenderer->iVisMaxRes == 256)
+					curres = 1;
+				if(pSVPRenderer->iVisMaxRes == 512)
+					curres = 2;
+				if(pSVPRenderer->iAllowNonPowerOf2)
+				{
+					if(pSVPRenderer->iVisMaxRes == 240)
+						curres = 3;
+					if(pSVPRenderer->iVisMaxRes == 640)
+						curres = 4;
+				}
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_SETCURSEL, curres, 0);
+			}
+			break;
+
+        case WM_COMMAND: 
+            switch (LOWORD(wParam)) 
+            { 
+				case IDC_SVPPREF_USEOPENGL:
+					{
+						pSVPRenderer->iUseOpenGL = true;
+
+						if(pSVPRenderer->bPBOSupport)
+						{
+							EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEPBO), true);
+							EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), pSVPRenderer->iUsePBO ? true : false);
+						}
+						else
+						{
+							EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEPBO), false);
+							EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), false);
+						}
+
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), REG_DWORD, (LPBYTE)&pSVPRenderer->iUseOpenGL, sizeof(int));
+					}
+					break;
+
+				case IDC_SVPPREF_USEGDI:
+					{
+						pSVPRenderer->iUseOpenGL = false;
+						EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEPBO), false);
+						EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), false);
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), REG_DWORD, (LPBYTE)&pSVPRenderer->iUseOpenGL, sizeof(int));
+					}
+					break;
+
+				case IDC_SVPPREF_USEPBO:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_SVPPREF_USEPBO, BM_GETCHECK, 0, 0);
+						pSVPRenderer->iUsePBO = State == BST_UNCHECKED ? FALSE : TRUE;
+						EnableWindow(GetDlgItem(hDlg, IDC_SVPPREF_USEMAPPEDPBO), pSVPRenderer->iUsePBO ? TRUE : FALSE);
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), REG_DWORD, (LPBYTE)&pSVPRenderer->iUsePBO, sizeof(int));
+					}
+					break;
+
+				case IDC_SVPPREF_USEMAPPEDPBO:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_SVPPREF_USEMAPPEDPBO, BM_GETCHECK, 0, 0);
+						pSVPRenderer->iUseMappedPBO = State == BST_UNCHECKED ? FALSE : TRUE;
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("UseMappedPBO"), REG_DWORD, (LPBYTE)&pSVPRenderer->iUseMappedPBO, sizeof(int));
+					}
+					break;
+
+				case IDC_SVPPREF_ALLOWNONPOWEROF2:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_SVPPREF_ALLOWNONPOWEROF2, BM_GETCHECK, 0, 0);
+						pSVPRenderer->iAllowNonPowerOf2 = State == BST_UNCHECKED ? FALSE : TRUE;
+
+						int curres = SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_GETCURSEL, 0, 0);
+
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_RESETCONTENT, 0, 0);
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("128*128"));
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("256*256"));
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("512*512"));
+						if(pSVPRenderer->iAllowNonPowerOf2)
+						{
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("240*240"));
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
+						}
+						else if(curres > 2)
+						{
+							curres = 0;
+							pSVPRenderer->iVisMaxRes = 128;
+							pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), REG_DWORD, (LPBYTE)&pSVPRenderer->iVisMaxRes, sizeof(int));
+						}
+
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_SETCURSEL, curres, 0);
+
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), REG_DWORD, (LPBYTE)&pSVPRenderer->iAllowNonPowerOf2, sizeof(int));
+					}
+					break;
+
+				case IDC_SVPPREF_MAXVISRES:
+					{
+						int curres = SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_GETCURSEL, 0, 0);
+						if(curres == 0)
+							pSVPRenderer->iVisMaxRes = 128;
+						if(curres == 1)
+							pSVPRenderer->iVisMaxRes = 256;
+						if(curres == 2)
+							pSVPRenderer->iVisMaxRes = 512;
+						if(curres == 3)
+							pSVPRenderer->iVisMaxRes = 240;
+						if(curres == 4)
+							pSVPRenderer->iVisMaxRes = 640;
+						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), REG_DWORD, (LPBYTE)&pSVPRenderer->iVisMaxRes, sizeof(int));
+					}
+					break;
+
+                case IDOK: 
+					{
+						EndDialog(hDlg, wParam); 
+						return TRUE;
+					}
+					break;
+            }
+
+		default:
+			return FALSE;
+			break;
+
+    } 
+    return TRUE; 
+} 
 
 ULONG_PTR m_gdiplusToken = 0;
 
@@ -24,6 +202,7 @@ void setVSync(int interval=1)
 	}
 }
 */
+
 __m64 Get_m64(__int64 n)
 {
     union __m64__m64
@@ -224,8 +403,17 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
+
+	m_hDC				= hDC;
+
+	bPBOSupport			= false;
+	bNonPowerOf2Support	= false;
+
 	iUseOpenGL			= 1;
 	iUsePBO				= 0;
+	iUseMappedPBO		= 0;
+	iVisMaxRes			= 128;
+	iAllowNonPowerOf2	= 0;
 
 	m_LastWidth			= -1;
 	m_LastHeight		= -1;
@@ -233,110 +421,48 @@ bool	SVPRenderer::Attach(HDC hDC)
 	m_TheVisual			= NULL;
 	iVisResHeight		= 128;
 	iVisResWidth		= 128;
-	iVisMaxRes			= 128;
-	iAllowNonPowerOf2	= 0;
+
 	bResChange			= true;
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
-
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
-
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), &lpRegType, (LPBYTE)&iUseOpenGL, &iRegSize);
-
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseMappedPBO"), &lpRegType, (LPBYTE)&iUseMappedPBO, &iRegSize);
 
+	if(iUseOpenGL)
+	{
+		if(!InitOpenGL())
+			return false;
+	}
+
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+		return false;
+
+	if(glewIsSupported("GL_VERSION_2_1"))
+		bPBOSupport = true;
+	else
+		iUsePBO = 0;
+
+	if(glewIsSupported("GL_VERSION_2_0"))
+		bNonPowerOf2Support = true;
+	else
+		iAllowNonPowerOf2 = 0;
+
+	if(iUseOpenGL && iUsePBO)
+	{
+		glGenBuffers(1, pboIds);
+	}
 
 	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 
 	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
 
 	m_LastMove = GetTickCount();
-	m_hDC = hDC;
-
-	if(iUseOpenGL)
-	{
-		m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
-		::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
-
-		m_glRC = NULL;
-
-		GLuint		PixelFormat;
-
-		PIXELFORMATDESCRIPTOR pfd ;
-		memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
-		pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
-		pfd.nVersion   = 1 ; 
-		pfd.dwFlags    =	PFD_DOUBLEBUFFER |
-							PFD_SUPPORT_OPENGL |
-							PFD_DRAW_TO_WINDOW |
-							PFD_GENERIC_ACCELERATED;
-		pfd.iPixelType = PFD_TYPE_RGBA;
-		pfd.cColorBits = 24 ;
-		pfd.cDepthBits = 32 ;
-		pfd.iLayerType = PFD_MAIN_PLANE ;
-
-		if (!(PixelFormat=ChoosePixelFormat(m_hDC,&pfd)))
-			return false;
-
-		if(!SetPixelFormat(m_hDC,PixelFormat,&pfd))
-			return false;
-
-		if (!(m_glRC=wglCreateContext(m_hDC)))
-			return false;
-
-		if(!wglMakeCurrent(m_hDC, m_glRC))
-			return false;
-
-		if(iUsePBO)
-		{
-			GLenum err = glewInit();
-			if (GLEW_OK != err)
-				return false;
-
-			glGenBuffers(1, pboIds);
-		}
-
-		//setVSync(1);
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_ALPHA_TEST);
-		glDisable(GL_LIGHTING);
-		glEnable (GL_TEXTURE_2D);
-
-		//visual texture
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
-		//for arrow blending
-		glEnable(GL_BLEND);
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		//arrow texture
-		glBindTexture(GL_TEXTURE_2D, 1);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
-		glTexImage2D(	GL_TEXTURE_2D, 
-						0, 
-						GL_ALPHA,
-						m_ArrowBM.bmWidth, 
-						m_ArrowBM.bmHeight, 
-						0,
-						GL_ALPHA, 
-						GL_UNSIGNED_BYTE, 
-						m_ArrowBM.bmBits);
-
-
-
-		SwapBuffers(m_hDC);
-	}
 
 	TCHAR szVisualsPath[2048];
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
@@ -364,32 +490,11 @@ bool	SVPRenderer::Attach(HDC hDC)
 bool	SVPRenderer::Detach()
 {
 	if(iUseOpenGL)
-	{
-		if(iUsePBO)
-			glDeleteBuffers(1, pboIds);
-
-		if (m_glRC)
-		{
-			wglMakeCurrent(NULL,NULL);
-			wglDeleteContext(m_glRC);
-			m_glRC=NULL;
-		}
-	}
+		ShutdownOpenGL();
 	else
-	{
+		ShutdownGDI();
 
-
-		if(hOldVisBMP)
-			SelectObject(hgdiDC, hOldVisBMP);
-
-		if(hVisBMP)
-			DeleteObject(hVisBMP);
-
-		if(hgdiDC)
-			DeleteDC(hgdiDC);
-	}
 	m_hDC = NULL;
-
 	if(m_textureData)
 	{
 		free(m_textureData);
@@ -407,17 +512,7 @@ bool	SVPRenderer::Detach()
 
 void	SVPRenderer::Destroy(void)
 {
-	if(m_textureData)
-	{
-		free(m_textureData);
-		m_textureData = NULL;
-	}
-
-	if(visdata)
-	{
-		_aligned_free(visdata);
-		visdata = NULL;
-	}
+	Detach();
 
 	kiss_fft_free(kiss_cfg);
 	free(freq_data);
@@ -430,8 +525,8 @@ bool SVPRenderer::RenderVisual(void)
 	if(m_TheVisual)
 	{
 		ulNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-		if(ulNumChannels == INVALID)
-			return true;
+		if(ulNumChannels == INVALID || ulNumChannels == 0)
+			return false;
 
 		if(ulNumChannels != ulOldNumChannels)
 		{
@@ -528,6 +623,9 @@ bool	SVPRenderer::Render(int w, int h)
 
 	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 	{
+		if(w == 0 || h == 0)
+			return false;
+
 		if(iAllowNonPowerOf2)
 		{
 			iVisResHeight = min(h, iVisMaxRes);
@@ -535,23 +633,25 @@ bool	SVPRenderer::Render(int w, int h)
 		}
 		else
 		{
-			int iVisTempRes = max(min(h, iVisMaxRes), min(w, iVisMaxRes));
 
-			//power of 2
-			iVisTempRes--;
-			iVisTempRes |= iVisTempRes >> 1;
-			iVisTempRes |= iVisTempRes >> 2;
-			iVisTempRes |= iVisTempRes >> 4;
-			iVisTempRes |= iVisTempRes >> 8;
-			iVisTempRes |= iVisTempRes >> 16;
-			iVisTempRes++;
+			if(h >= iVisMaxRes || w >= iVisMaxRes)
+				iVisResHeight = iVisResWidth = iVisMaxRes;
+			else
+			{
+				int iVisTempRes = max(h, w);
 
-			iVisResHeight = iVisResWidth = min(iVisMaxRes, iVisTempRes);
-
+				if(iVisTempRes >= iVisMaxRes)
+					iVisResHeight = iVisResWidth = iVisMaxRes;
+				else if(iVisTempRes <= 128)
+					iVisResHeight = iVisResWidth = 128;
+				else if(iVisTempRes <= 256)
+					iVisResHeight = iVisResWidth = 256;
+				else
+					iVisResHeight = iVisResWidth = 512;
+			}
 		}
 
-		if(iVisResWidth < 0 || iVisResHeight < 0)
-			return false;
+		iTextureSize = iVisResWidth*iVisResHeight*sizeof(unsigned long);
 
 		if(m_textureData)
 		{
@@ -559,7 +659,7 @@ bool	SVPRenderer::Render(int w, int h)
 			m_textureData = NULL;
 		}
 
-		m_textureData = (unsigned long*)malloc(iVisResWidth*iVisResHeight*sizeof(unsigned long));
+		m_textureData = (unsigned long*)malloc(iTextureSize);
 
 		SetRect(&m_NextVisRect, 
 				w-(64+16),
@@ -575,29 +675,24 @@ bool	SVPRenderer::Render(int w, int h)
 
 		if(iUseOpenGL)
 		{
-			glViewport(0,0,w,h);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			gluOrtho2D(0, (float)w, (float)h, 0);
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
+			glViewport(0,0,w,h);
 
 			//bind texture
 			glBindTexture(GL_TEXTURE_2D, 0);
-			if(iUsePBO)
-			{
-				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
-				glBufferData(GL_PIXEL_UNPACK_BUFFER, iVisResWidth*iVisResHeight*sizeof(unsigned long), 0, GL_STREAM_DRAW);
-			}
 
-			glTexImage2D(	GL_TEXTURE_2D, 
+			glTexImage2D( GL_TEXTURE_2D, 
 								0,
-								GL_RGB,
+								GL_RGB8,
 								iVisResWidth,
 								iVisResHeight,
 								0,
-								GL_BGRA_EXT,
-								GL_UNSIGNED_BYTE,
+								GL_BGRA,
+								GL_UNSIGNED_INT_8_8_8_8_REV,
 								0);
 		}
 		else
@@ -637,16 +732,29 @@ bool	SVPRenderer::Render(int w, int h)
 		//update texture
 		if(iUsePBO)
 		{
-			glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, iVisResWidth*iVisResHeight*sizeof(unsigned long), m_textureData);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
+			glBufferData(GL_PIXEL_UNPACK_BUFFER, iTextureSize, 0, GL_STREAM_DRAW);
+			if(iUseMappedPBO)
+			{
+				ioMem = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+				memcpy( ioMem, m_textureData, iTextureSize );
+				glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+			}
+			else
+			{
+				glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, iTextureSize, m_textureData);
+			}
+
 			glTexSubImage2D(GL_TEXTURE_2D,
 							0,
 							0,
 							0,
 							iVisResWidth,
 							iVisResHeight,
-							GL_BGRA_EXT,
-							GL_UNSIGNED_BYTE,
+							GL_BGRA,
+							GL_UNSIGNED_INT_8_8_8_8_REV,
 							0);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 		}
 		else
 		{
@@ -656,8 +764,8 @@ bool	SVPRenderer::Render(int w, int h)
 							0,
 							iVisResWidth,
 							iVisResHeight,
-							GL_BGRA_EXT,
-							GL_UNSIGNED_BYTE,
+							GL_BGRA,
+							GL_UNSIGNED_INT_8_8_8_8_REV,
 							m_textureData);
 		}
 
@@ -728,6 +836,7 @@ bool	SVPRenderer::Render(int w, int h)
 
 bool SVPRenderer::SetActiveVisual(int visindex)
 {
+	m_SelectedVisual = visindex;
 	CAutoLock m(&m_RenderLock);
 
 	if(m_TheVisual)
@@ -777,7 +886,6 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	if(newVis->LoadFromExternalDLL(szVisFilename))
 	{
 		m_TheVisual = newVis;
-		m_SelectedVisual = visindex;
 		m_TheVisual->SetQueryHelper(m_pHelper);
 	}
 	else
@@ -828,7 +936,7 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 			}
 			else if(PtInRect(&m_PrevVisRect, pt))
 			{
-				if(m_SelectedVisual > 0)
+				if(m_SelectedVisual)
 				{
 					SetActiveVisual(m_SelectedVisual-1);
 				}
@@ -854,30 +962,30 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 
 bool	SVPRenderer::Configure(HWND hWndParent)
 {
-	//crap(many in laptops) and old gpus require the res to be a power of 2 for glTexImage2D!
-	if(iVisMaxRes == 128)
-	{
-		if(iAllowNonPowerOf2)
-			iVisMaxRes = 240;
-		else
-			iVisMaxRes = 256;
-	}
-	else if(iVisMaxRes == 240)
-		iVisMaxRes = 256;
-	else if(iVisMaxRes == 256)
-		iVisMaxRes = 512;
-	else if(iVisMaxRes == 512)
-	{
-		if(iAllowNonPowerOf2)
-			iVisMaxRes = 640;
-		else
-			iVisMaxRes = 128;
-	}
+	CAutoLock m(&m_RenderLock);
+
+	if(iUseOpenGL)
+		ShutdownOpenGL();
 	else
-		iVisMaxRes = 128;
+		ShutdownGDI();
+
+	DialogBoxParam(GetModuleHandle(L"SVPVisualPlugin.dll"), MAKEINTRESOURCE(IDD_SVPPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
+
+	if(iUseOpenGL)
+	{
+		InitOpenGL();
+
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+			return false;
+
+		if(iUsePBO)
+		{
+			glGenBuffers(1, pboIds);
+		}
+	}
 
 	bResChange = true;
-	m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), REG_DWORD, (LPBYTE)&iVisMaxRes, sizeof(int));
 
 	return true;
 }
@@ -891,4 +999,102 @@ bool	SVPRenderer::About(HWND hWndParent)
 {
 	MessageBox(hWndParent, TEXT("Sonique SVP renderer. Tony Million & Brett Hoyle 2010"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
+}
+
+bool	SVPRenderer::InitOpenGL(void)
+{
+	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+	::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
+
+	m_glRC = NULL;
+
+	GLuint		PixelFormat;
+
+	PIXELFORMATDESCRIPTOR pfd ;
+	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR)) ;
+	pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR); 
+	pfd.nVersion   = 1 ; 
+	pfd.dwFlags    =	PFD_DOUBLEBUFFER |
+						PFD_SUPPORT_OPENGL |
+						PFD_DRAW_TO_WINDOW |
+						PFD_GENERIC_ACCELERATED;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 24 ;
+	pfd.cDepthBits = 32 ;
+	pfd.iLayerType = PFD_MAIN_PLANE ;
+
+	if (!(PixelFormat=ChoosePixelFormat(m_hDC,&pfd)))
+		return false;
+
+	if(!SetPixelFormat(m_hDC,PixelFormat,&pfd))
+		return false;
+
+	if (!(m_glRC=wglCreateContext(m_hDC)))
+		return false;
+
+	if(!wglMakeCurrent(m_hDC, m_glRC))
+		return false;
+
+	//setVSync(1);
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+	glEnable (GL_TEXTURE_2D);
+
+	//visual texture
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+	//for arrow blending
+	glEnable(GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//arrow texture
+	glBindTexture(GL_TEXTURE_2D, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,		GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,		GL_CLAMP);
+	glTexImage2D(	GL_TEXTURE_2D, 
+					0, 
+					GL_ALPHA,
+					m_ArrowBM.bmWidth, 
+					m_ArrowBM.bmHeight, 
+					0,
+					GL_ALPHA, 
+					GL_UNSIGNED_BYTE, 
+					m_ArrowBM.bmBits);
+
+	SwapBuffers(m_hDC);
+
+	return true;
+}
+
+void	SVPRenderer::ShutdownOpenGL(void)
+{
+	if(iUsePBO)
+		glDeleteBuffers(1, pboIds);
+
+	if (m_glRC)
+	{
+		wglMakeCurrent(NULL,NULL);
+		wglDeleteContext(m_glRC);
+		m_glRC=NULL;
+	}
+}
+
+void	SVPRenderer::ShutdownGDI(void)
+{
+	if(hOldVisBMP)
+		SelectObject(hgdiDC, hOldVisBMP);
+
+	if(hVisBMP)
+		DeleteObject(hVisBMP);
+
+	if(hgdiDC)
+		DeleteDC(hgdiDC);
 }
