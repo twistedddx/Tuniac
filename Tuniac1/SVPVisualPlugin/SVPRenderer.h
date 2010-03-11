@@ -18,16 +18,15 @@ class SVPRenderer :
 	public ITuniacVisPlugin
 {
 protected:
-
 	CCriticalSection					m_RenderLock;
 
-	int									iUseOpenGL;
-	int									iUsePBO;
-
+	HWND								m_hSVPPrefDlg;
 	HDC									m_hDC;
 
 	HGLRC								m_glRC;
 	unsigned int						pboIds[1];
+
+	GLvoid							*	ioMem;
 
 	HDC									hgdiDC;
 	HBITMAP								hVisBMP;
@@ -38,10 +37,9 @@ protected:
 	int									m_LastHeight;
 	int									iVisResHeight;
 	int									iVisResWidth;
-	int									iVisMaxRes;
-	int									iAllowNonPowerOf2;
 	bool								bResChange;
 	unsigned long					*	m_textureData;
+	int									iTextureSize;
 
 	VisData								vd;
 	float							*	visdata;
@@ -51,8 +49,6 @@ protected:
 	unsigned long						ulOldNumChannels;
 	unsigned long						ulSamples;
 
-	ITuniacVisHelper				*	m_pHelper;
-
 	Array<LPTSTR, 4>					m_VisFilenameArray;
 	SoniqueVisExternal				*	m_TheVisual;
 	int									m_SelectedVisual;
@@ -61,7 +57,6 @@ protected:
 	RECT								m_PrevVisRect;
 
 	unsigned long						m_LastMove;
-
 	int									m_iElaspedTime;
 
     BITMAP								m_ArrowBM;
@@ -69,6 +64,20 @@ protected:
 
 	kiss_fftr_cfg						kiss_cfg;
 	kiss_fft_cpx					*	freq_data;
+
+	int									iUseOpenGL;
+	int									iVisMaxRes;
+	int									iUsePBO;
+	int									iUseMappedPBO;
+	int									iAllowNonPowerOf2;
+
+	bool								bPBOSupport;
+	bool								bNonPowerOf2Support;
+
+	ITuniacVisHelper				*	m_pHelper;
+
+	static LRESULT CALLBACK WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	SVPRenderer(void);
@@ -88,7 +97,7 @@ public:
 	bool	SetHelper(ITuniacVisHelper *pHelper);
 	
 	bool	Attach(HDC hDC);
-	bool	Detach();
+	bool	Detach(void);
 
 	bool	Render(int w, int h);
 
@@ -97,4 +106,9 @@ public:
 
 	bool	Notify(unsigned long Notification);
 	bool	MouseFunction(unsigned long function, int x, int y);
+
+	bool	InitOpenGL(void);
+	void	ShutdownOpenGL(void);
+	void	ShutdownGDI(void);
+
 };
