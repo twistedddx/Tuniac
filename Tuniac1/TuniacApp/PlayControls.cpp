@@ -498,7 +498,9 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition() / 1000;
 				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength() / 1000;
-				float fProgress = (float)ulPosition / (float)ulSongLength;
+				float fProgress = 0.0f;
+				if(ulSongLength != 0)
+					fProgress = (float)ulPosition / (float)ulSongLength;
 
 				SeekRect.right = ((Width) * fProgress) + SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetSysColorBrush(COLOR_3DSHADOW));
