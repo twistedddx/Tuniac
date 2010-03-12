@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include ".\preferences.h"
+#include "preferences.h"
 
 #define PREFERENCES_KEY			TEXT("Software\\Tuniac")
 

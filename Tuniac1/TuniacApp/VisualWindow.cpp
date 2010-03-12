@@ -28,6 +28,13 @@
 
 #define MOUSE_TIMEOUT			3000
 
+HANDLE							m_hRenderEvent;
+
+VOID CALLBACK TimerRoutine(void)
+{
+    SetEvent(m_hRenderEvent);
+}
+
 CVisualWindow::CVisualWindow(void) :
 	m_hWnd (NULL),
 	m_hThread (NULL),
@@ -198,6 +205,10 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 	m_hRenderEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
+	m_LastFPS = tuniacApp.m_Preferences.GetVisualFPS();
+	hTimerQueue = CreateTimerQueue();
+	CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL, 0, ((1000 / m_LastFPS) + 1), 0);
+
 	m_hThread = CreateThread(	NULL,
 								16384,
 								ThreadStub,
@@ -242,7 +253,10 @@ bool			CVisualWindow::DestroyPluginWindow(void)
 		m_hThread = NULL;
 	}
 
-	CloseHandle(m_hRenderEvent);
+    CloseHandle(m_hRenderEvent);
+
+    // Delete all timers in the timer queue.
+    DeleteTimerQueue(hTimerQueue);
 
 	if(m_hWnd)
 	{
@@ -359,7 +373,7 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 		case WM_SIZE:
 		case WM_ERASEBKGND:
 			{
-				SetEvent(m_hRenderEvent);
+				//SetEvent(m_hRenderEvent);
 				return TRUE;
 			}
 			break;
@@ -584,6 +598,15 @@ unsigned long CVisualWindow::ThreadProc(void)
 		}
 		else
 		{
+			if(m_LastFPS != tuniacApp.m_Preferences.GetVisualFPS())
+			{
+				DeleteTimerQueue(hTimerQueue);
+				m_LastFPS = tuniacApp.m_Preferences.GetVisualFPS();
+				hTimerQueue = CreateTimerQueue();
+				CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL , 0, ((1000 / m_LastFPS) + 1), 0);
+
+			}
+
 			if(::IsWindowVisible(m_hWnd) && !IsIconic(GetParent(m_hWnd)))
 			{
 				CAutoLock t(&m_RenderLock);
@@ -597,7 +620,11 @@ unsigned long CVisualWindow::ThreadProc(void)
 					FillRect(m_WindowDC, &r, (HBRUSH)GetStockObject(BLACK_BRUSH));
 				}
 			}
-			WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000 / tuniacApp.m_Preferences.GetVisualFPS()));
+
+			WaitForSingleObject(m_hRenderEvent, INFINITE);
+
+			//not accurate enough 10-16ms accuracy!!
+			//WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000 / tuniacApp.m_Preferences.GetVisualFPS()));
 		}
 	}
 

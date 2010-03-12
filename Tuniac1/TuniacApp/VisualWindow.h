@@ -50,7 +50,9 @@ protected:
 
 	HMENU							m_ContextMenu;
 
-	HANDLE							m_hRenderEvent;
+	HANDLE							hTimer;
+	HANDLE							hTimerQueue;
+	int								m_LastFPS;
 
 	HANDLE							m_hThread;
 	unsigned long					m_dwThreadID;
