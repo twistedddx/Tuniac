@@ -48,10 +48,15 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("128*128"));
 				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("256*256"));
 				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("512*512"));
+				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("1024*1024"));
 				if(pSVPRenderer->iAllowNonPowerOf2)
 				{
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("-------"));
 					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("240*240"));
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("420*420"));
 					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("800*800"));
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Autoscale"));
 				}
 
 				int curres = 0;
@@ -59,12 +64,20 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 					curres = 1;
 				if(pSVPRenderer->iVisMaxRes == 512)
 					curres = 2;
+				if(pSVPRenderer->iVisMaxRes == 1024)
+					curres = 3;
 				if(pSVPRenderer->iAllowNonPowerOf2)
 				{
 					if(pSVPRenderer->iVisMaxRes == 240)
-						curres = 3;
+						curres = 5;
+					if(pSVPRenderer->iVisMaxRes == 420)
+						curres = 6;
 					if(pSVPRenderer->iVisMaxRes == 640)
-						curres = 4;
+						curres = 7;
+					if(pSVPRenderer->iVisMaxRes == 800)
+						curres = 8;
+					if(pSVPRenderer->iVisMaxRes == 2048)
+						curres = 9;
 				}
 				SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_SETCURSEL, curres, 0);
 			}
@@ -129,10 +142,15 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("128*128"));
 						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("256*256"));
 						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("512*512"));
+						SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("1024*1024"));
 						if(pSVPRenderer->iAllowNonPowerOf2)
 						{
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("-------"));
 							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("240*240"));
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("420*420"));
 							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("800*800"));
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Autoscale"));
 						}
 						else if(curres > 2)
 						{
@@ -157,9 +175,18 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 						if(curres == 2)
 							pSVPRenderer->iVisMaxRes = 512;
 						if(curres == 3)
+							pSVPRenderer->iVisMaxRes = 1024;
+						if(curres == 5)
 							pSVPRenderer->iVisMaxRes = 240;
-						if(curres == 4)
+						if(curres == 6)
+							pSVPRenderer->iVisMaxRes = 420;
+						if(curres == 7)
 							pSVPRenderer->iVisMaxRes = 640;
+						if(curres == 8)
+							pSVPRenderer->iVisMaxRes = 800;
+						if(curres == 9)
+							pSVPRenderer->iVisMaxRes = 2048;
+
 						pSVPRenderer->m_pHelper->SetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), REG_DWORD, (LPBYTE)&pSVPRenderer->iVisMaxRes, sizeof(int));
 					}
 					break;
@@ -427,7 +454,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
+	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), &lpRegType, (LPBYTE)&iUseOpenGL, &iRegSize);
 	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
@@ -646,8 +673,10 @@ bool	SVPRenderer::Render(int w, int h)
 					iVisResHeight = iVisResWidth = 128;
 				else if(iVisTempRes <= 256)
 					iVisResHeight = iVisResWidth = 256;
-				else
+				else if(iVisTempRes <= 512)
 					iVisResHeight = iVisResWidth = 512;
+				else
+					iVisResHeight = iVisResWidth = 1024;
 			}
 		}
 
