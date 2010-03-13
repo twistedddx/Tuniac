@@ -154,9 +154,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if (!m_SysEvents.Initialize())
 		return false;
 
-	//get decoder support extensions
-	m_Preferences.m_FileAssoc.UpdateExtensionList();
-
 	IWindow * t;
 
 	//create the main medialibrary window	
@@ -169,10 +166,12 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	t = m_VisualWindow;
 	m_WindowArray.AddTail(t);
 
+	/*
 	//create log window
 	m_LogWindow = new CLogWindow();
 	t = m_LogWindow;
 	m_WindowArray.AddTail(t);
+	*/
 
 	//theme the tray icon?
 	m_wc.cbSize			= sizeof(WNDCLASSEX); 

@@ -876,7 +876,7 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 150));
+				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETRANGE, TRUE, MAKELONG(25, 100));
 				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETPOS,	TRUE, pPrefs->m_iVisualFPS);
 
 				TCHAR	tstr[32];
@@ -921,8 +921,11 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				SendMessage(hDlg, WM_COMMAND, IDC_FILEASSOC_RESET, 0);
+				SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_OPEN, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_OPEN ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_PLAY, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_PLAY ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_QUEUE, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_QUEUE ? BST_CHECKED : BST_UNCHECKED, 0);
 
+				SendMessage(hDlg, WM_COMMAND, MAKELONG(IDC_FILEASSOC_TYPEDEFAULT_UPDATE, 0), 0);
 			}
 			break;
 
@@ -932,18 +935,9 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 
 				switch(wCmdID)
 				{
-
-					case IDC_FILEASSOC_ASSOCNOW:
+					case IDC_FILEASSOC_REGASSOC:
 						{
-							BOOL bSel;
-							for (int i = 1; i <= pPrefs->m_FileAssoc.GetExtensionCount(); i++)
-							{
-								bSel = SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_GETSEL, i, 0) > 0;
-								PFileAssocDetail pFAD = pPrefs->m_FileAssoc.GetExtensionDetail(i - 1);
-								pFAD->bAssociated = bSel;
-							}
-							bSel = SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_GETSEL, 0, 0) > 0;
-							pPrefs->m_FileAssoc.ReAssociate(pPrefs->m_iFileAssocType, bSel);
+							pPrefs->m_FileAssoc.ReAssociate(pPrefs->m_iFileAssocType);
 
 							int iSel = SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPEDEFAULT, CB_GETCURSEL, 0, 0);
 							int iType = iSel == 1 ? FILEASSOC_TYPE_PLAY : (iSel == 2 ? FILEASSOC_TYPE_QUEUE : FILEASSOC_TYPE_OPEN);
@@ -953,42 +947,24 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 						}
 						break;
 
-					case IDC_FILEASSOC_RESET:
+					case IDC_FILEASSOC_SETDEFAULT:
 						{
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_RESETCONTENT, 0, 0);
+//todo dynamically work this out!! Vista minimum.
+#if(_WIN32_WINNT >= 0x600)
+							HRESULT res;
+							IApplicationAssociationRegistrationUI *aarui;
+							res = CoCreateInstance(
+								CLSID_ApplicationAssociationRegistrationUI, 0,
+								CLSCTX_INPROC_SERVER,
+								IID_IApplicationAssociationRegistrationUI, (LPVOID*)&aarui);
 
-							// folder association
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_INSERTSTRING, -1, (LPARAM)TEXT("*** Add folders to Tuniac"));
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_SETSEL, pPrefs->m_FileAssoc.IsFoldersAssociated() ? TRUE : FALSE, 0);
-							
-							// file association
-							for(int x = 0; x < pPrefs->m_FileAssoc.GetExtensionCount(); x++)
+							if (SUCCEEDED(res) && aarui != 0)
 							{
-								PFileAssocDetail pFAD = pPrefs->m_FileAssoc.GetExtensionDetail(x);
-								TCHAR szDetail[128];
-								wnsprintf(szDetail, 128, TEXT("%s - %s"), pFAD->szExt, pFAD->szDesc);
-								SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_INSERTSTRING, -1, (LPARAM)szDetail);
-								SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_SETSEL, pFAD->bAssociated ? TRUE : FALSE, x + 1);
+								// We can call the Vista-style UI for registrations
+								aarui->LaunchAdvancedAssociationUI(L"Tuniac");
+								aarui->Release();
 							}
-
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_OPEN, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_OPEN ? BST_CHECKED : BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_PLAY, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_PLAY ? BST_CHECKED : BST_UNCHECKED, 0);
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_TYPE_QUEUE, BM_SETCHECK, pPrefs->m_iFileAssocType & FILEASSOC_TYPE_QUEUE ? BST_CHECKED : BST_UNCHECKED, 0);
-
-							SendMessage(hDlg, WM_COMMAND, MAKELONG(IDC_FILEASSOC_TYPEDEFAULT_UPDATE, 0), 0);
-
-						}
-						break;
-
-					case IDC_FILEASSOC_SELECTALL:
-						{
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_SETSEL, TRUE, -1);
-						}
-						break;
-
-					case IDC_FILEASSOC_DESELECTALL:
-						{
-							SendDlgItemMessage(hDlg, IDC_FILEASSOC_LIST, LB_SETSEL, FALSE, -1);
+#endif
 						}
 						break;
 

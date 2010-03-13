@@ -30,7 +30,7 @@
 
 HANDLE							m_hRenderEvent;
 
-VOID CALLBACK TimerRoutine(void)
+VOID CALLBACK TimerRoutine(PVOID lpParam, BOOL TimerOrWaitFired)
 {
     SetEvent(m_hRenderEvent);
 }
@@ -204,6 +204,9 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 	}
 
 	m_hRenderEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+	hTimer = NULL;
+	hTimerQueue = NULL;
 
 	m_LastFPS = tuniacApp.m_Preferences.GetVisualFPS();
 	hTimerQueue = CreateTimerQueue();

@@ -23,7 +23,7 @@
 #include "iwindow.h"
 
 #include "ITuniacVisPlugin.h"
-#include "OffsetTimer.h"
+//#include "OffsetTimer.h"
 
 typedef struct 
 {
@@ -57,7 +57,7 @@ protected:
 	HANDLE							m_hThread;
 	unsigned long					m_dwThreadID;
 
-	COffsetTimer					m_offsettimer;
+	//COffsetTimer					m_offsettimer;
 
 	static unsigned long __stdcall ThreadStub(void * in);
 	unsigned long ThreadProc(void);
