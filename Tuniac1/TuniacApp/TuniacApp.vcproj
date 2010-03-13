@@ -42,7 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="_WIN32_WINNT=0x502;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
@@ -115,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="true"
@@ -194,7 +194,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				PreprocessorDefinitions="_WIN32_WINNT=0x502;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
 				RuntimeLibrary="0"
 				StructMemberAlignment="5"
 				EnableFunctionLevelLinking="false"
@@ -271,7 +271,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				PreprocessorDefinitions="WINVER=0x0600;_WIN32_IE=0x0600;_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
+				PreprocessorDefinitions="_WIN32_WINNT=0x600;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE"
 				StructMemberAlignment="5"
 				WarningLevel="1"
 				SuppressStartupBanner="true"
@@ -413,10 +413,6 @@
 			</File>
 			<File
 				RelativePath=".\MediaLibraryPlaylistEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OffsetTimer.cpp"
 				>
 			</File>
 			<File
@@ -573,7 +569,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileAssoc.h"
+				RelativePath=".\FileAssocXP.h"
 				>
 			</File>
 			<File
@@ -670,10 +666,6 @@
 			</File>
 			<File
 				RelativePath=".\ntddstor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OffsetTimer.h"
 				>
 			</File>
 			<File

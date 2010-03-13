@@ -43,7 +43,6 @@
 
 #define FILEASSOC_ARRAY_TYPES			{FILEASSOC_TYPE_OPEN, FILEASSOC_TYPE_PLAY, FILEASSOC_TYPE_QUEUE}
 #define FILEASSOC_ARRAY_FILE			{FILEASSOC_REG_FILE_OPEN, FILEASSOC_REG_FILE_PLAY, FILEASSOC_REG_FILE_QUEUE}
-#define FILEASSOC_ARRAY_FOLDER			{FILEASSOC_REG_FOLDER_OPEN, FILEASSOC_REG_FOLDER_PLAY, FILEASSOC_REG_FOLDER_QUEUE}
 #define FILEASSOC_ARRAY_ACTIONS			{FILEASSOC_ACTION_OPEN, FILEASSOC_ACTION_PLAY, FILEASSOC_ACTION_QUEUE}
 
 
@@ -58,11 +57,7 @@ CFileAssoc::~CFileAssoc(void)
 bool			CFileAssoc::CleanAssociations()
 {
 	UpdateExtensionList();
-	for(unsigned long i = 0; i < m_ExtList.GetCount(); i++)
-	{
-		m_ExtList[i].bAssociated = false;
-	}
-	ReAssociate(0, false);
+	ReAssociate(0);
 	SHDeleteKey(HKEY_CLASSES_ROOT, TEXT("Tuniac.audio"));
 	return true;
 }
@@ -73,14 +68,9 @@ bool			CFileAssoc::UpdateExtensionList(void)
 	for(unsigned long i = 0; i < CCoreAudio::Instance()->GetNumPlugins(); i++)
 	{
 		IAudioSourceSupplier * pPlugin = CCoreAudio::Instance()->GetPluginAtIndex(i);
-		LPTSTR szName = pPlugin->GetName();
 		for (unsigned long j = 0; j < pPlugin->GetNumCommonExts(); j++)
 		{
-			FileAssocDetail FAD;
-			FAD.szDesc = szName;
-			FAD.szExt = pPlugin->GetCommonExt(j);
-			m_ExtList.AddTail(FAD);
-			m_ExtList[m_ExtList.GetCount() - 1].bAssociated = IsAssocInReg(m_ExtList.GetCount() - 1);
+			m_ExtList.AddTail(std::wstring(pPlugin->GetCommonExt(j)));
 		}
 	}
 
@@ -88,14 +78,9 @@ bool			CFileAssoc::UpdateExtensionList(void)
 	int iImporter = 0;
 	while((pImporter = tuniacApp.m_MediaLibrary.m_ImportExport.GetImporterAtIndex(iImporter)) != NULL)
 	{
-		LPTSTR szName = pImporter->GetName();
 		for (unsigned long j = 0; j < pImporter->GetNumExtensions(); j++)
 		{
-			FileAssocDetail FAD;
-			FAD.szDesc = szName;
-			FAD.szExt = pImporter->SupportedExtension(j);
-			m_ExtList.AddTail(FAD);
-			m_ExtList[m_ExtList.GetCount() - 1].bAssociated = IsAssocInReg(m_ExtList.GetCount() - 1);
+			m_ExtList.AddTail(std::wstring(pImporter->SupportedExtension(j)));
 		}
 		iImporter++;
 	}
@@ -103,203 +88,29 @@ bool			CFileAssoc::UpdateExtensionList(void)
 	return true;
 }
 
-PFileAssocDetail	CFileAssoc::GetExtensionDetail(unsigned long iIndex)
-{
-	if(iIndex >= m_ExtList.GetCount())
-		return NULL;
-
-	PFileAssocDetail pFAD = &m_ExtList[iIndex];
-	return pFAD;
-}
-
-bool			CFileAssoc::IsAssocInReg(unsigned long ulIndex)
-{
-	if(ulIndex >= m_ExtList.GetCount())
-		return false;
-
-	PFileAssocDetail pFAD = &m_ExtList[ulIndex];
-
-	HKEY hClassesKey;
-
-	if(RegOpenKeyEx(	HKEY_CLASSES_ROOT,
-						pFAD->szExt,
-						0,
-						KEY_QUERY_VALUE,
-						&hClassesKey) != ERROR_SUCCESS)
-	{
-		return false;
-	}
-
-	TCHAR szTmp[265];
-	unsigned long Size = 256 * sizeof(TCHAR);
-	unsigned long Type = REG_SZ;
-
-	if(RegQueryValueEx(	hClassesKey,
-						NULL,
-						NULL,
-						&Type,
-						(LPBYTE)&szTmp,
-						&Size) == ERROR_SUCCESS)
-	{
-
-		RegCloseKey(hClassesKey);
-		if(StrCmpNI(szTmp, TEXT("Tuniac.audio"), wcslen(TEXT("Tuniac.audio"))) == 0) {
-			return true;
-		}
-
-	}
-
-	return false;
-
-}
-
-bool			CFileAssoc::IsFoldersAssociated(void)
-{
-	LPTSTR	szTypeList[FILEASSOC_NUMTYPES]		= FILEASSOC_ARRAY_FOLDER;
-	HKEY hClassesKey;
-	TCHAR szTmp[512];
-
-	for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
-	{
-		wnsprintf(szTmp, 512, TEXT("Folder\\shell\\%s"), szTypeList[i]);
-		if(RegOpenKeyEx(	HKEY_CLASSES_ROOT,
-							szTmp,
-							0,
-							KEY_QUERY_VALUE,
-							&hClassesKey) == ERROR_SUCCESS)
-		{
-			RegCloseKey(hClassesKey);
-			return true;
-		}
-	}
-	return false;
-}
-
-bool			CFileAssoc::AssociateFolders(int iTypes)
-{
-	int		iTypeList[FILEASSOC_NUMTYPES]		= FILEASSOC_ARRAY_TYPES;
-	LPTSTR	szTypeList[FILEASSOC_NUMTYPES]		= FILEASSOC_ARRAY_FOLDER;
-	LPTSTR	szActionList[FILEASSOC_NUMTYPES]	= FILEASSOC_ARRAY_ACTIONS;
-
-	HKEY	hClassesKey;
-	TCHAR	szTmp[512];
-
-	for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
-	{
-		if(iTypes & iTypeList[i])
-		{
-			wnsprintf(szTmp, 512, TEXT("Folder\\shell\\%s\\command"), szTypeList[i]);
-			if(RegCreateKey(	HKEY_CLASSES_ROOT,
-								szTmp,
-								&hClassesKey) != ERROR_SUCCESS)
-			{
-				return false;
-			}
-
-			GetModuleFileName(NULL, szTmp, 512);
-			wnsprintf(szTmp, 512, TEXT("%s %s \"%%1\""), szTmp, szActionList[i]);
-			unsigned long Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-			RegSetValueEx(	hClassesKey,
-							NULL,
-							NULL,
-							REG_SZ,
-							(LPBYTE)&szTmp,
-							Size);
-	
-			RegCloseKey(hClassesKey);
-		}
-		else
-		{
-			wnsprintf(szTmp, 512, TEXT("Folder\\shell\\%s\\command"), szTypeList[i]);
-			if(RegDeleteKey(	HKEY_CLASSES_ROOT,
-								szTmp) == ERROR_SUCCESS)
-			{
-
-				wnsprintf(szTmp, 512, TEXT("Folder\\shell\\%s"), szTypeList[i]);
-				RegDeleteKey(	HKEY_CLASSES_ROOT,
-								szTmp);
-
-			}
-		}
-
-	}
-	return true;
-}
-
 bool			CFileAssoc::AssociateExtension(unsigned long ulIndex)
 {
+	if(!tuniacApp.getSavePrefs())
+		return false;
+
 	if(ulIndex >= m_ExtList.GetCount())
 		return false;
 
-	PFileAssocDetail pFAD = &m_ExtList[ulIndex];
-	HKEY hClassesKey;
+	HKEY hTuniacAssocKey;
 
-	if(RegCreateKey(	HKEY_CLASSES_ROOT,
-						pFAD->szExt,
-						&hClassesKey) != ERROR_SUCCESS)
-	{
-		return false;
-	}
-
-	TCHAR szTmp[512];
-	unsigned long Size = 512 * sizeof(TCHAR);
-	unsigned long Type = REG_SZ;
-
-	if(pFAD->bAssociated)
+	if(RegCreateKey(	HKEY_LOCAL_MACHINE,
+						L"SOFTWARE\\Tuniac\\Capabilities\\FileAssociations",
+						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
 
-		RegQueryValueEx(	hClassesKey,
-							NULL,
-							NULL,
-							&Type,
-							(LPBYTE)&szTmp,
-							&Size);
-
-		if(wcslen(szTmp) > 0 && StrCmpNI(szTmp, TEXT("Tuniac.audio"), wcslen(TEXT("Tuniac.audio"))) != 0)
-		{
-			RegSetValueEx(	hClassesKey,
-							TEXT("Tuniac_Previous"),
-							NULL,
-							REG_SZ,
-							(LPBYTE)&szTmp,
-							Size);
-		}
-
-		Size = (wcslen(TEXT("Tuniac.audio")) + 1) * sizeof(TCHAR);
-		wnsprintf(szTmp, 512, TEXT("Tuniac.audio"));
-		RegSetValueEx(	hClassesKey,
-						NULL,
-						NULL,
+		RegSetValueEx(	hTuniacAssocKey, 
+						(LPTSTR)m_ExtList[ulIndex].c_str(), 
+						0,
 						REG_SZ,
-						(LPBYTE)&szTmp,
-						Size);
-
+						(LPBYTE)L"Tuniac.audio", 
+						(12 + 1) * sizeof(TCHAR));
+		RegCloseKey(hTuniacAssocKey);
 	}
-	else
-	{
-		if (RegQueryValueEx(	hClassesKey,
-								TEXT("Tuniac_Previous"),
-								NULL,
-								&Type,
-								(LPBYTE)&szTmp,
-								&Size) != ERROR_SUCCESS)
-		{
-			wnsprintf(szTmp, 512, TEXT(""));
-		}
-
-		Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-		RegSetValueEx(	hClassesKey,
-						NULL,
-						NULL,
-						REG_SZ,
-						(LPBYTE)&szTmp,
-						Size);
-
-		RegDeleteValue(	hClassesKey,
-						TEXT("Tuniac_Previous"));
-
-	}
-	RegCloseKey(hClassesKey);
 
 	return true;
 
@@ -358,7 +169,7 @@ bool			CFileAssoc::SetDefaultType(int iType)
 	TCHAR	szDefault[128];
 	bool bFound = false;
 
-    	for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
+    for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
 	{
 		if(iType == iTypeList[i])
 		{
@@ -389,46 +200,49 @@ bool			CFileAssoc::SetDefaultType(int iType)
 	return true;
 }
 
-bool			CFileAssoc::ReAssociate(int iTypes, bool bAssocFolders)
+bool			CFileAssoc::ReAssociate(int iTypes)
 {
 	int		iTypeList[FILEASSOC_NUMTYPES]		= FILEASSOC_ARRAY_TYPES;
 	LPTSTR	szTypeList[FILEASSOC_NUMTYPES]		= FILEASSOC_ARRAY_FILE;
 	LPTSTR	szActionList[FILEASSOC_NUMTYPES]	= FILEASSOC_ARRAY_ACTIONS;
-	HKEY hClassesKey;
+
+	HKEY hTuniacAssocKey;
 	TCHAR szTmp[512];
 	unsigned long Size;
 
 	if(RegCreateKey(	HKEY_CLASSES_ROOT,
 						TEXT("Tuniac.audio"),
-						&hClassesKey) == ERROR_SUCCESS)
+						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
 		wnsprintf(szTmp, 512, TEXT("Tuniac Audio File"));
 		Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-		RegSetValueEx(	hClassesKey,
+		RegSetValueEx(	hTuniacAssocKey,
 						NULL,
 						NULL,
 						REG_SZ,
 						(LPBYTE)&szTmp,
 						Size);
-		RegCloseKey(hClassesKey);
-	} else {
+		RegCloseKey(hTuniacAssocKey);
+	}
+	else
+	{
 		return false;
 	}
 	
 	if(RegCreateKey(	HKEY_CLASSES_ROOT,
 						TEXT("Tuniac.audio\\DefaultIcon"),
-						&hClassesKey) == ERROR_SUCCESS)
+						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
 		GetModuleFileName(NULL, szTmp, 512);
 		wnsprintf(szTmp, 512, TEXT("%s,0"), szTmp);
 		Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-		RegSetValueEx(	hClassesKey,
+		RegSetValueEx(	hTuniacAssocKey,
 						NULL,
 						NULL,
 						REG_SZ,
 						(LPBYTE)&szTmp,
 						Size);
-		RegCloseKey(hClassesKey);
+		RegCloseKey(hTuniacAssocKey);
 	}
 
 	for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
@@ -439,33 +253,33 @@ bool			CFileAssoc::ReAssociate(int iTypes, bool bAssocFolders)
 			wnsprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s"), szTypeList[i]);
 			if(RegCreateKey(	HKEY_CLASSES_ROOT,
 								szTmp,
-								&hClassesKey) == ERROR_SUCCESS)
+								&hTuniacAssocKey) == ERROR_SUCCESS)
 			{
 				wnsprintf(szTmp, 512, TEXT("&%s"), szTypeList[i]);
 				Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-				RegSetValueEx(	hClassesKey,
+				RegSetValueEx(	hTuniacAssocKey,
 								NULL,
 								NULL,
 								REG_SZ,
 								(LPBYTE)&szTmp,
 								Size);
-				RegCloseKey(hClassesKey);
+				RegCloseKey(hTuniacAssocKey);
 
 				wnsprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s\\command"), szTypeList[i]);
 				if(RegCreateKey(	HKEY_CLASSES_ROOT,
 									szTmp,
-									&hClassesKey) == ERROR_SUCCESS)
+									&hTuniacAssocKey) == ERROR_SUCCESS)
 				{
 					GetModuleFileName(NULL, szTmp, 512);
 					wnsprintf(szTmp, 512, TEXT("%s %s \"%%1\""), szTmp, szActionList[i]);
 					Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
-					RegSetValueEx(	hClassesKey,
+					RegSetValueEx(	hTuniacAssocKey,
 									NULL,
 									NULL,
 									REG_SZ,
 									(LPBYTE)&szTmp,
 									Size);
-					RegCloseKey(hClassesKey);
+					RegCloseKey(hTuniacAssocKey);
 				}
 			}
 		}
@@ -485,7 +299,39 @@ bool			CFileAssoc::ReAssociate(int iTypes, bool bAssocFolders)
 		}
 	}
 
-	AssociateFolders(bAssocFolders ? iTypes : 0);
+	if(RegCreateKey(	HKEY_LOCAL_MACHINE,
+						L"SOFTWARE\\Tuniac",
+						&hTuniacAssocKey) == ERROR_SUCCESS)
+	{
+		if(RegCreateKey(	HKEY_LOCAL_MACHINE,
+							L"SOFTWARE\\Tuniac\\Capabilities",
+							&hTuniacAssocKey) == ERROR_SUCCESS)
+		{
+			RegSetValueEx(	hTuniacAssocKey, 
+							L"ApplicationDescription", 
+							0,
+							REG_SZ,
+							(LPBYTE)L"Tuniac media player", 
+							(19 + 1) * sizeof(TCHAR));
+			RegCloseKey(hTuniacAssocKey);
+		}
+	}
+
+	if(RegCreateKey(	HKEY_LOCAL_MACHINE,
+						L"SOFTWARE\\RegisteredApplications",
+						&hTuniacAssocKey) == ERROR_SUCCESS)
+	{
+
+		RegSetValueEx(	hTuniacAssocKey, 
+						L"Tuniac", 
+						0,
+						REG_SZ,
+						(LPBYTE)L"Software\\Tuniac\\Capabilities", 
+						(28 + 1) * sizeof(TCHAR));
+		RegCloseKey(hTuniacAssocKey);
+	}
+
+	UpdateExtensionList();
 
 	for(unsigned long i = 0; i < m_ExtList.GetCount(); i++)
 	{

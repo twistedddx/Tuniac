@@ -292,7 +292,7 @@ bool				CBasePlaylist::Previous(void)
 		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 			return SetActiveFilteredIndex(m_NormalIndexArray.GetCount() - 1);
 		else
-			return -1;
+			return false;
 	}
 
 	unsigned long ulFilteredIndex;
