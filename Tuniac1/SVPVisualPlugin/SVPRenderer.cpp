@@ -56,7 +56,7 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("420*420"));
 					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
 					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("800*800"));
-					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Autoscale"));
+					SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Max res"));
 				}
 
 				int curres = 0;
@@ -210,25 +210,6 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 ULONG_PTR m_gdiplusToken = 0;
 
 extern HANDLE	hInst;
-/*
-typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
-PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
-
-void setVSync(int interval=1)
-{
-	const char *extensions = (char*)glGetString( GL_EXTENSIONS );
-
-	if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
-		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
-	else
-	{
-		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
-
-		if( wglSwapIntervalEXT )
-			wglSwapIntervalEXT(interval);
-	}
-}
-*/
 
 __m64 Get_m64(__int64 n)
 {
@@ -431,6 +412,7 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 bool	SVPRenderer::Attach(HDC hDC)
 {
 
+	m_glRC				= NULL;
 	m_hDC				= hDC;
 
 	bPBOSupport			= false;
@@ -539,7 +521,12 @@ bool	SVPRenderer::Detach()
 
 void	SVPRenderer::Destroy(void)
 {
-	Detach();
+	m_hDC = NULL;
+	if(visdata)
+	{
+		_aligned_free(visdata);
+		visdata = NULL;
+	}
 
 	kiss_fft_free(kiss_cfg);
 	free(freq_data);
@@ -1035,8 +1022,6 @@ bool	SVPRenderer::InitOpenGL(void)
 	m_hArrow = (HBITMAP)LoadImage((HINSTANCE)hInst, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	::GetObject (m_hArrow, sizeof (m_ArrowBM), &m_ArrowBM);
 
-	m_glRC = NULL;
-
 	GLuint		PixelFormat;
 
 	PIXELFORMATDESCRIPTOR pfd ;
@@ -1063,8 +1048,6 @@ bool	SVPRenderer::InitOpenGL(void)
 
 	if(!wglMakeCurrent(m_hDC, m_glRC))
 		return false;
-
-	//setVSync(1);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
