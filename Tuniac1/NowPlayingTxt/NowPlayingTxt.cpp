@@ -45,7 +45,7 @@ LPTSTR			CNowPlayingTxt::GetPluginName(void)
 
 unsigned long	CNowPlayingTxt::GetFlags(void)
 {
-	return PLUGINFLAGS_ABOUT | PLUGINFLAGS_CONFIG;
+	return PLUGINFLAGS_ABOUT;
 }
 
 bool			CNowPlayingTxt::SetHelper(ITuniacPluginHelper *pHelper)
@@ -90,15 +90,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 	bool	Done = false;
 
 	m_aCopy = GlobalAddAtom(TEXT("TUNIACNOWPLAYING_COPY"));
-	RegisterHotKey(NULL, m_aCopy, MOD_WIN, VK_ADD);
-
-
-	m_bUseMirc = false;
-	DWORD				lpRegType = REG_DWORD;
-	DWORD				iRegSize = sizeof(int);
-	m_pHelper->PreferencesGet(TEXT("UseMIRC"), &lpRegType, (LPBYTE)&m_bUseMirc, &iRegSize);
-
-
+	RegisterHotKey(NULL, m_aCopy, MOD_WIN, VK_SUBTRACT);
 	while(!Done)
 	{
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -113,10 +105,14 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						m_pHelper->GetTrackInfo(szSong, 512, NULL, 0); //get current song, using default format
 
 						TCHAR szURL[512];
-						GetModuleFileName(NULL, szURL, 512);
-						PathRemoveFileSpec(szURL);
-						PathAddBackslash(szURL);
-						StrCat(szURL, TEXT("NowPlaying.txt"));
+						if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_PERSONAL, NULL, 0, szURL ) ) )
+						{
+							PathAppend( szURL, TEXT("\\NowPlaying.txt") );
+						}
+						else{
+							//cant get appdata path
+							break;
+						}
 
 						HANDLE hOutFile = CreateFile(	szURL,
 														GENERIC_WRITE, 
@@ -131,53 +127,6 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						unsigned long ulBytesWritten;
 						WriteFile(hOutFile, &szSong, (wcslen(szSong)) * sizeof(TCHAR), &ulBytesWritten, NULL);
 						CloseHandle(hOutFile);
-
-						if (m_bUseMirc) {
-							/* eh... this is probably incomplete.  I did not test it as
-							far as using another application that communicates with mIRC at
-							the same time. */
-						
-							HWND hwnd = FindWindow(L"mIRC", NULL);
-
-							if (hwnd != NULL) {
-								
-								int iLen = wcslen(szSong);
-
-								HANDLE hMap = CreateFileMapping(NULL,
-												NULL,
-												PAGE_READWRITE,
-												0,
-												iLen,
-												L"mIRC");
-
-								if (GetLastError() == ERROR_ALREADY_EXISTS) {
-									DWORD dSize = 0;
-
-									if (GetFileSize(hMap, &dSize) == NO_ERROR) {
-										iLen = (int) dSize;
-									}
-								}
-
-								if (hMap != NULL) {
-									char* szContents = (char*) MapViewOfFile(hMap,
-															FILE_MAP_ALL_ACCESS,
-															0,
-															0,
-															iLen);
-
-									// update the file map with the command
-									WideCharToMultiByte(CP_ACP, 0, szSong, -1, szContents, 512, NULL, FALSE);
-
-									// issue the configured mirc command to the current instance of mIRC.
-									long lRes =  SendMessage(hwnd,  WM_MCOMMAND, 1, 0L);
-
-									UnmapViewOfFile(szContents);
-									CloseHandle(hMap);
-								}
-							}
-						}
-						
-
 					}
 					break;
 
@@ -230,20 +179,17 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 	UnregisterHotKey(NULL, m_aCopy);
 	GlobalDeleteAtom(m_aCopy);
 
-	m_pHelper->PreferencesSet(TEXT("UseMIRC"), REG_DWORD, (LPBYTE)&m_bUseMirc, sizeof(int));
-
 	m_bThreadActive = false;
 	return 0;
 }
 
 bool			CNowPlayingTxt::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("NowPlaying .Txt Plugin for Tuniac.\r\nBy Blur, 2005-2008.\r\n\r\nWill output the current song to <Tuniac-dir>\\NowPlaying.txt"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("NowPlaying .Txt Plugin for Tuniac.\r\nBy Blur, 2005-2008.\r\n\r\nWill output the current song to <My Documents>\\NowPlaying.txt"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
 bool			CNowPlayingTxt::Configure(HWND hWndParent)
 {
-	m_bUseMirc = !m_bUseMirc;
 	return true;
 }
