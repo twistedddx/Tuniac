@@ -20,7 +20,7 @@
 */
 
 #include "stdafx.h"
-#include ".\playlistsourceview.h"
+#include "playlistsourceview.h"
 
 #include "resource.h"
 
@@ -695,7 +695,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							EntryArray			entryArray;
 
 							TCHAR tBuffer[256];
-							GetDlgItemText(hDlg, IDC_LIBRARY_FILTER, tBuffer, 255);
+							GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 255);
 							for(unsigned long x=0; x<m_pPlaylist->GetNumItems(); x++)
 							{
 								pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(x);
@@ -729,7 +729,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								case EN_CHANGE:
 									{
 										TCHAR tBuffer[256];
-										GetDlgItemText(hDlg, IDC_LIBRARY_FILTER, tBuffer, 256);
+										GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 256);
 
 										if(StrCmpI(tBuffer, m_pPlaylist->GetTextFilter()))
 										{

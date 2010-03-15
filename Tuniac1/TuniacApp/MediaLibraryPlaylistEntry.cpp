@@ -20,7 +20,7 @@
 */
 
 #include "stdafx.h"
-#include ".\medialibraryplaylistentry.h"
+#include "medialibraryplaylistentry.h"
 
 CMediaLibraryPlaylistEntry::CMediaLibraryPlaylistEntry(LibraryEntry * pIPE)
 {
