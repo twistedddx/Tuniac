@@ -17,7 +17,7 @@ DefaultGroupName=Tuniac
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp2
 OutputDir=.
-OutputBaseFilename=..\Tuniac_Setup_{#DateTime}
+OutputBaseFilename=..\Tuniac_Setup_{#DateTime}(inc SVP)
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 ShowTasksTreeLines=yes
 SolidCompression=yes
@@ -52,6 +52,8 @@ Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Fl
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; MinVersion:0,6.0.6000; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\ReleaseXP\TuniacApp.exe; DestDir: {app}\; OnlyBelowVersion:0,6.0.6000; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+Source: ..\Win32\Release\visuals\vis\*.*; DestDir: {app}\visuals\vis\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
