@@ -313,6 +313,15 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 							REG_SZ,
 							(LPBYTE)L"Tuniac media player", 
 							(19 + 1) * sizeof(TCHAR));
+
+			RegSetValueEx(	hTuniacAssocKey, 
+							L"ApplicationName", 
+							0,
+							REG_SZ,
+							(LPBYTE)L"Tuniac", 
+							(6 + 1) * sizeof(TCHAR));
+
+
 			RegCloseKey(hTuniacAssocKey);
 		}
 	}
