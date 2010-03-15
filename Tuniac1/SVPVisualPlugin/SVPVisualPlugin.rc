@@ -81,7 +81,7 @@ BEGIN
     CONTROL         "Use GDI",IDC_SVPPREF_USEGDI,"Button",BS_AUTORADIOBUTTON | WS_DISABLED,16,58,119,10
     CONTROL         "Use mapped Pixel Buffer Object",IDC_SVPPREF_USEMAPPEDPBO,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,44,131,8
-    LTEXT           "Warning: High resolutions are are very CPU intensive and may cause some visuals to crash.",IDC_STATIC,11,137,182,18
+    LTEXT           "Warning: High resolutions are very CPU intensive and may cause some visuals to crash.",IDC_STATIC,11,137,182,18
 END
 
 
