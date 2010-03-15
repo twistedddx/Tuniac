@@ -644,7 +644,7 @@ BEGIN
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "Edit Track &Info\tAlt+I",     ID_EDIT_EDITFILEINFORMATION
+        MENUITEM "Edit Track &Info\tAlt+I",     ID_EDIT_EDITFILEINFORMATION, GRAYED
         MENUITEM "Show &Currently Playing\tCtrl+L", ID_EDIT_SHOWCURRENTLYPLAYINGTRACK
         MENUITEM "View &Options",               ID_EDIT_SHOWVIEWOPTIONS
         MENUITEM SEPARATOR
@@ -680,7 +680,7 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "Tuniac &Help...",             ID_HELP_TUNIACHELP
-        MENUITEM "Check For &Updates...",       ID_HELP_CHECKFORUPDATES
+        MENUITEM "Tuniac Home&page",       ID_HELP_HOMEPAGE
         MENUITEM SEPARATOR
         MENUITEM "&About Tuniac...",            ID_HELP_ABOUT
     END

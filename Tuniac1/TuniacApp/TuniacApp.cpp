@@ -1554,6 +1554,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
+					//help -> about tuniac
+					case ID_HELP_HOMEPAGE:
+						{
+							ShellExecute(NULL, NULL, TEXT("http://www.tuniac.org/"), NULL, NULL, SW_SHOW);
+						}
+						break;
+
 					//help -> tuniac help
 					case ID_HELP_TUNIACHELP:
 						{
