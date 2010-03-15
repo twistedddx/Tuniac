@@ -1,8 +1,17 @@
 Mar, 2010
 ---------
+-Rename "view options" to "Column Selection"
+-Disable non functional things
+-Tidy up menus
+-Move nowplayingtxt output locations to "My Documents". Copy to clipboard shortcut moved to Winkey+Numpad_Subtract
+-Windows Vista/7 file associations
+-Update homepage links to tuniac.org
 -DirectX Feb 2010
 -Correct texture size in svp plugin and a few less memory allocations
+-Many SVP updates. Much lower cpu usage, more options and now has a config screen.
+-Correct pause on Previous
 -Fix updating after track change from history and future menus. Change in logic of when to rebuild future menu.
+-Cosmetic fixes for when a playlist ends and the play controls looking ugly
 
 Feb, 2010
 ---------
