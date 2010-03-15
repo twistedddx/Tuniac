@@ -1018,7 +1018,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						break;
 
 						//right click headers "options" (column views)
-					case ID_EDIT_SHOWVIEWOPTIONS:
+					case ID_EDIT_SHOWCOLUMNSELECTION:
 						{
 							ShowSourceViewOptions(tuniacApp.getMainWindow());
 						}

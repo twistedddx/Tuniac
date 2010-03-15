@@ -1499,27 +1499,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 						break;
 
-					//edit -> show currently paylist track (jump focus to current track)
-					case ID_EDIT_SHOWCURRENTLYPLAYINGTRACK:
-						{
-							for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
-	 						{
-								//dont hide visual windows when showvisart
-								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
-									continue;
- 								m_WindowArray[item]->Hide();
-	 						}
-							//reshow visual window in source view
-							if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
-								tuniacApp.m_VisualWindow->Show();
-
-							m_SourceSelectorWindow->Show();
-							m_SourceSelectorWindow->ShowCurrentlyPlaying();
-						}
-						break;
-
-					//edit -> show view options (playlist column select)
-					case ID_EDIT_SHOWVIEWOPTIONS:
+					//edit -> show playlist column Selection
+					case ID_EDIT_SHOWCOLUMNSELECTION:
 						{
 							m_SourceSelectorWindow->ShowActiveViewViewOptions(hWnd);
 						}
@@ -1573,6 +1554,25 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.com/guide/"));
 
 							ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
+						}
+						break;
+
+					//playback -> show currently paylist track (jump focus to current track)
+					case ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK:
+						{
+							for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
+	 						{
+								//dont hide visual windows when showvisart
+								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
+									continue;
+ 								m_WindowArray[item]->Hide();
+	 						}
+							//reshow visual window in source view
+							if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
+								tuniacApp.m_VisualWindow->Show();
+
+							m_SourceSelectorWindow->Show();
+							m_SourceSelectorWindow->ShowCurrentlyPlaying();
 						}
 						break;
 
