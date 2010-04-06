@@ -1551,7 +1551,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							PathRemoveFileSpec(szHelp);
 							StringCbCat(szHelp, 512, TEXT("\\Guide\\index.html"));
 							if(PathFileExists(szHelp) == FALSE)
-								StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.com/guide/"));
+								StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
 
 							ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
 						}
