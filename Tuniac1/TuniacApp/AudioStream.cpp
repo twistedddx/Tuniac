@@ -20,7 +20,7 @@
 */
 
 #include "stdafx.h"
-#include ".\audiostream.h"
+#include "audiostream.h"
 
 #include <intrin.h>
 
@@ -28,7 +28,7 @@ CAudioStream::CAudioStream()
 {
 	m_bEntryPlayed	= false;
 
-	m_PlayState		= STATE_UNKNOWN;
+	m_PlayState		= STATE_STOPPED;
 	m_FadeState		= FADE_NONE;
 
 	fVolume			= 1.0f;

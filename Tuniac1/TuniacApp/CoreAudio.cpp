@@ -256,8 +256,8 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)
 					{
 						m_Streams[ttt]->FadeOut(m_ulCrossfadeTimeMS);
-					pStream->FadeIn(m_ulCrossfadeTimeMS);
-					bShoudStart = true;
+						pStream->FadeIn(m_ulCrossfadeTimeMS);
+						bShoudStart = true;
 					}
 
 					pStream->SetVolumeScale(m_fVolume);
