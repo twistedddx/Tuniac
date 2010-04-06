@@ -150,7 +150,7 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("420*420"));
 							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("640*640"));
 							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("800*800"));
-							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Autoscale"));
+							SendDlgItemMessage(hDlg, IDC_SVPPREF_MAXVISRES, CB_ADDSTRING, 0, (LPARAM)TEXT("Max(not recommended)"));
 						}
 						else if(curres > 2)
 						{
@@ -852,7 +852,6 @@ bool	SVPRenderer::Render(int w, int h)
 
 bool SVPRenderer::SetActiveVisual(int visindex)
 {
-	m_SelectedVisual = visindex;
 	CAutoLock m(&m_RenderLock);
 
 	if(m_TheVisual)
@@ -869,6 +868,8 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		t->Shutdown();
 		delete t;
 	}
+
+	m_SelectedVisual = visindex;
 
 	//freshen up vd. serial experiment lain will crash without
 	vd.MillSec = 0;
