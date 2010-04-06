@@ -849,7 +849,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
 									{
-										tuniacApp.PlayEntry(pIPE, true, true, true);
+										tuniacApp.PlayEntry(pIPE, true, false, true);
 									}
 								}
 								else
@@ -2525,7 +2525,10 @@ bool	CTuniacApp::SetArt(IPlaylistEntry * pIPE)
 bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bManual, bool bSetArt)
 {
 	if(bManual)
+	{
 		m_SoftPause.bNow = false;
+		m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+	}
 
 	//open for art before opening for decode.
 	if(bSetArt)
