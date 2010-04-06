@@ -9,7 +9,7 @@ AppPublisher=Tuniac Dev Team
 AppPublisherURL=http://www.tuniac.org
 AppSupportURL=http://www.tuniac.org
 AppUpdatesURL=http://www.tuniac.org
-AppVerName=Tuniac (Beta)
+AppVerName=Tuniac 1.0
 Compression=lzma/ultra
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
@@ -47,7 +47,7 @@ Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\gpl.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\lgpl.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
-;Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
+Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; MinVersion:0,6.0.6000; Flags: ignoreversion
 Source: ..\Win32\ReleaseXP\TuniacApp.exe; DestDir: {app}\; OnlyBelowVersion:0,6.0.6000; Flags: ignoreversion
@@ -85,7 +85,7 @@ external 'DestroyIcon@user32.dll stdcall';
 
 procedure AboutButtonOnClick(Sender: TObject);
 begin
-  MsgBox('This installer will install the Tuniac (Beta) media player onto your computer', mbInformation, mb_Ok);
+  MsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok);
 end;
 
 procedure URLLabelOnClick(Sender: TObject);

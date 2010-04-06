@@ -4,12 +4,12 @@
 AllowNoIcons=yes
 AppID={{A2A3A9DE-A195-4A66-8DA6-59968E0EF943}
 AppMutex=TUNIACWINDOWCLASS
-AppName=Tuniac {code:TheVersion}
+AppName=Tuniac 1.0
 AppPublisher=Tuniac Dev Team
 AppPublisherURL=http://www.tuniac.org
 AppSupportURL=http://www.tuniac.org
 AppUpdatesURL=http://www.tuniac.org
-AppVerName=Tuniac (Beta)
+AppVerName=Tuniac 1.0
 ArchitecturesInstallIn64BitMode=x64
 Compression=lzma/ultra
 DefaultDirName={pf}\Tuniac
@@ -85,7 +85,7 @@ external 'DestroyIcon@user32.dll stdcall';
 
 procedure AboutButtonOnClick(Sender: TObject);
 begin
-  MsgBox('This installer will install the Tuniac (Beta) media player onto your computer', mbInformation, mb_Ok);
+  MsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok);
 end;
 
 procedure URLLabelOnClick(Sender: TObject);
