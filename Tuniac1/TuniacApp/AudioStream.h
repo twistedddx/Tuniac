@@ -75,8 +75,8 @@ public:
 	float								fVolume;
 	float								fVolumeChange;
 
-	unsigned long						m_PlayState;
-	unsigned long						m_FadeState;
+	int									m_PlayState;
+	int									m_FadeState;
 
 	bool								m_bIsFinished;
 	bool								m_bEntryPlayed;
