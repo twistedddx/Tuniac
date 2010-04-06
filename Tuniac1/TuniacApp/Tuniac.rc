@@ -175,9 +175,9 @@ BEGIN
     CONTROL         "Play",IDC_FILEASSOC_TYPE_PLAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,82,29,10
     CONTROL         "Queue",IDC_FILEASSOC_TYPE_QUEUE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,95,37,10
     LTEXT           "Add these items:",IDC_FILEASSOC_ADDTHESE,24,56,84,10
-    COMBOBOX        IDC_FILEASSOC_TYPEDEFAULT,32,127,63,14,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Default action:",IDC_FILEASSOC_ACTIONTEXT,24,113,55,12
-    LTEXT           "Note: Only for Windows Vista and 7\nRegister Associations requires admin rights!",IDC_FILEASSOC_WARNINGTEXT,24,150,186,19
+    COMBOBOX        IDC_FILEASSOC_TYPEDEFAULT,32,125,63,14,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Default action:",IDC_FILEASSOC_ACTIONTEXT,24,110,55,12
+    LTEXT           "Note: Only for Windows Vista and 7\nRegister Associations requires admin rights!",IDC_FILEASSOC_WARNINGTEXT,24,143,186,19
 END
 
 IDD_PREFERENCES_PLUGINS DIALOGEX 0, 0, 235, 176
@@ -629,7 +629,7 @@ BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "Import &Files...\tCtrl+I",    ID_FILE_ADDFILES
-        MENUITEM "Import &Directory...",        ID_FILE_ADDDIRECTORY
+        MENUITEM "Import &Directory...\tCtrl+D", ID_FILE_ADDDIRECTORY
         MENUITEM "Import &Stream...",           ID_FILE_ADDOTHER
         MENUITEM "&ForceSave MediaLibrary",     ID_FILE_FORCESAVEMEDIALIBRARY
         MENUITEM SEPARATOR
@@ -644,16 +644,16 @@ BEGIN
     END
     POPUP "&Options"
     BEGIN
-        MENUITEM "&Show Preferences\tCtrl+P",   ID_EDIT_PREFERENCES
-        MENUITEM "C&olumn Selection",               ID_EDIT_SHOWCOLUMNSELECTION
+        MENUITEM "&Preferences\tCtrl+P",        ID_EDIT_PREFERENCES
+        MENUITEM "C&olumn Selection",           ID_EDIT_SHOWCOLUMNSELECTION
         MENUITEM "Always On &Top",              ID_EDIT_ALWAYSONTOP
         MENUITEM SEPARATOR
-        MENUITEM "Edit Track &Info\tAlt+I",     ID_EDIT_EDITFILEINFORMATION, GRAYED
+        MENUITEM "&Edit Track Info\tCtrl+E",    ID_EDIT_EDITFILEINFORMATION, GRAYED
     END
     POPUP "&Playback"
     BEGIN
-	    MENUITEM "Show &Currently Playing\tCtrl+L", ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK
-		MENUITEM SEPARATOR
+        MENUITEM "Show &Currently Playing\tCtrl+L", ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK
+        MENUITEM SEPARATOR
         MENUITEM "&Play / Pause\tWinKey+Numpad5", ID_PLAYBACK_PLAYPAUSE
         MENUITEM "S&oft Pause\tCtrl+Shift+Spacebar", ID_PLAYBACK_SOFTPAUSE
         MENUITEM "Sto&p\tWinKey+Numpad0",       ID_PLAYBACK_STOP
@@ -671,7 +671,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "&Clear Queue",                ID_PLAYBACK_CLEARQUEUE
-        MENUITEM "Clear Scheduled Pause",       ID_PLAYBACK_CLEARPAUSEAT
+        MENUITEM "Clear Scheduled &Pause",      ID_PLAYBACK_CLEARPAUSEAT
     END
     POPUP "&View"
     BEGIN
@@ -679,10 +679,10 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "Tuniac &Help",             ID_HELP_TUNIACHELP
-        MENUITEM "Tuniac Home&page",       ID_HELP_HOMEPAGE
+        MENUITEM "Tuniac &Help",                ID_HELP_TUNIACHELP
+        MENUITEM "Tuniac Home&page",            ID_HELP_HOMEPAGE
         MENUITEM SEPARATOR
-        MENUITEM "&About Tuniac",            ID_HELP_ABOUT
+        MENUITEM "&About Tuniac",               ID_HELP_ABOUT
     END
 END
 
@@ -696,8 +696,8 @@ BEGIN
         END
         MENUITEM "FullScreen",                  ID_VIS_FULLSCREEN
         MENUITEM SEPARATOR
-        MENUITEM "Configure",                ID_VIS_CONFIGURE
-        MENUITEM "About",                    ID_VIS_ABOUT
+        MENUITEM "Configure",                   ID_VIS_CONFIGURE
+        MENUITEM "About",                       ID_VIS_ABOUT
     END
 END
 
