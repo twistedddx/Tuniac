@@ -126,7 +126,7 @@ public:
 	float 				*				pBuffer;
  	unsigned long						ulNumSamples;
 
-	[EQSTATE							m_EQS[2];
+	EQSTATE							m_EQS[2];
 	
 
 public:
