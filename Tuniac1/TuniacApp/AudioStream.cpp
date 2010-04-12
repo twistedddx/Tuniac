@@ -24,6 +24,71 @@
 
 #include <intrin.h>
 
+static float vsa = (1.0 / 4294967295.0);   // Very small amount (Denormal Fix)
+
+static void init_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq)
+{
+  // Clear state 
+
+  memset(es,0,sizeof(EQSTATE));
+
+  // Set Low/Mid/High gains to unity
+
+  es->lg = 1.0;
+  es->mg = 1.0;
+  es->hg = 1.0;
+
+  // Calculate filter cutoff frequencies
+
+  es->lf = 2 * sin(M_PI * ((float)lowfreq / (float)mixfreq)); 
+  es->hf = 2 * sin(M_PI * ((float)highfreq / (float)mixfreq));
+}
+
+static float do_3band(EQSTATE* es, float sample)
+{
+  // Locals
+
+  float  l,m,h;      // Low / Mid / High - Sample Values
+
+  // Filter #1 (lowpass)
+
+  es->f1p0  += (es->lf * (sample   - es->f1p0)) + vsa;
+  es->f1p1  += (es->lf * (es->f1p0 - es->f1p1));
+  es->f1p2  += (es->lf * (es->f1p1 - es->f1p2));
+  es->f1p3  += (es->lf * (es->f1p2 - es->f1p3));
+
+  l          = es->f1p3;
+
+  // Filter #2 (highpass)
+  
+  es->f2p0  += (es->hf * (sample   - es->f2p0)) + vsa;
+  es->f2p1  += (es->hf * (es->f2p0 - es->f2p1));
+  es->f2p2  += (es->hf * (es->f2p1 - es->f2p2));
+  es->f2p3  += (es->hf * (es->f2p2 - es->f2p3));
+
+  h          = es->sdm3 - es->f2p3;
+
+  // Calculate midrange (signal - (low + high))
+
+  m          = es->sdm3 - (h + l);
+
+  // Scale, Combine and store
+
+  l         *= es->lg;
+  m         *= es->mg;
+  h         *= es->hg;
+
+  // Shuffle history buffer 
+
+  es->sdm3   = es->sdm2;
+  es->sdm2   = es->sdm1;
+  es->sdm1   = sample;                
+
+  // Return result
+
+  return(l + m + h);
+}
+
 CAudioStream::CAudioStream()
 {
 	m_bEntryPlayed	= false;
@@ -72,6 +137,13 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	}
 	else
 		return false;
+		
+	//lowfreq == 800
+	//highfreq == 5000
+	
+	init_3band_state(&m_EQS[0], 800, 5000, srate);
+	init_3band_state(&m_EQS[1], 800, 5000, srate);
+	
 
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
@@ -162,6 +234,13 @@ bool			CAudioStream::SetAmpGain(float scale)
 	return true;
 }
 
+void CAudioStream::SetEQGain(float low, float mid, float high)
+{
+	m_EQS[0].lg = m_EQS[1].lg = low;
+	m_EQS[0].mg = m_EQS[1].lg = mid;
+	m_EQS[0].hg = m_EQS[1].lg = high;
+}
+
 int			CAudioStream::ServiceStream(void)
 {
 	if(m_bIsSeeking)
@@ -234,7 +313,15 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 	{
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
-
+			// do equalization 
+			// TODO: Make this optional with a checkbox
+			
+			for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
+			{
+				pAudioBuffer[ulSample]		= do_3band(&m_EQS[0], pAudioBuffer[ulSample]);
+				if(m_Channels > 1)
+					pAudioBuffer[ulSample+1]	= do_3band(&m_EQS[1], pAudioBuffer[ulSample+1]);
+			}
 #ifdef SSE
 
 			// WE CAN ACTUALLY DO 8 SAMPLES AT ONCE
@@ -540,6 +627,8 @@ unsigned long CAudioStream::GetVisData(float * ToHere, unsigned long ulNumSample
 
 	return m_Output->GetVisData(ToHere, ulNumSamples);
 }
+
+
 
 float MMtoDB(float mm)
 {
