@@ -150,6 +150,8 @@ public:
 
 	bool			SetVolumeScale(float scale);
 	bool			SetAmpGain(float scale);
+	
+	void			SetEQGain(float low, float mid, float high);
 
 	void			EnableReplayGain(bool bEnable = true);
 	bool			SetReplayGainScale(float trackscale, float albumscale);
