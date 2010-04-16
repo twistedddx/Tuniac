@@ -126,7 +126,8 @@ public:
 	float 				*				pBuffer;
  	unsigned long						ulNumSamples;
 
-	EQSTATE							m_EQS[2];
+	bool								bEQEnabled;
+	EQSTATE								m_EQS[8];
 	
 
 public:
@@ -150,7 +151,8 @@ public:
 
 	bool			SetVolumeScale(float scale);
 	bool			SetAmpGain(float scale);
-	
+
+	void			EnableEQ(bool bEnable = true);
 	void			SetEQGain(float low, float mid, float high);
 
 	void			EnableReplayGain(bool bEnable = true);

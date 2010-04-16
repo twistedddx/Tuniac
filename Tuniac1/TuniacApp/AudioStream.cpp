@@ -26,6 +26,8 @@
 
 static float vsa = (1.0 / 4294967295.0);   // Very small amount (Denormal Fix)
 
+#define M_PI 3.141592653589793238462643f
+
 static void init_3band_state(EQSTATE* es, int lowfreq, int highfreq, int mixfreq)
 {
   // Clear state 
@@ -110,6 +112,8 @@ CAudioStream::CAudioStream()
 
 	bUseAlbumGain	= false;
 
+	bEQEnabled		= false;
+
 	m_ulLastSeekMS	= 0;
 	m_ulCrossfadeTimeMS = 0;
 
@@ -143,7 +147,12 @@ bool CAudioStream::Initialize(IAudioSource * pSource, CAudioOutput * pOutput, LP
 	
 	init_3band_state(&m_EQS[0], 800, 5000, srate);
 	init_3band_state(&m_EQS[1], 800, 5000, srate);
-	
+	init_3band_state(&m_EQS[2], 800, 5000, srate);
+	init_3band_state(&m_EQS[3], 800, 5000, srate);	
+	init_3band_state(&m_EQS[4], 800, 5000, srate);
+	init_3band_state(&m_EQS[5], 800, 5000, srate);
+	init_3band_state(&m_EQS[6], 800, 5000, srate);
+	init_3band_state(&m_EQS[7], 800, 5000, srate);
 
 	m_Packetizer.SetPacketSize(m_Output->GetBlockSize());
 	m_Output->SetCallback(this);
@@ -209,6 +218,11 @@ bool			CAudioStream::SetReplayGainScale(float trackscale, float albumscale)
 	return true;
 }
 
+void			CAudioStream::EnableEQ(bool bEnable)
+{
+	bEQEnabled = bEnable;
+}
+
 void			CAudioStream::EnableReplayGain(bool bEnable)
 {
 	bReplayGain = bEnable;
@@ -236,9 +250,12 @@ bool			CAudioStream::SetAmpGain(float scale)
 
 void CAudioStream::SetEQGain(float low, float mid, float high)
 {
-	m_EQS[0].lg = m_EQS[1].lg = low;
-	m_EQS[0].mg = m_EQS[1].lg = mid;
-	m_EQS[0].hg = m_EQS[1].lg = high;
+	for(unsigned long ulEQ=0; ulEQ<8; ulEQ++)
+	{
+		m_EQS[ulEQ].lg = low;
+		m_EQS[ulEQ].mg = mid;
+		m_EQS[ulEQ].hg = high;
+	}
 }
 
 int			CAudioStream::ServiceStream(void)
@@ -315,12 +332,17 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		{
 			// do equalization 
 			// TODO: Make this optional with a checkbox
-			
-			for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
+			if(bEQEnabled)
 			{
-				pAudioBuffer[ulSample]		= do_3band(&m_EQS[0], pAudioBuffer[ulSample]);
-				if(m_Channels > 1)
-					pAudioBuffer[ulSample+1]	= do_3band(&m_EQS[1], pAudioBuffer[ulSample+1]);
+				for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
+				{
+					for(unsigned long ulChannel=0; ulChannel<m_Channels; ulChannel++)
+					{
+						if(ulChannel > 7)
+							break;
+						pAudioBuffer[ulSample+ulChannel]	= do_3band(&m_EQS[ulChannel], pAudioBuffer[ulSample+ulChannel]);
+					}
+				}
 			}
 #ifdef SSE
 

@@ -55,7 +55,14 @@ protected:
 	unsigned long						m_BufferSizeMS;
 
 	float								m_fVolume;
+
+	bool								m_bEQEnabled;
+	float								m_fEQLow;
+	float								m_fEQMid;
+	float								m_fEQHigh;
+
 	float								m_fAmpGain;
+
 	float					*			fMixBuffer;
 	bool								m_bReplayGainEnabled;
 	bool								m_bUseAlbumGain;
@@ -95,6 +102,11 @@ public:
 	float				GetVolumePercent();
 	void				SetVolumePercent(float fPercent);
 
+	void				EnableEQ(bool bEnabled);
+	float				GetEQLowGain(void);
+	float				GetEQMidGain(void);
+	float				GetEQHighGain(void);
+	void				SetEQGain(float fEQLow, float fEQMid, float fEQHigh);
 	float				GetAmpGain();
 	void				SetAmpGain(float fPercent);
 
