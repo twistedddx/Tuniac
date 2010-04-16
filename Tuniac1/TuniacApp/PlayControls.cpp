@@ -447,6 +447,29 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 			}
 			break;
 
+			case WM_LBUTTONUP:
+			{
+				POINT		pt;
+
+				POINTSTOPOINT(pt,MAKEPOINTS(lParam));
+
+				RECT r;
+				GetClientRect(hWnd, &r);
+
+				RECT CurrentSongRect;
+
+				SetRect(&CurrentSongRect,	r.left + 160, 
+											r.top, 
+											r.right, 
+											r.bottom - 20);
+				
+				if(PtInRect(&CurrentSongRect, pt))
+				{
+					tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+				}
+			}
+			break;
+
 		case WM_HSCROLL:
 			{
 				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
