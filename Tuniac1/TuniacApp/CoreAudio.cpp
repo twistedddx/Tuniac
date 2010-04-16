@@ -261,6 +261,9 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 					}
 
 					pStream->SetVolumeScale(m_fVolume);
+
+					pStream->EnableEQ(m_bEQEnabled);
+					pStream->SetEQGain(m_fEQLow, m_fEQMid, m_fEQHigh);
 					pStream->SetAmpGain(m_fAmpGain);
 					pStream->SetCrossfadePoint(m_ulCrossfadeTimeMS);
 
@@ -534,6 +537,41 @@ void CCoreAudio::SetVolumePercent(float fVolume)
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
 		m_Streams[x]->SetVolumeScale(m_fVolume);
+	}
+}
+
+void CCoreAudio::EnableEQ(bool bEnable)
+{
+	m_bEQEnabled = bEnable;
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->EnableEQ(m_bEQEnabled);
+	}
+}
+
+float CCoreAudio::GetEQLowGain()
+{
+	return m_fEQLow;
+}
+
+float CCoreAudio::GetEQMidGain()
+{
+	return m_fEQMid;
+}
+
+float CCoreAudio::GetEQHighGain()
+{
+	return m_fEQHigh;
+}
+
+void CCoreAudio::SetEQGain(float fEQLow, float fEQMid, float fEQHigh)
+{
+	m_fEQLow = fEQLow;
+	m_fEQMid = fEQMid;
+	m_fEQHigh = fEQHigh;
+	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
+	{
+		m_Streams[x]->SetEQGain(m_fEQLow, m_fEQMid, m_fEQHigh);
 	}
 }
 

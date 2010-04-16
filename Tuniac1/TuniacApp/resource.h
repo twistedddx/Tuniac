@@ -31,6 +31,7 @@
 #define IDD_SAVINGLIBRARY               127
 #define IDD_PREFERENCES_GENERAL         128
 #define IDD_PREFERENCES_FILEASSOC       129
+#define IDD_PREFERENCES_EQ              130
 #define IDR_TRAYMENU                    131
 #define IDD_PREFERENCES_PLUGINS         132
 #define IDR_PLAYLISTITEM_MENU           133
@@ -164,6 +165,16 @@
 #define IDC_FILEASSOC_ACTIONTEXT        1167
 #define IDC_FILEASSOC_WARNINGTEXT       1168
 #define IDC_FILEASSOC_REGASSOC          1169
+#define IDC_EQLOW_SLIDER                1180
+#define IDC_EQMID_SLIDER                1181
+#define IDC_EQHIGH_SLIDER               1182
+#define IDC_EQLOW_TEXT                  1183
+#define IDC_EQMID_TEXT                  1184
+#define IDC_EQHIGH_TEXT                 1185
+#define IDC_EQ_GROUP                    1186
+#define IDC_EQRESET_BUTTON              1187
+#define IDC_EQ_CHECKBOX                 1188
+#define IDC_EQ_ENABLE                   1188
 #define ID_FILE_EXIT                    40001
 #define ID_FILE_NEWPLAYLIST_NORMALPLAYLIST 40002
 #define ID_FILE_NEWPLAYLIST_SMARTPLAYLIST 40003
@@ -180,7 +191,7 @@
 #define ID_PLAYBACK_PLAYPAUSE           40017
 #define ID_FILE_OPENSTREAM              40018
 #define ID_PLAYBACK_REPEATMODE          40019
-#define ID_EDIT_SHOWCOLUMNSELECTION         40021
+#define ID_EDIT_SHOWCOLUMNSELECTION     40021
 #define ID_REPEAT_OFF                   40028
 #define ID_REPEAT_ONETRACK              40030
 #define ID_REPEAT_ALLTRACKS             40031
@@ -245,7 +256,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         40149
-#define _APS_NEXT_CONTROL_VALUE         1180
+#define _APS_NEXT_CONTROL_VALUE         1189
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -54,7 +54,7 @@ protected:
 		DLGPROC			pDialogFunc;
 		HTREEITEM		hTreeItem;
 	} PrefPage;
-	PrefPage	m_Pages[8];
+	PrefPage	m_Pages[9];
 	int			m_StartPage;
 
 	HWND		m_hTextFormatToolTip;
@@ -84,6 +84,11 @@ protected:
 	BOOL		m_bReplayGainAlbum;
 
 	float		m_fVolume;
+
+	BOOL		m_bEQEnabled;
+	float		m_fEQLow;
+	float		m_fEQMid;
+	float		m_fEQHigh;
 	float		m_fAmpGain;
 
 	// TCHAR		m_Theme[128];
@@ -130,6 +135,7 @@ protected:
 
 	// audio
 	static LRESULT CALLBACK AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	CPreferences(void);
@@ -177,6 +183,13 @@ public:
 
 	float	GetVolumePercent(void);
 	void	SetVolumePercent(float percent);
+
+	BOOL	GetEQEnabled(void);
+	void	SetEQEnabled(BOOL bEnabled);
+	float	GetEQLowGain(void);
+	float	GetEQMidGain(void);
+	float	GetEQHighGain(void);
+	void	SetEQGain(float fEQLow, float fEQMid, float fEQHigh);
 
 	float	GetAmpGain(void);
 	void	SetAmpGain(float gain);

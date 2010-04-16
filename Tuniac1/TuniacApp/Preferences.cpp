@@ -53,6 +53,10 @@
 #define AUDIOGAINALBUM			TEXT("AudioReplayGainAlbum")
 
 #define VOLUME 					TEXT("Volume")
+#define EQENABLED				TEXT("EQEnabled")
+#define EQLOW					TEXT("EQLow")
+#define EQMID					TEXT("EQMid")
+#define EQHIGH					TEXT("EQHigh")
 #define AMPGAIN					TEXT("AmpGain")
 
 #define DATEADDED 				TEXT("DateAdded")
@@ -567,15 +571,15 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				RECT r;
-				POINT pt;
-				GetWindowRect(GetDlgItem(GetParent(hDlg), IDCANCEL), &r);
-				pt.x = r.left;
-				pt.y = r.top;
-				ScreenToClient(GetParent(hDlg), &pt);
+				//RECT r;
+				//POINT pt;
+				//GetWindowRect(GetDlgItem(GetParent(hDlg), IDCANCEL), &r);
+				//pt.x = r.left;
+				//pt.y = r.top;
+				//ScreenToClient(GetParent(hDlg), &pt);
 
-				ShowWindow(GetDlgItem(GetParent(hDlg), IDCANCEL), SW_HIDE);
-				SetWindowPos(GetDlgItem(GetParent(hDlg), IDOK), NULL, pt.x, pt.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+				//ShowWindow(GetDlgItem(GetParent(hDlg), IDCANCEL), SW_HIDE);
+				//SetWindowPos(GetDlgItem(GetParent(hDlg), IDOK), NULL, pt.x, pt.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
 				TCHAR		tstr[256];
 				wsprintf(tstr, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
@@ -645,8 +649,6 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 						}
 						break;
 				}
-
-
 			}
 			break;
 
@@ -672,6 +674,86 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
 							SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
 							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_fAmpGain);
+						}
+						break;
+				}
+			}
+			break;
+
+		default:
+			return false;
+			break;
+	}
+
+	return true;
+}
+
+LRESULT CALLBACK CPreferences::EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	switch(uMsg)
+	{
+		case WM_INITDIALOG:
+			{
+
+				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+				pPrefs = (CPreferences *)lParam;
+
+				SendDlgItemMessage(hDlg, IDC_EQLOW_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(0, 2000));
+				SendDlgItemMessage(hDlg, IDC_EQLOW_SLIDER, TBM_SETPOS,		TRUE, (pPrefs->m_fEQLow * 1000.0f));
+
+				SendDlgItemMessage(hDlg, IDC_EQMID_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(0, 2000));
+				SendDlgItemMessage(hDlg, IDC_EQMID_SLIDER, TBM_SETPOS,		TRUE, (pPrefs->m_fEQMid * 1000.0f));
+
+				SendDlgItemMessage(hDlg, IDC_EQHIGH_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(0, 2000));
+				SendDlgItemMessage(hDlg, IDC_EQHIGH_SLIDER, TBM_SETPOS,		TRUE, (pPrefs->m_fEQHigh * 1000.0f));
+
+				SendDlgItemMessage(hDlg, IDC_EQ_ENABLE, BM_SETCHECK, pPrefs->m_bEQEnabled ? BST_CHECKED : BST_UNCHECKED, 0);
+
+			}
+			break;
+
+		case WM_COMMAND:
+			{
+				WORD wCmdID = LOWORD(wParam);
+
+				switch(wCmdID)
+				{
+					case IDC_EQRESET_BUTTON:
+						{
+							SendDlgItemMessage(hDlg, IDC_EQLOW_SLIDER, TBM_SETPOS,		TRUE, 1000);
+							SendDlgItemMessage(hDlg, IDC_EQMID_SLIDER, TBM_SETPOS,		TRUE, 1000);
+							SendDlgItemMessage(hDlg, IDC_EQHIGH_SLIDER, TBM_SETPOS,		TRUE, 1000);
+							pPrefs->m_fEQLow = 1.0f; 
+							pPrefs->m_fEQMid = 1.0f; 
+							pPrefs->m_fEQHigh = 1.0f; 
+							CCoreAudio::Instance()->SetEQGain(pPrefs->m_fEQLow, pPrefs->m_fEQMid, pPrefs->m_fEQHigh);
+						}
+						break;
+
+					case IDC_EQ_ENABLE:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_EQ_ENABLE, BM_GETCHECK, 0, 0);
+							pPrefs->m_bEQEnabled = State == BST_UNCHECKED ? FALSE : TRUE;
+							CCoreAudio::Instance()->EnableEQ(State);
+						}
+						break;
+				}
+
+			}
+			break;
+
+		case WM_HSCROLL:
+			{
+				switch (LOWORD(wParam)) 
+				{
+					case TB_THUMBTRACK:
+					case TB_ENDTRACK:
+						{
+							pPrefs->m_fEQLow = ((float)SendDlgItemMessage(hDlg, IDC_EQLOW_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f); 
+							pPrefs->m_fEQMid = ((float)SendDlgItemMessage(hDlg, IDC_EQMID_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f); 
+							pPrefs->m_fEQHigh = ((float)SendDlgItemMessage(hDlg, IDC_EQHIGH_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f); 
+							CCoreAudio::Instance()->SetEQGain(pPrefs->m_fEQLow, pPrefs->m_fEQMid, pPrefs->m_fEQHigh);
 						}
 						break;
 				}
@@ -1131,6 +1213,12 @@ CPreferences::CPreferences(void)
 	m_Pages[7].iParent = 1;
 	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
 
+	m_Pages[8].pszName = TEXT("EQ");
+	m_Pages[8].pDialogFunc = (DLGPROC)&EQProc;
+	m_Pages[8].iParent = 2;
+	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
+
+
 }
 
 CPreferences::~CPreferences(void)
@@ -1172,6 +1260,11 @@ bool CPreferences::DefaultPreferences(void)
 	m_bReplayGainAlbum			= FALSE;
 
 	m_fVolume					= 100.0f;
+
+	m_bEQEnabled				= FALSE;
+	m_fEQLow					= 1.0f;
+	m_fEQMid					= 1.0f;
+	m_fEQHigh					= 1.0f;
 	m_fAmpGain					= -6.0f;
 
 	m_iPlaylistViewNumColumns		= 5;
@@ -1441,6 +1534,38 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_fVolume,
 						&Size);
 
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						EQENABLED,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bEQEnabled,
+						&Size);
+
+	Size = sizeof(float);
+	RegQueryValueEx(	hTuniacPrefKey,
+						EQLOW,
+						NULL,
+						&Type,
+						(LPBYTE)&m_fEQLow,
+						&Size);
+
+	Size = sizeof(float);
+	RegQueryValueEx(	hTuniacPrefKey,
+						EQMID,
+						NULL,
+						&Type,
+						(LPBYTE)&m_fEQMid,
+						&Size);
+
+	Size = sizeof(float);
+	RegQueryValueEx(	hTuniacPrefKey,
+						EQHIGH,
+						NULL,
+						&Type,
+						(LPBYTE)&m_fEQHigh,
+						&Size);
+
 	Size = sizeof(float);
 	RegQueryValueEx(	hTuniacPrefKey,
 						AMPGAIN,
@@ -1667,6 +1792,34 @@ bool CPreferences::SavePreferences(void)
 					0,
 					REG_DWORD,
 					(LPBYTE)&m_fVolume, 
+					sizeof(float));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					EQENABLED, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bEQEnabled, 
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					EQLOW, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_fEQLow, 
+					sizeof(float));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					EQMID, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_fEQMid, 
+					sizeof(float));
+	
+	RegSetValueEx(	hTuniacPrefKey, 
+					EQHIGH, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_fEQHigh, 
 					sizeof(float));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -2185,6 +2338,28 @@ float	CPreferences::GetVolumePercent(void)
 void	CPreferences::SetVolumePercent(float fPercent)
 {
 	m_fVolume = fPercent;
+}
+
+float		CPreferences::GetEQLowGain(void)
+{
+	return m_fEQLow;
+}
+
+float		CPreferences::GetEQMidGain(void)
+{
+	return m_fEQMid;
+}
+
+float		CPreferences::GetEQHighGain(void)
+{
+	return m_fEQHigh;
+}
+
+void	CPreferences::SetEQGain(float fEQLow, float fEQMid, float fEQHigh)
+{
+	m_fEQLow = fEQLow;
+	m_fEQMid = fEQMid;
+	m_fEQHigh = fEQHigh;
 }
 
 float		CPreferences::GetAmpGain(void)
