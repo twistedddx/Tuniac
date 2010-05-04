@@ -1,9 +1,29 @@
+May, 2010
+---------
+-The preference is called "Pause after each song" and is in the General section.
+-This build also fixes an issue with playselected and not building the futurelist correctly.
+
+Apr, 2010 (100426)
+---------
+-3 band equalization
+-Left click on song title shows current song
+-Fix repeat menu
+-Taglib update
+
+Apr, 2010 (100406)
+---------
+-Correct playback starting after pausing and then skipping tracks
+-Tidy assoc pref Window
+-Soft pause auto cancelled at the end of a song with crossfade off. Also cancel "scheduled soft pause" not just "current soft pause" when the user manually changes song.
+-Remove remaining references to "beta"
+
 Mar, 2010
 ---------
 -Rename "view options" to "Column Selection"
 -Disable non functional things
 -Tidy up menus
 -Move nowplayingtxt output locations to "My Documents". Copy to clipboard shortcut moved to Winkey+Numpad_Subtract
+-Move mIRC Spammer to standalone plugin(it use to live in the nowplayingtxt plugin)
 -Windows Vista/7 file associations
 -Update homepage links to tuniac.org
 -DirectX Feb 2010
