@@ -70,21 +70,22 @@ IDD_PREFERENCES_MEDIALIBRARY DIALOGEX 0, 0, 235, 176
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Advanced",IDC_STATIC,7,54,221,66
-    PUSHBUTTON      "Rebuild Media Library",IDC_REBUILD_ML,14,66,90,14
-    LTEXT           "Move all files into the Media Library base folder. ",IDC_STATIC,131,85,90,27
-    LTEXT           "Reread the information from each file in the library and update the database.",IDC_STATIC,14,85,90,27
-    GROUPBOX        "Media Library Base Folder",IDC_STATIC,7,7,221,45
+    GROUPBOX        "Database Tools",IDC_STATIC,7,50,221,54
+    PUSHBUTTON      "Rebuild Media Library",IDC_REBUILD_ML,14,60,90,14
+    LTEXT           "Move all files into the Media Library base folder. ",IDC_STATIC,131,75,90,17
+    LTEXT           "Reread the information from each file in the library and update the database.",IDC_STATIC,14,75,90,27
+    GROUPBOX        "Media Library Base Folder",IDC_STATIC,7,7,221,39
     EDITTEXT        IDC_MEDIALIBRARY_TEXT,14,19,188,12,ES_AUTOHSCROLL | WS_DISABLED
     PUSHBUTTON      "...",IDC_MEDIALIBRARYBROWSE_BUTTON,205,19,16,12,WS_DISABLED
-    PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,66,90,14,WS_DISABLED
-    LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,38,207,8
-    CONTROL         "Set Date Added to File Creation Time",IDC_FILETIMETODATEADDED,
+    PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,60,90,14,WS_DISABLED
+    LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,34,207,8
+    CONTROL         "Set Date Added to File Creation Time",IDC_LIBRARY_FILETIMETODATEADDED,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,207,10
     CONTROL         "Allow playlist sorting",IDC_LIBRARY_PLAYLISTSORTING,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,147,207,10
     CONTROL         "Create playlists of playlist files during import",IDC_LIBRARY_AUTOADDPLAYLIST,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,159,207,10
+    GROUPBOX        "Misc",IDC_STATIC,7,122,221,47
 END
 
 IDD_ALBUMARTISTVIEW DIALOGEX 0, 0, 313, 305
@@ -156,27 +157,28 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Follow current song",IDC_GENERAL_FOLLOWCURRENTSONG,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,17,92,9
-    CONTROL         "",IDC_GENERAL_HISTORYCOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,146,41,11,14
-    EDITTEXT        IDC_GENERAL_HISTORYCOUNT,130,41,18,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Items in history list",IDC_STATIC,160,44,62,8
+    CONTROL         "",IDC_GENERAL_HISTORYCOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,148,52,11,14
+    EDITTEXT        IDC_GENERAL_HISTORYCOUNT,130,52,18,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Items in history list",IDC_STATIC,160,55,62,8
     CONTROL         "Enable smart sorting",IDC_GENERAL_SMARTSORTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,28,92,10
-    CONTROL         "",IDC_GENERAL_FUTURECOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,146,57,11,14
-    EDITTEXT        IDC_GENERAL_FUTURECOUNT,130,57,18,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Items in future list",IDC_STATIC,160,60,62,8
+    CONTROL         "",IDC_GENERAL_FUTURECOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,148,68,11,14
+    EDITTEXT        IDC_GENERAL_FUTURECOUNT,130,68,18,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Items in future list",IDC_STATIC,160,71,62,8
     GROUPBOX        "Taskbar and tray icon",IDC_STATIC,7,7,105,50
     CONTROL         "Normal",IDC_GENERAL_TASKBAR_NORMAL,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,12,17,97,10
     CONTROL         "Minimize to tray",IDC_GENERAL_TASKBAR_MINIMIZE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,12,27,97,10
-    GROUPBOX        "Pause when...",IDC_STATIC,7,84,105,35
-    CONTROL         "Windows is locked",IDC_GENERAL_PAUSEONLOCK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,12,95,96,10
+    GROUPBOX        "Pause when...",IDC_STATIC,7,102,105,35
+    CONTROL         "Windows is locked",IDC_GENERAL_PAUSEONLOCK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,12,124,100,10
     CONTROL         "Screensaver is active",IDC_GENERAL_PAUSEONSCREENSAVE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,106,95,10
-    GROUPBOX        "Miscellaneous",IDC_STATIC,124,7,105,71
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,114,95,10
+    GROUPBOX        "Miscellaneous",IDC_STATIC,124,7,105,83
     CONTROL         "Minimize on close",IDC_GENERAL_MINIMIZEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,41,95,10
-    GROUPBOX        "Album Art",IDC_STATIC,124,84,105,47
-    CONTROL         "Show album art panel",IDC_GENERAL_SHOWALBUMART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,94,92,10
+    GROUPBOX        "Album Art",IDC_STATIC,124,102,105,47
+    CONTROL         "Show album art panel",IDC_GENERAL_SHOWALBUMART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,113,92,10
     CONTROL         "Change art on selection",IDC_GENERAL_ARTONSELECTION,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,106,92,10
-    CONTROL         "Use visual for art",IDC_GENERAL_SHOWVISART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,118,71,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,125,92,10
+    CONTROL         "Use visual for art",IDC_GENERAL_SHOWVISART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,137,71,10
+    CONTROL         "Pause after each song",IDC_GENERAL_AUTOSOFTPAUSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,40,92,10
 END
 
 IDD_PREFERENCES_FILEASSOC DIALOGEX 0, 0, 235, 176
@@ -390,16 +392,12 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 228
         VERTGUIDE, 14
-        VERTGUIDE, 59
         VERTGUIDE, 104
         VERTGUIDE, 131
-        VERTGUIDE, 176
         VERTGUIDE, 221
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
         HORZGUIDE, 26
-        HORZGUIDE, 102
-        HORZGUIDE, 127
     END
 
     IDD_ALBUMARTISTVIEW, DIALOG
@@ -470,15 +468,14 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 229
         VERTGUIDE, 12
-        VERTGUIDE, 107
         VERTGUIDE, 112
         VERTGUIDE, 124
         VERTGUIDE, 130
         VERTGUIDE, 222
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
-        HORZGUIDE, 78
-        HORZGUIDE, 84
+        HORZGUIDE, 89
+        HORZGUIDE, 102
     END
 
     IDD_PREFERENCES_FILEASSOC, DIALOG

@@ -75,6 +75,7 @@ protected:
 	BOOL		m_bSetDateAddedToFileCreationTime;
 	BOOL		m_bPlaylistSorting;
 	BOOL		m_bAutoAddPlaylist;
+	BOOL		m_bAutoSoftPause;
 
 	BOOL		m_bCrossfadeEnabled;
 	int			m_iCrossfadeTime;
@@ -244,5 +245,6 @@ public:
 	BOOL		GetDateAddedToFileCreationTime(void);
 	BOOL		GetCanPlaylistsSort(void);
 	BOOL		GetAutoAddPlaylists(void);
+	BOOL		GetAutoSoftPause(void);
 	BOOL		GetSmartSortingEnabled(void);
 };

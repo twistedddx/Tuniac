@@ -62,6 +62,7 @@
 #define DATEADDED 				TEXT("DateAdded")
 #define PLAYLISTSORTING			TEXT("PlaylistSorting")
 #define AUTOADDPLAYLIST			TEXT("AutoAddPlaylist")
+#define AUTOSOFTPAUSE			TEXT("AutoSoftPause")
 
 #define SHUFFLEPLAY				TEXT("ShufflePlay")
 #define REPEATMODE				TEXT("RepeatMode")
@@ -123,6 +124,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FOLLOWCURRENTSONG, BM_SETCHECK, pPrefs->m_bFollowCurrentSong ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_SETCHECK, pPrefs->m_bSmartSorting ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_SETCHECK, pPrefs->m_bAutoSoftPause ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOCK, BM_SETCHECK, pPrefs->m_bPauseOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bPauseOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
 				
@@ -167,6 +169,14 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_GETCHECK, 0, 0);
 							pPrefs->m_bSmartSorting = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+
+					case IDC_GENERAL_AUTOSOFTPAUSE:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_GETCHECK, 0, 0);
+							pPrefs->m_bAutoSoftPause = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
 
@@ -509,7 +519,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 							if(pPE->pPlugin == NULL)
 							{
-								if(IDOK == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
+								if(IDYES == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
 								{
 									tuniacApp.m_PluginManager.EnablePlugin(iSel, TRUE);
 									SendMessage(hDlg, WM_USER, 0, 0);
@@ -864,7 +874,6 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_SETCHECK, pPrefs->m_bSetDateAddedToFileCreationTime ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_SETCHECK, pPrefs->m_bPlaylistSorting ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_AUTOADDPLAYLIST, BM_SETCHECK, pPrefs->m_bAutoAddPlaylist ? BST_CHECKED : BST_UNCHECKED, 0);
-
 			}
 			break;
 
@@ -874,9 +883,9 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				switch(wCmdID)
 				{
-					case IDC_FILETIMETODATEADDED:
+					case IDC_LIBRARY_FILETIMETODATEADDED:
 						{
-							int State = SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_GETCHECK, 0, 0);
+							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_FILETIMETODATEADDED, BM_GETCHECK, 0, 0);
 							pPrefs->m_bSetDateAddedToFileCreationTime = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
@@ -1247,6 +1256,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bSetDateAddedToFileCreationTime = FALSE;
 	m_bPlaylistSorting			= FALSE;
 	m_bAutoAddPlaylist			= TRUE;
+	m_bAutoSoftPause			= FALSE;
 
 	wnsprintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
 	wnsprintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
@@ -1484,6 +1494,14 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bAutoAddPlaylist,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						AUTOSOFTPAUSE,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bAutoSoftPause,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1918,6 +1936,13 @@ bool CPreferences::SavePreferences(void)
 					NULL,
 					REG_DWORD,
 					(LPBYTE)&m_bAutoAddPlaylist,
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					AUTOSOFTPAUSE,
+					NULL,
+					REG_DWORD,
+					(LPBYTE)&m_bAutoSoftPause,
 					sizeof(BOOL));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -2558,4 +2583,9 @@ BOOL		CPreferences::GetCanPlaylistsSort(void)
 BOOL		CPreferences::GetAutoAddPlaylists(void)
 {
 	return m_bAutoAddPlaylist;
+}
+
+BOOL		CPreferences::GetAutoSoftPause(void)
+{
+	return m_bAutoSoftPause;
 }

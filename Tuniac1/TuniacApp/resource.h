@@ -152,6 +152,7 @@
 #define IDC_GENERAL_SHOWALBUMART        1151
 #define IDC_GENERAL_ALBUMARTBOX         1152
 #define IDC_FILETIMETODATEADDED         1153
+#define IDC_LIBRARY_FILETIMETODATEADDED 1153
 #define IDC_AUDIO_AMPGAINTEXT           1154
 #define IDC_LIBRARY_PLAYLISTSORTING     1155
 #define IDC_LIBRARY_AUTOADDPLAYLIST     1156
@@ -173,8 +174,9 @@
 #define IDC_EQHIGH_TEXT                 1185
 #define IDC_EQ_GROUP                    1186
 #define IDC_EQRESET_BUTTON              1187
-#define IDC_EQ_CHECKBOX                 1188
 #define IDC_EQ_ENABLE                   1188
+#define IDC_CHECK1                      1190
+#define IDC_GENERAL_AUTOSOFTPAUSE       1190
 #define ID_FILE_EXIT                    40001
 #define ID_FILE_NEWPLAYLIST_NORMALPLAYLIST 40002
 #define ID_FILE_NEWPLAYLIST_SMARTPLAYLIST 40003
@@ -256,7 +258,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         40149
-#define _APS_NEXT_CONTROL_VALUE         1189
+#define _APS_NEXT_CONTROL_VALUE         1191
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

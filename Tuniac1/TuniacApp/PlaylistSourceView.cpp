@@ -1623,6 +1623,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							//alt key modifier held while selecting songs to cause play selected
 							if(GetKeyState(VK_MENU) & 0x8000)
 							{
+								//keep previous items selected
 								if(!(GetKeyState(VK_CONTROL) & 0x8000 || GetKeyState(VK_SHIFT) & 0x8000))
 								{
 									LVITEM lvi;
@@ -1634,6 +1635,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										SendMessage(hListViewWnd, LVM_SETITEMSTATE, tuniacApp.m_PlaySelected[i], WPARAM(&lvi));
 									}
 								}
+
 								//rebuild playselected
 								tuniacApp.m_PlaySelected.RemoveAll();
 
@@ -1658,7 +1660,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									tuniacApp.m_PlaySelected.RemoveAll();
 								}
 							}
-
+							tuniacApp.RebuildFutureMenu();
 						}
 						break;
 
