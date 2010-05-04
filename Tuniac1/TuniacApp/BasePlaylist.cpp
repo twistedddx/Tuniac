@@ -354,7 +354,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 
 		//check that we are checking a valid index
 		//if(!CheckFilteredIndex(ulFilteredIndex))
-		//	return -1;
+		//	return INVALID_PLAYLIST_INDEX;
 
 		//if repeatone the next song is just the current song
 		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
@@ -382,7 +382,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 					return tuniacApp.m_PlaySelected[0];
 
 			//see if found within m_PlaySelected 0 thru GetCount - 1
-			unsigned long ulFound = -1;
+			unsigned long ulFound = INVALID_PLAYLIST_INDEX;
 			for(unsigned long x=0; x < ulPlaySize; x++)
 			{
 				if(tuniacApp.m_PlaySelected[x] == ulFilteredIndex)
@@ -397,7 +397,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 				return ulFilteredIndex + 1;
 
 			//if found we want it's next
-			if(ulFound != -1)
+			if(ulFound != INVALID_PLAYLIST_INDEX)
 				if(tuniacApp.m_Preferences.GetShuffleState())
 					return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[ulFound + 1]));
 				else
@@ -471,7 +471,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 		return 0;
 
 	//no files
-	return -1;
+	return INVALID_PLAYLIST_INDEX;
 }
 
 //////////////////////////////////////////////////////////
