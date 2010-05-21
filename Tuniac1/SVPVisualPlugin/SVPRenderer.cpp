@@ -1089,8 +1089,18 @@ bool	SVPRenderer::InitOpenGL(void)
 
 void	SVPRenderer::ShutdownOpenGL(void)
 {
+	//flush
+	SwapBuffers(m_hDC);
+
 	if(iUsePBO)
+	{
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
+		glBufferData(GL_PIXEL_UNPACK_BUFFER, iTextureSize, 0, GL_STREAM_DRAW);
 		glDeleteBuffers(1, pboIds);
+	}
+
+	//flush
+	SwapBuffers(m_hDC);
 
 	if (m_glRC)
 	{
