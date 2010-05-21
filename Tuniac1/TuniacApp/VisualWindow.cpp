@@ -285,6 +285,23 @@ bool CVisualWindow::Hide(void)
 {
 	if(m_hWnd)
 	{
+		if(m_bFullScreen)
+		{
+			LONG_PTR StyleEx = GetWindowLongPtr(m_hWnd, GWL_EXSTYLE);
+			StyleEx |= WS_EX_CLIENTEDGE;
+			SetWindowLongPtr(m_hWnd, GWL_EXSTYLE, StyleEx);
+
+			LONG_PTR Style = GetWindowLongPtr(m_hWnd, GWL_STYLE);
+			Style |= WS_CHILD;
+			SetWindowLongPtr(m_hWnd, GWL_STYLE, Style);
+
+			SetParent(m_hWnd, m_hParentWnd);
+			SetWindowPos(m_hWnd, 0, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
+
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+
+			m_bFullScreen = false;
+		}		
 		ShowWindow(m_hWnd, SW_HIDE);
 		return(true);
 	}
