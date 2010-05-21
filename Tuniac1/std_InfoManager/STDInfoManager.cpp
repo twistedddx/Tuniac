@@ -408,22 +408,19 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 				id3Tag = flacfile->ID3v2Tag()->frameListMap()["APIC"];
 		}
 
-		if(!id3Tag.isEmpty())
+		if(!id3Tag.isEmpty() && (ulImageIndex < id3Tag.size()))
 		{
-			if(!id3Tag.isEmpty() && (ulImageIndex < id3Tag.size()))
-			{
-				TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3Tag[ulImageIndex]);
+			TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3Tag[ulImageIndex]);
 
-				*ulImageDataSize = picframe->picture().size();
-				*pImageData = malloc(*ulImageDataSize);
+			*ulImageDataSize = picframe->picture().size();
+			*pImageData = malloc(*ulImageDataSize);
 
-				CopyMemory(*pImageData, picframe->picture().data(), *ulImageDataSize);
-				StrCpy((LPWSTR)szMimeType, (LPTSTR)picframe->mimeType().toWString().c_str());
+			CopyMemory(*pImageData, picframe->picture().data(), *ulImageDataSize);
+			StrCpy((LPWSTR)szMimeType, (LPTSTR)picframe->mimeType().toWString().c_str());
 
-				*ulArtType = picframe->type();
+			*ulArtType = picframe->type();
 
-				bRet = true;
-			}
+			bRet = true;
 		}
 	}
 
