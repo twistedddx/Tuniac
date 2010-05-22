@@ -113,10 +113,12 @@ protected:
 	bool								m_bSavePrefs;
 	bool								m_bSaveML;
 
+	bool								m_WasPlaying;
+
 	int									m_ActiveScreen;
 
 	int									m_iFailedSongRetry;
-	//int									m_iCPUCount;
+	//int								m_iCPUCount;
 
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK		WndProcStub(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -142,13 +144,10 @@ public:
 
 	Array<IWindow *,3>			m_WindowArray;
 
-	//CCoreAudio					m_CoreAudio;
-
 	CPluginManager				m_PluginManager;
 	CSysEvents					m_SysEvents;
 	CTaskbar					m_Taskbar;
 	CHistory					m_History;
-	//CCurrentlyPlaying			m_CurrentlyPlaying;
 
 	CTuniacSkin					m_Skin;
 
