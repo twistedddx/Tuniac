@@ -1,7 +1,12 @@
 May, 2010
 ---------
--The preference is called "Pause after each song" and is in the General section.
--This build also fixes an issue with playselected and not building the futurelist correctly.
+-supports Windows suspend/sleep/hibernation and resuming from them when playing from a networked source.
+-switch to Visual Studio 2010
+-remove redundant code from std_infomanager
+-flush opengl pipe better
+-Fix abnormal exit of fullscreen mode
+-"Pause after each song" feature added
+-fix an issue with playselected and not building the futurelist correctly.
 
 Apr, 2010 (100426)
 ---------
