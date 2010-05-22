@@ -99,7 +99,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	WSADATA wsadata;
 	::WSAStartup(w, &wsadata); 
 
-
 	m_hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_MAINWINDOWACCEL));
 
 	/*
@@ -117,6 +116,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	//these are used for the portable switch to force not saving to disk
 	m_bSavePrefs = true;
 	m_bSaveML = true;
+
+	//used to pause/resume on Windows suspends like sleep or hibernate
+	m_WasPlaying = false;
 
 	//load everything saved including windows size/postion/ontop
 	m_Preferences.LoadPreferences();
@@ -582,6 +584,29 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 			}
 			break;
+
+		case WM_POWERBROADCAST:
+			{
+				if(wParam == PBT_APMSUSPEND)
+				{
+					//pause at suspend
+					if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+					{
+						SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+						m_WasPlaying = true;
+					}
+				}
+				if(wParam == PBT_APMRESUMEAUTOMATIC)
+				{
+					//resume
+					if(m_WasPlaying)
+					{
+						Sleep(5000);
+						SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+						m_WasPlaying = false;
+					}
+				}
+			}
 
 			//resize limits
 		case WM_GETMINMAXINFO:
