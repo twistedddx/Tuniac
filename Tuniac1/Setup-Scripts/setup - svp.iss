@@ -15,7 +15,7 @@ Compression=lzma/ultra
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
 InternalCompressLevel=ultra
-MinVersion=0,5.01.2600sp2
+MinVersion=0,5.01.2600sp3
 OutputDir=.
 OutputBaseFilename=..\Tuniac_Setup_{#DateTime}(inc SVP)
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
@@ -34,6 +34,9 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
+
+Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\*.dll; Check: InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
+Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\*.dll; Check: not InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
 
 Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
 
