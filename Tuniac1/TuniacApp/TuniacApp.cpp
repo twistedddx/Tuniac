@@ -1769,6 +1769,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1782,6 +1783,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							else if(m_Preferences.GetRepeatMode() == RepeatAll)
 								m_Preferences.SetRepeatMode(RepeatNone);
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1794,6 +1796,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatAll);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 							}
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1802,6 +1805,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1810,6 +1814,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_Preferences.SetRepeatMode(RepeatNone);
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1818,6 +1823,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_Preferences.SetRepeatMode(RepeatOne);
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1826,6 +1832,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_Preferences.SetRepeatMode(RepeatAll);
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 
@@ -1834,6 +1841,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_Preferences.SetRepeatMode(RepeatAllQueued);
 							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							RebuildFutureMenu();
 						}
 						break;
 				}
