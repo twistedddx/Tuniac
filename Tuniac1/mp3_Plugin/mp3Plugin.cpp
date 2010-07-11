@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "MP3DecoderPlugin.h"
+#include "cmpegaudiodecoderPlugin.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
 {
@@ -12,7 +12,7 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 extern "C" __declspec(dllexport) IAudioSourceSupplier * CreateDecoderPlugin(void)
 {
-	IAudioSourceSupplier * t = new CMP3DecoderPlugin;
+	IAudioSourceSupplier * t = new CMpegAudioDecoderPlugin;
 
 	return t;
 }
