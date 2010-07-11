@@ -18,13 +18,32 @@ FOR /F "tokens=*" %%G IN ('DIR /B /AD /S Win32*') DO RMDIR /S /Q "%%G"
 Echo Deleting build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S x64*') DO RMDIR /S /Q "%%G"
 
+Echo Deleting build folders from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S release*') DO RMDIR /S /Q "%%G"
+
+Echo Deleting build folders from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S debug*') DO RMDIR /S /Q "%%G"
+
+Echo Deleting build folders from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S ipch*') DO RMDIR /S /Q "%%G"
+
 Echo Deleting user files from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.user') DO DEL /Q "%%G"
 
 Echo Deleting ncb files from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.ncb') DO DEL /Q "%%G"
 
+Echo Deleting sdf files from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /S *.sdf') DO DEL /Q "%%G"
 
+Echo Deleting filters files from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /S *.filters') DO DEL /Q "%%G"
+
+Echo Deleting aps files from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /S *.aps') DO DEL /Q "%%G"
+
+Echo Deleting exe files from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /S *.exe') DO DEL /Q "%%G"
 
 Echo Date stamps will be wrong in many countries. Such as date and month reversed in America.
 SET DATETIME=%date%%time%

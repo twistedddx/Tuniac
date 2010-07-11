@@ -1,5 +1,13 @@
+Jul, 2010
+---------
+-Direct X June 2010 (XAudio 2.7)
+-Force XP SP3 in installer
+-std_infomanager supports wav track length and ape files. Remove those infomanagers
+-Bugfixes
+
 May, 2010
 ---------
+-update future menu on shuffle and repeat state change
 -supports Windows suspend/sleep/hibernation and resuming from them when playing from a networked source.
 -switch to Visual Studio 2010
 -remove redundant code from std_infomanager

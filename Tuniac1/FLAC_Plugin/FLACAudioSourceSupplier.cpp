@@ -35,7 +35,7 @@ static const GUID FLAC_GUID =
 
 unsigned long	CFLACAudioSourceSupplier::GetFlags(void)
 {
-	return FLAGS_PROVIDEMEMORYFILEIO | FLAGS_ABOUT;
+	return FLAGS_PROVIDESTANDARDFILEIO | FLAGS_ABOUT;
 }
 
 bool			CFLACAudioSourceSupplier::About(HWND hParent)

@@ -536,7 +536,7 @@ void	SVPRenderer::Destroy(void)
 
 bool SVPRenderer::RenderVisual(void)
 {
-	if(m_TheVisual)
+	if(m_TheVisual && m_pHelper)
 	{
 		ulNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 		if(ulNumChannels == INVALID || ulNumChannels == 0)
