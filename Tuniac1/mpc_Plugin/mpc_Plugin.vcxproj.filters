@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D26737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{69BA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="mpcdec_includes">
+      <UniqueIdentifier>{b65132ca-2477-429d-946c-825146421fbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{479b80ba-f405-41af-9e7a-497a052c4364}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MPCDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPCDecoderPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mpcPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MPCDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPCDecoderPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\config_win32.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\decoder.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\huffman.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\internal.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\math.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\mpcdec.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\reader.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\requant.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+    <ClInclude Include="mpcdec\streaminfo.h">
+      <Filter>mpcdec_includes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\libmpcdec32.lib">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\libmpcdec64.lib">
+      <Filter>libs</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
