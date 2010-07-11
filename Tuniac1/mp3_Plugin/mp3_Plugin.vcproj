@@ -44,7 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../TuniacApp"
+				AdditionalIncludeDirectories="./;./filehandler;./httphandler;../TuniacApp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;"
 				RuntimeLibrary="1"
 				StructMemberAlignment="5"
@@ -196,7 +196,7 @@
 				AdditionalIncludeDirectories="../TuniacApp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WIN32_WINNT=0x502"
 				StructMemberAlignment="5"
-				EnableEnhancedInstructionSet="1"
+				EnableEnhancedInstructionSet="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -323,35 +323,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\BaseDecoder.cpp"
+				RelativePath=".\bitstream.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\BitStream.cpp"
+				RelativePath=".\cmpegaudiodecoder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\mp3streamer_Plugin\CRC.cpp"
+				RelativePath=".\cmpegaudiodecoderPlugin.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FrameSplitter.cpp"
+				RelativePath=".\header.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Header.cpp"
+				RelativePath=".\huffman.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Layer3Decoder.cpp"
+				RelativePath=".\layer3decoder.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3Decoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MP3DecoderPlugin.cpp"
+				RelativePath=".\maindatabuffer.cpp"
 				>
 			</File>
 			<File
@@ -359,11 +355,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SideInfo.cpp"
+				RelativePath=".\mpegdecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\sideinfo.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\synthesisfilter.cpp"
 				>
 			</File>
 		</Filter>
@@ -373,27 +377,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\BaseDecoder.h"
+				RelativePath=".\bitstream.h"
 				>
 			</File>
 			<File
-				RelativePath=".\BitReservoir.H"
+				RelativePath=".\cmpegaudiodecoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\BitStream.h"
+				RelativePath=".\cmpegaudiodecoderPlugin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\mp3streamer_Plugin\CRC.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Frame.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FrameSplitter.h"
+				RelativePath=".\generaldefs.h"
 				>
 			</File>
 			<File
@@ -401,31 +397,43 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IMPEGDecoder.h"
+				RelativePath=".\huffman.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Layer3Decoder.h"
+				RelativePath=".\layer3decoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3Decoder.h"
+				RelativePath=".\maindatabuffer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3DecoderPlugin.h"
+				RelativePath=".\mpegdecoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\ringbuffer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SideInfo.h"
+				RelativePath=".\sideinfo.h"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\synthesisfilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tuniacthread.h"
 				>
 			</File>
 		</Filter>
