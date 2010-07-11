@@ -1,70 +1,91 @@
 /*
-Copyright (c) 2002 Tony Million
+ *  bitstream.cpp
+ *  audioenginetest
+ *
+ *  Created by Tony Million on 29/11/2009.
+ *  Copyright 2009 Tony Million. All rights reserved.
+ *
+ */
 
-This software is provided 'as-is', without any express or 
-implied warranty. In no event will the authors be held liable 
-for any damages arising from the use of this software.
+#include "generaldefs.h"
 
-Permission is granted to anyone to use this software for any 
-purpose, including commercial applications, and to alter it 
-and redistribute it freely, subject to the following 
-restrictions:
+#include "bitstream.h"
 
-1. The origin of this software must not be 
-misrepresented; you must not claim that you wrote 
-the original software. If you use this software in a 
-product, an acknowledgment in the product 
-documentation is required.
-
-2. Altered source versions must be plainly marked as 
-such, and must not be misrepresented as being the 
-original software.
-
-3. This notice may not be removed or altered from any 
-source distribution.
-*/
-
-#include "BitStream.h"
-
-
-BitStream::BitStream()
+void bitstream::load(const uint8_t * pData, uint32_t length)
 {
-	buffer		= 0;
-	bitindex	= 0;
+	data			= pData;
+	datalength		= length;
+	datalengthbits	= length * 8;
+	
+	bitoffset		= 0;
 }
 
-BitStream::~BitStream()
+uint32_t bitstream::getbits(uint32_t numbits)
 {
-
-}
-
-unsigned long BitStream::GetBits(unsigned long N)
-{
-	unsigned long rval;
+	uint32_t rval = 0;
 	int pos;
+	
+	if(numbits == 0)
+		return 0;
+	
 
-	if(N == 0)
+	if(bitoffset + numbits > datalengthbits)
 		return 0;
 
-	pos = (unsigned long)(bitindex >> 3);
+	// replaced with code above which makes sure we can read that many bits eh
+	// prevents overrunning the buffer
+	//if(pos > datalength)
+	//	return 0;
+	
+	pos = (uint32_t)(bitoffset >> 3);
+	rval =	(uint32_t)data[pos]	<< 24 |
+			(uint32_t)data[pos+1]	<< 16 |
+			(uint32_t)data[pos+2]	<< 8 |
+			(uint32_t)data[pos+3];
+	
+	rval <<= bitoffset & 7;
+	rval >>= 32 - numbits;
+	
+	bitoffset += numbits;
+	
+	return rval;	
+}
 
-	rval =	buffer[pos]		<< 24 |
-			buffer[pos+1]	<< 16 |
-			buffer[pos+2]	<< 8 |
-			buffer[pos+3];
+uint32_t bitstream::dismiss(uint32_t numbits)
+{
+	bitoffset += numbits;
+	return bitoffset;
+}
 
-	rval <<= bitindex & 7;
-	rval >>= 32 - N;
-	bitindex += N;
+void bitstream::rewind(uint32_t numbits)
+{
+	// make sure we cant rewind past the beginning
+	bitoffset -= MIN(numbits, bitoffset);
+}
 
-	return rval;
+uint32_t bitstream::getBitOffset(void)
+{
+	return bitoffset;
+}
+
+void bitstream::setBitOffset(uint32_t offset)
+{
+	bitoffset = offset;
 }
 
 
-bool BitStream::Load(unsigned char *FromHere)
+uint32_t bitstream::getByteOffset(void)
 {
-	buffer		= FromHere;
-	bitindex	= 0;
+	return (uint32_t)(bitoffset >> 3);
+}
 
-	return(true);
+bool bitstream::EOS(void)
+{
+	uint32_t pos = (uint32_t)(bitoffset >> 3);
+	
+	// prevents overrunning the buffer
+	if(pos > datalength)
+		return true;
+	
+	return false;
 }
