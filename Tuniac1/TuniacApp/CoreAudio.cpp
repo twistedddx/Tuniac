@@ -73,9 +73,9 @@ bool			CCoreAudio::Startup()
 	if(FAILED(XAudio2Create(&m_pXAudio)))
 	{
 		//booo we dont have an XAudio2 object!
-		if (IDYES == MessageBox(NULL, TEXT("Failed initializing XAudio 2.5.\nThis is most likely because you have not installed DirectX August 2009 redist which is required.\n Simply reinstall Tuniac to fix or do you want to be directed to the Microsoft download?"), TEXT("Fatal Error"), MB_YESNO | MB_ICONERROR))
+		if (IDYES == MessageBox(NULL, TEXT("Failed initializing XAudio 2.7.\nThis is most likely because you have not installed DirectX June 2010 redist which is required.\n Simply reinstall Tuniac to fix or do you want to be directed to the Microsoft download?"), TEXT("Fatal Error"), MB_YESNO | MB_ICONERROR))
 		{
-			ShellExecute(NULL, NULL, TEXT("http://download.microsoft.com/download/B/7/9/B79FC9D7-47B8-48B7-A75E-101DEBEB5AB4/directx_aug2009_redist.exe"), NULL, NULL, SW_SHOW);
+			ShellExecute(NULL, NULL, TEXT("http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe"), NULL, NULL, SW_SHOW);
 		}
 		m_pXAudio = NULL;
 		return false;

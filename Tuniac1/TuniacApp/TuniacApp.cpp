@@ -611,60 +611,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//resize limits
 		case WM_GETMINMAXINFO:
 			{
-				LPMINMAXINFO lpMinMaxInfo = (LPMINMAXINFO)lParam;
-
-				lpMinMaxInfo->ptMinTrackSize.x = 530;
-				lpMinMaxInfo->ptMinTrackSize.y = 400;
+				if(lParam)
+				{	
+					LPMINMAXINFO lpMinMaxInfo = (LPMINMAXINFO)lParam;
+					lpMinMaxInfo->ptMinTrackSize.x = 530;
+					lpMinMaxInfo->ptMinTrackSize.y = 400;
+				}
 			}
 			break;
-
-/*
-		case WM_PAINT:
-			{
-				PAINTSTRUCT ps;
-				RECT		r;
-
-				GetClientRect(hWnd, &r);
-
-				HDC		hDC = BeginPaint(hWnd, &ps);
-
-				HTHEME hTheme   = OpenThemeData(hWnd, L"HEADER");
-				if(hTheme)
-				{
-					r.top = 95;
-					r.bottom = 99;
-
-					DrawThemeBackground(hTheme, hDC, HP_HEADERITEMLEFT, HILS_NORMAL, &r, NULL);
-					CloseThemeData(hTheme);
-					r.top = 98;
-					r.bottom = 99;
-					FillRect(hDC, &r, GetSysColorBrush(COLOR_3DSHADOW));
-
-					r.top = 99;
-					r.bottom = 100;
-					FillRect(hDC, &r, GetSysColorBrush(COLOR_3DDKSHADOW));
-				}
-				else
-				{
-					r.top = 98;
-					r.bottom = 99;
-					FillRect(hDC, &r, GetSysColorBrush(COLOR_3DSHADOW));
-
-					r.top = 99;
-					r.bottom = 100;
-					FillRect(hDC, &r, GetSysColorBrush(COLOR_3DDKSHADOW));
-				}
-
-				EndPaint(hWnd, &ps);
-			}
-			break;
-*/
 
 		case WM_SIZE:
 			{
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
-//				RECT clientRect;
 				RECT playcontrolsrect = {0,0, Width, 60};
 				RECT statusRect;
 
@@ -674,8 +633,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 					{
 						ShowWindow(hWnd, SW_HIDE);
-						//m_Taskbar.Show();
-						//break;
 					}
 				}
 				else
@@ -707,25 +664,27 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//file dropped on tuniacapp.exe
 		case WM_DROPFILES:
 			{
-				HDROP hDrop = (HDROP)wParam;
-
-				TCHAR szURL[MAX_PATH];
-
-				UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
-
-				if(m_MediaLibrary.BeginAdd(uNumFiles))
+				if(wParam)
 				{
-					for(UINT file = 0; file<uNumFiles; file++)
+					HDROP hDrop = (HDROP)wParam;
+
+					TCHAR szURL[MAX_PATH];
+
+					UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
+
+					if(m_MediaLibrary.BeginAdd(uNumFiles))
 					{
-						DragQueryFile(hDrop, file, szURL, MAX_PATH);
-						m_MediaLibrary.AddItem(szURL);
+						for(UINT file = 0; file<uNumFiles; file++)
+						{
+							DragQueryFile(hDrop, file, szURL, MAX_PATH);
+							m_MediaLibrary.AddItem(szURL);
+						}
+
+						m_MediaLibrary.EndAdd();
 					}
 
-					m_MediaLibrary.EndAdd();
+					DragFinish(hDrop);
 				}
-
-				DragFinish(hDrop);
-
 			}
 			break;
 
@@ -753,59 +712,59 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//multimedia keyboard keys
 		case WM_APPCOMMAND:
 			{
-				DWORD cmd  = GET_APPCOMMAND_LPARAM(lParam);
-				//DWORD uDevice = GET_DEVICE_LPARAM(lParam);
-				//DWORD dwKeys = GET_KEYSTATE_LPARAM(lParam);
-
-				switch(cmd)
+				if(lParam)
 				{
-					case APPCOMMAND_MEDIA_PLAY_PAUSE:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
-						}
-						break;
+					DWORD cmd  = GET_APPCOMMAND_LPARAM(lParam);
 
-					case APPCOMMAND_MEDIA_STOP:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
-						}
-						break;
+					switch(cmd)
+					{
+						case APPCOMMAND_MEDIA_PLAY_PAUSE:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
+							}
+							break;
 
-					case APPCOMMAND_MEDIA_PAUSE:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
-						}
-						break;
+						case APPCOMMAND_MEDIA_STOP:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+							}
+							break;
 
-					case APPCOMMAND_MEDIA_PLAY:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
-						}
-						break;
+						case APPCOMMAND_MEDIA_PAUSE:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+							}
+							break;
 
-					case APPCOMMAND_MEDIA_NEXTTRACK:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
-						}
-						break;
+						case APPCOMMAND_MEDIA_PLAY:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+							}
+							break;
 
-					case APPCOMMAND_MEDIA_PREVIOUSTRACK:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
-						}
-						break;
-					case APPCOMMAND_MEDIA_FAST_FORWARD:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
-						}
-						break;
-					case APPCOMMAND_MEDIA_REWIND:
-						{
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
-						}
-						break;
+						case APPCOMMAND_MEDIA_NEXTTRACK:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+							}
+							break;
+
+						case APPCOMMAND_MEDIA_PREVIOUSTRACK:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+							}
+							break;
+						case APPCOMMAND_MEDIA_FAST_FORWARD:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
+							}
+							break;
+						case APPCOMMAND_MEDIA_REWIND:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
+							}
+							break;
+					}
 				}
-
 				return(DefWindowProc(hWnd, message, wParam, lParam));
 			}
 			break;
@@ -1067,160 +1026,163 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		//command line from previous (or current) version
 		case WM_COPYDATA:
 			{
-				PCOPYDATASTRUCT pCDS = (PCOPYDATASTRUCT)lParam;
-
-				switch(pCDS->dwData)
+				if(lParam)
 				{
-					case 0:
-						{ 
+					PCOPYDATASTRUCT pCDS = (PCOPYDATASTRUCT)lParam;
 
-							bool		bAddingFiles = false, bPlayAddedFiles = false, bQueueAddedFiles = false;
-							bool		bExitAtEnd = false, bWantFocus = false;
+					switch(pCDS->dwData)
+					{
+						case 0:
+							{ 
 
-							unsigned long ulMLOldCount = m_MediaLibrary.GetCount();
-							LPWSTR		*szArglist;
-							int			nArgs;
-							int			i;
-							szArglist	= CommandLineToArgvW((LPTSTR)pCDS->lpData, &nArgs);
+								bool		bAddingFiles = false, bPlayAddedFiles = false, bQueueAddedFiles = false;
+								bool		bExitAtEnd = false, bWantFocus = false;
 
-							if(szArglist != NULL)
-							{
-								for(i = 1; i < nArgs; i++)
+								unsigned long ulMLOldCount = m_MediaLibrary.GetCount();
+								LPWSTR		*szArglist;
+								int			nArgs;
+								int			i;
+								szArglist	= CommandLineToArgvW((LPTSTR)pCDS->lpData, &nArgs);
+
+								if(szArglist != NULL)
 								{
-									//tuniac first assumes command line is a filepath
-									//it checks if it would be a valid path it can use
-									if(PathFileExists(szArglist[i]) || PathIsURL(szArglist[i]))
+									for(i = 1; i < nArgs; i++)
 									{
-										if(!bAddingFiles)
+										//tuniac first assumes command line is a filepath
+										//it checks if it would be a valid path it can use
+										if(PathFileExists(szArglist[i]) || PathIsURL(szArglist[i]))
 										{
-											if(!m_MediaLibrary.BeginAdd(nArgs - 1)) break;
-											bAddingFiles = true;
+											if(!bAddingFiles)
+											{
+												if(!m_MediaLibrary.BeginAdd(nArgs - 1)) break;
+												bAddingFiles = true;
+												bWantFocus = true;
+											}
+
+											m_MediaLibrary.AddItem(szArglist[i]);
+										}
+										else if(StrCmpI(szArglist[i], TEXT("-queue")) == 0)
+											bQueueAddedFiles = true;
+
+										else if(StrCmpI(szArglist[i], TEXT("-play")) == 0)
+											bPlayAddedFiles = true;
+
+										else if(StrCmpI(szArglist[i], TEXT("-pause")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-togglepause")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-stop")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-softpause")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-next")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-prev")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-togglerepeat")) == 0)
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0); 
+
+										else if(StrCmpI(szArglist[i], TEXT("-dontsaveprefs")) == 0)
+											m_bSavePrefs = false;
+
+										else if(StrCmpI(szArglist[i], TEXT("-wipeprefs")) == 0)
+										{
+											m_Preferences.CleanPreferences();
+											m_Preferences.DefaultPreferences();
+										}
+
+										else if(StrCmpI(szArglist[i], TEXT("-wipefileassoc")) == 0)
+											m_Preferences.m_FileAssoc.CleanAssociations();
+
+										else if(StrCmpI(szArglist[i], TEXT("-dontsaveml")) == 0)
+											m_bSaveML = false;
+
+										else if(StrCmpI(szArglist[i], TEXT("-restore")) == 0)
+										{
+											//TODO: Implement This
+											//m_Taskbar.ShowTrayIcon(FALSE);
 											bWantFocus = true;
+											ShowWindow(hWnd, SW_RESTORE);
+											ShowWindow(hWnd, SW_SHOW);
 										}
 
-										m_MediaLibrary.AddItem(szArglist[i]);
-									}
-									else if(StrCmpI(szArglist[i], TEXT("-queue")) == 0)
-										bQueueAddedFiles = true;
-
-									else if(StrCmpI(szArglist[i], TEXT("-play")) == 0)
-										bPlayAddedFiles = true;
-
-									else if(StrCmpI(szArglist[i], TEXT("-pause")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-togglepause")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-stop")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-softpause")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-next")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-prev")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-togglerepeat")) == 0)
-										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0); 
-
-									else if(StrCmpI(szArglist[i], TEXT("-dontsaveprefs")) == 0)
-										m_bSavePrefs = false;
-
-									else if(StrCmpI(szArglist[i], TEXT("-wipeprefs")) == 0)
-									{
-										m_Preferences.CleanPreferences();
-										m_Preferences.DefaultPreferences();
-									}
-
-									else if(StrCmpI(szArglist[i], TEXT("-wipefileassoc")) == 0)
-										m_Preferences.m_FileAssoc.CleanAssociations();
-
-									else if(StrCmpI(szArglist[i], TEXT("-dontsaveml")) == 0)
-										m_bSaveML = false;
-
-									else if(StrCmpI(szArglist[i], TEXT("-restore")) == 0)
-									{
-										//TODO: Implement This
-										//m_Taskbar.ShowTrayIcon(FALSE);
-										bWantFocus = true;
-										ShowWindow(hWnd, SW_RESTORE);
-										ShowWindow(hWnd, SW_SHOW);
-									}
-
-									else if(StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
-									{
-										//TODO: Implement This
-										//m_Taskbar.ShowTrayIcon(TRUE);
-										bWantFocus = false;
-										ShowWindow(hWnd, SW_MINIMIZE);
-										if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
-											ShowWindow(m_hWnd, SW_HIDE);
-									}
-
-									else if(StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
-										bWantFocus = false;
-
-									else if(StrCmpI(szArglist[i], TEXT("-exit")) == 0)
-									{
-										bWantFocus = false;
-										bExitAtEnd = true;
-									}
-								}
-
-								if(bAddingFiles) m_MediaLibrary.EndAdd();
-								if(bPlayAddedFiles)
-								{
-									if(m_MediaLibrary.GetCount() > ulMLOldCount)
-									{
-										CCoreAudio::Instance()->Reset();
-										m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
-										m_PlaylistManager.SetActivePlaylist(0);
-										if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+										else if(StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
 										{
-											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-											m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
-											pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
-											IPlaylistEntry * pIPE = pPlaylistEX->GetActiveItem();
-											PlayEntry(pIPE, false, false, true);
+											//TODO: Implement This
+											//m_Taskbar.ShowTrayIcon(TRUE);
+											bWantFocus = false;
+											ShowWindow(hWnd, SW_MINIMIZE);
+											if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
+												ShowWindow(m_hWnd, SW_HIDE);
 										}
-									}
-									SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
-								}
-								else if (bQueueAddedFiles)
-								{
-									if(m_MediaLibrary.GetCount() > ulMLOldCount)
-									{
-										m_PlaylistManager.SetActivePlaylist(0);
-										for(unsigned long i = ulMLOldCount; i < m_MediaLibrary.GetCount(); i++)
+
+										else if(StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
+											bWantFocus = false;
+
+										else if(StrCmpI(szArglist[i], TEXT("-exit")) == 0)
 										{
-											m_MediaLibrary.m_Queue.Append((IPlaylistEntry *)m_MediaLibrary.GetItemByIndex(i));
+											bWantFocus = false;
+											bExitAtEnd = true;
 										}
-										RebuildFutureMenu();
 									}
+
+									if(bAddingFiles) m_MediaLibrary.EndAdd();
+									if(bPlayAddedFiles)
+									{
+										if(m_MediaLibrary.GetCount() > ulMLOldCount)
+										{
+											CCoreAudio::Instance()->Reset();
+											m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
+											m_PlaylistManager.SetActivePlaylist(0);
+											if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+											{
+												IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+												m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
+												pPlaylistEX->SetActiveFilteredIndex(ulMLOldCount);
+												IPlaylistEntry * pIPE = pPlaylistEX->GetActiveItem();
+												PlayEntry(pIPE, false, false, true);
+											}
+										}
+										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+									}
+									else if (bQueueAddedFiles)
+									{
+										if(m_MediaLibrary.GetCount() > ulMLOldCount)
+										{
+											m_PlaylistManager.SetActivePlaylist(0);
+											for(unsigned long i = ulMLOldCount; i < m_MediaLibrary.GetCount(); i++)
+											{
+												m_MediaLibrary.m_Queue.Append((IPlaylistEntry *)m_MediaLibrary.GetItemByIndex(i));
+											}
+											RebuildFutureMenu();
+										}
+									}
+
+									if(bWantFocus)
+										SetForegroundWindow(hWnd);
+
+									if(bExitAtEnd)
+										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FILE_EXIT, 0), 0);
+
+
 								}
-
-								if(bWantFocus)
-									SetForegroundWindow(hWnd);
-
-								if(bExitAtEnd)
-									SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FILE_EXIT, 0), 0);
-
+								LocalFree(szArglist);
 
 							}
-							LocalFree(szArglist);
-
-						}
-						break;
+							break;
+					}
 				}
 			}
 			break;
@@ -1229,621 +1191,624 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		//menu equal given where possible
 		case WM_COMMAND:
 			{
-				WORD wCmdID = LOWORD(wParam);
-
-				//clicked a different view in menu
-				if(wCmdID >= MENU_BASE && wCmdID <= (MENU_BASE + m_WindowArray.GetCount()))
+				if(wParam)
 				{
-					m_ActiveScreen = wCmdID - MENU_BASE;
+					WORD wCmdID = LOWORD(wParam);
 
-					for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
+					//clicked a different view in menu
+					if(wCmdID >= MENU_BASE && wCmdID <= (MENU_BASE + m_WindowArray.GetCount()))
 					{
-						//dont hide visual windows when showvisart
-						 if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
-							 continue;
+						m_ActiveScreen = wCmdID - MENU_BASE;
 
-						//resize visual window to full screen
-						if(wcscmp(GetActiveScreenName(), L"Visuals") == 0)
+						for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
 						{
-							RECT		rcWindowRect;
-							GetClientRect(hWnd, &rcWindowRect);
-							SendMessage(hWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
-						}
+							//dont hide visual windows when showvisart
+							 if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
+								 continue;
 
-						if(item == m_ActiveScreen)
-							m_WindowArray[item]->Show();
-						else
-							m_WindowArray[item]->Hide();
-
-						//reshow visual window in source view
-						if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
-							m_VisualWindow->Show();
-					}
-
-					return 0;
-				}
-
-				//clicked to create new playlist
-				if(wCmdID >= PLAYLISTMENU_BASE && wCmdID <= (PLAYLISTMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
-				{
-					CCoreAudio::Instance()->Reset();
-					m_SourceSelectorWindow->ShowPlaylistAtIndex(wCmdID - PLAYLISTMENU_BASE);
-					m_PlaylistManager.SetActivePlaylist(wCmdID - PLAYLISTMENU_BASE);
-					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-					if(pPlaylist == NULL)
-						return 0;
-
-					if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-					{
-						((IPlaylistEX *)pPlaylist)->SetActiveFilteredIndex(0);
-					}
-					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
-					return 0;
-				}
-
-				//clicked item inside history menu("previous" button)
-				if(wCmdID >= HISTORYMENU_BASE && wCmdID <= (HISTORYMENU_BASE + m_Preferences.GetHistoryListSize()))
-				{
-					m_History.PlayHistoryItem(wCmdID - HISTORYMENU_BASE);
-					return 0;
-				}
-
-				//clicked item inside future menu("next" button)
-				if(wCmdID >= FUTUREMENU_BASE && wCmdID <= (FUTUREMENU_BASE + m_Preferences.GetFutureListSize()))
-				{
-					unsigned long ulIndex = m_FutureMenu[wCmdID - FUTUREMENU_BASE];
-					if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-					{
-						IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
-						IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
-
-						if(pIPE)
-						{
-							pPlaylistEX->SetActiveFilteredIndex(ulIndex);
-							PlayEntry(pIPE, true, true, true);
-						}
-					}
-				}
-
-				//clicked a different view in tray menu
-				if(wCmdID >= TRAYMENU_BASE && wCmdID <= (TRAYMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
-				{
-					unsigned long m_PlaylistIndex = wCmdID - TRAYMENU_BASE;
-					m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistIndex);
-					m_PlaylistManager.SetActivePlaylist(m_PlaylistIndex);
-				}
-
-
-				switch(wCmdID)
-				{
-					//show tuniac
-					case ID_APP_SHOW:
-						{
-							m_Preferences.SetMainWindowMinimized(false);
-							ShowWindow(hWnd, SW_RESTORE);
-							ShowWindow(hWnd, SW_SHOW);
-							SetForegroundWindow(hWnd);
-						}
-						break;
-
-					//file -> import files
-					case ID_FILE_ADDFILES:
-						{
-							//setup open file dialog
-#define OFNBUFFERSIZE		(32*1024)
-							OPENFILENAME		ofn;
-							TCHAR				szURLBuffer[OFNBUFFERSIZE];
-
-							ZeroMemory(&ofn, sizeof(OPENFILENAME));
-							StringCbCopy(szURLBuffer, OFNBUFFERSIZE, TEXT(""));
-
-							ofn.lStructSize			= sizeof(OPENFILENAME);
-							ofn.hwndOwner			= hWnd;
-							ofn.hInstance			= m_hInstance;
-							ofn.lpstrFilter			= TEXT("All Files\0*.*\0");
-							ofn.lpstrCustomFilter	= NULL;
-							ofn.nMaxCustFilter		= 0;
-							ofn.nFilterIndex		= 0;
-							ofn.lpstrFile			= szURLBuffer;
-							ofn.nMaxFile			= OFNBUFFERSIZE;
-							ofn.lpstrFileTitle		= NULL;
-							ofn.nMaxFileTitle		= 0;
-							ofn.lpstrInitialDir		= NULL;
-							ofn.lpstrTitle			= NULL;
-							ofn.Flags				= OFN_ALLOWMULTISELECT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-
-							//something valid was selected to be opened
-							if(GetOpenFileName(&ofn))
+							//resize visual window to full screen
+							if(wcscmp(GetActiveScreenName(), L"Visuals") == 0)
 							{
-
-								if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
-								{
-									//single file was selected(straight url to file)
-									if(ofn.nFileOffset < lstrlen(szURLBuffer))
-									{
-										m_MediaLibrary.AddItem(szURLBuffer);
-									}
-									//multiple files were selected(path + multiple filenames, need to join)
-									else
-									{
-										TCHAR szFilePath[MAX_PATH];
-										TCHAR szURL[MAX_PATH];
-
-										LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
-
-										StringCbCopy( szFilePath, MAX_PATH, szURLBuffer );
-										while( lstrlen(szOFNName) != 0 )
-										{
-											StringCbCopy( szURL, MAX_PATH, szFilePath );
-											StringCbCat( szURL, MAX_PATH, TEXT("\\") );
-											StringCbCat( szURL, MAX_PATH, szOFNName );
-
-											m_MediaLibrary.AddItem(szURL);
-
-											szOFNName = &szOFNName[lstrlen(szOFNName) + 1];
-										}
-									}
-
-									m_MediaLibrary.EndAdd();
-								}
+								RECT		rcWindowRect;
+								GetClientRect(hWnd, &rcWindowRect);
+								SendMessage(hWnd, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
 							}
-						}
-						break;
 
-					//file -> import directory
-					case ID_FILE_ADDDIRECTORY:
-						{
-							LPMALLOC lpMalloc;  // pointer to IMalloc
+							if(item == m_ActiveScreen)
+								m_WindowArray[item]->Show();
+							else
+								m_WindowArray[item]->Hide();
 
-							if(::SHGetMalloc(&lpMalloc) == NOERROR)
-							{
-								//setup open directory dialog
-								TCHAR szBuffer[1024];
-
-								BROWSEINFO browseInfo;
-								LPITEMIDLIST lpItemIDList;
-
-								browseInfo.hwndOwner		= hWnd;
-								browseInfo.pidlRoot			= NULL; 
-								browseInfo.pszDisplayName	= NULL;
-								browseInfo.lpszTitle		= TEXT("Select a directory...");   // passed in
-								browseInfo.ulFlags			= BIF_RETURNONLYFSDIRS | BIF_USENEWUI;   // also passed in
-								browseInfo.lpfn				= NULL;      // not used
-								browseInfo.lParam			= 0;      // not used   
-
-								if((lpItemIDList = ::SHBrowseForFolder(&browseInfo)) != NULL)
-								{
-									//something valid was selected for open
-									if(::SHGetPathFromIDList(lpItemIDList, szBuffer))
-									{
-										if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
-										{
-											//straight url to directory
-											m_MediaLibrary.AddItem(szBuffer);
-											m_MediaLibrary.EndAdd();
-										}
-									}
-
-									lpMalloc->Free(lpItemIDList);
-								}
-
-								lpMalloc->Release();
-
-							}
-						}
-						break;
-
-					//file -> import stream
-					case ID_FILE_ADDOTHER:
-						{
-							TCHAR szAddBuffer[2048] = TEXT("");
-							if(DialogBoxParam(m_hInstance, MAKEINTRESOURCE(IDD_ADDOTHER), hWnd, (DLGPROC)AddOtherProc, (LPARAM)szAddBuffer))
-							{
-								if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
-								{
-									m_MediaLibrary.AddItem(szAddBuffer);
-									m_MediaLibrary.EndAdd();
-								}
-							}
-						}
-						break;
-
-					//file -> forcesave medialibrary
-					case ID_FILE_FORCESAVEMEDIALIBRARY:
-						{
-							bool bOK;
-							bOK = m_MediaLibrary.SaveMediaLibrary();
-							bOK = m_PlaylistManager.SavePlaylistLibrary() && bOK;
-							
-							if(bOK)
-							{
-								TCHAR szMessage[128];
-								wnsprintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%d entries total.\n%d standard playlists."), 
-												m_MediaLibrary.GetCount(), 
-												m_PlaylistManager.m_StandardPlaylists.GetCount());
-
-								m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
-							}
-						}
-						break;
-
-					//file -> new playlist -> normal playlist
-					case ID_FILE_NEWPLAYLIST_NORMALPLAYLIST:
-						{
-							m_PlaylistManager.CreateNewStandardPlaylist(TEXT("Untitled Playlist"));
-							m_SourceSelectorWindow->UpdateList();
-						}
-						break;
-
-					//file -> new playlist -> smart playlist (not implemented)
-					case ID_FILE_NEWPLAYLIST_SMARTPLAYLIST:
-						{
-						}
-						break;
-
-					//file -> export playlist (import/export plugin save)
-					case ID_FILE_EXPORTPLAYLIST:
-						{
-							if(m_SourceSelectorWindow->GetVisiblePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-							{
-								IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_SourceSelectorWindow->GetVisiblePlaylist();
-								IndexArray indexArray;
-								EntryArray exportArray;
-								/*
-								if(m_SourceSelectorWindow->m_PlaylistSourceView->GetSelectedIndexes(indexArray))
-								{
-									for(unsigned long i = 0; i < indexArray.GetCount(); i++)
-									{
-										IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(indexArray[i]);
-										if(pIPE)
-											exportArray.AddTail(pIPE);
-									}
-								}
-								else*/
-								{
-									// must want to export everything eh???
-
-									for(unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
-									{
-										IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(i);
-										if(pIPE)
-											exportArray.AddTail(pIPE);
-									}
-								}
-								m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
-							}
-						}
-						break;
-
-					//file -> exit
-					case ID_FILE_EXIT:
-						{
-							DestroyWindow(hWnd);
-						}
-						break;
-
-					//edit -> edit track info (not implemented)
-					case ID_EDIT_EDITFILEINFORMATION:
-						{
-							m_SourceSelectorWindow->GetVisibleView()->EditTrackInfo();
-						}
-						break;
-
-					//edit -> show playlist column Selection
-					case ID_EDIT_SHOWCOLUMNSELECTION:
-						{
-							m_SourceSelectorWindow->ShowActiveViewViewOptions(hWnd);
-						}
-						break;
-
-					//edit -> always on top	
-					case ID_EDIT_ALWAYSONTOP:
-						{
-							m_Preferences.SetAlwaysOnTop(!m_Preferences.GetAlwaysOnTop());
-							SetWindowPos(hWnd, m_Preferences.GetAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-						}
-						break;
-
-					//edit -> preferences
-					case ID_EDIT_PREFERENCES:
-						{
-							m_Preferences.ShowPreferences(hWnd, 0);
-
-							CCoreAudio::Instance()->EnableReplayGain(m_Preferences.ReplayGainEnabled());
-							CCoreAudio::Instance()->ReplayGainUseAlbumGain(m_Preferences.ReplayGainUseAlbumGain());
-						}
-						break;
-
-					//help -> about tuniac
-					case ID_HELP_ABOUT:
-						{
-							CAboutWindow about;
-
-							about.Show();
-							//wnsprintf(szAbout, 512, TEXT("Tuniac Audio Player (Beta)\nBuild: %s\n\nBased on code originally developed by Tony Million.\nNow developed by: Blair 'Blur' McBride.\n\n\nContributers (in chronological order):\n\n%s."), TEXT(__DATE__), TEXT(TUNIACABOUT_CONTRIBUTERS));
-						}
-						break;
-
-					//help -> about tuniac
-					case ID_HELP_HOMEPAGE:
-						{
-							ShellExecute(NULL, NULL, TEXT("http://www.tuniac.org/"), NULL, NULL, SW_SHOW);
-						}
-						break;
-
-					//help -> tuniac help
-					case ID_HELP_TUNIACHELP:
-						{
-							//if local help exists, load it, otherwise goto url
-							TCHAR szHelp[512];
-							GetModuleFileName(NULL, szHelp, 512);
-							PathRemoveFileSpec(szHelp);
-							StringCbCat(szHelp, 512, TEXT("\\Guide\\index.html"));
-							if(PathFileExists(szHelp) == FALSE)
-								StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
-
-							ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
-						}
-						break;
-
-					//playback -> show currently paylist track (jump focus to current track)
-					case ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK:
-						{
-							for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
-	 						{
-								//dont hide visual windows when showvisart
-								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
-									continue;
- 								m_WindowArray[item]->Hide();
-	 						}
 							//reshow visual window in source view
 							if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
 								m_VisualWindow->Show();
-
-							m_SourceSelectorWindow->Show();
-							m_SourceSelectorWindow->ShowCurrentlyPlaying();
 						}
-						break;
 
-					//playback -> play / pause
-					case ID_PLAYBACK_PLAYPAUSE:
+						return 0;
+					}
+
+					//clicked to create new playlist
+					if(wCmdID >= PLAYLISTMENU_BASE && wCmdID <= (PLAYLISTMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
+					{
+						CCoreAudio::Instance()->Reset();
+						m_SourceSelectorWindow->ShowPlaylistAtIndex(wCmdID - PLAYLISTMENU_BASE);
+						m_PlaylistManager.SetActivePlaylist(wCmdID - PLAYLISTMENU_BASE);
+						IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+						if(pPlaylist == NULL)
+							return 0;
+
+						if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 						{
-							//if currently playing, PAUSE
-							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+							((IPlaylistEX *)pPlaylist)->SetActiveFilteredIndex(0);
+						}
+						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+						return 0;
+					}
+
+					//clicked item inside history menu("previous" button)
+					if(wCmdID >= HISTORYMENU_BASE && wCmdID <= (HISTORYMENU_BASE + m_Preferences.GetHistoryListSize()))
+					{
+						m_History.PlayHistoryItem(wCmdID - HISTORYMENU_BASE);
+						return 0;
+					}
+
+					//clicked item inside future menu("next" button)
+					if(wCmdID >= FUTUREMENU_BASE && wCmdID <= (FUTUREMENU_BASE + m_Preferences.GetFutureListSize()))
+					{
+						unsigned long ulIndex = m_FutureMenu[wCmdID - FUTUREMENU_BASE];
+						if (m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+						{
+							IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_PlaylistManager.GetActivePlaylist();
+							IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(ulIndex);
+
+							if(pIPE)
 							{
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+								pPlaylistEX->SetActiveFilteredIndex(ulIndex);
+								PlayEntry(pIPE, true, true, true);
 							}
-							//if not playing, PLAY
-							else
+						}
+					}
+
+					//clicked a different view in tray menu
+					if(wCmdID >= TRAYMENU_BASE && wCmdID <= (TRAYMENU_BASE + m_PlaylistManager.GetNumPlaylists()))
+					{
+						unsigned long m_PlaylistIndex = wCmdID - TRAYMENU_BASE;
+						m_SourceSelectorWindow->ShowPlaylistAtIndex(m_PlaylistIndex);
+						m_PlaylistManager.SetActivePlaylist(m_PlaylistIndex);
+					}
+
+
+					switch(wCmdID)
+					{
+						//show tuniac
+						case ID_APP_SHOW:
 							{
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+								m_Preferences.SetMainWindowMinimized(false);
+								ShowWindow(hWnd, SW_RESTORE);
+								ShowWindow(hWnd, SW_SHOW);
+								SetForegroundWindow(hWnd);
 							}
-						}
-						break;
+							break;
 
-					//playback -> stop (coreaudio stop is a "pause", a stop is a "pause" and "rewind")
-					case ID_PLAYBACK_STOP:
-						{
-							CCoreAudio::Instance()->Stop();
-							CCoreAudio::Instance()->SetPosition(0);
-							UpdateState();
-						}
-						break;
+						//file -> import files
+						case ID_FILE_ADDFILES:
+							{
+								//setup open file dialog
+	#define OFNBUFFERSIZE		(32*1024)
+								OPENFILENAME		ofn;
+								TCHAR				szURLBuffer[OFNBUFFERSIZE];
 
-					//playback -> pause (coreaudio stop is a "pause")
-					case ID_PLAYBACK_PAUSE:
-						{
-							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+								ZeroMemory(&ofn, sizeof(OPENFILENAME));
+								StringCbCopy(szURLBuffer, OFNBUFFERSIZE, TEXT(""));
+
+								ofn.lStructSize			= sizeof(OPENFILENAME);
+								ofn.hwndOwner			= hWnd;
+								ofn.hInstance			= m_hInstance;
+								ofn.lpstrFilter			= TEXT("All Files\0*.*\0");
+								ofn.lpstrCustomFilter	= NULL;
+								ofn.nMaxCustFilter		= 0;
+								ofn.nFilterIndex		= 0;
+								ofn.lpstrFile			= szURLBuffer;
+								ofn.nMaxFile			= OFNBUFFERSIZE;
+								ofn.lpstrFileTitle		= NULL;
+								ofn.nMaxFileTitle		= 0;
+								ofn.lpstrInitialDir		= NULL;
+								ofn.lpstrTitle			= NULL;
+								ofn.Flags				= OFN_ALLOWMULTISELECT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+
+								//something valid was selected to be opened
+								if(GetOpenFileName(&ofn))
+								{
+
+									if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+									{
+										//single file was selected(straight url to file)
+										if(ofn.nFileOffset < lstrlen(szURLBuffer))
+										{
+											m_MediaLibrary.AddItem(szURLBuffer);
+										}
+										//multiple files were selected(path + multiple filenames, need to join)
+										else
+										{
+											TCHAR szFilePath[MAX_PATH];
+											TCHAR szURL[MAX_PATH];
+
+											LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
+
+											StringCbCopy( szFilePath, MAX_PATH, szURLBuffer );
+											while( lstrlen(szOFNName) != 0 )
+											{
+												StringCbCopy( szURL, MAX_PATH, szFilePath );
+												StringCbCat( szURL, MAX_PATH, TEXT("\\") );
+												StringCbCat( szURL, MAX_PATH, szOFNName );
+
+												m_MediaLibrary.AddItem(szURL);
+
+												szOFNName = &szOFNName[lstrlen(szOFNName) + 1];
+											}
+										}
+
+										m_MediaLibrary.EndAdd();
+									}
+								}
+							}
+							break;
+
+						//file -> import directory
+						case ID_FILE_ADDDIRECTORY:
+							{
+								LPMALLOC lpMalloc;  // pointer to IMalloc
+
+								if(::SHGetMalloc(&lpMalloc) == NOERROR)
+								{
+									//setup open directory dialog
+									TCHAR szBuffer[1024];
+
+									BROWSEINFO browseInfo;
+									LPITEMIDLIST lpItemIDList;
+
+									browseInfo.hwndOwner		= hWnd;
+									browseInfo.pidlRoot			= NULL; 
+									browseInfo.pszDisplayName	= NULL;
+									browseInfo.lpszTitle		= TEXT("Select a directory...");   // passed in
+									browseInfo.ulFlags			= BIF_RETURNONLYFSDIRS | BIF_USENEWUI;   // also passed in
+									browseInfo.lpfn				= NULL;      // not used
+									browseInfo.lParam			= 0;      // not used   
+
+									if((lpItemIDList = ::SHBrowseForFolder(&browseInfo)) != NULL)
+									{
+										//something valid was selected for open
+										if(::SHGetPathFromIDList(lpItemIDList, szBuffer))
+										{
+											if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+											{
+												//straight url to directory
+												m_MediaLibrary.AddItem(szBuffer);
+												m_MediaLibrary.EndAdd();
+											}
+										}
+
+										lpMalloc->Free(lpItemIDList);
+									}
+
+									lpMalloc->Release();
+
+								}
+							}
+							break;
+
+						//file -> import stream
+						case ID_FILE_ADDOTHER:
+							{
+								TCHAR szAddBuffer[2048] = TEXT("");
+								if(DialogBoxParam(m_hInstance, MAKEINTRESOURCE(IDD_ADDOTHER), hWnd, (DLGPROC)AddOtherProc, (LPARAM)szAddBuffer))
+								{
+									if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+									{
+										m_MediaLibrary.AddItem(szAddBuffer);
+										m_MediaLibrary.EndAdd();
+									}
+								}
+							}
+							break;
+
+						//file -> forcesave medialibrary
+						case ID_FILE_FORCESAVEMEDIALIBRARY:
+							{
+								bool bOK;
+								bOK = m_MediaLibrary.SaveMediaLibrary();
+								bOK = m_PlaylistManager.SavePlaylistLibrary() && bOK;
+							
+								if(bOK)
+								{
+									TCHAR szMessage[128];
+									wnsprintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%d entries total.\n%d standard playlists."), 
+													m_MediaLibrary.GetCount(), 
+													m_PlaylistManager.m_StandardPlaylists.GetCount());
+
+									m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+								}
+							}
+							break;
+
+						//file -> new playlist -> normal playlist
+						case ID_FILE_NEWPLAYLIST_NORMALPLAYLIST:
+							{
+								m_PlaylistManager.CreateNewStandardPlaylist(TEXT("Untitled Playlist"));
+								m_SourceSelectorWindow->UpdateList();
+							}
+							break;
+
+						//file -> new playlist -> smart playlist (not implemented)
+						case ID_FILE_NEWPLAYLIST_SMARTPLAYLIST:
+							{
+							}
+							break;
+
+						//file -> export playlist (import/export plugin save)
+						case ID_FILE_EXPORTPLAYLIST:
+							{
+								if(m_SourceSelectorWindow->GetVisiblePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+								{
+									IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_SourceSelectorWindow->GetVisiblePlaylist();
+									IndexArray indexArray;
+									EntryArray exportArray;
+									/*
+									if(m_SourceSelectorWindow->m_PlaylistSourceView->GetSelectedIndexes(indexArray))
+									{
+										for(unsigned long i = 0; i < indexArray.GetCount(); i++)
+										{
+											IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(indexArray[i]);
+											if(pIPE)
+												exportArray.AddTail(pIPE);
+										}
+									}
+									else*/
+									{
+										// must want to export everything eh???
+
+										for(unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
+										{
+											IPlaylistEntry * pIPE = pPlaylistEX->GetItemAtFilteredIndex(i);
+											if(pIPE)
+												exportArray.AddTail(pIPE);
+										}
+									}
+									m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
+								}
+							}
+							break;
+
+						//file -> exit
+						case ID_FILE_EXIT:
+							{
+								DestroyWindow(hWnd);
+							}
+							break;
+
+						//edit -> edit track info (not implemented)
+						case ID_EDIT_EDITFILEINFORMATION:
+							{
+								m_SourceSelectorWindow->GetVisibleView()->EditTrackInfo();
+							}
+							break;
+
+						//edit -> show playlist column Selection
+						case ID_EDIT_SHOWCOLUMNSELECTION:
+							{
+								m_SourceSelectorWindow->ShowActiveViewViewOptions(hWnd);
+							}
+							break;
+
+						//edit -> always on top	
+						case ID_EDIT_ALWAYSONTOP:
+							{
+								m_Preferences.SetAlwaysOnTop(!m_Preferences.GetAlwaysOnTop());
+								SetWindowPos(hWnd, m_Preferences.GetAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							}
+							break;
+
+						//edit -> preferences
+						case ID_EDIT_PREFERENCES:
+							{
+								m_Preferences.ShowPreferences(hWnd, 0);
+
+								CCoreAudio::Instance()->EnableReplayGain(m_Preferences.ReplayGainEnabled());
+								CCoreAudio::Instance()->ReplayGainUseAlbumGain(m_Preferences.ReplayGainUseAlbumGain());
+							}
+							break;
+
+						//help -> about tuniac
+						case ID_HELP_ABOUT:
+							{
+								CAboutWindow about;
+
+								about.Show();
+								//wnsprintf(szAbout, 512, TEXT("Tuniac Audio Player (Beta)\nBuild: %s\n\nBased on code originally developed by Tony Million.\nNow developed by: Blair 'Blur' McBride.\n\n\nContributers (in chronological order):\n\n%s."), TEXT(__DATE__), TEXT(TUNIACABOUT_CONTRIBUTERS));
+							}
+							break;
+
+						//help -> about tuniac
+						case ID_HELP_HOMEPAGE:
+							{
+								ShellExecute(NULL, NULL, TEXT("http://www.tuniac.org/"), NULL, NULL, SW_SHOW);
+							}
+							break;
+
+						//help -> tuniac help
+						case ID_HELP_TUNIACHELP:
+							{
+								//if local help exists, load it, otherwise goto url
+								TCHAR szHelp[512];
+								GetModuleFileName(NULL, szHelp, 512);
+								PathRemoveFileSpec(szHelp);
+								StringCbCat(szHelp, 512, TEXT("\\Guide\\index.html"));
+								if(PathFileExists(szHelp) == FALSE)
+									StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
+
+								ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
+							}
+							break;
+
+						//playback -> show currently paylist track (jump focus to current track)
+						case ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK:
+							{
+								for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
+	 							{
+									//dont hide visual windows when showvisart
+									if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
+										continue;
+ 									m_WindowArray[item]->Hide();
+	 							}
+								//reshow visual window in source view
+								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
+									m_VisualWindow->Show();
+
+								m_SourceSelectorWindow->Show();
+								m_SourceSelectorWindow->ShowCurrentlyPlaying();
+							}
+							break;
+
+						//playback -> play / pause
+						case ID_PLAYBACK_PLAYPAUSE:
+							{
+								//if currently playing, PAUSE
+								if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+								{
+									SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+								}
+								//if not playing, PLAY
+								else
+								{
+									SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
+								}
+							}
+							break;
+
+						//playback -> stop (coreaudio stop is a "pause", a stop is a "pause" and "rewind")
+						case ID_PLAYBACK_STOP:
 							{
 								CCoreAudio::Instance()->Stop();
+								CCoreAudio::Instance()->SetPosition(0);
 								UpdateState();
 							}
-						}
-						break;
+							break;
 
-					//playback -> play
-					case ID_PLAYBACK_PLAY:
-						{
-							//if only paused we can simply play again
-							if(CCoreAudio::Instance()->Play())
+						//playback -> pause (coreaudio stop is a "pause")
+						case ID_PLAYBACK_PAUSE:
 							{
-								UpdateState();
-								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+								if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+								{
+									CCoreAudio::Instance()->Stop();
+									UpdateState();
+								}
 							}
-							else
+							break;
+
+						//playback -> play
+						case ID_PLAYBACK_PLAY:
+							{
+								//if only paused we can simply play again
+								if(CCoreAudio::Instance()->Play())
+								{
+									UpdateState();
+									m_PluginManager.PostMessage(PLUGINNOTIFY_SONGPLAY, NULL, NULL);
+								}
+								else
+								{
+									IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+
+									//play the current song
+									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+									if(pIPE)
+									{
+										PlayEntry(pIPE, true, true, true);
+									}
+								}
+
+							}
+							break;
+
+						//playback -> softpause (on/off)
+						case ID_PLAYBACK_SOFTPAUSE:
+							{
+								m_SoftPause.bNow = !m_SoftPause.bNow;
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+							}
+							break;
+
+						//playback -> next
+						case ID_PLAYBACK_NEXT:
 							{
 								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 
-								//play the current song
-								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-								if(pIPE)
-								{
-									PlayEntry(pIPE, true, true, true);
-								}
-							}
-
-						}
-						break;
-
-					//playback -> softpause (on/off)
-					case ID_PLAYBACK_SOFTPAUSE:
-						{
-							m_SoftPause.bNow = !m_SoftPause.bNow;
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-						}
-						break;
-
-					//playback -> next
-					case ID_PLAYBACK_NEXT:
-						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-
-							//try next song for non crossfade mode
-							//do we have a valid next song, if not we have run out of songs(end of playlist?)
-							if(pPlaylist->Next())
-							{
-								//play the current song
-								IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-								if(pIPE)
-								{
-									PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
-								}
-							}
-						}
-						break;
-
-					//playback -> random next (toggle random for a moment to get a new random song, or if already random, next logical song)
-					case ID_PLAYBACK_RANDOMNEXT:
-						{
-							bool bWasShuffle = m_Preferences.GetShuffleState();
-							m_Preferences.SetShuffleState(!bWasShuffle);
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
-							m_Preferences.SetShuffleState(bWasShuffle);
-						}
-						break;
-
-					//playback -> previous
-					case ID_PLAYBACK_PREVIOUS:
-						{
-							//still at start, skip backwards
-							if(CCoreAudio::Instance()->GetPosition() < 3500)
-							{
-								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 								//try next song for non crossfade mode
 								//do we have a valid next song, if not we have run out of songs(end of playlist?)
-								if(pPlaylist->Previous())
+								if(pPlaylist->Next())
 								{
 									//play the current song
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 									if(pIPE)
+									{
 										PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
+									}
 								}
-								//no valid previous song?, simply rewind
+							}
+							break;
+
+						//playback -> random next (toggle random for a moment to get a new random song, or if already random, next logical song)
+						case ID_PLAYBACK_RANDOMNEXT:
+							{
+								bool bWasShuffle = m_Preferences.GetShuffleState();
+								m_Preferences.SetShuffleState(!bWasShuffle);
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+								m_Preferences.SetShuffleState(bWasShuffle);
+							}
+							break;
+
+						//playback -> previous
+						case ID_PLAYBACK_PREVIOUS:
+							{
+								//still at start, skip backwards
+								if(CCoreAudio::Instance()->GetPosition() < 3500)
+								{
+									IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+									//try next song for non crossfade mode
+									//do we have a valid next song, if not we have run out of songs(end of playlist?)
+									if(pPlaylist->Previous())
+									{
+										//play the current song
+										IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
+										if(pIPE)
+											PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
+									}
+									//no valid previous song?, simply rewind
+									else
+									{
+										CCoreAudio::Instance()->SetPosition(0);
+									}
+								}
+								//past start of song, simply rewind
 								else
 								{
 									CCoreAudio::Instance()->SetPosition(0);
 								}
 							}
-							//past start of song, simply rewind
-							else
+							break;
+
+						//playback -> previous by history
+						case ID_PLAYBACK_PREVIOUS_BYHISTORY:
 							{
-								CCoreAudio::Instance()->SetPosition(0);
+								if(m_History.GetCount() > 1)
+									m_History.PlayHistoryItem(1);
 							}
-						}
-						break;
+							break;
 
-					//playback -> previous by history
-					case ID_PLAYBACK_PREVIOUS_BYHISTORY:
-						{
-							if(m_History.GetCount() > 1)
-								m_History.PlayHistoryItem(1);
-						}
-						break;
+						//playback -> seek forward (750ms at a time)
+						case ID_PLAYBACK_SEEKFORWARD:
+							{
+								unsigned long pos = CCoreAudio::Instance()->GetPosition() + 750;
+								CCoreAudio::Instance()->SetPosition(pos);
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
+							}
+							break;
 
-					//playback -> seek forward (750ms at a time)
-					case ID_PLAYBACK_SEEKFORWARD:
-						{
-							unsigned long pos = CCoreAudio::Instance()->GetPosition() + 750;
-							CCoreAudio::Instance()->SetPosition(pos);
-							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
-						}
-						break;
+						//playback -> seekback (1300ms at a time)
+						case ID_PLAYBACK_SEEKBACK:
+							{
+								unsigned long pos;
+								if(CCoreAudio::Instance()->GetPosition() < 1300)
+									pos = 0;
+								else
+									pos = CCoreAudio::Instance()->GetPosition() - 1300;
+								CCoreAudio::Instance()->SetPosition(pos);
+								m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
+							}
+							break;
 
-					//playback -> seekback (1300ms at a time)
-					case ID_PLAYBACK_SEEKBACK:
-						{
-							unsigned long pos;
-							if(CCoreAudio::Instance()->GetPosition() < 1300)
-								pos = 0;
-							else
-								pos = CCoreAudio::Instance()->GetPosition() - 1300;
-							CCoreAudio::Instance()->SetPosition(pos);
-							m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
-						}
-						break;
+						//toggle shuffle mode
+						case ID_PLAYBACK_TOGGLE_SHUFFLE:
+							{
+								m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
 
-					//toggle shuffle mode
-					case ID_PLAYBACK_TOGGLE_SHUFFLE:
-						{
-							m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
+						//toggle repeat mode
+						case ID_PLAYBACK_TOGGLE_REPEAT:
+							{
+								if(m_Preferences.GetRepeatMode() == RepeatNone)
+									m_Preferences.SetRepeatMode(RepeatOne);
+								else if(m_Preferences.GetRepeatMode() == RepeatOne)
+									m_Preferences.SetRepeatMode(RepeatAll);
+								else if(m_Preferences.GetRepeatMode() == RepeatAll)
+									m_Preferences.SetRepeatMode(RepeatNone);
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
 
-					//toggle repeat mode
-					case ID_PLAYBACK_TOGGLE_REPEAT:
-						{
-							if(m_Preferences.GetRepeatMode() == RepeatNone)
-								m_Preferences.SetRepeatMode(RepeatOne);
-							else if(m_Preferences.GetRepeatMode() == RepeatOne)
-								m_Preferences.SetRepeatMode(RepeatAll);
-							else if(m_Preferences.GetRepeatMode() == RepeatAll)
+						//clear play queue
+						case ID_PLAYBACK_CLEARQUEUE:
+							{
+								m_MediaLibrary.m_Queue.Clear();
+								if(m_Preferences.GetRepeatMode() == RepeatAllQueued)
+								{
+									m_Preferences.SetRepeatMode(RepeatAll);
+									SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								}
+								RebuildFutureMenu();
+							}
+							break;
+
+						//clear soft pause
+						case ID_PLAYBACK_CLEARPAUSEAT:
+							{
+								m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
+
+						//turn off repeat
+						case ID_REPEAT_OFF:
+							{
 								m_Preferences.SetRepeatMode(RepeatNone);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
 
-					//clear play queue
-					case ID_PLAYBACK_CLEARQUEUE:
-						{
-							m_MediaLibrary.m_Queue.Clear();
-							if(m_Preferences.GetRepeatMode() == RepeatAllQueued)
+						//turn on repeat track
+						case ID_REPEAT_ONETRACK:
+							{
+								m_Preferences.SetRepeatMode(RepeatOne);
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
+
+						//turn on repeat all
+						case ID_REPEAT_ALLTRACKS:
 							{
 								m_Preferences.SetRepeatMode(RepeatAll);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
 							}
-							RebuildFutureMenu();
-						}
-						break;
+							break;
 
-					//clear soft pause
-					case ID_PLAYBACK_CLEARPAUSEAT:
-						{
-							m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
-
-					//turn off repeat
-					case ID_REPEAT_OFF:
-						{
-							m_Preferences.SetRepeatMode(RepeatNone);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
-
-					//turn on repeat track
-					case ID_REPEAT_ONETRACK:
-						{
-							m_Preferences.SetRepeatMode(RepeatOne);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
-
-					//turn on repeat all
-					case ID_REPEAT_ALLTRACKS:
-						{
-							m_Preferences.SetRepeatMode(RepeatAll);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
-
-					//turn on repeat queued
-					case ID_REPEAT_ALLQUEUED:
-						{
-							m_Preferences.SetRepeatMode(RepeatAllQueued);
-							SendMessage(hWnd, WM_MENUSELECT, 0, 0);
-							RebuildFutureMenu();
-						}
-						break;
+						//turn on repeat queued
+						case ID_REPEAT_ALLQUEUED:
+							{
+								m_Preferences.SetRepeatMode(RepeatAllQueued);
+								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								RebuildFutureMenu();
+							}
+							break;
+					}
 				}
 			}
 			break;

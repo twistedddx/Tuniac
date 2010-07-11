@@ -1040,22 +1040,30 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 
 					case IDC_FILEASSOC_SETDEFAULT:
 						{
-//todo dynamically work this out!! Vista minimum.
-#if(_WIN32_WINNT >= 0x600)
-							HRESULT res;
-							IApplicationAssociationRegistrationUI *aarui;
-							res = CoCreateInstance(
-								CLSID_ApplicationAssociationRegistrationUI, 0,
-								CLSCTX_INPROC_SERVER,
-								IID_IApplicationAssociationRegistrationUI, (LPVOID*)&aarui);
+							OSVERSIONINFO osvi;
+							ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+							osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 
-							if (SUCCEEDED(res) && aarui != 0)
+							GetVersionEx(&osvi);
+
+							if(osvi.dwMajorVersion >= 6)
 							{
-								// We can call the Vista-style UI for registrations
-								aarui->LaunchAdvancedAssociationUI(L"Tuniac");
-								aarui->Release();
+								HRESULT res;
+								IApplicationAssociationRegistrationUI *aarui;
+								res = CoCreateInstance(
+									CLSID_ApplicationAssociationRegistrationUI,
+									0,
+									CLSCTX_INPROC_SERVER,
+									IID_IApplicationAssociationRegistrationUI,
+									(LPVOID*)&aarui);
+
+								if (SUCCEEDED(res) && aarui != 0)
+								{
+									// We can call the Vista-style UI for registrations
+									aarui->LaunchAdvancedAssociationUI(L"Tuniac");
+									aarui->Release();
+								}
 							}
-#endif
 						}
 						break;
 

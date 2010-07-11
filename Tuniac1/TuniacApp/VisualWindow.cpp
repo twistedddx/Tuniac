@@ -444,7 +444,7 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
 								SetParent(hWnd, m_hParentWnd);
-								SetWindowPos(hWnd, 0, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
+								SetWindowPos(hWnd, HWND_TOP, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
 
 								SetCursor(LoadCursor(NULL, IDC_ARROW));
 
@@ -461,8 +461,8 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
 								SetParent(hWnd, NULL);
-								SetWindowPos(hWnd, 0, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
-								
+								SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
+								SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING);
 								m_bFullScreen = true;
 
 								SetTimer(hWnd, 0, MOUSE_TIMEOUT, NULL);
