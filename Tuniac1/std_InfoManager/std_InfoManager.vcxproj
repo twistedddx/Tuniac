@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D77CC4A5-6510-4CC2-8087-4B505E201324}</ProjectGuid>
-    <RootNamespace>ape_InfoManager</RootNamespace>
+    <ProjectGuid>{D1FD9348-BB12-4357-AD7E-17089D89C5E6}</ProjectGuid>
+    <RootNamespace>std_InfoManager</RootNamespace>
     <Keyword>ManagedCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -87,11 +87,19 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\taglib;D:\Code\taglib\win32;D:\Code\taglib\asf;D:\Code\taglib\ape;D:\Code\taglib\flac;D:\Code\taglib\mp4;D:\Code\taglib\mpc;D:\Code\taglib\mpeg;D:\Code\taglib\mpeg\id3v1;D:\Code\taglib\mpeg\id3v2;D:\Code\taglib\mpeg\id3v2\frames;D:\Code\taglib\ogg;D:\Code\taglib\ogg\flac;D:\Code\taglib\ogg\speex;D:\Code\taglib\ogg\vorbis;D:\Code\taglib\riff;D:\Code\taglib\riff\aiff;D:\Code\taglib\riff\wav;D:\Code\taglib\toolkit;D:\Code\taglib\trueaudio;D:\Code\taglib\wavpack;D:\Code\portaudio\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\taglib\win32\Win32\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\taglib\win32\x64\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\taglib\win32\Win32\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\taglib\win32\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\taglib;D:\Code\taglib\win32;D:\Code\taglib\asf;D:\Code\taglib\ape;D:\Code\taglib\flac;D:\Code\taglib\mp4;D:\Code\taglib\mpc;D:\Code\taglib\mpeg;D:\Code\taglib\mpeg\id3v1;D:\Code\taglib\mpeg\id3v2;D:\Code\taglib\mpeg\id3v2\frames;D:\Code\taglib\ogg;D:\Code\taglib\ogg\flac;D:\Code\taglib\ogg\speex;D:\Code\taglib\ogg\vorbis;D:\Code\taglib\riff;D:\Code\taglib\riff\aiff;D:\Code\taglib\riff\wav;D:\Code\taglib\toolkit;D:\Code\taglib\trueaudio;D:\Code\taglib\wavpack;D:\Code\portaudio\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\taglib;D:\Code\taglib\win32;D:\Code\taglib\asf;D:\Code\taglib\ape;D:\Code\taglib\flac;D:\Code\taglib\mp4;D:\Code\taglib\mpc;D:\Code\taglib\mpeg;D:\Code\taglib\mpeg\id3v1;D:\Code\taglib\mpeg\id3v2;D:\Code\taglib\mpeg\id3v2\frames;D:\Code\taglib\ogg;D:\Code\taglib\ogg\flac;D:\Code\taglib\ogg\speex;D:\Code\taglib\ogg\vorbis;D:\Code\taglib\riff;D:\Code\taglib\riff\aiff;D:\Code\taglib\riff\wav;D:\Code\taglib\toolkit;D:\Code\taglib\trueaudio;D:\Code\taglib\wavpack;D:\Code\portaudio\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\taglib;D:\Code\taglib\win32;D:\Code\taglib\asf;D:\Code\taglib\ape;D:\Code\taglib\flac;D:\Code\taglib\mp4;D:\Code\taglib\mpc;D:\Code\taglib\mpeg;D:\Code\taglib\mpeg\id3v1;D:\Code\taglib\mpeg\id3v2;D:\Code\taglib\mpeg\id3v2\frames;D:\Code\taglib\ogg;D:\Code\taglib\ogg\flac;D:\Code\taglib\ogg\speex;D:\Code\taglib\ogg\vorbis;D:\Code\taglib\riff;D:\Code\taglib\riff\aiff;D:\Code\taglib\riff\wav;D:\Code\taglib\toolkit;D:\Code\taglib\trueaudio;D:\Code\taglib\wavpack;D:\Code\portaudio\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../TuniacApp;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;TAGLIB_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -99,13 +107,12 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;taglib(static)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -113,21 +120,21 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;TAGLIB_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;taglib(static)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,20 +143,18 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;TAGLIB_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;taglib(static).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <TargetMachine>MachineX86</TargetMachine>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,42 +166,27 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../TuniacApp;.;./TagLib;./TagLib/toolkit;./TagLib/mpeg;./TagLib/mpeg/id3v1;./TagLib/mpeg/id3v2;./TagLib/ogg;./TagLib/ogg/speex;./TagLib/ogg/vorbis;./TagLib/ape;./TagLib/mpc;./TagLib/flac;./TagLib/mp4;./TagLib/wavpack;./Taglib/ogg/flac;./Taglib/trueaudio;./Taglib/asf;./Taglib/riff;./Taglib/riff/aiff;./Taglib/riff/wav;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;TAGLIB_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;taglib(static).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="APEDecoder.cpp" />
-    <ClCompile Include="APEDecoderPlugin.cpp" />
-    <ClCompile Include="APEInfoManager.cpp" />
-    <ClCompile Include="apePlugin.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="STDInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="APEDecoder.h" />
-    <ClInclude Include="APEDecoderPlugin.h" />
-    <ClInclude Include="APEInfoManager.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="..\ape_SDK\All.h" />
-    <ClInclude Include="..\ape_SDK\APETag.h" />
-    <ClInclude Include="..\ape_SDK\MACLib.h" />
-    <ClInclude Include="..\ape_SDK\SmartPtr.h" />
-    <ClInclude Include="..\ape_SDK\WindowsEnvironment.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\ape_SDK\MACLib.lib" />
-    <Library Include="..\ape_SDK\MACLib64.lib" />
+    <ClInclude Include="STDInfoManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

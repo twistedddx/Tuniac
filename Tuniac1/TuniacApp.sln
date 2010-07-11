@@ -1,58 +1,58 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TuniacApp", "TuniacApp\TuniacApp.vcproj", "{97CC9F89-20A5-454D-A824-030021ADFD15}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TuniacApp", "TuniacApp\TuniacApp.vcxproj", "{97CC9F89-20A5-454D-A824-030021ADFD15}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ape_Plugin", "ape_Plugin\ape_Plugin.vcproj", "{D77CC4A5-6510-4CC2-8087-4B505E201324}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ape_Plugin", "ape_Plugin\ape_Plugin.vcxproj", "{D77CC4A5-6510-4CC2-8087-4B505E201324}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m3u_Plugin", "m3u_Plugin\m3u_Plugin.vcproj", "{63870483-72AA-4286-829C-ACDD048B00F8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m3u_Plugin", "m3u_Plugin\m3u_Plugin.vcxproj", "{63870483-72AA-4286-829C-ACDD048B00F8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m4a_Plugin", "m4a_Plugin\m4a_Plugin.vcproj", "{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m4a_Plugin", "m4a_Plugin\m4a_Plugin.vcxproj", "{5843FC51-E3EA-4C63-B954-DD6ED69E4DDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3streamer_Plugin", "mp3streamer_Plugin\mp3streamer_Plugin.vcproj", "{62528D67-C778-4582-8C41-7A99E2C3527D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3streamer_Plugin", "mp3streamer_Plugin\mp3streamer_Plugin.vcxproj", "{62528D67-C778-4582-8C41-7A99E2C3527D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSNInfo_Plugin", "MSNInfo\MSNInfo.vcproj", "{E2E626FD-694B-40D0-B088-D84615FA7B70}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSNInfo_Plugin", "MSNInfo\MSNInfo.vcxproj", "{E2E626FD-694B-40D0-B088-D84615FA7B70}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NowPlayingTxt_Plugin", "NowPlayingTxt\NowPlayingTxt.vcproj", "{F5B70CFE-5F0D-4C02-8725-142E860D53F6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NowPlayingTxt_Plugin", "NowPlayingTxt\NowPlayingTxt.vcxproj", "{F5B70CFE-5F0D-4C02-8725-142E860D53F6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ogg_Plugin", "ogg_Plugin\ogg_Plugin.vcproj", "{1FCCD4B9-FF04-4CDD-96A5-E2490CCF6365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ogg_Plugin", "ogg_Plugin\ogg_Plugin.vcxproj", "{1FCCD4B9-FF04-4CDD-96A5-E2490CCF6365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pls_Plugin", "pls_Plugin\pls_Plugin.vcproj", "{73541A64-9540-425D-B97F-6011486D1DB9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pls_Plugin", "pls_Plugin\pls_Plugin.vcxproj", "{73541A64-9540-425D-B97F-6011486D1DB9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PopupNotify_Plugin", "PopupNotify\PopupNotify.vcproj", "{466FE8B7-1602-48EA-92CF-935704656315}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PopupNotify_Plugin", "PopupNotify\PopupNotify.vcxproj", "{466FE8B7-1602-48EA-92CF-935704656315}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3_Plugin", "mp3_Plugin\mp3_Plugin.vcproj", "{10E62D73-EDAD-4612-B4E9-9589E054F67C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3_Plugin", "mp3_Plugin\mp3_Plugin.vcxproj", "{10E62D73-EDAD-4612-B4E9-9589E054F67C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CDDAReader", "CDDAReader\CDDAReader.vcproj", "{66602221-E22B-474E-BF6B-0EA4856342DF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CDDAReader", "CDDAReader\CDDAReader.vcxproj", "{66602221-E22B-474E-BF6B-0EA4856342DF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPVisualPlugin", "SVPVisualPlugin\SVPVisualPlugin.vcproj", "{EFA8E165-C0CD-49D5-B858-8FEB86A9AEF5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPVisualPlugin", "SVPVisualPlugin\SVPVisualPlugin.vcxproj", "{EFA8E165-C0CD-49D5-B858-8FEB86A9AEF5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_InfoManager", "std_InfoManager\std_InfoManager.vcproj", "{D1FD9348-BB12-4357-AD7E-17089D89C5E6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_InfoManager", "std_InfoManager\std_InfoManager.vcxproj", "{D1FD9348-BB12-4357-AD7E-17089D89C5E6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FLAC_Plugin", "FLAC_Plugin\FLAC_Plugin.vcproj", "{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FLAC_Plugin", "FLAC_Plugin\FLAC_Plugin.vcxproj", "{40B3BC3B-4544-4E6B-8AAE-A4ECF8F602CB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mpc_Plugin", "mpc_Plugin\mpc_Plugin.vcproj", "{1FCCD4B9-FF74-4CDD-96E5-E2290CCF6365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mpc_Plugin", "mpc_Plugin\mpc_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E5-E2290CCF6365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wv_Plugin", "wv_Plugin\WVDecoder.vcproj", "{1FBA3217-FF74-4CDD-96E5-E2294CCF6365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wv_Plugin", "wv_Plugin\WVDecoder.vcxproj", "{1FBA3217-FF74-4CDD-96E5-E2294CCF6365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wav_Plugin", "wav_Plugin\wav_Plugin.vcproj", "{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wav_Plugin", "wav_Plugin\wav_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "alac_Plugin", "alac_Plugin\alac_Plugin.vcproj", "{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "alac_Plugin", "alac_Plugin\alac_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofr_Plugin", "ofr_Plugin\ofr_Plugin.vcproj", "{1FCCD4B9-FF74-4CDD-96E2-E2625CCF2565}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofr_Plugin", "ofr_Plugin\ofr_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E2-E2625CCF2565}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tta_Plugin", "tta_Plugin\tta_Plugin.vcproj", "{1FCCD4B9-FF74-4CDD-96E2-E2694CCF7265}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tta_Plugin", "tta_Plugin\tta_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E2-E2694CCF7265}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tak_Plugin", "tak_Plugin\tak_Plugin.vcproj", "{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tak_Plugin", "tak_Plugin\tak_Plugin.vcxproj", "{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFN_Exporter", "NFN_Exporter\NFN_Exporter.vcproj", "{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFN_Exporter", "NFN_Exporter\NFN_Exporter.vcxproj", "{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wma_Plugin", "wma_Plugin\WMADecoder.vcproj", "{1FBA3217-FF74-4CDD-96E5-E2294CCF6364}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wma_Plugin", "wma_Plugin\WMADecoder.vcxproj", "{1FBA3217-FF74-4CDD-96E5-E2294CCF6364}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shn_Plugin", "shn_Plugin\shn_Decoder.vcproj", "{1FBA4217-FF74-4CDA-96E5-E2294CCF6364}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shn_Plugin", "shn_Plugin\shn_Decoder.vcxproj", "{1FBA4217-FF74-4CDA-96E5-E2294CCF6364}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bass_Plugin", "bass_Plugin\BASSDecoder.vcproj", "{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bass_Plugin", "bass_Plugin\BASSDecoder.vcxproj", "{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mIRCSpammer_Plugin", "mIRCSpammer\mIRCSpammer.vcproj", "{3EA65DF6-01ED-43CB-9EC6-C6F85306C0A5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mIRCSpammer_Plugin", "mIRCSpammer\mIRCSpammer.vcxproj", "{3EA65DF6-01ED-43CB-9EC6-C6F85306C0A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,13 +71,9 @@ Global
 		{97CC9F89-20A5-454D-A824-030021ADFD15}.Release|x64.ActiveCfg = Release|x64
 		{97CC9F89-20A5-454D-A824-030021ADFD15}.Release|x64.Build.0 = Release|x64
 		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Debug|Win32.Build.0 = Debug|Win32
 		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Debug|x64.ActiveCfg = Debug|x64
-		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Debug|x64.Build.0 = Debug|x64
 		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Release|Win32.ActiveCfg = Release|Win32
-		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Release|Win32.Build.0 = Release|Win32
 		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Release|x64.ActiveCfg = Release|x64
-		{D77CC4A5-6510-4CC2-8087-4B505E201324}.Release|x64.Build.0 = Release|x64
 		{63870483-72AA-4286-829C-ACDD048B00F8}.Debug|Win32.ActiveCfg = Debug|Win32
 		{63870483-72AA-4286-829C-ACDD048B00F8}.Debug|Win32.Build.0 = Debug|Win32
 		{63870483-72AA-4286-829C-ACDD048B00F8}.Debug|x64.ActiveCfg = Debug|x64
@@ -165,13 +161,9 @@ Global
 		{1FBA3217-FF74-4CDD-96E5-E2294CCF6365}.Release|Win32.ActiveCfg = Release|Win32
 		{1FBA3217-FF74-4CDD-96E5-E2294CCF6365}.Release|x64.ActiveCfg = Release|x64
 		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Debug|Win32.Build.0 = Debug|Win32
 		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Debug|x64.ActiveCfg = Debug|x64
-		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Debug|x64.Build.0 = Debug|x64
 		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Release|Win32.ActiveCfg = Release|Win32
-		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Release|Win32.Build.0 = Release|Win32
 		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Release|x64.ActiveCfg = Release|x64
-		{1FCCD4B9-FF74-4CDD-96E5-E5630CCF6365}.Release|x64.Build.0 = Release|x64
 		{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}.Debug|Win32.Build.0 = Debug|Win32
 		{1FCCD4B9-FF74-4CDD-96E2-E2630CCF1365}.Debug|x64.ActiveCfg = Debug|x64
