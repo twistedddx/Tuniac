@@ -16,6 +16,7 @@
 #include "asffile.h"
 #include "aifffile.h"
 #include "wavfile.h"
+#include "apefile.h"
 
 #include "id3v1tag.h"
 #include "id3v2tag.h"
@@ -44,6 +45,7 @@ protected:
 	TagLib::ASF::File *wmafile;
 	TagLib::RIFF::AIFF::File *aiffile;
 	TagLib::RIFF::WAV::File *wavfile;
+	TagLib::APE::File *apefile;
 
 public:
 	CSTDInfoManager(void);
