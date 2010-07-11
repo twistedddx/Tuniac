@@ -46,7 +46,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 19;
+	return 21;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -71,8 +71,9 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".tta"),
 		TEXT(".spx"),
 		TEXT(".aif"),
-		TEXT(".aiff")//,
-		//TEXT(".wav")
+		TEXT(".aiff"),
+		TEXT(".wav"),
+		TEXT(".ape")
 	};
 
 	return exts[ulExtentionNum];
@@ -105,8 +106,11 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(aiffile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileref.file() ))
 			return true;
-		//else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
-			//return true;
+		else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
+			return true;
+		else if(apefile = dynamic_cast<TagLib::APE::File *>( fileref.file() ))
+			return true;
+
 	}
 
 	return false;
@@ -120,7 +124,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	TagLib::ID3v2::FrameListMap id3v2Tag;
 	TagLib::MP4::ItemListMap mp4Tag;
 	TagLib::ASF::AttributeListMap wmaTag;
-
+	
 	TagLib::AudioProperties *audprops = 0;
 	TagLib::Tag *tag = 0;
 
@@ -198,6 +202,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(wmafile->tag())
 			wmaTag = wmafile->tag()->attributeListMap();
+	}
+	else if(apefile)
+	{
+		if(apefile->APETag())
+			apeTag = apefile->APETag()->itemListMap();
 	}
 
 	if(!id3v2Tag.isEmpty())
@@ -371,6 +380,13 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
 			if(flacfile->ID3v2Tag()) 
 				count = flacfile->ID3v2Tag()->frameListMap()["APIC"].size();
 		}
+		/*
+		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+		{
+			if(wmafile->tag());
+				count = wmafile->tag()->attributeListMap()["WM/Picture"].size();
+		}
+		*/
 	}
 
 	return count;
@@ -386,6 +402,7 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 	bool bRet = false;
 
 	TagLib::ID3v2::FrameList id3Tag;
+	TagLib::ASF::AttributeList wmaTag;
 
 	fileref = TagLib::FileRef(szFilename, false);
 
@@ -407,6 +424,14 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 			if(flacfile->ID3v2Tag()) 
 				id3Tag = flacfile->ID3v2Tag()->frameListMap()["APIC"];
 		}
+		/*
+		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+		{
+			if(wmafile->tag());
+				wmaTag = wmafile->tag()->attributeListMap()["WM/Picture"];
+		}
+		*/
+
 
 		if(!id3Tag.isEmpty() && (ulImageIndex < id3Tag.size()))
 		{
@@ -422,6 +447,24 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 
 			bRet = true;
 		}
+		/*
+		else if(!wmaTag.isEmpty() && (ulImageIndex < wmaTag.size()))
+		{
+			TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(wmaTag[ulImageIndex]);
+
+			*ulImageDataSize = picframe->picture().size();
+			*pImageData = malloc(*ulImageDataSize);
+
+			CopyMemory(*pImageData, picframe->picture().data(), *ulImageDataSize);
+			StrCpy((LPWSTR)szMimeType, (LPTSTR)picframe->mimeType().toWString().c_str());
+
+			*ulArtType = picframe->type();
+
+			bRet = true;
+		}
+		*/
+
+
 	}
 
 	return bRet;
