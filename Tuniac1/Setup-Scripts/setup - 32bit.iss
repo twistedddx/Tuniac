@@ -36,11 +36,11 @@ Name: {app}\Guide\Images\*.jpg; Type: files
 
 Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\*.dll; DestDir: {app}\; Flags: ignoreversion
 
-Source: .\DirectX\*.dll; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
-Source: .\DirectX\*.exe; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
-Source: .\DirectX\dxdllreg_x86.cab; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
-Source: .\DirectX\dxupdate.cab; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
-Source: .\DirectX\Feb2010_XAudio_x86.cab; DestDir: {tmp}\; Check: DXFeb2010Check; Flags: ignoreversion
+Source: .\DirectX\*.dll; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
+Source: .\DirectX\*.exe; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
+Source: .\DirectX\dxdllreg_x86.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
+Source: .\DirectX\dxupdate.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
+Source: .\DirectX\Jun2010_XAudio_x86.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
 
 Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
@@ -51,13 +51,14 @@ Source: ..\Housekeeping\lgpl.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
-Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; MinVersion:0,6.0.6000; Flags: ignoreversion
-Source: ..\Win32\ReleaseXP\TuniacApp.exe; DestDir: {app}\; OnlyBelowVersion:0,6.0.6000; Flags: ignoreversion
+Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Flags: ignoreversion recursesubdirs
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
 Root: HKCU; Subkey: "SOFTWARE\MediaScience\Sonique\General Preferences 0.80"; ValueType: string; ValueName: "SoniquePath"; ValueData: "{app}\visuals\"
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Keyboard\Native Media Players\TuniacApp"; ValueType: string; ValueName: "AppName"; ValueData: "TuniacApp"
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Keyboard\Native Media Players\TuniacApp"; ValueType: string; ValueName: "ExePath"; ValueData: "{app}\TuniacApp.exe"
 
 [Icons]
 Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe
@@ -66,7 +67,7 @@ Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: desktopicon
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.6...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist; Check: DXFeb2010Check
+Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist; Check: DXJun2010Check
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
@@ -97,11 +98,11 @@ begin
   ShellExec('open', 'http://www.tuniac.org', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
 end;
 
-function DXFeb2010Check: Boolean;
+function DXJun2010Check: Boolean;
 var
   XAudio2: String;
 begin
-  if RegQueryStringValue( HKCR, 'CLSID\{3eda9b49-2085-498b-9bb2-39a6778493de}', '', XAudio2 ) then
+  if RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 ) then
     Result := false
   else
     Result := true;
