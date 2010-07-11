@@ -33,6 +33,19 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void
 
 CSTDInfoManager::CSTDInfoManager(void)
 {
+	flacfile = NULL;
+	mp3file = NULL;
+	mp4file = NULL;
+	mpcfile = NULL;
+	ttafile = NULL;
+	wvfile = NULL;
+	oggfile = NULL;
+	ogafile = NULL;
+	spxfile = NULL;
+	wmafile = NULL;
+	aiffile = NULL;
+	wavfile = NULL;
+	apefile = NULL;
 }
 
 CSTDInfoManager::~CSTDInfoManager(void)
