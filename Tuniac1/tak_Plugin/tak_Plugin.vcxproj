@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D77CC4A5-6510-4CC2-8087-4B505E201324}</ProjectGuid>
-    <RootNamespace>ape_InfoManager</RootNamespace>
+    <ProjectGuid>{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}</ProjectGuid>
+    <RootNamespace>tak_Plugin</RootNamespace>
     <Keyword>ManagedCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -105,7 +105,6 @@
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,7 +113,7 @@
     </Midl>
     <ClCompile>
       <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;INFOMANAGER;DECODER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -127,7 +126,6 @@
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,8 +146,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <TargetMachine>MachineX86</TargetMachine>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +158,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../TuniacApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;INFOMANAGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;INFOMANAGER;DECODER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
     </ClCompile>
     <Link>
@@ -172,31 +168,25 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="APEDecoder.cpp" />
-    <ClCompile Include="APEDecoderPlugin.cpp" />
-    <ClCompile Include="APEInfoManager.cpp" />
-    <ClCompile Include="apePlugin.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TAKDecoder.cpp" />
+    <ClCompile Include="TAKDecoderPlugin.cpp" />
+    <ClCompile Include="TAKInfoManager.cpp" />
+    <ClCompile Include="takPlugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="APEDecoder.h" />
-    <ClInclude Include="APEDecoderPlugin.h" />
-    <ClInclude Include="APEInfoManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="..\ape_SDK\All.h" />
-    <ClInclude Include="..\ape_SDK\APETag.h" />
-    <ClInclude Include="..\ape_SDK\MACLib.h" />
-    <ClInclude Include="..\ape_SDK\SmartPtr.h" />
-    <ClInclude Include="..\ape_SDK\WindowsEnvironment.h" />
+    <ClInclude Include="TAKDecoder.h" />
+    <ClInclude Include="TAKDecoderPlugin.h" />
+    <ClInclude Include="TAKInfoManager.h" />
+    <ClInclude Include="TAK\tak_deco_lib.h" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\ape_SDK\MACLib.lib" />
-    <Library Include="..\ape_SDK\MACLib64.lib" />
+    <Library Include="TAK\tak_deco_lib.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

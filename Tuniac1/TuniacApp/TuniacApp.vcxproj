@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|x64">
+      <Configuration>Template</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{97CC9F89-20A5-454D-A824-030021ADFD15}</ProjectGuid>
+    <RootNamespace>TuniacApp</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>true</AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>true</AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <WarningLevel>Level1</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="AlbumArt.cpp" />
+    <ClCompile Include="AudioCDPlaylist.cpp" />
+    <ClCompile Include="AudioCDSourceView.cpp" />
+    <ClCompile Include="AudioOutput.cpp" />
+    <ClCompile Include="AudioPacketizer.cpp" />
+    <ClCompile Include="AudioStream.cpp" />
+    <ClCompile Include="BasePlaylist.cpp" />
+    <ClCompile Include="CoreAudio.cpp" />
+    <ClCompile Include="CurrentlyPlaying.cpp" />
+    <ClCompile Include="DoubleBuffer.cpp" />
+    <ClCompile Include="FileAssoc.cpp" />
+    <ClCompile Include="..\jpegdecoder\H2v2.cpp" />
+    <ClCompile Include="History.cpp" />
+    <ClCompile Include="..\jpegdecoder\idct.cpp" />
+    <ClCompile Include="ImportExportManager.cpp" />
+    <ClCompile Include="..\jpegdecoder\jidctfst.cpp" />
+    <ClCompile Include="..\jpegdecoder\jpegdecoder.cpp" />
+    <ClCompile Include="LibraryPlaylist.cpp" />
+    <ClCompile Include="LogWindow.cpp" />
+    <ClCompile Include="MediaLibrary.cpp" />
+    <ClCompile Include="MediaLibraryPlaylistEntry.cpp" />
+    <ClCompile Include="picopng.cpp" />
+    <ClCompile Include="PlayControls.cpp" />
+    <ClCompile Include="PlaylistManager.cpp" />
+    <ClCompile Include="PlaylistSourceView.cpp" />
+    <ClCompile Include="PlayQueue.cpp" />
+    <ClCompile Include="PlayQueueSourceView.cpp" />
+    <ClCompile Include="PluginManager.cpp" />
+    <ClCompile Include="Preferences.cpp" />
+    <ClCompile Include="SharedMemorySongInfo.cpp" />
+    <ClCompile Include="SourceSelectorWindow.cpp" />
+    <ClCompile Include="SSE_Utils.cpp" />
+    <ClCompile Include="StandardPlaylist.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="SysEvents.cpp" />
+    <ClCompile Include="TagEditor.cpp" />
+    <ClCompile Include="Taskbar.cpp" />
+    <ClCompile Include="Tuniac.cpp" />
+    <ClCompile Include="TuniacApp.cpp" />
+    <ClCompile Include="TuniacHTTPFileIO.cpp" />
+    <ClCompile Include="TuniacMemoryFileIO.cpp" />
+    <ClCompile Include="TuniacSkin.cpp" />
+    <ClCompile Include="TuniacStandardFileIO.cpp" />
+    <ClCompile Include="TuniacVisual.cpp" />
+    <ClCompile Include="VisualWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutWindow.h" />
+    <ClInclude Include="AlbumArt.h" />
+    <ClInclude Include="Array.h" />
+    <ClInclude Include="AudioCDPlaylist.h" />
+    <ClInclude Include="AudioCDSourceView.h" />
+    <ClInclude Include="AudioOutput.h" />
+    <ClInclude Include="AudioPacketizer.h" />
+    <ClInclude Include="AudioStream.h" />
+    <ClInclude Include="BasePlaylist.h" />
+    <ClInclude Include="CoreAudio.h" />
+    <ClInclude Include="CriticalSection.h" />
+    <ClInclude Include="CurrentlyPlaying.h" />
+    <ClInclude Include="DoubleBuffer.h" />
+    <ClInclude Include="FileAssoc.h" />
+    <ClInclude Include="generaldefs.h" />
+    <ClInclude Include="History.h" />
+    <ClInclude Include="IAudioCallback.h" />
+    <ClInclude Include="IAudioOutput.h" />
+    <ClInclude Include="IAudioSource.h" />
+    <ClInclude Include="IInfoManager.h" />
+    <ClInclude Include="ImportExportManager.h" />
+    <ClInclude Include="IPlaylist.h" />
+    <ClInclude Include="ISourceView.h" />
+    <ClInclude Include="ITuniacExportPlugin.h" />
+    <ClInclude Include="ITuniacImportPlugin.h" />
+    <ClInclude Include="ITuniacPlugin.h" />
+    <ClInclude Include="ITuniacVisPlugin.h" />
+    <ClInclude Include="IWindow.h" />
+    <ClInclude Include="..\jpegdecoder\jpegdecoder.h" />
+    <ClInclude Include="LibraryEntry.h" />
+    <ClInclude Include="LibraryPlaylist.h" />
+    <ClInclude Include="LogWindow.h" />
+    <ClInclude Include="..\jpegdecoder\main.h" />
+    <ClInclude Include="MediaLibrary.h" />
+    <ClInclude Include="MediaLibraryPlaylistEntry.h" />
+    <ClInclude Include="ntddcdrm.h" />
+    <ClInclude Include="ntddstor.h" />
+    <ClInclude Include="PlayControls.h" />
+    <ClInclude Include="PlaylistManager.h" />
+    <ClInclude Include="PlaylistSourceView.h" />
+    <ClInclude Include="PlayQueue.h" />
+    <ClInclude Include="PlayQueueSourceView.h" />
+    <ClInclude Include="PluginManager.h" />
+    <ClInclude Include="PluginVariable.h" />
+    <ClInclude Include="Preferences.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ringbuffer.h" />
+    <ClInclude Include="SharedMemorySongInfo.h" />
+    <ClInclude Include="SourceSelectorWindow.h" />
+    <ClInclude Include="SSE_Utils.h" />
+    <ClInclude Include="StandardPlaylist.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="stdint.h" />
+    <ClInclude Include="SysEvents.h" />
+    <ClInclude Include="TagEditor.h" />
+    <ClInclude Include="Taskbar.h" />
+    <ClInclude Include="Tuniac-Meta.h" />
+    <ClInclude Include="TuniacApp.h" />
+    <ClInclude Include="TuniacHTTPFileIO.h" />
+    <ClInclude Include="TuniacMemoryFileIO.h" />
+    <ClInclude Include="TuniacSkin.h" />
+    <ClInclude Include="TuniacStandardFileIO.h" />
+    <ClInclude Include="tuniacthread.h" />
+    <ClInclude Include="TuniacVisual.h" />
+    <ClInclude Include="VisualWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\jpegdecoder\jpegdecoder.inl" />
+    <None Include="cursors\addarrow.cur" />
+    <None Include="default-theme\control-next.ico" />
+    <None Include="default-theme\control-pause.ico" />
+    <None Include="default-theme\control-play.ico" />
+    <None Include="default-theme\control-previous.ico" />
+    <None Include="icons\Drive CD.ico" />
+    <None Include="images\editinfo.bmp" />
+    <None Include="icons\empty.ico" />
+    <None Include="default-theme\item-active.ico" />
+    <None Include="default-theme\item-normal.ico" />
+    <None Include="icons\medialibrary.ico" />
+    <None Include="cursors\newplaylistcursor.cur" />
+    <None Include="images\next.bmp" />
+    <None Include="default-theme\next.ico" />
+    <None Include="images\pause.bmp" />
+    <None Include="default-theme\pause.ico" />
+    <None Include="images\play.bmp" />
+    <None Include="default-theme\play.ico" />
+    <None Include="icons\playing.ico" />
+    <None Include="default-theme\playlist-cd.ico" />
+    <None Include="default-theme\playlist-medialibrary.ico" />
+    <None Include="default-theme\playlist-standard.ico" />
+    <None Include="icons\playlist.ico" />
+    <None Include="default-theme\preview.bmp" />
+    <None Include="images\previous.bmp" />
+    <None Include="default-theme\previous.ico" />
+    <None Include="images\repeatall.bmp" />
+    <None Include="images\repeatnone.bmp" />
+    <None Include="images\repeatone.bmp" />
+    <None Include="images\shuffleoff.bmp" />
+    <None Include="images\shuffleon.bmp" />
+    <None Include="icons\tuniac.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Tuniac.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tuniac.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="Tuniac.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
