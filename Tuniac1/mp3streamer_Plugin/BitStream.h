@@ -1,42 +1,41 @@
 /*
-Copyright (c) 2002 Tony Million
-
-This software is provided 'as-is', without any express or 
-implied warranty. In no event will the authors be held liable 
-for any damages arising from the use of this software.
-
-Permission is granted to anyone to use this software for any 
-purpose, including commercial applications, and to alter it 
-and redistribute it freely, subject to the following 
-restrictions:
-
-1. The origin of this software must not be 
-misrepresented; you must not claim that you wrote 
-the original software. If you use this software in a 
-product, an acknowledgment in the product 
-documentation is required.
-
-2. Altered source versions must be plainly marked as 
-such, and must not be misrepresented as being the 
-original software.
-
-3. This notice may not be removed or altered from any 
-source distribution.
-*/
+ *  bitstream.h
+ *  audioenginetest
+ *
+ *  Created by Tony Million on 29/11/2009.
+ *  Copyright 2009 Tony Million. All rights reserved.
+ *
+ */
 
 #pragma once
 
-class BitStream  
+#include "stdint.h"
+
+// TODO: maybe make this capable of reading up to 63bits at a time rather than 31
+
+class bitstream
 {
 protected:
-	unsigned char	*	buffer;
-	unsigned int		bitindex;
-
+	const uint8_t *		data;
+	uint32_t		datalength;
+	uint32_t		datalengthbits;
+	
+	uint32_t		bitoffset;
+	
 public:
-	BitStream();
-	virtual ~BitStream();
-
-	bool Load(unsigned char * FromHere);
-	unsigned long GetBits(unsigned long N);
-
+	
+	void		load(const uint8_t * pData, uint32_t length);
+	
+	uint32_t	getbits(uint32_t numbits);
+	
+	uint32_t	dismiss(uint32_t numbits);
+	void		rewind(uint32_t numbits);
+	
+	uint32_t	getBitOffset(void);
+	void		setBitOffset(uint32_t offset);
+	
+	
+	uint32_t	getByteOffset(void);
+	
+	bool		EOS(void);
 };

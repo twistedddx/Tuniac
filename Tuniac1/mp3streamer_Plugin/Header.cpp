@@ -1,13 +1,15 @@
-// Header.cpp: implementation of the Header class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+ *  header.cpp
+ *  audioenginetest
+ *
+ *  Created by Tony Million on 29/11/2009.
+ *  Copyright 2009 Tony Million. All rights reserved.
+ *
+ */
 
-#include "stdafx.h"
-#include "Header.h"
+#include "generaldefs.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+#include "header.h"
 
 #define HDRMAIN_BITS	0xfffffc00			// 1111 1111 1111 1111 1111 1100 0000 0000
 #define MPEG_BITS		0x00180000			// 0000 0000 0001 1000 0000 0000 0000 0000
@@ -33,8 +35,14 @@
 #define LAYER_BITS_2	0x00040000
 #define LAYER_BITS_3	0x00020000
 
+#define MPEGVERSION_BITSHIFT	19
+#define LAYER_BITSHIFT			17
+#define BITRATE_BITSHIFT		12
+#define SAMPLERATE_BITSHIFT		10
+#define MODE_BITSHIFT			6
+#define MODE_EXT_BITSHIFT		4
 
-const unsigned long Header::BitRates[2][3][16] = 
+const uint32_t BitRates[2][3][16] = 
 {
 	{
 		{0 /*free format*/, 32000, 64000, 96000, 128000, 160000, 192000, 224000, 256000, 288000, 320000, 352000, 384000, 416000, 448000, 0},
@@ -48,7 +56,8 @@ const unsigned long Header::BitRates[2][3][16] =
 	},
 };
 
-const unsigned long Header::SampleRates[3][3] = 
+
+const uint32_t SampleRates[3][3] = 
 {
 	{
 		44100, 48000, 32000
@@ -61,227 +70,162 @@ const unsigned long Header::SampleRates[3][3] =
 	}
 };
 
-Header::Header()
+// mpeg version, channels -2
+const uint32_t SideInfoSize[3][2] = 
 {
-	Reset();
-}
-
-Header::~Header()
-{
-
-}
-
-void Header::Reset()
-{
-	MpegVersion = -1;
-	Layer = -1;
-	SampleFrequency = -1;
-	Mode = -1;
-}
-
-bool Header::Load(unsigned char *FromHere)
-{
-	bs.Load(FromHere);
-
-	if(bs.GetBits(11) != 0x7ff)
-		return(false);
-
-	unsigned long OldMpeg = MpegVersion;
-	if(bs.GetBits(1))			// mpeg 1 or 2
 	{
-		if(bs.GetBits(1))
-		{	
-			MpegVersion = MPEG1;
-		}
-		else
-		{
-			MpegVersion = MPEG2;
-		}
+		32, 17
+	},
+	{
+		9, 17
+	},
+	{
+		9, 17
+	},
+};
+
+int Header::decodeHeader(uint8_t * bytes)
+{
+	SideInfoSize		= 0;
+	AudioDataSize		= 0;
+	TotalFrameSize		= 0;
+	
+	
+	bs.load(bytes, 4);
+	
+	
+	// ultimately we want to real 11 bits 
+	// the next bit defines MPEG2.5
+	// but lets ignore that for the moment eh?
+	if((bs.getbits(12) & 0xfff) != 0xfff)
+		return 0;
+	
+	// read the MPEG version
+	if(bs.getbits(1))
+	{
+		MpegVersion = MPEG1;
 	}
-	else						// mpeg 2.5 or invalid
+	else
 	{
-		if(bs.GetBits(1))
-		{
-			MpegVersion = OldMpeg;
-			return(false);
-		}
-		else
-		{
-			MpegVersion = MPEG25;
-		}
+		MpegVersion = MPEG2;
 	}
-
-	if(OldMpeg != -1)
+	
+	// get layer, anything other than layer3 is invalid
+	int layer = bs.getbits(2);
+	switch(layer)
 	{
-		if(MpegVersion != OldMpeg)
-		{
-			MpegVersion = OldMpeg;
-			return false;
-		}
-	}
-
-	unsigned OldLayer = Layer;
-	switch(bs.GetBits(2))
-	{
-		case 0:
-			Layer		= OldLayer;
-			return(false);
-			break;
-
 		case 1:
-			Layer = LAYER3;
+			{
+				Layer = LAYER3;
+				
+				if(MpegVersion == MPEG2) 
+				{
+					SamplesPerFrame = 576;
+				}
+				else
+				{
+					SamplesPerFrame = 1152;
+				}
+			}
 			break;
-
-		case 2:
-			return false;
-			//Layer = LAYER2;
-			break;
-
-		case 3:
-			return false;
-			//Layer = LAYER1;
-			break;
+		default:
+			return 0;
 	}
-	if(OldLayer != -1)
+	
+	// read the CRC bit (we use this later
+	CRCPresent = 1 - bs.getbits(1);
+	
+	
+	// read the bitrate index, and get the bitrate out of the array
+	BitrateIndex = bs.getbits(4);
+	if((BitrateIndex == 0xff) || (BitrateIndex == 0))
 	{
-		if(Layer != OldLayer)
-		{
-			MpegVersion = OldMpeg;
-			Layer		= OldLayer;
-			return false;
-		}
+		// 16 and 0 are invalid
+		// technically 0 isn't invalid, but we can't do it atm
+		return 0;
 	}
-
-	ProtectionBit	= !(bs.GetBits(1));
-
-	BitrateIndex	= bs.GetBits(4);
-	if(BitrateIndex == 15)
+	Bitrate = BitRates[MpegVersion][Layer][BitrateIndex];
+	
+	
+	// read the sample rate index, and grab it
+	SampleRateIndex = bs.getbits(2);
+	if(SampleRateIndex == 0x03)
 	{
-		MpegVersion = OldMpeg;
-		Layer		= OldLayer;
-		return(false);
+		// 3 is invalid and is used as a check
+		return 0;
 	}
-
-	if(BitrateIndex == 0)
-	{
-		MpegVersion = OldMpeg;
-		Layer		= OldLayer;
-		return(false);
-	}
-
-	unsigned long OldSampleFrequency = SampleFrequency;
-	SampleFrequency = bs.GetBits(2);
-	if(OldSampleFrequency != -1)
-	{
-		if(SampleFrequency != OldSampleFrequency)
-		{
-			MpegVersion		= OldMpeg;
-			Layer			= OldLayer;
-			SampleFrequency = OldSampleFrequency;
-			return false;
-		}
-	}
-
-	if(SampleFrequency == 3)
-	{
-		MpegVersion		= OldMpeg;
-		Layer			= OldLayer;
-		SampleFrequency = OldSampleFrequency;
-		return false;
-	}
-
-	PaddingBit		= bs.GetBits(1);
-	PrivateBit		= bs.GetBits(1);
-
-	unsigned long OldMode = Mode;
-	Mode			= bs.GetBits(2);
-	if(OldMode != -1)
-	{
-		if(OldMode != Mode)
-		{
-			MpegVersion			= OldMpeg;
-			Layer				= OldLayer;
-			SampleFrequency		= OldSampleFrequency;
-			Mode				= OldMode;
-			return false;
-		}
-	}
-
-
-	Mode_Extension	= bs.GetBits(2);
-
-	Copyright		= bs.GetBits(1);
-	Original		= bs.GetBits(1);
-
-	Emphasis		= bs.GetBits(2);
-	if(Emphasis == EMPH_RESERVED)
-	{
-			MpegVersion			= OldMpeg;
-			Layer				= OldLayer;
-			SampleFrequency		= OldSampleFrequency;
-			Mode				= OldMode;
-
-		return(false);
-	}
-
+	SampleRate = SampleRates[MpegVersion][SampleRateIndex];
+	
+	// this bit means there is an extra byte on the end of the frame (you'll see later)
+	PaddingBit = bs.getbits(1);
+	
+	// lame copyright bit....
+	PrivateBit = bs.getbits(1);
+	
+	Mode			= bs.getbits(2);
+	Mode_Extension	= bs.getbits(2);
+	
 	if(Mode == MODE_MONO)
+	{
 		Channels = 1;
+	}
 	else
+	{
 		Channels = 2;
-
-
-	if(Layer == LAYER3)
-	{
-		if(MpegVersion == MPEG1)
-		{
-			if(Channels==1)
-				SideInfoSize = 17;
-			else
-				SideInfoSize = 32;
-		}
-		else
-		{
-			if(Channels==1)
-				SideInfoSize = 9;
-			else
-				SideInfoSize = 17;
-		}
 	}
-	else
-		SideInfoSize = 0;
-
-	unsigned long base;
-	unsigned long Multiple;
-
-	if(Layer == LAYER1)
+	
+	Copyright			= bs.getbits(1);
+	Original			= bs.getbits(1);
+	
+	Emphasis			= bs.getbits(2);
+	if(Emphasis == EMPH_RESERVED)
+		return 0;
+	if(Emphasis != EMPH_NONE)
 	{
-		base		= 12;
-		Multiple	= 4;
+		DLog("Holy crap this track has emphasis!!!\n");
+	}
+	
+	//TODO: load value from sideinfo thing
+	if(MpegVersion == MPEG1)
+	{
+		if(Channels==1)
+			SideInfoSize = 17;
+		else
+			SideInfoSize = 32;
 	}
 	else
 	{
-		// framesize is HALF of what it is for MPEG 1
-		// really we should change that 144 * BitRate...
-		// to be 72 * BitRate....
-		if(MpegVersion != MPEG1)
-			base = 72;
+		if(Channels==1)
+			SideInfoSize = 9;
 		else
-			base = 144;
-
-		Multiple = 1;
+			SideInfoSize = 17;
 	}
-
-	FrameSize	= ((base * BitRates[MpegVersion == MPEG1 ? 0 : 1][Layer][BitrateIndex]) / SampleRates[MpegVersion][SampleFrequency]);
+	
+	int base = 144;   
+	if(MpegVersion != MPEG1)
+		base = 72;
+	
+	TotalFrameSize = ((base * Bitrate) / SampleRate);
 	if(PaddingBit)
-		FrameSize++;
-
-	FrameSize  *= Multiple;
-	FrameSize -= 4; // for the Header;
-	if(ProtectionBit)
-		FrameSize -= 2;
-	FrameSize -= SideInfoSize;
-
-	HeaderSize = 4;
-
-	return(true);
+		TotalFrameSize++;
+	
+	//TODO: we should do some tests here to make sure TotalFrameSize is in acceptable limits!
+	if(TotalFrameSize > 1441)
+		return 0; //(size too big possibly)
+	
+	//TODO work out smallest possible frame size!
+	if (TotalFrameSize < 14) {
+		return 0; //(size too small possibly)
+	}
+	
+	AudioDataSize	=  TotalFrameSize;
+	
+	AudioDataSize -= 4;		// for the header
+	
+	if(CRCPresent)
+		AudioDataSize -= 2;
+	
+	AudioDataSize -= SideInfoSize;
+		
+	return 1;
 }

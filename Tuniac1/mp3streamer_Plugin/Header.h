@@ -1,32 +1,14 @@
 /*
-Copyright (c) 2002 Tony Million
-
-This software is provided 'as-is', without any express or 
-implied warranty. In no event will the authors be held liable 
-for any damages arising from the use of this software.
-
-Permission is granted to anyone to use this software for any 
-purpose, including commercial applications, and to alter it 
-and redistribute it freely, subject to the following 
-restrictions:
-
-1. The origin of this software must not be 
-misrepresented; you must not claim that you wrote 
-the original software. If you use this software in a 
-product, an acknowledgment in the product 
-documentation is required.
-
-2. Altered source versions must be plainly marked as 
-such, and must not be misrepresented as being the 
-original software.
-
-3. This notice may not be removed or altered from any 
-source distribution.
-*/
+ *  header.h
+ *  audioenginetest
+ *
+ *  Created by Tony Million on 29/11/2009.
+ *  Copyright 2009 Tony Million. All rights reserved.
+ *
+ */
 
 #pragma once
 
-#include "BitStream.h"
 
 #define LAYER1				0
 #define LAYER2				1
@@ -42,13 +24,6 @@ source distribution.
 #define MODE_MONO			3
 
 //mode extensions
-
-// for LAYER1 and LAYER2
-#define BOUND4				0
-#define BOUND8				1
-#define BOUND12				2
-#define BOUND16				3
-
 // for LAYER3
 #define MODE_EXT_STEREO		0	// stream is actually MODE_STEREO
 #define MODE_EXT_IS			1	// Intensity stereo coding is used
@@ -60,60 +35,51 @@ source distribution.
 #define EMPH_RESERVED		2	// should never happen
 #define EMPH_CCITT			3	// CCITT j.17
 
-class Header  
+#include "stdint.h"
+#include "bitstream.h"
+
+class Header
 {
 protected:
-	// Mpeg Header Stuff
-	unsigned long	MpegVersion;
-	unsigned long	Layer;
-	unsigned long	ProtectionBit;
-	unsigned long	BitrateIndex;
-	unsigned long	SampleFrequency;
-	unsigned long	PaddingBit;
-	unsigned long	PrivateBit;
-	unsigned long	Mode;
-	unsigned long	Mode_Extension;
-	unsigned long	Copyright;
-	unsigned long	Original;
-	unsigned long	Emphasis;
+	bitstream bs;
 
-	// Calculated stuff
-	unsigned long	FrameSize;
-	unsigned long	SideInfoSize;
-	unsigned long	Channels;
-
-	unsigned long	HeaderSize;
-
-	unsigned char	CRC[2];
-
-	static const unsigned long BitRates[2][3][16];
-	static const unsigned long SampleRates[3][3];
-
-	BitStream		bs;
-
+	
 public:
-	Header();
-	virtual ~Header();
+	uint32_t	MpegVersion;
+	uint32_t	Layer;
+	
+	uint32_t	SampleRateIndex;
+	
+	uint32_t	ProtectionBit;
+	
+	uint32_t	BitrateIndex;
+	
+	uint32_t	PaddingBit;
+	uint32_t	PrivateBit;
+	
+	uint32_t	Mode;
+	uint32_t	Mode_Extension;
+	
+	uint32_t	Copyright;
+	uint32_t	Original;
+	uint32_t	Emphasis;
+	
+	// Calculated stuff
+	uint32_t	SideInfoSize;
+	uint32_t	AudioDataSize;
+	uint32_t	TotalFrameSize;
+	
+	uint32_t	CRCPresent;
+	uint16_t	CRC;	
+	
+	uint32_t	Bitrate;
+	uint32_t	SampleRate;
+	uint32_t	Channels;
+	
+	uint32_t	SamplesPerFrame;
+	
+	
+public:
+	int decodeHeader(uint8_t * bytes);
 
-	void Reset();
-
-	bool Load(unsigned char * FromHere);
-
-	unsigned long GetHeaderSize(void)		{ return(HeaderSize); };
-	unsigned long GetCRCSize()				{ if(IsCRC()) return 2; else return 0; };
-	unsigned long GetSideInfoSize(void)		{ return(SideInfoSize); }
-	unsigned long GetDataSize(void)			{ return(FrameSize); }
-
-	unsigned long GetMpegVersion()			{ return MpegVersion; };
-	unsigned long GetMode()					{ return Mode; };
-	unsigned long GetModeExtension()		{ return Mode_Extension; };
-	unsigned long GetLayer()				{ return Layer; };
-	unsigned long GetChannels()				{ return Channels; };
-	unsigned long GetSampleFrequencyIndex()	{ return SampleFrequency; };
-	unsigned long GetSampleFrequency()		{ return SampleRates[MpegVersion][SampleFrequency]; };
-	unsigned long IsCRC() 					{ return( ProtectionBit ); };
-
-	unsigned long GetTotalFrameSize()		{ return( GetHeaderSize() + GetCRCSize() + GetSideInfoSize() + GetDataSize() ); }
-
-	unsigned long GetBitrate()				{ return( BitRates[MpegVersion == MPEG1 ? 0 : 1][Layer][BitrateIndex] ); };
 };

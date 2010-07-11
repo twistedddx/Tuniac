@@ -323,19 +323,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\BaseDecoder.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\BitStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CRC.cpp"
+				RelativePath=".\cmpegaudiostreamdecoder.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FrameSplitter.cpp"
+				RelativePath=".\cmpegaudiostreamdecoderPlugin.cpp"
 				>
 			</File>
 			<File
@@ -343,19 +339,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\huffman.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Layer3Decoder.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3StreamerDecoder.cpp"
+				RelativePath=".\maindatabuffer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3StreamerDecoderPlugin.cpp"
+				RelativePath=".\mp3Plugin.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mp3streamerPlugin.cpp"
+				RelativePath=".\mpegdecoder.cpp"
 				>
 			</File>
 			<File
@@ -366,6 +366,10 @@
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\synthesisfilter.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -373,19 +377,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\BaseDecoder.h"
+				RelativePath=".\BitStream.h"
 				>
 			</File>
 			<File
-				RelativePath=".\BitReservoir.H"
+				RelativePath=".\cmpegaudiostreamdecoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\FrameSplitter.h"
+				RelativePath=".\cmpegaudiostreamdecoderPlugin.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IMPEGDecoder.h"
+				RelativePath=".\generaldefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header.h"
+				>
+			</File>
+			<File
+				RelativePath=".\huffman.h"
 				>
 			</File>
 			<File
@@ -393,15 +405,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MP3StreamerDecoder.h"
+				RelativePath=".\maindatabuffer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MP3StreamerDecoderPlugin.h"
+				RelativePath=".\mpegdecoder.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\ringbuffer.h"
 				>
 			</File>
 			<File
@@ -410,6 +422,18 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\synthesisfilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tuniacthread.h"
 				>
 			</File>
 		</Filter>
