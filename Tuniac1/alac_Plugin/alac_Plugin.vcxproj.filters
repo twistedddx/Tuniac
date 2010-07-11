@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D26737F1-C7E2-4376-A346-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93952380-89ED-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="alac_decoder">
+      <UniqueIdentifier>{2c6d04a3-0c85-432a-a647-d12db85a5de1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ALACDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ALACDecoderPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ALACInfoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alacPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alac_decoder\alac.c">
+      <Filter>alac_decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="alac_decoder\demux.c">
+      <Filter>alac_decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="alac_decoder\stream.c">
+      <Filter>alac_decoder</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ALACDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ALACDecoderPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ALACInfoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alac_decoder\decomp.h">
+      <Filter>alac_decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="alac_decoder\demux.h">
+      <Filter>alac_decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="alac_decoder\stdint_win.h">
+      <Filter>alac_decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="alac_decoder\stream.h">
+      <Filter>alac_decoder</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
