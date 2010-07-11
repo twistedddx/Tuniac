@@ -3,6 +3,7 @@ Jul, 2010
 -Direct X June 2010 (XAudio 2.7)
 -Force XP SP3 in installer
 -std_infomanager supports wav track length and ape files. Remove those infomanagers
+-BASS dll update
 -Bugfixes
 
 May, 2010
