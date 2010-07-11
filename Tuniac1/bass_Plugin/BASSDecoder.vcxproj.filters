@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D26736F2-C725-4376-A056-2A32D751A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93455481-89BD-4b04-88EB-625EDE5264FB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="basslib">
+      <UniqueIdentifier>{4ce6c8de-4b4c-4072-bf98-e4f046037954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="basslib\32bit">
+      <UniqueIdentifier>{493de2dc-2cf7-4e83-ade0-656f84181e7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="basslib\64bit">
+      <UniqueIdentifier>{a807ab4d-bf8f-445c-a2bc-1597659b6cb1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BASSDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BASSDecoderPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bassPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BASSDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BASSDecoderPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="basslib\bass.h">
+      <Filter>basslib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="basslib\32bit\bass.lib">
+      <Filter>basslib\32bit</Filter>
+    </Library>
+    <Library Include="basslib\64bit\bass.lib">
+      <Filter>basslib\64bit</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
