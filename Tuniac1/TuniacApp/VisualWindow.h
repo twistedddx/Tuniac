@@ -88,6 +88,7 @@ public:
 	bool			SetPos(int x, int y, int w, int h);
 
 	bool			GetFullscreen(void);
+	void			SetFullscreen(bool bFull);
 
 public:
 	unsigned long	GetVisData(float * pWaveformData, unsigned long ulNumSamples);

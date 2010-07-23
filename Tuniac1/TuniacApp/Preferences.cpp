@@ -1040,13 +1040,7 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 
 					case IDC_FILEASSOC_SETDEFAULT:
 						{
-							OSVERSIONINFO osvi;
-							ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
-							osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
-							GetVersionEx(&osvi);
-
-							if(osvi.dwMajorVersion >= 6)
+							if(tuniacApp.m_dwWinVer >= 6)
 							{
 								HRESULT res;
 								IApplicationAssociationRegistrationUI *aarui;

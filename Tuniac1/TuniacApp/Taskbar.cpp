@@ -48,13 +48,15 @@ CTaskbar::~CTaskbar(void)
 
 bool			CTaskbar::Initialize(HWND hTargetWindow, unsigned long AppMessage)
 {
-	m_TrayIconData.cbSize			= sizeof(NOTIFYICONDATA);
+	if(tuniacApp.m_dwWinVer < 6) //XP and under
+		m_TrayIconData.cbSize			= NOTIFYICONDATA_V3_SIZE;
+	else //vista and over
+		m_TrayIconData.cbSize			= sizeof(NOTIFYICONDATA);
 	m_TrayIconData.hWnd				= hTargetWindow;
 	m_TrayIconData.uID				= 1;
 	m_TrayIconData.uCallbackMessage = AppMessage;
 	m_TrayIconData.hIcon			= tuniacApp.m_Skin.GetIcon(THEMEICON_WINDOW_SMALL);
 	m_TrayIconData.uVersion			= NOTIFYICON_VERSION;
-	
 	m_TrayIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 
 	Shell_NotifyIcon(NIM_SETVERSION, &m_TrayIconData);
