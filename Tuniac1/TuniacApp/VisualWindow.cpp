@@ -287,20 +287,7 @@ bool CVisualWindow::Hide(void)
 	{
 		if(m_bFullScreen)
 		{
-			LONG_PTR StyleEx = GetWindowLongPtr(m_hWnd, GWL_EXSTYLE);
-			StyleEx |= WS_EX_CLIENTEDGE;
-			SetWindowLongPtr(m_hWnd, GWL_EXSTYLE, StyleEx);
-
-			LONG_PTR Style = GetWindowLongPtr(m_hWnd, GWL_STYLE);
-			Style |= WS_CHILD;
-			SetWindowLongPtr(m_hWnd, GWL_STYLE, Style);
-
-			SetParent(m_hWnd, m_hParentWnd);
-			SetWindowPos(m_hWnd, 0, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
-
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
-
-			m_bFullScreen = false;
+			SetFullscreen(false);
 		}		
 		ShowWindow(m_hWnd, SW_HIDE);
 		return(true);
@@ -324,6 +311,39 @@ bool CVisualWindow::SetPos(int x, int y, int w, int h)
 bool CVisualWindow::GetFullscreen(void)
 {
 	return m_bFullScreen;
+}
+
+void CVisualWindow::SetFullscreen(bool bFull)
+{
+	if(bFull == m_bFullScreen)
+		return;
+
+	LONG_PTR StyleEx = GetWindowLongPtr(m_hWnd, GWL_EXSTYLE);
+	LONG_PTR Style = GetWindowLongPtr(m_hWnd, GWL_STYLE);
+	if(bFull)
+	{
+		StyleEx &= ~WS_EX_CLIENTEDGE;
+		Style &= ~WS_CHILD;
+
+		SetParent(m_hWnd, NULL);
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
+		SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING);
+
+		SetTimer(m_hWnd, 0, MOUSE_TIMEOUT, NULL);
+	}
+	else
+	{
+		StyleEx |= WS_EX_CLIENTEDGE;
+		Style |= WS_CHILD;
+
+		SetParent(m_hWnd, m_hParentWnd);
+		SetWindowPos(m_hWnd, 0, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
+
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+	}
+	SetWindowLongPtr(m_hWnd, GWL_EXSTYLE, StyleEx);
+	SetWindowLongPtr(m_hWnd, GWL_STYLE, Style);
+	m_bFullScreen = bFull;
 }
 
 #define VISMENU_BASE			(60000)
@@ -434,39 +454,9 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 					case ID_VIS_FULLSCREEN:
 						{
 							if(m_bFullScreen)
-							{
-								LONG_PTR StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-								StyleEx |= WS_EX_CLIENTEDGE;
-								SetWindowLongPtr(hWnd, GWL_EXSTYLE, StyleEx);
-
-								LONG_PTR Style = GetWindowLongPtr(hWnd, GWL_STYLE);
-								Style |= WS_CHILD;
-								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
-
-								SetParent(hWnd, m_hParentWnd);
-								SetWindowPos(hWnd, HWND_TOP, m_OldSize.left, m_OldSize.top, m_OldSize.right, m_OldSize.bottom, SWP_NOZORDER);
-
-								SetCursor(LoadCursor(NULL, IDC_ARROW));
-
-								m_bFullScreen = false;
-							}
+								SetFullscreen(false);
 							else
-							{
-								LONG_PTR StyleEx = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-								StyleEx &= ~WS_EX_CLIENTEDGE;
-								SetWindowLongPtr(hWnd, GWL_EXSTYLE, StyleEx);
-
-								LONG_PTR Style = GetWindowLongPtr(hWnd, GWL_STYLE);
-								Style &= ~WS_CHILD;
-								SetWindowLongPtr(hWnd, GWL_STYLE, Style);
-
-								SetParent(hWnd, NULL);
-								SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
-								SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING);
-								m_bFullScreen = true;
-
-								SetTimer(hWnd, 0, MOUSE_TIMEOUT, NULL);
-							}
+								SetFullscreen(true);
 						}
 						break;
 				}

@@ -113,6 +113,14 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		m_iCPUCount = 1;
 	*/
 
+	OSVERSIONINFO osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+	GetVersionEx(&osvi);
+
+	m_dwWinVer = osvi.dwMajorVersion;
+	
 	//these are used for the portable switch to force not saving to disk
 	m_bSavePrefs = true;
 	m_bSaveML = true;
@@ -629,6 +637,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				if(wParam == SIZE_MINIMIZED)
 				{
+					m_VisualWindow->SetFullscreen(false);
 					m_Preferences.SetMainWindowMinimized(true);
 					if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 					{
