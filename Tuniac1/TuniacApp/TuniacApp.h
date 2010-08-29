@@ -196,7 +196,7 @@ public:
 
 	void				UpdateState(void);
 	void				UpdateTitles(void);
-	void				UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID);
 	void				UpdateQueues(void);
 	bool				DoSoftPause(void);
 

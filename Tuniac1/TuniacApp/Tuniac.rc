@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -80,12 +78,14 @@ BEGIN
     PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,60,90,14,WS_DISABLED
     LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,34,207,8
     CONTROL         "Set Date Added to File Creation Time",IDC_LIBRARY_FILETIMETODATEADDED,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,207,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,120,207,10
     CONTROL         "Allow playlist sorting",IDC_LIBRARY_PLAYLISTSORTING,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,147,207,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,130,207,10
     CONTROL         "Create playlists of playlist files during import",IDC_LIBRARY_AUTOADDPLAYLIST,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,159,207,10
-    GROUPBOX        "Misc",IDC_STATIC,7,122,221,47
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,140,207,10
+    GROUPBOX        "Misc",IDC_STATIC,7,110,221,52
+    CONTROL         "Add single stream from playlists only",IDC_LIBRARY_ADDSINGLESTREAM,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,151,207,9
 END
 
 IDD_ALBUMARTISTVIEW DIALOGEX 0, 0, 313, 305
@@ -357,7 +357,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_SOURCESELECTOR, DIALOG
     BEGIN
@@ -629,25 +629,23 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.K.) resources
+// English (United Kingdom) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_TUNIAC_MENU MENU 
+IDR_TUNIAC_MENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -709,7 +707,7 @@ BEGIN
     END
 END
 
-IDR_VISMENU MENU 
+IDR_VISMENU MENU
 BEGIN
     POPUP "_HOLDER_"
     BEGIN
@@ -724,7 +722,7 @@ BEGIN
     END
 END
 
-IDR_TRAYMENU MENU 
+IDR_TRAYMENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -756,7 +754,7 @@ BEGIN
     END
 END
 
-IDR_PLAYLISTITEM_MENU MENU 
+IDR_PLAYLISTITEM_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -830,7 +828,7 @@ IDC_NEWPLAYLISTARROW    CURSOR                  ".\\cursors\\newplaylistcursor.c
 // Accelerator
 //
 
-IDR_MAINWINDOWACCEL ACCELERATORS 
+IDR_MAINWINDOWACCEL ACCELERATORS
 BEGIN
     "I",            ID_EDIT_EDITFILEINFORMATION, VIRTKEY, ALT, NOINVERT
     "P",            ID_EDIT_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
@@ -867,25 +865,23 @@ IDB_SHUFFLEON           BITMAP                  "images\\shuffleon.bmp"
 //
 
 1                       RT_MANIFEST             "Tuniac.manifest"
-#endif    // English (U.K.) resources
+#endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (New Zealand) resources
+// English (New Zealand)  resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENZ)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_NZ
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_SOURCESELECT_MENU MENU 
+IDR_SOURCESELECT_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -902,7 +898,7 @@ BEGIN
     END
 END
 
-IDR_FILTERBYFIELD_MENU MENU 
+IDR_FILTERBYFIELD_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -921,7 +917,7 @@ BEGIN
     END
 END
 
-IDR_SOURCESELECT_DRAGMENU MENU 
+IDR_SOURCESELECT_DRAGMENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -931,7 +927,7 @@ BEGIN
     END
 END
 
-IDR_PLAYLISTHEADER_MENU MENU 
+IDR_PLAYLISTHEADER_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
@@ -940,7 +936,7 @@ BEGIN
     END
 END
 
-#endif    // English (New Zealand) resources
+#endif    // English (New Zealand)  resources
 /////////////////////////////////////////////////////////////////////////////
 
 
