@@ -131,7 +131,7 @@ bool			CPLS_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 {
 	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
 
-	TCHAR szVarName[32];
+	TCHAR szVarName[32] = L"";
 	wnsprintf(szVarName, 32, L"Title%d", m_Current);
 	GetPrivateProfileString(L"playlist", szVarName, NULL, szDest, iDestSize, m_Source);
 
