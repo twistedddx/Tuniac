@@ -17,21 +17,33 @@ void DoMeta(DWORD handle, void *user)
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
 	TCHAR szTitle[128];
+	TCHAR szBitrate[128];
 	if(icy)
 	{ // got ICY metadata
 		for(;*icy;icy+=strlen(icy)+1)
 		{
 			if (!strnicmp(icy,"icy-name:",9))
 			{
-				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szArtist, 128);
-				m_pHelper->UpdateStreamTitle((LPTSTR)user, szArtist, FIELD_ARTIST);
+				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szTitle, 128);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 			}
 
 			if (!strnicmp(icy,"icy-genre:",10))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+10, -1, szGenre, 128);
-				m_pHelper->UpdateStreamTitle((LPTSTR)user, szGenre, FIELD_GENRE);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szGenre, FIELD_GENRE);
 			}
+			if (!strnicmp(icy,"icy-br:",7))
+			{
+				MultiByteToWideChar(CP_ACP, 0, icy+7, -1, szBitrate, 128);
+				wcscat(szBitrate, L"000");
+				m_pHelper->UpdateMetaData((LPTSTR)user, szBitrate, FIELD_BITRATE);
+			}
+			/* these should already been known
+			ice-samplerate:
+			ice-channels:
+			ice-bitrate:
+			*/
 		}
 	}
 	char *meta=(char *)BASS_ChannelGetTags(handle,BASS_TAG_META);
@@ -43,15 +55,15 @@ void DoMeta(DWORD handle, void *user)
 		{
 			title=strdup(title+13);
 			strchr(title,';')[-1]=0;
-			MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
-			m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
+			MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
+			m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 		}
 		if(url && szArtist == NULL)
 		{
 			url=strdup(url+11);
 			strchr(url,';')[-1]=0;
-			MultiByteToWideChar(CP_ACP, 0, url, -1, szArtist, 128);
-			m_pHelper->UpdateStreamTitle((LPTSTR)user, szArtist, FIELD_ARTIST);
+			MultiByteToWideChar(CP_ACP, 0, url, -1, szTitle, 128);
+			m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 		}
 	}
 	else
@@ -71,16 +83,23 @@ void DoMeta(DWORD handle, void *user)
 			{
 				char text[100];
 				_snprintf(text,sizeof(text),"%s - %s",artist,title);
-				MultiByteToWideChar(CP_ACP, 0, text, -1, szTitle, 128);
-				m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
+				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 			else if(title  && szTitle == NULL)
 			{
-				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
-				m_pHelper->UpdateStreamTitle((LPTSTR)user, szTitle, FIELD_TITLE);
+				MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 		}
     }
+	/*
+	char *meta=(char *)BASS_ChannelGetTags(handle,BASS_TAG_WMA_META);
+	if(meta)
+	{ // got WMA tag
+
+	}
+	*/
 }
 
 void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
@@ -127,6 +146,7 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 				DoMeta(decodehandle, szSource);
 				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
 				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
+				//BASS_ChannelSetSync(decodehandle,BASS_SYNC_WMA_CHANGE,0,&MetaSync, szSource); // WMA
 			}
 		}
 	}
@@ -137,10 +157,24 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 	BASS_ChannelGetInfo(decodehandle,&info);
 
 	dTime = LENGTH_UNKNOWN;
-	if(!bIsStream)
-		dTime = BASS_ChannelBytes2Seconds(decodehandle,BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE)) * 1000;
+	long long len = BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE);
+	if(len)
+		dTime = BASS_ChannelBytes2Seconds(decodehandle, len) * 1000;
 
-	//m_Buffer = (float *)VirtualAlloc(NULL, BUFFERSIZE, MEM_COMMIT, PAGE_READWRITE);
+	if(bIsStream) //update unknowns for streams
+	{
+		TCHAR szLength[10];
+		_i64tow(dTime, szLength, 10);
+		m_pHelper->UpdateMetaData(szSource, szLength, FIELD_PLAYBACKTIME);
+
+		TCHAR szChannels[2];
+		_itow(info.chans, szChannels, 10);
+		m_pHelper->UpdateMetaData(szSource, szChannels, FIELD_NUMCHANNELS);
+		TCHAR szSamplerate[6];
+		_itow(info.freq, szSamplerate, 10);
+		m_pHelper->UpdateMetaData(szSource, szSamplerate, FIELD_SAMPLERATE);
+	}
+
 	m_Buffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
 
 	return(true);
