@@ -134,6 +134,37 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 bool			CM3U_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 {
+	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
+
+	if(m_File == NULL)
+		return false;
+
+	if(feof(m_File) != 0)
+		return false;
+
+	while(1)
+	{
+		if(fgetws(szDest, iDestSize, m_File) != NULL)
+		{
+			if (!_wcsnicmp(szDest, L"#EXTINF:",8))
+			{
+				TCHAR * szTemp = wcsstr(szDest, L",");
+				
+				if(szTemp[wcslen(szTemp)-1] == L'\n')
+					szTemp[wcslen(szTemp)-1] = L'\0';
+
+				wcscpy_s(szDest, iDestSize, &szTemp[1]);
+
+				return true;
+			}
+			return false;
+		}
+		else
+		{
+			break;
+		}
+	}
+
 	return false;
 }
 
