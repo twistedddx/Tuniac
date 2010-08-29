@@ -75,6 +75,7 @@ protected:
 	BOOL		m_bSetDateAddedToFileCreationTime;
 	BOOL		m_bPlaylistSorting;
 	BOOL		m_bAutoAddPlaylist;
+	BOOL		m_bAddSingleStream;
 	BOOL		m_bAutoSoftPause;
 
 	BOOL		m_bCrossfadeEnabled;
@@ -230,7 +231,6 @@ public:
 	void		SetCurrentVisual(int iVisual);
 	BOOL		GetShowVisArt(void);
 
-
 	TrayIconMode	GetTrayIconMode(void);
 	void		SetTrayIconMode(TrayIconMode eMode);
 
@@ -238,13 +238,13 @@ public:
 	BOOL		GetAlwaysOnTop(void);
 	void		SetAlwaysOnTop(BOOL bEnabled);
 
-
 	int			GetHistoryListSize(void);
 	int			GetFutureListSize(void);
 
 	BOOL		GetDateAddedToFileCreationTime(void);
 	BOOL		GetCanPlaylistsSort(void);
 	BOOL		GetAutoAddPlaylists(void);
+	BOOL		GetAddSingleStream(void);
 	BOOL		GetAutoSoftPause(void);
 	BOOL		GetSmartSortingEnabled(void);
 };

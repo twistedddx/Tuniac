@@ -220,7 +220,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 		dwEntryID++;
 	}
 	// we need to set the streampath here plus a nice name
-	StrCpy(libraryEntry.szTitle, szURL);
+	StrCpy(libraryEntry.szArtist, szURL);
     StrCpy(libraryEntry.szURL, szURL);
 	GetLocalTime(&libraryEntry.stDateAdded);
 

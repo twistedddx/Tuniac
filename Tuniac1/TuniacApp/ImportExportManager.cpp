@@ -258,79 +258,58 @@ bool			CImportExportManager::Import(LPTSTR szSource)
 
 bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR szSource)
 {
-	
 	bool bOK = false;
 	bool bStreamList = false;
+	bool bAutoAddPlaylists = tuniacApp.m_Preferences.GetAutoAddPlaylists();
+	bool bAddSingleStream = tuniacApp.m_Preferences.GetAddSingleStream();
+
 	CMediaLibraryPlaylistEntry * pStreamEntry;
-	TCHAR szFilename[MAX_PATH];
+	TCHAR szFilename[MAX_PATH] = L"";;
 
 	if(pImporter->BeginImport(szSource) && pImporter->ImportUrl(szFilename, MAX_PATH))
 	{
 		bOK = true;
-		bStreamList = PathIsURL(szFilename);
-		if(bStreamList)
+		IPlaylistEntry	*	pPE = NULL;
+		EntryArray playlistEntries;
+
+		do
 		{
 			tuniacApp.m_MediaLibrary.AddItem(szFilename);
+			pPE = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
 
-			pStreamEntry = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
-			//pStreamEntry = tuniacApp.m_MediaLibrary.GetItemByIndex(tuniacApp.m_MediaLibrary.GetCount() - 1);
+			if(pPE)
+			{
+				if(bAutoAddPlaylists)
+					playlistEntries.AddTail(pPE);
 
-			TCHAR szTitle[128];
-			if(pImporter->ImportTitle(szTitle, 128))
-			{
-				if(pStreamEntry->GetLibraryEntry()->szArtist[0] == TEXT('\0'))
-					StrCpyN(pStreamEntry->GetLibraryEntry()->szArtist, szTitle, 128);
-				if(pStreamEntry->GetLibraryEntry()->szComment[0] == TEXT('\0'))
-				StrCpyN(pStreamEntry->GetLibraryEntry()->szComment, szTitle, 128);
-			}
-			else
-			{
-				if(pStreamEntry->GetLibraryEntry()->szArtist[0] == TEXT('\0'))
-					StrCpy(pStreamEntry->GetLibraryEntry()->szArtist, TEXT("[Unknown Stream]"));
-			}
-
-			/*
-			if(pStreamEntry != NULL && StrCmpI(pStreamEntry->GetLibraryEntry()->szURL, szFilename) == 0)
-			{
-				
-				for(int i = 1; i < LIBENTRY_MAX_URLS; i++)
+				bStreamList = PathIsURL(szFilename);
+				if(bStreamList) //auto fill details for streams
 				{
-					if(!pImporter->ImportUrl(pStreamEntry->GetLibraryEntry()->szURL[i], MAX_PATH))
+					TCHAR szTitle[128] = L"";;
+					if(pImporter->ImportTitle(szTitle, 128))
+					{
+						if(wcscmp((LPTSTR)pPE->GetField(FIELD_TITLE), L"") == 0)
+							pPE->SetField(FIELD_TITLE, szTitle);
+						if(wcscmp((LPTSTR)pPE->GetField(FIELD_COMMENT), L"") == 0)
+							pPE->SetField(FIELD_COMMENT, szTitle);
+					}
+					else
+					{
+						if(wcscmp((LPTSTR)pPE->GetField(FIELD_TITLE), L"") == 0)
+							pPE->SetField(FIELD_TITLE, L"[Unknown Stream]");
+					}
+					if(bAddSingleStream) //pls and m3u contain numerous mirrors of the same stream normally. Normal behaviour is to only add the first
 						break;
 				}
-				
 			}
-			else
-			{
-				bOK = false;
-			}
-			*/
+		} while(pImporter->ImportUrl(szFilename, MAX_PATH));
 
-
-
-		}
-		else
+		if(bAutoAddPlaylists && !bAddSingleStream) //create a Tuniac playlist of this playlist file except when single adding streams
 		{
-			IPlaylistEntry	*	pPE = NULL;
-			EntryArray playlistEntries;
-
-			do
-			{
-				tuniacApp.m_MediaLibrary.AddItem(szFilename);
-				pPE = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
-				if(pPE)
-				{
-					playlistEntries.AddTail(pPE);
-				}
-			} while(pImporter->ImportUrl(szFilename, MAX_PATH));
-
-			if(tuniacApp.m_Preferences.GetAutoAddPlaylists())
-			{
-				TCHAR	szFileTitle[128];
-				GetFileTitle(szSource, szFileTitle, 128);
-				tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFileTitle, playlistEntries);
-				tuniacApp.m_SourceSelectorWindow->UpdateList();
-			}
+			TCHAR	szFileTitle[128];
+			GetFileTitle(szSource, szFileTitle, 128);
+			tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFileTitle, playlistEntries);
+			tuniacApp.m_SourceSelectorWindow->UpdateList();
 		}
 		pImporter->EndImport();
 	}

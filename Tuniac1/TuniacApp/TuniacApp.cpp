@@ -2436,7 +2436,7 @@ void	CTuniacApp::UpdateTitles(void)
 }
 
 //update streamtitle eg for mp3 streams
-void	CTuniacApp::UpdateStreamTitle(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID)
+void	CTuniacApp::UpdateMetaData(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID)
 {
 	IPlaylistEntry * pIPE = m_MediaLibrary.GetItemByURL(szURL);
 

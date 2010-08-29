@@ -33,8 +33,30 @@
 #define FIELD_URL							0
 #define FIELD_FILENAME						1
 #define FIELD_ARTIST						2
+#define FIELD_ALBUM							3
 #define FIELD_TITLE							4
+#define FIELD_TRACKNUM						5
 #define FIELD_GENRE							6
+#define FIELD_YEAR							7
+#define FIELD_PLAYBACKTIME					8
+#define FIELD_KIND							9
+#define FIELD_FILESIZE						10
+#define FIELD_DATEADDED						11
+#define FIELD_DATEFILECREATION				12
+#define FIELD_DATELASTPLAYED				13
+#define FIELD_PLAYCOUNT						14
+#define FIELD_RATING						15
+#define FIELD_COMMENT						16
+#define FIELD_BITRATE						17
+#define FIELD_SAMPLERATE					18
+#define FIELD_NUMCHANNELS					19
+#define FIELD_FILEEXTENSION					20
+#define FIELD_PLAYORDER						21
+#define FIELD_REPLAYGAIN_TRACK_GAIN			22
+#define FIELD_REPLAYGAIN_TRACK_PEAK			23
+#define FIELD_REPLAYGAIN_ALBUM_GAIN			24
+#define FIELD_REPLAYGAIN_ALBUM_PEAK			25
+//#define FIELD_STATIONNAME					26
 
 class IAudioFileIO
 {
@@ -71,7 +93,7 @@ public:
 class IAudioSourceHelper
 {
 public:
-	virtual void		UpdateStreamTitle(LPTSTR szSource, LPTSTR szTitle, unsigned long ulFieldID)		= 0;
+	virtual void		UpdateMetaData(LPTSTR szSource, LPTSTR szTitle, unsigned long ulFieldID)		= 0;
 	virtual void		LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)		= 0;
 };
 
