@@ -86,10 +86,12 @@ public:
 	bool				Next(void);
 	bool				CheckFilteredIndex(unsigned long ulFilteredIndex);
 
-	unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext);
+	unsigned long		GetNextFilteredIndexForActive();
+	unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex);
 	unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex);
 
 	IPlaylistEntry	*	GetActiveItem(void);
+	unsigned long		GetActiveEntryID(void);
 
 public:
 	unsigned long		GetNumItems(void);
@@ -99,11 +101,17 @@ public:
 	unsigned long		GetActiveNormalFilteredIndex(void);
 	bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
 
-	IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex);
-	IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
-	unsigned long		GetFilteredIndexforItem(IPlaylistEntry * pIPE);
-	unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pIPE);
-	unsigned long		GetRealIndexforItem(IPlaylistEntry * pIPE);
+	IPlaylistEntry *	GetEntryAtFilteredIndex(unsigned long ulFilteredIndex);
+	unsigned long		GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex);
+	IPlaylistEntry *	GetEntryAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+	unsigned long		GetEntryIDAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+
+	unsigned long		GetFilteredIndexforEntry(IPlaylistEntry * pIPE);
+	unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID);
+	unsigned long		GetNormalFilteredIndexforEntry(IPlaylistEntry * pIPE);
+	unsigned long		GetNormalFilteredIndexforEntryID(unsigned long ulEntryID);
+	unsigned long		GetRealIndexforEntry(IPlaylistEntry * pIPE);
+	unsigned long		GetRealIndexforEntryID(unsigned long ulEntryID);
 
 	bool				SetTextFilter(LPTSTR	szFilterString);
 	LPTSTR				GetTextFilter(void);
@@ -112,14 +120,14 @@ public:
 	bool				SetTextFilterReversed(bool bReverse);
 	bool				GetTextFilterReversed(void);
 
-	void				GetFieldFilteredList(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse);
+	void				GetFieldFilteredItemArray(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse);
 
 	bool				Sort(unsigned long ulSortBy);
 
 	bool				AddEntryArray(EntryArray & entryArray);
 
-	bool				DeleteItemArray(IndexArray &	indexArray);
-	bool				MoveItemArray(unsigned long ToIndex, IndexArray &	indexArray);
+	bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray);
+	bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray);
 
 	bool				DeleteAllItemsWhereIDEquals(unsigned long ID);
 	bool				UpdateIndex(unsigned long ulRealIndex);

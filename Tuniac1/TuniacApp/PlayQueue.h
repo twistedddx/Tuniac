@@ -28,7 +28,7 @@
 class CPlayQueue
 {
 protected:
-	Array<IPlaylistEntry *, 3>	m_Queue;
+	IndexArray m_Queue;
 
 public:
 	CPlayQueue(void);
@@ -36,12 +36,12 @@ public:
 
 	unsigned long		GetCount(void);
 
-	IPlaylistEntry *	GetItemAtIndex(unsigned long ulIndex);
+	unsigned long		GetEntryIDAtIndex(unsigned long ulIndex);
 
-	bool				Prepend(IPlaylistEntry * pIPE);
-	bool				Append(IPlaylistEntry * pIPE);
+	bool				Prepend(unsigned long ulEntryID);
+	bool				Append(unsigned long ulEntryID);
 
-	bool				Remove(int iIndex);
-	bool				RemoveItem(IPlaylistEntry * pIPE);
+	bool				Remove(unsigned long ulIndex);
+	bool				RemoveEntryID(unsigned long ulEntryID);
 	void				Clear(void);
 };

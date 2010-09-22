@@ -48,7 +48,7 @@ public:
 	char GetDriveLetter(void) { return m_DriveLetter; }
 
 	unsigned long		GetNumCDTracks(void);
-	IPlaylistEntry *	GetItemAtIndex(unsigned long Index);
+	IPlaylistEntry *	GetEntryAtIndex(unsigned long Index);
 
 	unsigned long		GetActiveIndex();
 	bool				SetActiveIndex(int iIndex);
@@ -65,4 +65,5 @@ public:
 	bool				Next(void);
 
 	IPlaylistEntry	*	GetActiveItem(void);
+	unsigned long		GetActiveEntryID(void);
 };

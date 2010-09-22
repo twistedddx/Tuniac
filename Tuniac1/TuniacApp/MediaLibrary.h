@@ -25,7 +25,6 @@
 #include "IInfoManager.h"
 #include "IPlaylist.h"
 #include "MediaLibraryPlaylistEntry.h"
-#include "PlayQueue.h"
 #include "ImportExportManager.h"
 
 #define BEGIN_ADD_UNKNOWNNUMBER		(-1)
@@ -54,7 +53,6 @@ typedef struct
 
 	void AddingFilesIncrement(bool bDir);
 public:
-	CPlayQueue				m_Queue;
 	CImportExportManager	m_ImportExport;
 
 	CMediaLibrary();
@@ -71,16 +69,21 @@ public:
 	bool					BeginAdd(unsigned long ulNumItems);
 	bool					EndAdd(void);
 	bool					AddItem(LPTSTR szItemToAdd);
-	bool					RemoveItem(IPlaylistEntry *			pIPE);
+	bool					RemoveEntry(IPlaylistEntry *			pIPE);
+	bool					RemoveEntryID(unsigned long ulEntryID);
 
 	bool					UpdateMLIndex(unsigned long	ulMLIndex);
 //todo bits: per column tag writing?
 //	bool					WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData);
 	bool					WriteFileTags(IPlaylistEntry * pIPE);
 
-	CMediaLibraryPlaylistEntry *	GetItemByIndex(unsigned long	ulIndex);
-	CMediaLibraryPlaylistEntry *	GetItemByID(unsigned long		ulID);
-	CMediaLibraryPlaylistEntry *	GetItemByURL(LPTSTR		szURL);
+	CMediaLibraryPlaylistEntry *	GetEntryByIndex(unsigned long	ulIndex);
+	CMediaLibraryPlaylistEntry *	GetEntryByEntryID(unsigned long		ulEntryID);
+	CMediaLibraryPlaylistEntry *	GetEntryByURL(LPTSTR		szURL);
+
+	unsigned long	GetEntryIDByIndex(unsigned long	ulIndex);
+	unsigned long	GetEntryIDByItem(CMediaLibraryPlaylistEntry *		pIPE);
+	unsigned long	GetEntryIDByURL(LPTSTR		szURL);
 
 	IInfoManager	*		GetInfoManagerForFilename(LPTSTR szItemToAdd);
 };

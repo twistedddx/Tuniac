@@ -22,7 +22,7 @@
 //every type of playlist is a base playlist. Playlist 0 is the LibraryPlaylist.cpp, low numbers playlists may be AudioCDPlaylist.cpp
 
 #include "stdafx.h"
-#include ".\baseplaylist.h"
+#include "baseplaylist.h"
 
 CBasePlaylist::CBasePlaylist(void)
 {
@@ -324,7 +324,7 @@ bool				CBasePlaylist::Next(void)
 		}
 	}
 
-	unsigned long ulFilteredIndex = GetNextFilteredIndex(ulIndex, true, true, bForceNext);
+	unsigned long ulFilteredIndex = GetNextFilteredIndexForActive();
 
 	//set our found next index
 	return SetActiveFilteredIndex(ulFilteredIndex);
@@ -332,6 +332,10 @@ bool				CBasePlaylist::Next(void)
 
 bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
 {
+	//invalid
+	if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
+		return false;
+
 	//too low
 	if(ulFilteredIndex < 0)
 		return false;
@@ -343,122 +347,69 @@ bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
 	return true;
 }
 
-//will return the next song index and return -1 the index given is not valid
-unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)
+//will return the next song index
+unsigned long		CBasePlaylist::GetNextFilteredIndexForActive()
 {
-///////////////// normal logic
-	if(!bForceNext)
-	{
-		if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
-			return 0;
-
-		//check that we are checking a valid index
-		//if(!CheckFilteredIndex(ulFilteredIndex))
-		//	return INVALID_PLAYLIST_INDEX;
-
-		//if repeatone the next song is just the current song
-		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
-			return ulFilteredIndex;
-	}
+	//there is no files, there is no next
+	if(GetNumItems() == 0)
+		return INVALID_PLAYLIST_INDEX;
 
 	unsigned long ulActiveIndex = GetActiveFilteredIndex();
 
-///////////////// play selected logic
-		//if PlaySelected is valid check
-
-	if(bFollowSelected)
+	if(ulActiveIndex == INVALID_PLAYLIST_INDEX)
 	{
-		unsigned long ulPlaySize = tuniacApp.m_PlaySelected.GetCount();
-
-		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-		if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED && ulPlaySize)
-		{
-
-			//if we are checking the current song, the next song is our playselected
-			if(ulFilteredIndex == ulActiveIndex )
-				if(tuniacApp.m_Preferences.GetShuffleState())
-					return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[0]));
-				else
-					return tuniacApp.m_PlaySelected[0];
-
-			//see if found within m_PlaySelected 0 thru GetCount - 1
-			unsigned long ulFound = INVALID_PLAYLIST_INDEX;
-			for(unsigned long x=0; x < ulPlaySize; x++)
-			{
-				if(tuniacApp.m_PlaySelected[x] == ulFilteredIndex)
-				{
-					ulFound = x;
-					break;
-				}
-			}
-
-			//if it was found to be the last playselected, but watch we are not queueing(must be handle yourself check rebuildfuturemenu for example)
-			if(ulFound == (ulPlaySize - 1))
-				return ulFilteredIndex + 1;
-
-			//if found we want it's next
-			if(ulFound != INVALID_PLAYLIST_INDEX)
-				if(tuniacApp.m_Preferences.GetShuffleState())
-					return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[ulFound + 1]));
-				else
-					return tuniacApp.m_PlaySelected[ulFound + 1];
-					
-		}
+		//no active, start from the start
+		return 0;
 	}
 
-///////////////// play queue logic
 
-	if(bFollowQueue)
+	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
+		return ulActiveIndex;
+
+	if(tuniacApp.m_PlaySelected.GetCount())
 	{
-		unsigned long ulQueueSize = tuniacApp.m_MediaLibrary.m_Queue.GetCount();
-
-		//if play queue play is valid check
-		if (ulQueueSize)
-		{
-			unsigned long ulNextIndex = INVALID_PLAYLIST_INDEX;
-			//if we are checking the current song the next song is our queue
-			if(ulFilteredIndex == ulActiveIndex )
-			{
-				ulNextIndex = 0;
-			}
-			else
-			{
-				//see if found within m_Queue 0 thru GetCount - 1
-				for(unsigned long x=0; x < ulQueueSize ; x++)
-				{
-					IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(x);
-					if(GetFilteredIndexforItem(pIPE) == ulFilteredIndex)
-					{
-						ulNextIndex = x + 1;
-						break;
-					}
-				}
-
-				//if it was found to be the last queueing
-				if(ulNextIndex == ulQueueSize)
-					return ulFilteredIndex + 1;
-			}
-
-
-			//if found we want it's next
-			if(ulNextIndex != INVALID_PLAYLIST_INDEX)
-			{
-				//remove dead entries
-				for(unsigned long x=0; x < ulQueueSize; x++)
-				{
-					unsigned long ulFilIndex = GetFilteredIndexforItem(tuniacApp.m_MediaLibrary.m_Queue.GetItemAtIndex(ulNextIndex));
-					if(ulFilIndex != INVALID_PLAYLIST_INDEX && ulFilIndex != ulActiveIndex)
-						return ulFilIndex;
-					else
-						tuniacApp.m_MediaLibrary.m_Queue.Remove(ulNextIndex);
-				}
-			}
-		}
+		//playselected is always stored as a normal filtered index, so will need to switch for shuffle
+		if(tuniacApp.m_Preferences.GetShuffleState())
+			return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[0]));
+		else
+			return tuniacApp.m_PlaySelected[0];
 	}
 
-///////////////// normal logic
+	if (tuniacApp.m_Queue.GetCount())
+	{
+		unsigned long ulFilteredIndex = GetFilteredIndexforEntryID(tuniacApp.m_Queue.GetEntryIDAtIndex(0));
+		//check the queue is for a valid file
+		if(CheckFilteredIndex(ulFilteredIndex))
+			return ulFilteredIndex;
+	}
 
-	//we are at the last song, there is no next song
+	//m_NormalIndexArray/m_RandomIndexArray should be the same length
+	if(ulActiveIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+		return 0;
+	
+	//try to set active as +1 of current active
+	if(ulActiveIndex < m_NormalIndexArray.GetCount() - 1)
+		return ulActiveIndex + 1;
+
+	//this is the end of the line, start again
+	return 0;
+}
+
+//will return the next song index for the index given. DOES NOT follow queues
+unsigned long		CBasePlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex)
+{
+	//there is no files, there is no next
+	if(GetNumItems() == 0)
+		return INVALID_PLAYLIST_INDEX;
+
+	//no valid start, so just start from the beginning again
+	if(!CheckFilteredIndex(ulFilteredIndex))
+		return 0;
+
+	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
+		return ulFilteredIndex;
+
+	//we are at the last song
 	//m_NormalIndexArray/m_RandomIndexArray should be the same length
 	if(ulFilteredIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 		return 0;
@@ -467,11 +418,8 @@ unsigned long		CBasePlaylist::GetNextFilteredIndex(unsigned long ulFilteredIndex
 	if(ulFilteredIndex < m_NormalIndexArray.GetCount() - 1)
 		return ulFilteredIndex + 1;
 	
-	if(bForceNext)
-		return 0;
-
-	//no files
-	return INVALID_PLAYLIST_INDEX;
+	//no more files
+	return 0;
 }
 
 //////////////////////////////////////////////////////////
@@ -483,6 +431,15 @@ IPlaylistEntry	*	CBasePlaylist::GetActiveItem(void)
 		return NULL;
 
 	return m_PlaylistArray[m_ActiveRealIndex].pIPE;
+}
+
+//get the active entryid(any active entryid should be in the current playlist?
+unsigned long		CBasePlaylist::GetActiveEntryID(void)
+{
+	if(m_ActiveRealIndex == INVALID_PLAYLIST_INDEX)
+		return NULL;
+
+	return m_PlaylistArray[m_ActiveRealIndex].pIPE->GetEntryID();
 }
 
 //play order is simply the order of m_NormalIndexArray/m_RandomIndexArray 
@@ -549,7 +506,7 @@ unsigned long		CBasePlaylist::GetActiveNormalFilteredIndex(void)
 }
 
 //get the item at filtered ulIndex for m_NormalIndexArray/m_RandomIndexArray
-IPlaylistEntry *	CBasePlaylist::GetItemAtFilteredIndex(unsigned long ulFilteredIndex)
+IPlaylistEntry *	CBasePlaylist::GetEntryAtFilteredIndex(unsigned long ulFilteredIndex)
 {
 	unsigned long ulRealIndex = INVALID_PLAYLIST_INDEX;
 	if(tuniacApp.m_Preferences.GetShuffleState())
@@ -565,8 +522,25 @@ IPlaylistEntry *	CBasePlaylist::GetItemAtFilteredIndex(unsigned long ulFilteredI
 	return NULL;
 }
 
+//get the EntryID at filtered ulIndex for m_NormalIndexArray/m_RandomIndexArray
+unsigned long	CBasePlaylist::GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex)
+{
+	unsigned long ulRealIndex = INVALID_PLAYLIST_INDEX;
+	if(tuniacApp.m_Preferences.GetShuffleState())
+		ulRealIndex = RandomFilteredIndexToRealIndex(ulFilteredIndex);
+	else
+		ulRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
+	
+	if(ulRealIndex != INVALID_PLAYLIST_INDEX)
+	{
+		return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
+	}
+
+	return NULL;
+}
+
 //get the item at filtered ulIndex for m_NormalIndexArray/m_RandomIndexArray
-IPlaylistEntry *	CBasePlaylist::GetItemAtNormalFilteredIndex(unsigned long ulFilteredIndex)
+IPlaylistEntry *	CBasePlaylist::GetEntryAtNormalFilteredIndex(unsigned long ulFilteredIndex)
 {
 	unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
 
@@ -578,8 +552,21 @@ IPlaylistEntry *	CBasePlaylist::GetItemAtNormalFilteredIndex(unsigned long ulFil
 	return NULL;
 }
 
+//get the EntryID at filtered ulIndex for m_NormalIndexArray/m_RandomIndexArray
+unsigned long	CBasePlaylist::GetEntryIDAtNormalFilteredIndex(unsigned long ulFilteredIndex)
+{
+	unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(ulFilteredIndex);
+
+	if(ulRealIndex != INVALID_PLAYLIST_INDEX)
+	{
+		return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
+	}
+
+	return NULL;
+}
+
 //gets real index then returns filtered index for item 
-unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pIPE)
+unsigned long		CBasePlaylist::GetFilteredIndexforEntry(IPlaylistEntry	* pIPE)
 {
 
 	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
@@ -599,8 +586,29 @@ unsigned long		CBasePlaylist::GetFilteredIndexforItem(IPlaylistEntry	* pIPE)
 	return INVALID_PLAYLIST_INDEX;
 }
 
+//gets real index then returns filtered index for EntryID 
+unsigned long		CBasePlaylist::GetFilteredIndexforEntryID(unsigned long ulEntryID)
+{
+
+	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
+	{
+		if(tuniacApp.m_Preferences.GetShuffleState())
+		{
+			if(m_PlaylistArray[m_RandomIndexArray[x]].pIPE->GetEntryID() == ulEntryID)
+				return x;
+		}
+		else
+		{
+			if(m_PlaylistArray[m_NormalIndexArray[x]].pIPE->GetEntryID() == ulEntryID)
+				return x;
+		}
+	}
+
+	return INVALID_PLAYLIST_INDEX;
+}
+
 //gets real index then returns filtered index for item 
-unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pIPE)
+unsigned long		CBasePlaylist::GetNormalFilteredIndexforEntry(IPlaylistEntry	* pIPE)
 {
 	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
 	{
@@ -613,8 +621,22 @@ unsigned long		CBasePlaylist::GetNormalFilteredIndexforItem(IPlaylistEntry	* pIP
 	return INVALID_PLAYLIST_INDEX;
 }
 
+//gets real index then returns filtered index for EntryID 
+unsigned long		CBasePlaylist::GetNormalFilteredIndexforEntryID(unsigned long ulEntryID)
+{
+	for(unsigned long x=0; x < m_NormalIndexArray.GetCount(); x++)
+	{
+		if(m_PlaylistArray[m_NormalIndexArray[x]].pIPE->GetEntryID() == ulEntryID)
+		{
+			return x;
+		}
+	}
+
+	return INVALID_PLAYLIST_INDEX;
+}
+
 //gets real index for item 
-unsigned long		CBasePlaylist::GetRealIndexforItem(IPlaylistEntry	* pIPE)
+unsigned long		CBasePlaylist::GetRealIndexforEntry(IPlaylistEntry	* pIPE)
 {
 	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
 	{
@@ -625,6 +647,17 @@ unsigned long		CBasePlaylist::GetRealIndexforItem(IPlaylistEntry	* pIPE)
 	return INVALID_PLAYLIST_INDEX;
 }
 
+//gets real index for EntryID 
+unsigned long		CBasePlaylist::GetRealIndexforEntryID(unsigned long ulEntryID)
+{
+	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+	{
+		if(m_PlaylistArray[x].pIPE->GetEntryID() == ulEntryID)
+			return x;
+	}
+
+	return INVALID_PLAYLIST_INDEX;
+}
 
 bool				CBasePlaylist::SetTextFilter(LPTSTR	szFilterString)
 {
@@ -661,7 +694,7 @@ bool				CBasePlaylist::GetTextFilterReversed(void)
 	return m_bTextFilterReversed;
 }
 
-void			CBasePlaylist::GetFieldFilteredList(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse)
+void			CBasePlaylist::GetFieldFilteredItemArray(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse)
 {
 	entryArray.RemoveAll();
 	TCHAR szTemp[512];
@@ -674,6 +707,7 @@ void			CBasePlaylist::GetFieldFilteredList(EntryArray & entryArray, unsigned lon
 		}
 	}
 }
+
 bool CBasePlaylist::Sort (unsigned long ulSortBy)
 {
 	bool reversesort = false;
@@ -712,7 +746,7 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 
-	m_ActiveRealIndex = GetRealIndexforItem(pIPE);
+	m_ActiveRealIndex = GetRealIndexforEntry(pIPE);
 	RebuildPlaylistArrays();
 
 	return true;
@@ -854,9 +888,9 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 /*
 		case FIELD_PLAYORDER:
 			{
-				if(GetPlayOrder(GetNormalFilteredIndexforItem(pItem1)) > GetPlayOrder(GetNormalFilteredIndexforItem(pItem2)))
+				if(GetPlayOrder(GetNormalFilteredIndexforEntry(pItem1)) > GetPlayOrder(GetNormalFilteredIndexforEntry(pItem2)))
 					return 1;
-				else if(GetPlayOrder(GetNormalFilteredIndexforItem(pItem1)) < GetPlayOrder(GetNormalFilteredIndexforItem(pItem2)))
+				else if(GetPlayOrder(GetNormalFilteredIndexforEntry(pItem1)) < GetPlayOrder(GetNormalFilteredIndexforEntry(pItem2)))
 					return -1;
 			}
 			break;
@@ -970,22 +1004,18 @@ bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
 	return true;
 }
 
-bool				CBasePlaylist::DeleteItemArray(IndexArray &	indexArray)
+bool				CBasePlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 {
+	//swap to real index
 	for(unsigned long x=0; x<indexArray.GetCount(); x++)
 	{
 		indexArray[x] = NormalFilteredIndexToRealIndex(indexArray[x]);
 	}
 
+	//remove them all
 	while(indexArray.GetCount())
 	{
-		//we are about to remove 0 so if its earlier than other files, than position will be smaller by 1
-		for(unsigned long x=1; x<indexArray.GetCount(); x++)
-		{
-			if(indexArray[0] < indexArray[x])
-				indexArray[x]--;
-		}
-
+		//move active song
 		if(m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
 		{
 			if(indexArray[0] < m_ActiveRealIndex)
@@ -994,20 +1024,33 @@ bool				CBasePlaylist::DeleteItemArray(IndexArray &	indexArray)
 			}
 			else if(indexArray[0] == m_ActiveRealIndex)
 			{
+				if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == this)
+					CCoreAudio::Instance()->Reset();
+
 				m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
 			}
 		}
 
 		m_PlaylistArray.RemoveAt(indexArray[0]);
+
+		//move indexes to compensate for now deleted files
+		for(unsigned long i=1; i<indexArray.GetCount(); i++)
+		{
+			if(indexArray[0] < indexArray[i])
+				indexArray[i]--;
+		}
+
 		indexArray.RemoveAt(0);
 	}
 
-	ApplyFilter();
+	RebuildPlaylistArrays();
+	tuniacApp.RebuildFutureMenu();
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
 }
 
-bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexArray)
+bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray)
 {
 	EntryArray		theEntries;
 	bool			bIDActive = false;
@@ -1029,7 +1072,7 @@ bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexAr
 	}
 
 
-	DeleteItemArray(indexArray);
+	DeleteNormalFilteredIndexArray(indexArray);
 
 	if(ToIndex > m_PlaylistArray.GetCount())
 	{
@@ -1058,6 +1101,8 @@ bool				CBasePlaylist::MoveItemArray(unsigned long ToIndex, IndexArray &	indexAr
 	}
 
 	ApplyFilter();
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
+
 	return true;
 }
 
@@ -1074,7 +1119,7 @@ bool				CBasePlaylist::DeleteAllItemsWhereIDEquals(unsigned long ID)
 		}
 	}
 
-	return DeleteItemArray(indexesToDelete);
+	return DeleteNormalFilteredIndexArray(indexesToDelete);
 }
 
 bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
@@ -1086,8 +1131,8 @@ bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
 		return false;
 	
 	PlaylistEntry PE;
-	unsigned long ulEntry = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
-	PE.pIPE = tuniacApp.m_MediaLibrary.GetItemByID(ulEntry);
+	unsigned long ulEntryID = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
+	PE.pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
 	return true;
@@ -1122,7 +1167,7 @@ void				CBasePlaylist::RestoreOrder(void)
 		PE.bFiltered	= false;
 		for(unsigned long x=0; x<m_SavedPlaylistArray.GetCount(); x++)
 		{
-			PE.pIPE = tuniacApp.m_MediaLibrary.GetItemByID(m_SavedPlaylistArray[x]);
+			PE.pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(m_SavedPlaylistArray[x]);
 			m_PlaylistArray.AddTail(PE);
 		}
 		ApplyFilter();

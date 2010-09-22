@@ -253,6 +253,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 			}
 			break;
 
+			//catches drag on divider
 		case WM_LBUTTONDOWN:
 			{
 				POINT pt;
@@ -274,6 +275,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 			}
 			break;
 
+			//catches drag and drop of playlists
 		case WM_LBUTTONUP:
 			{
 				if(m_bTrackingDrag)
@@ -317,6 +319,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 			}
 			break;
 
+			//catches double click on divider
 		case WM_LBUTTONDBLCLK:
 			{
 				if(m_bTrackingDrag)
@@ -339,6 +342,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 			}
 			break;
 
+			//catches right click and drag of playlists
 		case WM_RBUTTONUP:
 			{
 				if(m_bSourceDrag && m_bSourceAltDrag)
@@ -638,16 +642,19 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(iPos == -1)
 								break;
 
+							if(IDNO == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist(s)?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
+								break;
+
 							IndexArray	m_DeleteArray;
 							while(iPos != -1)
 							{
+								//not ML playlist
 								if(iPos != 0)
 									m_DeleteArray.AddTail((unsigned long &)iPos);
 
 								iPos = ListView_GetNextItem(hSourceViewWnd, iPos, LVNI_SELECTED);
 							}
 
-							bool bConfirm = 1;
 							for(unsigned long i = m_DeleteArray.GetCount(); i > 0; i--)
 							{
 								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_DeleteArray[i - 1]))
@@ -656,10 +663,8 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
 								}
 
-								if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_DeleteArray[i - 1], bConfirm))
+								if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_DeleteArray[i - 1]))
 								{
-									bConfirm = 0;
-
 									if(m_ulVisiblePlaylistIndex == m_DeleteArray[i - 1])
 									{
 										unsigned long ulOldActiveIndex = m_ulVisiblePlaylistIndex;
@@ -673,28 +678,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									UpdateList();
 								}
 							}
-
-/*
-//single delete
-							if(m_ulVisiblePlaylistIndex == 0)
-								break;
-
-							if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_ulVisiblePlaylistIndex))
-							{
-								CCoreAudio::Instance()->Reset();
-							}
-							unsigned long ulIndex = m_ulVisiblePlaylistIndex;
-							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(ulIndex))
-							{
-								m_ulVisiblePlaylistIndex = INVALID_PLAYLIST_INDEX;
-								if(ulIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
-									ShowPlaylistAtIndex(ulIndex-1);
-								else
-									ShowPlaylistAtIndex(ulIndex);
-
-								UpdateList();
-							}
-*/
 						}
 						break;
 
@@ -717,13 +700,16 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(iSel <= 0)
 								break;
 
+							if(IDNO == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
+								break;
+
 							if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel))
 							{
 									CCoreAudio::Instance()->Reset();
 									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
 							}
 
-							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel, true))
+							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel))
 							{
 								if(m_ulVisiblePlaylistIndex == iSel)
 								{
@@ -777,10 +763,10 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 								for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pEntry1 = pPlaylist->GetItemAtNormalFilteredIndex(i);
+									pEntry1 = pPlaylist->GetEntryAtNormalFilteredIndex(i);
 									for(unsigned long j = 0; j < i; j++)
 									{
-										pEntry2 = pPlaylist->GetItemAtNormalFilteredIndex(j);
+										pEntry2 = pPlaylist->GetEntryAtNormalFilteredIndex(j);
 										if(StrCmpI((LPTSTR)pEntry1->GetField(FIELD_URL), (LPTSTR)pEntry2->GetField(FIELD_URL)) == 0)
 										{
 											if(pEntry1 == pActiveEntry)
@@ -792,13 +778,13 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									}
 								}
 
-								pPlaylist->DeleteItemArray(deleteArray);
+								pPlaylist->DeleteNormalFilteredIndexArray(deleteArray);
 
 								if(pActiveEntry != NULL)
 								{
 									for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 									{
-										if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pActiveEntry)
+										if(pPlaylist->GetEntryAtNormalFilteredIndex(i) == pActiveEntry)
 										{
 											pPlaylist->SetActiveNormalFilteredIndex(i);
 											break;
@@ -823,7 +809,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								EntryArray exportArray;
 								for(unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 								{
-									pIPE = pPlaylist->GetItemAtNormalFilteredIndex(i);
+									pIPE = pPlaylist->GetEntryAtNormalFilteredIndex(i);
 									exportArray.AddTail(pIPE);
 								}
 								tuniacApp.m_MediaLibrary.m_ImportExport.Export(exportArray, NULL);
@@ -841,7 +827,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								EntryArray			EA;
 								for(unsigned long i = 0; i < ((IPlaylistEX *)pSource)->GetNumItems(); i++)
 								{
-									pPE = ((IPlaylistEX *)pSource)->GetItemAtNormalFilteredIndex(i);
+									pPE = ((IPlaylistEX *)pSource)->GetEntryAtNormalFilteredIndex(i);
 									EA.AddTail(pPE);
 								}
 								((IPlaylistEX *)pDest)->AddEntryArray(EA);
@@ -867,14 +853,14 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								{
 									for(unsigned long j = 0; j < ((IPlaylistEX *)pDest)->GetNumItems(); j++)
 									{
-										if(((IPlaylistEX *)pDest)->GetItemAtNormalFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetItemAtNormalFilteredIndex(i)->GetEntryID())
+										if(((IPlaylistEX *)pDest)->GetEntryAtNormalFilteredIndex(j)->GetEntryID() == ((IPlaylistEX *)pSource)->GetEntryAtNormalFilteredIndex(i)->GetEntryID())
 										{
 											IA.AddTail((unsigned long &)j);
 											continue;
 										}
 									}
 								}
-								((IPlaylistEX *)pDest)->DeleteItemArray(IA);
+								((IPlaylistEX *)pDest)->DeleteNormalFilteredIndexArray(IA);
 							}
 						}
 						break;
@@ -935,23 +921,13 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								case VK_DELETE:
 									{
-										if(m_ulVisiblePlaylistIndex == 0)
-											break;
+										SendMessage(m_hSourceWnd, WM_COMMAND, MAKELONG(IDC_SOURCE_DELPLAYLIST, 0), 0);
+									}
+									break;
 
-										if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_ulVisiblePlaylistIndex))
-										{
-											CCoreAudio::Instance()->Reset();
-										}
-
-										if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_ulVisiblePlaylistIndex, true))
-										{
-											if(m_ulVisiblePlaylistIndex >= tuniacApp.m_PlaylistManager.GetNumPlaylists())
-												ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex-1);
-											else
-												ShowPlaylistAtIndex(m_ulVisiblePlaylistIndex);
-
-											UpdateList();
-										}
+								case VK_F2:
+									{
+										SendMessage(m_hSourceWnd, WM_COMMAND, MAKELONG(ID_RENAME, 0), 0);
 									}
 									break;
 
@@ -1031,22 +1007,18 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 						}
 						break;
 
+						//catches left click on playlists
 					case NM_CLICK:
 					case LVN_ITEMACTIVATE:
 						{
 							LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
 
 							if(lpnmitem->iItem != -1)
-							{
 								ShowPlaylistAtIndex(lpnmitem->iItem);
-							}
-							else
-							{
-								ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), m_ulVisiblePlaylistIndex, LVIS_SELECTED, LVIS_SELECTED);
-							}
 						}
 						break;
 
+						//catches right click on playlists
 					case NM_RCLICK:
 						{
 							POINT pt;
@@ -1214,7 +1186,7 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 		return true;
 
 	if(ulIndex == INVALID_PLAYLIST_INDEX)
-		return true;
+		return false;
 
 	m_ulVisiblePlaylistIndex = ulIndex;
 
@@ -1264,9 +1236,10 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 
 		m_pVisibleView->Update();
 		ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), m_ulVisiblePlaylistIndex, LVIS_SELECTED, LVIS_SELECTED);
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 IPlaylist	*	CSourceSelectorWindow::GetVisiblePlaylist()
@@ -1281,7 +1254,12 @@ unsigned long	CSourceSelectorWindow::GetVisiblePlaylistIndex()
 
 void CSourceSelectorWindow::ShowCurrentlyPlaying(void)
 {
-	ShowPlaylistAtIndex(tuniacApp.m_PlaylistManager.GetActivePlaylistIndex());
+	unsigned long ulActivePlaylistIndex = tuniacApp.m_PlaylistManager.GetActivePlaylistIndex();
+	if(m_ulVisiblePlaylistIndex != ulActivePlaylistIndex)
+	{
+		ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), -1, 0, LVIS_SELECTED);
+		ShowPlaylistAtIndex(tuniacApp.m_PlaylistManager.GetActivePlaylistIndex());
+	}
 	if(m_pVisibleView)
 		m_pVisibleView->ShowCurrentItem();
 }

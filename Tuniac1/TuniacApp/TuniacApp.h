@@ -29,23 +29,24 @@
 
 #include "CriticalSection.h"
 
-#include "PlaylistManager.h"
-
 #include "SourceSelectorWindow.h"
 #include "VisualWindow.h"
 #include "LogWindow.h"
 
 #include "PlayControls.h"
+#include "AlbumArt.h"
 
+#include "PlaylistManager.h"
 #include "SysEvents.h"
 #include "Taskbar.h"
+
 #include "History.h"
-//#include "CurrentlyPlaying.h"
+#include "PlayQueue.h"
+
 #include "TuniacSkin.h"
 
 #include "PluginManager.h"
 
-#include "AlbumArt.h"
 
 #define FONT_SIZE_LARGE				0
 #define FONT_SIZE_MEDIUM			1
@@ -137,6 +138,7 @@ public:
 	CPreferences				m_Preferences;
 
 	CPlayControls				m_PlayControls;
+	CAlbumArt					m_AlbumArtPanel;
 
 	CSourceSelectorWindow	*	m_SourceSelectorWindow;
 	CVisualWindow			*	m_VisualWindow;
@@ -147,12 +149,11 @@ public:
 	CPluginManager				m_PluginManager;
 	CSysEvents					m_SysEvents;
 	CTaskbar					m_Taskbar;
+
 	CHistory					m_History;
+	CPlayQueue					m_Queue;
 
 	CTuniacSkin					m_Skin;
-
-	CAlbumArt					m_AlbumArtPanel;
-
 
 	struct
 	{
@@ -191,6 +192,7 @@ public:
 
 	HMENU				GetFutureMenu(void);
 	IPlaylistEntry *	GetFuturePlaylistEntry(int iFromCurrent);
+	unsigned long		GetFuturePlaylistEntryID(int iFromCurrent);
 	void				BuildFuturePlaylistArray(void);
 	void				RebuildFutureMenu(void);
 
@@ -200,8 +202,8 @@ public:
 	void				UpdateQueues(void);
 	bool				DoSoftPause(void);
 
-	bool				SetArt(IPlaylistEntry * pIPE);
+	bool				SetArt(LPTSTR szSource);
 
-	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bManual, bool bSetArt);
-
+	bool				PlayItem(IPlaylistEntry * pIPE, bool bStart, bool bManual, bool bSetArt);
+	bool				PlayEntryID(unsigned long ulEntryID, bool bStart, bool bManual, bool bSetArt);
 };

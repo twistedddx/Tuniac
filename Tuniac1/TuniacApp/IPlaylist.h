@@ -103,6 +103,7 @@ public:
 
 
 	virtual IPlaylistEntry	*	GetActiveItem(void)							= 0;
+	virtual unsigned long		GetActiveEntryID(void)						= 0;
 };
 
 class IPlaylistEX : public IPlaylist
@@ -123,13 +124,20 @@ public:
 	virtual unsigned long		GetActiveNormalFilteredIndex(void)									= 0;
 	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 
-	virtual IPlaylistEntry *	GetItemAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
-	virtual IPlaylistEntry *	GetItemAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
-	virtual unsigned long		GetFilteredIndexforItem(IPlaylistEntry	* pIPE)					= 0;
-	virtual unsigned long		GetNormalFilteredIndexforItem(IPlaylistEntry * pIPE)				= 0;
-	virtual unsigned long		GetRealIndexforItem(IPlaylistEntry * pIPE)						= 0;
+	virtual IPlaylistEntry *	GetEntryAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
+	virtual unsigned long		GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
+	virtual IPlaylistEntry *	GetEntryAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
+	virtual unsigned long		GetEntryIDAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 
-	virtual unsigned long		GetNextFilteredIndex(unsigned long ulFilteredIndex, bool bFollowSelected, bool bFollowQueue, bool bForceNext)			= 0;
+	virtual unsigned long		GetFilteredIndexforEntry(IPlaylistEntry	* pIPE)					= 0;
+	virtual unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID)					= 0;
+	virtual unsigned long		GetNormalFilteredIndexforEntry(IPlaylistEntry * pIPE)				= 0;
+	virtual unsigned long		GetNormalFilteredIndexforEntryID(unsigned long ulEntryID)				= 0;
+	virtual unsigned long		GetRealIndexforEntry(IPlaylistEntry * pIPE)						= 0;
+	virtual unsigned long		GetRealIndexforEntryID(unsigned long ulEntryID)						= 0;
+
+	virtual unsigned long		GetNextFilteredIndexForActive()			= 0;
+	virtual unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex)			= 0;
 	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;
 
 	virtual bool				SetTextFilter(LPTSTR	szFilterString)			= 0;
@@ -139,14 +147,14 @@ public:
 	virtual bool				SetTextFilterReversed(bool bReverse)			= 0;
 	virtual bool				GetTextFilterReversed(void)						= 0;
 
-	virtual void				GetFieldFilteredList(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse) = 0;
+	virtual void				GetFieldFilteredItemArray(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse) = 0;
 
 	virtual bool				Sort(unsigned long ulSortBy)					= 0;
 
 	virtual bool				AddEntryArray(EntryArray & entryArray)			= 0;
 
-	virtual bool				DeleteItemArray(IndexArray &	indexArray)		= 0;
-	virtual bool				MoveItemArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
+	virtual bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray)		= 0;
+	virtual bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
 
 	virtual bool				DeleteAllItemsWhereIDEquals(unsigned long ID)	= 0;
 	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;

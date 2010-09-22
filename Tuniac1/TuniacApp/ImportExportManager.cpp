@@ -275,7 +275,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 		do
 		{
 			tuniacApp.m_MediaLibrary.AddItem(szFilename);
-			pPE = tuniacApp.m_MediaLibrary.GetItemByURL(szFilename);
+			pPE = tuniacApp.m_MediaLibrary.GetEntryByURL(szFilename);
 
 			if(pPE)
 			{
@@ -396,7 +396,7 @@ bool			CImportExportManager::ExportTo(ITuniacExportPlugin * pExporter, LPTSTR sz
 
 		for(unsigned long i = 0; i < entryArray.GetCount(); i++)
 		{
-			pIPE = tuniacApp.m_MediaLibrary.GetItemByID(entryArray[i]->GetEntryID());
+			pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(entryArray[i]->GetEntryID());
 			if(pIPE != NULL)
 			{
 				CopyMemory(&LE, pIPE->GetLibraryEntry(), sizeof(LE));

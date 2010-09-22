@@ -42,19 +42,18 @@ bool		CHistory::Shutdown()
 	return true;
 }
 
-void		CHistory::AddItem(IPlaylistEntry * pIPE)
+void		CHistory::AddEntryID(unsigned long ulEntryID)
 {
-	if(pIPE == NULL)
+	if(m_History.GetCount() > 0 && m_History[0] == ulEntryID)
 		return;
 
-	if(m_History.GetCount() > 0 && m_History[0] == pIPE)
-		return;
-
-	if(m_History.GetCount() > 1 && m_History[1] == pIPE)
+	if(m_History.GetCount() > 1 && m_History[1] == ulEntryID)
 	{
 		m_History.RemoveAt(1);
 		DeleteMenu(m_hMenu, 1, MF_BYPOSITION);
 	}
+
+	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 
 	TCHAR szDetail[112];
 	TCHAR szTime[16];
@@ -71,7 +70,7 @@ void		CHistory::AddItem(IPlaylistEntry * pIPE)
 	while(GetMenuItemCount(m_hMenu) > tuniacApp.m_Preferences.GetHistoryListSize())
 		DeleteMenu(m_hMenu, tuniacApp.m_Preferences.GetHistoryListSize(), MF_BYPOSITION);
 
-	m_History.AddHead(pIPE);
+	m_History.AddHead(ulEntryID);
 	while(m_History.GetCount() > tuniacApp.m_Preferences.GetHistoryListSize())
 		m_History.RemoveTail();
 
@@ -88,14 +87,11 @@ void		CHistory::AddItem(IPlaylistEntry * pIPE)
 	}
 }
 
-bool		CHistory::RemoveItem(IPlaylistEntry * pIPE)
+bool		CHistory::RemoveEntryID(unsigned long ulEntryID)
 {
-	if(pIPE == NULL)
-		return false;
-
 	for(unsigned long i = 0; i < m_History.GetCount(); i++)
 	{
-		if(m_History[i] == pIPE)
+		if(m_History[i] == ulEntryID)
 		{
 			m_History.RemoveAt(i);
 			DeleteMenu(m_hMenu, i, MF_BYPOSITION);
@@ -120,35 +116,26 @@ void		CHistory::PopupMenu(int x, int y)
 	TrackPopupMenu(m_hMenu, TPM_RIGHTBUTTON, x, y, 0, tuniacApp.getMainWindow(), NULL);
 }
 
-bool		CHistory::PlayHistoryItem(unsigned long ulIndex)
+bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 {
 	if(ulIndex > m_History.GetCount())
 		return false;
 
-	IPlaylistEntry * pIPE = m_History[ulIndex];
+	//store before delete
+	unsigned long ulEntryID = m_History[ulIndex];
 
 	if(ulIndex > 0)
 	{
 		for(unsigned long i = 0; i < ulIndex; i++)
 		{
-			RemoveItem(m_History[i]);
+			RemoveEntryID(m_History[i]);
 		}
 	}
 
-	if(pIPE)
-	{
-		if(tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-		{
-			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetActivePlaylist();
-			pPlaylistEX->SetActiveNormalFilteredIndex(pPlaylistEX->GetNormalFilteredIndexforItem(pIPE));
-		}
-		tuniacApp.PlayEntry(pIPE, true, true, true);
-		return true;
-	}
-	return false;
+	return tuniacApp.PlayEntryID(ulEntryID, true, true, true);
 }
 
-IPlaylistEntry * CHistory::GetHistoryItem(unsigned long ulIndex)
+unsigned long CHistory::GetHistoryEntryID(unsigned long ulIndex)
 {
 	if(ulIndex > m_History.GetCount())
 		return NULL;
