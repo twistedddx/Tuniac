@@ -74,7 +74,8 @@ void			CTaskbar::SetTitle(LPCWSTR szTitle)
 {
 	if(wcscmp(szTitle, m_TrayIconData.szInfo))
 	{
-		wcscpy_s(m_TrayIconData.szTip,	sizeof(m_TrayIconData.szTip),	szTitle);
+		//fixed buffer overflow
+		StringCchCopyNW(m_TrayIconData.szTip, sizeof(m_TrayIconData.szTip), szTitle, sizeof(m_TrayIconData.szTip));
 		Shell_NotifyIcon(NIM_MODIFY, &m_TrayIconData);
 	}
 }

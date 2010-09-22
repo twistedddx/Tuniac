@@ -701,7 +701,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 255);
 							for(unsigned long x=0; x<m_pPlaylist->GetNumItems(); x++)
 							{
-								pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(x);
+								pPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(x);
 								if(pPE)
 								{
 									entryArray.AddTail(pPE);
@@ -763,12 +763,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(m_iLastClickedItem < 0) break;
 
 							tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-							if(m_pPlaylist->SetActiveNormalFilteredIndex(m_iLastClickedItem))
-							{
-								IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
-								if(pIPE)
-									tuniacApp.PlayEntry(pIPE, true, true, true);
-							}
+							tuniacApp.PlayEntryID(m_pPlaylist->GetEntryIDAtNormalFilteredIndex(m_iLastClickedItem), true, true, true);
 						}
 						break;
 
@@ -790,7 +785,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							}
 							for(unsigned long i = iaPlayArray.GetCount(); i > 0; i--)
 							{
-								tuniacApp.m_MediaLibrary.m_Queue.Prepend(m_pPlaylist->GetItemAtNormalFilteredIndex(iaPlayArray[i-1]));
+								tuniacApp.m_Queue.Prepend(m_pPlaylist->GetEntryAtNormalFilteredIndex(iaPlayArray[i-1])->GetEntryID());
 							}
 							iaPlayArray.RemoveAll();
 							tuniacApp.RebuildFutureMenu();
@@ -809,7 +804,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							while(iPos != -1)
 							{
-								tuniacApp.m_MediaLibrary.m_Queue.Append(m_pPlaylist->GetItemAtNormalFilteredIndex((unsigned long &)iPos));
+								tuniacApp.m_Queue.Append(m_pPlaylist->GetEntryAtNormalFilteredIndex((unsigned long &)iPos)->GetEntryID());
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
 							tuniacApp.RebuildFutureMenu();
@@ -820,7 +815,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case ID_PAUSEHERE:
 						{
 							if(m_iLastClickedItem < 0) break;
-							IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(m_iLastClickedItem);
+							IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem);
 							if(pIPE)
 							{
 								if(tuniacApp.m_SoftPause.ulAt == pIPE->GetEntryID())
@@ -849,7 +844,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED);
 								}
 								ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
-								m_pPlaylist->DeleteItemArray(m_DeleteArray);
+								m_pPlaylist->DeleteNormalFilteredIndexArray(m_DeleteArray);
 								m_DeleteArray.RemoveAll();
 
 								if((m_pPlaylist->GetActiveItem() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
@@ -877,7 +872,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(iPos - deletedIndexes);
 								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(realIndex))
 								{
-									IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByIndex(realIndex);
+									IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByIndex(realIndex);
 									if(pIPE)
 									{
 										unsigned long ulEntryID = pIPE->GetEntryID();
@@ -887,7 +882,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
 											pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
 										}
-										tuniacApp.m_MediaLibrary.RemoveItem(pIPE);
+										tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
 										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 										ListView_SetItemState(hListViewWnd, iPos, 0, LVIS_SELECTED);
@@ -921,7 +916,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								break;
 							while(iPos != -1)
 							{
-								pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos);
+								pPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos);
 
 								if(pPE)
 								{
@@ -947,7 +942,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								break;
 							if(iPos != -1)
 							{
-								pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos);
+								pPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos);
 
 								if(pPE)
 								{
@@ -972,7 +967,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case ID_FILTERBYFIELD:
 						{
 							EntryArray			entryArray;
-							IPlaylistEntry *	pIPE				= m_pPlaylist->GetItemAtNormalFilteredIndex(m_iLastClickedItem);
+							IPlaylistEntry *	pIPE				= m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem);
 							TCHAR				szFilterString[512];
 							TCHAR				szFilterName[256];
 							bool				bReverse			= GetKeyState(VK_CONTROL) & 0x8000;
@@ -986,7 +981,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							if(lstrlen(szFilterString))
 							{
-								m_pPlaylist->GetFieldFilteredList(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, bReverse); 
+								m_pPlaylist->GetFieldFilteredItemArray(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, bReverse); 
 
 								tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(szFilterName, entryArray);
 								tuniacApp.m_SourceSelectorWindow->UpdateList();
@@ -999,21 +994,21 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					case ID_QUEUEBYFIELD:
 						{
 							if(GetKeyState(VK_CONTROL) & 0x8000)
-								tuniacApp.m_MediaLibrary.m_Queue.Clear();
+								tuniacApp.m_Queue.Clear();
 
 							EntryArray			entryArray;
-							IPlaylistEntry *	pIPE				= m_pPlaylist->GetItemAtNormalFilteredIndex(m_iLastClickedItem);
+							IPlaylistEntry *	pIPE				= m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem);
 							TCHAR				szFilterString[512];
 
 							pIPE->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, 512);
 
 							if(lstrlen(szFilterString))
 							{
-								m_pPlaylist->GetFieldFilteredList(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, false); 
+								m_pPlaylist->GetFieldFilteredItemArray(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, false); 
 
 								for(unsigned long i = 0; i < entryArray.GetCount(); i++)
 								{
-									tuniacApp.m_MediaLibrary.m_Queue.Append(entryArray[i]);
+									tuniacApp.m_Queue.Append(entryArray[i]->GetEntryID());
 								}
 							}
 							tuniacApp.RebuildFutureMenu();
@@ -1064,7 +1059,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							int iLeft, iMid, iRight, iPos, iComp;
 							for(unsigned long i = 0; i < m_pPlaylist->GetNumItems(); i++)
 							{
-								m_pPlaylist->GetItemAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
+								m_pPlaylist->GetEntryAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
 								if(szCurrent[0] == TEXT('\0')) continue;
 
 								iLeft = 0;
@@ -1172,7 +1167,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					int iLeft, iMid, iRight, iPos, iComp;
 					for(unsigned long i = 0; i < m_pPlaylist->GetNumItems(); i++)
 					{
-						m_pPlaylist->GetItemAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
+						m_pPlaylist->GetEntryAtNormalFilteredIndex(i)->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szCurrent, 64);
 						if(szCurrent == TEXT('\0')) continue;
 
 						iLeft = 0;
@@ -1251,7 +1246,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							SetWindowLongPtr(hEditControl, GWLP_USERDATA, (DWORD_PTR)this);
 							m_origEditWndProc = (WNDPROC)SetWindowLongPtr(hEditControl, GWLP_WNDPROC, (LONG_PTR)EditWndProc);
 
-							IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(pdi->item.iItem);
+							IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pdi->item.iItem);
 							if(pIPE)
 							{
 								TCHAR szFieldData[512];
@@ -1268,7 +1263,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							if(pdi->item.pszText)
 							{
-								IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(pdi->item.iItem);
+								IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pdi->item.iItem);
 								if(pIPE)
 								{
 									if(pIPE->SetField(m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText))
@@ -1336,15 +1331,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 												iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED);
 											}
 											ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
-											m_pPlaylist->DeleteItemArray(m_DeleteArray);
+											m_pPlaylist->DeleteNormalFilteredIndexArray(m_DeleteArray);
 											m_DeleteArray.RemoveAll();
-
-											if((m_pPlaylist->GetActiveItem() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
-											{
-												CCoreAudio::Instance()->Reset();
-											}
-											tuniacApp.RebuildFutureMenu();
-											Update();
 										}
 									}
 									break;
@@ -1366,9 +1354,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											if(iPos == -1)
 												break;
 
-											IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos-1);
+											IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos-1);
 											if(pIPE)
-												tuniacApp.SetArt(pIPE);
+												tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 										}
 									}
 									break;
@@ -1382,9 +1370,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											if(iPos == -1)
 												break;
 
-											IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos+1);
+											IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos+1);
 											if(pIPE)
-												tuniacApp.SetArt(pIPE);
+												tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 										}
 									}
 									break;
@@ -1450,7 +1438,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									}
 									else
 									{
-										IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(pDispInfo->item.iItem);
+										IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem);
 
 										if(pIPE)
 										{
@@ -1537,9 +1525,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							m_iLastClickedSubitem = lpnmitem->iSubItem;
 							if(tuniacApp.m_Preferences.GetArtOnSelection())
 							{
-								IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(lpnmitem->iItem);
+								IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem);
 								if(pIPE)
-									tuniacApp.SetArt(pIPE);
+									tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 							}
 						}
 						break;
@@ -1552,12 +1540,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(lpnmitem->iItem != -1)
 							{
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-								if(m_pPlaylist->SetActiveNormalFilteredIndex(lpnmitem->iItem))
-								{
-									IPlaylistEntry * pIPE = m_pPlaylist->GetActiveItem();
-									if(pIPE)
-										tuniacApp.PlayEntry(pIPE, true, true, true);
-								}
+								tuniacApp.PlayEntryID(m_pPlaylist->GetEntryIDAtNormalFilteredIndex(lpnmitem->iItem), true, true, true);
 							}
 						}
 						break;
@@ -1583,11 +1566,14 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								// check user clicked a valid item + didn't right-click the icon column(right click item menu)
 								if(m_iLastClickedItem >= 0 && m_iLastClickedSubitem > 0)
 								{
-									IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(m_iLastClickedItem);
+									IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem);
 									if(pIPE)
 									{
 										CheckMenuItem(m_ItemMenu, ID_PAUSEHERE, tuniacApp.m_SoftPause.ulAt == pIPE->GetEntryID() ? MF_CHECKED : MF_UNCHECKED);
 									}
+									EnableMenuItem(m_ItemMenu, ID_PLAYNEXT, MF_BYCOMMAND | (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist() ? MF_ENABLED : MF_GRAYED));
+									EnableMenuItem(m_ItemMenu, ID_QUEUE, MF_BYCOMMAND | (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist() ? MF_ENABLED : MF_GRAYED));
+									EnableMenuItem(m_ItemMenu, ID_PAUSEHERE, MF_BYCOMMAND | (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist() ? MF_ENABLED : MF_GRAYED));
 									TrackPopupMenu(m_ItemMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_PlaylistSourceWnd, NULL);
 								}
 							}
@@ -1681,7 +1667,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 					for(unsigned long x=0; x<Count; x++)
 					{
-						IPlaylistEntry * pIPE = m_pPlaylist->GetItemAtNormalFilteredIndex(x);
+						IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(x);
 
 						if(pIPE)
 						{
@@ -1933,7 +1919,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							break;
 						while(iPos != -1)
 						{
-							pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos);
+							pPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos);
 
 							if(pPE)
 							{
@@ -1982,7 +1968,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									//POSSIBLY
 									// get the top index and move the items there
-									m_pPlaylist->MoveItemArray(ListView_GetTopIndex(hListViewWnd), m_MoveArray);
+									m_pPlaylist->MoveNormalFilteredIndexArray(ListView_GetTopIndex(hListViewWnd), m_MoveArray);
 								}
 								else if(HitTest.flags & LVHT_BELOW)
 								{
@@ -1992,13 +1978,13 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								else if(HitTest.flags & LVHT_NOWHERE)
 								{
 									// move items to end of list
-									m_pPlaylist->MoveItemArray(m_pPlaylist->GetNumItems(), m_MoveArray);
+									m_pPlaylist->MoveNormalFilteredIndexArray(m_pPlaylist->GetNumItems(), m_MoveArray);
 								}
 							}
 							else
 							{
 								//move items to ItemHit
-								m_pPlaylist->MoveItemArray(ItemHit, m_MoveArray);
+								m_pPlaylist->MoveNormalFilteredIndexArray(ItemHit, m_MoveArray);
 							}
 						}
 					}
@@ -2171,7 +2157,7 @@ bool CPlaylistSourceView::EditTrackInfo(void)
 	{
 		while(iPos != -1)
 		{
-			pPE = m_pPlaylist->GetItemAtNormalFilteredIndex(iPos);
+			pPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos);
 			if(pPE)
 			{
 				entryArray.AddTail(pPE);

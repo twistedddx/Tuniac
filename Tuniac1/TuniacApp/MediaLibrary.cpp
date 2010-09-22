@@ -71,7 +71,7 @@ unsigned long CMediaLibrary::GetCount(void)
 	return(m_MediaLibrary.GetCount());
 }
 
-CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByIndex(unsigned long ulIndex)
+CMediaLibraryPlaylistEntry * CMediaLibrary::GetEntryByIndex(unsigned long ulIndex)
 {
 	if(ulIndex > GetCount())
 	{
@@ -81,11 +81,11 @@ CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByIndex(unsigned long ulIndex
 	return m_MediaLibrary[ulIndex];
 }
 
-CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByID(unsigned long ulID)
+CMediaLibraryPlaylistEntry * CMediaLibrary::GetEntryByEntryID(unsigned long ulEntryID)
 {
 	for(unsigned long index = 0; index < GetCount(); index++)
 	{
-		if(m_MediaLibrary[index]->GetEntryID() == ulID)
+		if(m_MediaLibrary[index]->GetEntryID() == ulEntryID)
 		{
 			return(m_MediaLibrary[index]);
 		}
@@ -94,13 +94,47 @@ CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByID(unsigned long ulID)
 	return NULL;
 }
 
-CMediaLibraryPlaylistEntry * CMediaLibrary::GetItemByURL(LPTSTR szURL)
+CMediaLibraryPlaylistEntry * CMediaLibrary::GetEntryByURL(LPTSTR szURL)
 {
 	for(unsigned long index = 0; index < GetCount(); index++)
 	{
 		if(StrCmpI(m_MediaLibrary[index]->GetLibraryEntry()->szURL, szURL) == 0)
 		{
 			return(m_MediaLibrary[index]);
+		}
+	}
+	return(NULL);
+}
+
+unsigned long CMediaLibrary::GetEntryIDByIndex(unsigned long ulIndex)
+{
+	if(ulIndex > GetCount())
+	{
+		return NULL;
+	}
+
+	return m_MediaLibrary[ulIndex]->GetEntryID();
+}
+
+unsigned long CMediaLibrary::GetEntryIDByItem(CMediaLibraryPlaylistEntry * pIPE)
+{
+	for(unsigned long index = 0; index < GetCount(); index++)
+	{
+		if(m_MediaLibrary[index] == pIPE)
+		{
+			return(m_MediaLibrary[index]->GetEntryID());
+		}
+	}
+	return(NULL);
+}
+
+unsigned long CMediaLibrary::GetEntryIDByURL(LPTSTR szURL)
+{
+	for(unsigned long index = 0; index < GetCount(); index++)
+	{
+		if(StrCmpI(m_MediaLibrary[index]->GetLibraryEntry()->szURL, szURL) == 0)
+		{
+			return(m_MediaLibrary[index]->GetEntryID());
 		}
 	}
 	return(NULL);
@@ -206,7 +240,7 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd)
 
 bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 {
-	if(GetItemByURL(szURL))
+	if(GetEntryByURL(szURL))
 		return true;
 
 	LibraryEntry  libraryEntry;
@@ -215,7 +249,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 
 	// fill in media library specific stuff
 	unsigned long dwEntryID = m_MediaLibrary.GetCount();
-	while(GetItemByID(dwEntryID))
+	while(GetEntryByEntryID(dwEntryID))
 	{
 		dwEntryID++;
 	}
@@ -265,7 +299,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 
 bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 {
-	if(GetItemByURL(szURL))
+	if(GetEntryByURL(szURL))
 		return false;
 
 	//if its a playlist file import it
@@ -284,7 +318,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			// fill in media library specific stuff
 			unsigned long dwEntryID = m_MediaLibrary.GetCount();
-			while(GetItemByID(dwEntryID))
+			while(GetEntryByEntryID(dwEntryID))
 			{
 				dwEntryID++;
 			}
@@ -390,16 +424,32 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 	return true;
 }
 
-bool			CMediaLibrary::RemoveItem(IPlaylistEntry * pIPE)
+bool			CMediaLibrary::RemoveEntry(IPlaylistEntry * pIPE)
 {
 	if(pIPE == NULL)
 		return false;
 
-	m_Queue.RemoveItem(pIPE);
-	tuniacApp.m_History.RemoveItem(pIPE);
+	tuniacApp.m_Queue.RemoveEntryID(pIPE->GetEntryID());
+	tuniacApp.m_History.RemoveEntryID(pIPE->GetEntryID());
 	for(unsigned long x=0; x<m_MediaLibrary.GetCount(); x++)
 	{
 		if(m_MediaLibrary[x] == pIPE)
+		{
+			delete m_MediaLibrary[x];
+			m_MediaLibrary.RemoveAt(x);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool			CMediaLibrary::RemoveEntryID(unsigned long ulEntryID)
+{
+	tuniacApp.m_Queue.RemoveEntryID(ulEntryID);
+	tuniacApp.m_History.RemoveEntryID(ulEntryID);
+	for(unsigned long x=0; x<m_MediaLibrary.GetCount(); x++)
+	{
+		if(m_MediaLibrary[x]->GetEntryID()== ulEntryID)
 		{
 			delete m_MediaLibrary[x];
 			m_MediaLibrary.RemoveAt(x);
@@ -501,7 +551,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 	if(ulMLIndex > GetCount())
 		return false;
 
-	CMediaLibraryPlaylistEntry *	pIPE = GetItemByIndex(ulMLIndex);
+	CMediaLibraryPlaylistEntry *	pIPE = GetEntryByIndex(ulMLIndex);
 	LPTSTR szURL = (LPTSTR)pIPE->GetField(FIELD_URL);
 
 	//stream
@@ -550,7 +600,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 				StrCpy(libraryEntry.szTitle, szFileTitle);
 			}
 
-			//we could do dwEntryID = GetCount() - ulMLIndex; while(GetItemByID(dwEntryID)){ dwEntryID++ } to "compact" the entryID's again
+			//we could do dwEntryID = GetCount() - ulMLIndex; while(GetEntryByID(dwEntryID)){ dwEntryID++ } to "compact" the entryID's again
 			//if UpdateIndex was called backwards through the list, fastest i can think of but still what would the speed be with 30,000 files?
 			//I could see this growing out of control eventually I suppose with a well hacked up ML
 			unsigned long dwEntryID = pIPE->GetEntryID();
@@ -571,7 +621,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 //bool CMediaLibrary::WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData)
 bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pIPE)
 {
-	LibraryEntry * libEnt = GetItemByID(pIPE->GetEntryID())->GetLibraryEntry();
+	LibraryEntry * libEnt = GetEntryByEntryID(pIPE->GetEntryID())->GetLibraryEntry();
 	// let the info manager get the format specific stuff here!
 	for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
 	{
@@ -685,14 +735,11 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 					if(BytesRead != sizeof(unsigned long))
 					{
 						MessageBox(NULL, TEXT("Queue is corrupt, resetting queue."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
-						m_Queue.Clear();
+						tuniacApp.m_Queue.Clear();
 						bOK = false;
 						break;
 					}
-
-					IPlaylistEntry * pIPE = this->GetItemByID(TempID);
-					if(pIPE)
-						m_Queue.Append(pIPE);
+					tuniacApp.m_Queue.Append(TempID);
 				}
 			}
 
@@ -716,14 +763,12 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 						break;
 					}
 
-					IPlaylistEntry * pIPE = this->GetItemByID(TempID);
-					if(pIPE)
-						tuniacApp.m_History.AddItem(pIPE);
+					tuniacApp.m_History.AddEntryID(TempID);
 				}
 			}
 		}
 
-		if(m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+		if(tuniacApp.m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
 			tuniacApp.m_Preferences.SetRepeatMode(RepeatAll);
 
 	}
@@ -827,7 +872,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			}
 
 
-			WriteFile(hLibraryFile, GetItemByID(RealID)->GetLibraryEntry(), sizeof(LibraryEntry), &BytesWritten, NULL);
+			WriteFile(hLibraryFile, GetEntryByEntryID(RealID)->GetLibraryEntry(), sizeof(LibraryEntry), &BytesWritten, NULL);
 
 			if(BytesWritten != sizeof(LibraryEntry))
 			{
@@ -841,7 +886,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 		if(bOK)
 		{
-			unsigned long ulQueueSize = m_Queue.GetCount();
+			unsigned long ulQueueSize = tuniacApp.m_Queue.GetCount();
 			WriteFile(hLibraryFile, &ulQueueSize, sizeof(unsigned long), &BytesWritten, NULL);
 			if(BytesWritten != sizeof(unsigned long))
 			{
@@ -852,11 +897,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			{
 				for(unsigned long x = 0; x < ulQueueSize; x++)
 				{
-					IPlaylistEntry *pIPE = m_Queue.GetItemAtIndex(x);
-					if(pIPE == NULL)
+					unsigned long ulEntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(x);
+					if(ulEntryID == NULL)
 						continue;
-					unsigned long RealID = pIPE->GetEntryID();
-					WriteFile(hLibraryFile, &RealID, sizeof(unsigned long), &BytesWritten, NULL);
+					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 
 					if(BytesWritten != sizeof(unsigned long))
 					{
@@ -881,11 +925,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 				for(int x = ulHistorySize - 1; x >= 0; x--)
 				{
-					IPlaylistEntry *pIPE = tuniacApp.m_History.GetHistoryItem(x);
-					if(pIPE == NULL)
+					unsigned long ulEntryID = tuniacApp.m_History.GetHistoryEntryID(x);
+					if(ulEntryID == NULL)
 						continue;
-					unsigned long RealID = pIPE->GetEntryID();
-					WriteFile(hLibraryFile, &RealID, sizeof(unsigned long), &BytesWritten, NULL);
+					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 
 					if(BytesWritten != sizeof(unsigned long))
 					{

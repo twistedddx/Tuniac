@@ -217,11 +217,9 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 					break;
 				}
 
-				IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetItemByID(ulEntryID);
+				IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 				if(pIPE)
-				{
 					myEntryArray.AddTail(pIPE);
-				}
 			}
 
 
@@ -231,26 +229,27 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
 			SubHeader.Filter[127] = L'\0';
 			pPlaylist->SetTextFilter(SubHeader.Filter);
-			pPlaylist->ApplyFilter();
 
 			m_StandardPlaylists.AddTail(pPlaylist);
 			if(PLDH.ActivePlaylist - 1 == ulPlaylist)
 			{
 				SetActivePlaylist(GetNumPlaylists() - 1);
-				if(!pPlaylist->SetActiveNormalFilteredIndex(PLDH.ActiveIndex))
-					pPlaylist->SetActiveNormalFilteredIndex(0);
-				pPlaylist->RebuildPlaylistArrays();
-				if(pPlaylist->GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX)
+				pPlaylist->ApplyFilter();
+				if(pPlaylist->CheckFilteredIndex(PLDH.ActiveIndex))
 				{
-					IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
-					if(pIPE)
-					{
-						tuniacApp.PlayEntry(pIPE, false, false, false);
-					}
+					if(!tuniacApp.PlayEntryID(pPlaylist->GetEntryIDAtNormalFilteredIndex(PLDH.ActiveIndex), false, false, false))
+						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
+				else
+				{
+					if(!tuniacApp.PlayEntryID(pPlaylist->GetEntryIDAtNormalFilteredIndex(0), false, false, false))
+						pPlaylist->SetActiveNormalFilteredIndex(0);
+				}
+					
+				pPlaylist->RebuildPlaylistArrays();
 			}
-
-			pPlaylist->ApplyFilter();
+			else
+				pPlaylist->ApplyFilter();
 		}
 
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
@@ -258,26 +257,25 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
 		PLDH.LibraryFilter[127] = L'\0';
 		m_LibraryPlaylist.SetTextFilter(PLDH.LibraryFilter);
-		m_LibraryPlaylist.ApplyFilter();
-
+		
 		if(PLDH.ActivePlaylist == 0)
 		{
 			SetActivePlaylist(0);
-			if(!m_LibraryPlaylist.SetActiveNormalFilteredIndex(PLDH.ActiveIndex))
-				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
-			m_LibraryPlaylist.RebuildPlaylistArrays();
-			if(m_LibraryPlaylist.GetActiveNormalFilteredIndex() != INVALID_PLAYLIST_INDEX && (unsigned long)m_LibraryPlaylist.GetActiveItem()->GetField(FIELD_KIND) != ENTRY_KIND_URL)
+			m_LibraryPlaylist.ApplyFilter();
+			if(m_LibraryPlaylist.CheckFilteredIndex(PLDH.ActiveIndex))
 			{
-				IPlaylistEntry * pIPE = m_LibraryPlaylist.GetActiveItem();
-				if(pIPE)
-				{
-					tuniacApp.PlayEntry(pIPE, false, false, false);
-				}
+				if(!tuniacApp.PlayEntryID(m_LibraryPlaylist.GetEntryIDAtNormalFilteredIndex(PLDH.ActiveIndex), false, false, false))
+					m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
-			
+			else
+			{
+				if(!tuniacApp.PlayEntryID(m_LibraryPlaylist.GetEntryIDAtNormalFilteredIndex(0), false, false, false))
+				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
+			}
+			m_LibraryPlaylist.RebuildPlaylistArrays();
 		}
-
-		
+		else
+			m_LibraryPlaylist.ApplyFilter();
 	}
 
 	CloseHandle(hFile);
@@ -454,7 +452,7 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 		IPlaylistEX * pPlaylist = (IPlaylistEX *)m_ActivePlaylist;
 		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 		{
-			if(pPlaylist->GetItemAtNormalFilteredIndex(i) == pIPE)
+			if(pPlaylist->GetEntryAtNormalFilteredIndex(i) == pIPE)
 			{
 				bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
 			}
@@ -464,7 +462,7 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)GetPlaylistAtIndex(0);
 	for (unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
 	{
-		if(pPlaylistEX->GetItemAtNormalFilteredIndex(i) == pIPE)
+		if(pPlaylistEX->GetEntryAtNormalFilteredIndex(i) == pIPE)
 		{
 			bOk = pPlaylistEX->SetActiveNormalFilteredIndex(i);
 		}
@@ -480,6 +478,8 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 
 	if(ulPlaylistNumber == INVALID_PLAYLIST_INDEX)
 		return true;
+
+	tuniacApp.m_Queue.Clear();
 
 	m_ulActivePlaylistIndex = ulPlaylistNumber;
 
@@ -597,45 +597,34 @@ bool CPlaylistManager::MoveStandardPlaylist(unsigned long ulIndex, unsigned long
 	return true;
 }
 
-bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber, bool bConfirm)
+bool CPlaylistManager::DeletePlaylistAtIndex(unsigned long ulPlaylistNumber)
 {
 	if(ulPlaylistNumber == 0)
 		return false;
 
-	bool bOK = 0;
-	if(bConfirm == 0)
-		bOK = 1;
-	else if(IDYES == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
-		bOK = 1;
+	if(ulPlaylistNumber == m_ulActivePlaylistIndex)
+		SetActivePlaylist(0);
 
-	if(bOK) 
-	{
+	else if(ulPlaylistNumber < m_ulActivePlaylistIndex)
+		m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
 
-		if(ulPlaylistNumber == m_ulActivePlaylistIndex)
-			SetActivePlaylist(0);
+	ulPlaylistNumber-=1;
 
-		else if(ulPlaylistNumber < m_ulActivePlaylistIndex)
-			m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
-
-		ulPlaylistNumber-=1;
-
-		if(ulPlaylistNumber < m_CDPlaylists.GetCount())
-		{	// cd playlist playlist
-			// maybe we can eject here?
-			return true;
-		}
-		ulPlaylistNumber -= m_CDPlaylists.GetCount();
-
-		if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
-		{	// standard playlist
-			delete m_StandardPlaylists[ulPlaylistNumber];
-			m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
-		}
-
-		PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
+	if(ulPlaylistNumber < m_CDPlaylists.GetCount())
+	{	// cd playlist playlist
+		// maybe we can eject here?
 		return true;
 	}
-	return false;
+	ulPlaylistNumber -= m_CDPlaylists.GetCount();
+
+	if(ulPlaylistNumber < m_StandardPlaylists.GetCount())
+	{	// standard playlist
+		delete m_StandardPlaylists[ulPlaylistNumber];
+		m_StandardPlaylists.RemoveAt(ulPlaylistNumber);
+	}
+
+	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
+	return true;
 }
 
 unsigned long CPlaylistManager::PMThreadStub(void * in)

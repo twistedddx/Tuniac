@@ -109,9 +109,8 @@ bool			CPluginManager::Initialize(void)
 					else
 					{ 
 						PE.hThread = PE.pPlugin->CreateThread(&PE.dwThreadId);
-						SetThreadPriority(PE.hThread, THREAD_PRIORITY_LOWEST);
 						PE.pPlugin->SetHelper(this);
-					
+						SetThreadPriority(PE.hThread, THREAD_PRIORITY_LOWEST);
 					}
 					m_PluginArray.AddTail(PE);
 				}
@@ -201,8 +200,8 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 				}
 				else
 				{
-					SetThreadPriority(m_PluginArray[iPlugin].hThread, THREAD_PRIORITY_LOWEST);
 					m_PluginArray[iPlugin].pPlugin->SetHelper(this);
+					SetThreadPriority(m_PluginArray[iPlugin].hThread, THREAD_PRIORITY_LOWEST);
 					wnsprintf(m_PluginArray[iPlugin].szName, 64, TEXT("%s"), m_PluginArray[iPlugin].pPlugin->GetPluginName());
 					m_PluginArray[iPlugin].ulFlags = m_PluginArray[iPlugin].pPlugin->GetFlags();
 					m_PluginArray[iPlugin].bEnabled = true;
@@ -375,22 +374,17 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 
 	if(iFromCurrent < 0)
 	{
-		if(!tuniacApp.m_History.PlayHistoryItem(0 - iFromCurrent))
+		if(!tuniacApp.m_History.PlayHistoryIndex(0 - iFromCurrent))
 			return false;
 	}
 	else if(iFromCurrent > 0)
 	{
-		IPlaylistEntry * pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
-		if(pIPE)
-			tuniacApp.PlayEntry(pIPE, CCoreAudio::Instance()->GetState(), true, true);
-		else
-			return false;
+		 return tuniacApp.PlayEntryID(tuniacApp.GetFuturePlaylistEntryID(iFromCurrent - 1), CCoreAudio::Instance()->GetState(), true, true);
 	}
 	else
 	{
 		CCoreAudio::Instance()->SetPosition(0);
 		PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
-
 	}
 	return true;
 }

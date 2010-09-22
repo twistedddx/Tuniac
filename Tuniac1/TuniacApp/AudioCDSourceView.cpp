@@ -20,7 +20,7 @@
 */
 
 #include "stdafx.h"
-#include ".\audiocdsourceview.h"
+#include "audiocdsourceview.h"
 #include "resource.h"
 
 #define WM_UPDATE					(WM_APP+2)
@@ -193,9 +193,9 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							if(tuniacApp.m_Preferences.GetArtOnSelection())
 							{
 								LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
-								IPlaylistEntry * pIPE = m_pCDPlaylist->GetItemAtIndex(lpnmitem->iItem);
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtIndex(lpnmitem->iItem);
 								if(pIPE)
-									tuniacApp.SetArt(pIPE);
+									tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 							}
 						}
 						break;
@@ -209,11 +209,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
 								if(m_pCDPlaylist->SetActiveIndex(lpnmitem->iItem))
 								{
-									IPlaylistEntry * pIPE = m_pCDPlaylist->GetActiveItem();
-									if(pIPE)
-									{
-										tuniacApp.PlayEntry(pIPE, true, true, true);
-									}
+									tuniacApp.PlayItem(m_pCDPlaylist->GetActiveItem(), true, true, true);
 								}
 
 								Update();
@@ -226,7 +222,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
 							if(pDispInfo->item.iItem != -1)
 							{
-								IPlaylistEntry * pIPE = m_pCDPlaylist->GetItemAtIndex(pDispInfo->item.iItem);
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtIndex(pDispInfo->item.iItem);
 
 								if(pIPE)
 								{

@@ -30,7 +30,7 @@ class CHistory
 {
 protected:
 	HMENU						m_hMenu;
-	Array<IPlaylistEntry *, 3>	m_History;
+	IndexArray					m_History;
 
 public:
 	CHistory(void);
@@ -39,14 +39,14 @@ public:
 	bool		Initialize();
 	bool		Shutdown();
 
-	void		AddItem(IPlaylistEntry * pIPE);
+	void		AddEntryID(unsigned long ulEntryID);
 	
-	bool		RemoveItem(IPlaylistEntry * pIPE);
+	bool		RemoveEntryID(unsigned long ulEntryID);
 	void		Clear(void);
 	
 	void		PopupMenu(int x, int y);
-	bool		PlayHistoryItem(unsigned long ulIndex);
-	IPlaylistEntry * GetHistoryItem(unsigned long ulIndex);
+	bool		PlayHistoryIndex(unsigned long ulIndex);
+	unsigned long GetHistoryEntryID(unsigned long ulIndex);
 
 	unsigned long	GetCount(void);
 

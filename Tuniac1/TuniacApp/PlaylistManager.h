@@ -78,5 +78,5 @@ public:
 	bool			CreateNewStandardPlaylistWithIDs(LPTSTR szName, EntryArray & newIDs);
 	bool			MoveStandardPlaylist(unsigned long ulIndex, unsigned long ulNewIndex);
 
-	bool			DeletePlaylistAtIndex(unsigned long ulPlaylistNumber, bool bConfirm);
+	bool			DeletePlaylistAtIndex(unsigned long ulPlaylistNumber);
 };

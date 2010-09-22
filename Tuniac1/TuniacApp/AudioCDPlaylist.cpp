@@ -186,7 +186,12 @@ IPlaylistEntry	*	CAudioCDPlaylist::GetActiveItem(void)
 	return m_TrackList[m_ActiveItem];
 }
 
-IPlaylistEntry *	CAudioCDPlaylist::GetItemAtIndex(unsigned long Index)
+unsigned long		CAudioCDPlaylist::GetActiveEntryID(void)
+{
+	return m_TrackList[m_ActiveItem]->GetEntryID();
+}
+
+IPlaylistEntry *	CAudioCDPlaylist::GetEntryAtIndex(unsigned long Index)
 {
 	return m_TrackList[Index];
 }
