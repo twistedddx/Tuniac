@@ -1,4 +1,34 @@
-Jul, 2010
+Sep, 2010
+---------
+-improve queue(handle filter changes, clear queue on playlist change, disable queueing in non active playlist, allow multiple song adds, allow current song add)
+-improve future(also fix popup notify window), history, playselected and basic play logic. More reliable and faster.
+-f2 to rename playlists
+-fix possible buffer overflow in setting systray tip
+-use -restore command line when no command line given
+-fix many UI querks
+-release file from std_InfoManager after tag read
+-many other bug fixes and improvements
+
+Aug, 2010
+---------
+-streams will update length, sample rate and channels in ml
+-shoutcast streams where the server gives details will update the bitrate
+-m3u importer can now import track title(note playlist title feilds are only used for streams not local files where a infomanager will likely get that info from the file itself)
+-swap what feilds are title and artist. Now title is the name of the station and artist is the name of the current song.
+-fix/update how title artist and comment will be filled out when the stream is unknown and/or unnamed
+-preference under Media Library for if playlists will add only the first stream or all streams
+-if add single stream is enabled and adding a stream only the auto playlist "Streams" will be created. If disabled, "Streams" as well as the playlist name with its actual files will be created.
+-if auto playlist create is off it will only ever create "Streams"
+-lots of minor internal changes to allow passing of extra info between decoders and tuniac ML etc..
+
+Jul, 2010 (100723)
+---------
+-Fix visible song while minimized
+-Fix taskbar for XP and disable file assoc for XP
+-Exit fullscreen if Tuniac gets minimized
+-Simplify XP vs Vista/7 and add visual fullscreen functions.
+
+Jul, 2010 (100711)
 ---------
 -Direct X June 2010 (XAudio 2.7)
 -Force XP SP3 in installer
