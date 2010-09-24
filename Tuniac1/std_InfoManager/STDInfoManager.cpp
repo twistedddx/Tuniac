@@ -340,7 +340,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			libEnt->fReplayGain_Album_Peak = atof(apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 	}
-
+	fileref = TagLib::FileRef();
 	return true;
 }
 
@@ -362,9 +362,13 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 		tag->setYear(libEnt->iYear);
 
 		if(fileref.save())
+		{
+			fileref = TagLib::FileRef();
 			return true;
+		}
 	}
 
+	fileref = TagLib::FileRef();
 	return false;
 }
 
@@ -402,6 +406,7 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
 		*/
 	}
 
+	fileref = TagLib::FileRef();
 	return count;
 }
 
@@ -476,8 +481,7 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 			bRet = true;
 		}
 		*/
-
-
+		fileref = TagLib::FileRef();
 	}
 
 	return bRet;
