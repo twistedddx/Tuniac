@@ -311,19 +311,6 @@ bool				CBasePlaylist::Previous(void)
 //will set m_ActiveRealIndex to the next song and return that songs index or -1 if it fails
 bool				CBasePlaylist::Next(void)
 {
-	//get the next index
-	unsigned long ulIndex = GetActiveFilteredIndex();
-
-	//if the current song is filtered we wont be able to get its filtered index
-	bool bForceNext = 0;
-	if(ulIndex == INVALID_PLAYLIST_INDEX)
-	{
-		if(GetNumItems() > 0)
-		{
-			bForceNext = 1;
-		}
-	}
-
 	unsigned long ulFilteredIndex = GetNextFilteredIndexForActive();
 
 	//set our found next index
@@ -391,8 +378,8 @@ unsigned long		CBasePlaylist::GetNextFilteredIndexForActive()
 	if(ulActiveIndex < m_NormalIndexArray.GetCount() - 1)
 		return ulActiveIndex + 1;
 
-	//this is the end of the line, start again
-	return 0;
+	//this is the end of the line
+	return INVALID_PLAYLIST_INDEX;
 }
 
 //will return the next song index for the index given. DOES NOT follow queues
@@ -460,10 +447,6 @@ unsigned long		CBasePlaylist::GetNumItems(void)
 //set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
 bool				CBasePlaylist::SetActiveFilteredIndex(unsigned long ulFilteredIndex)
 {
-	//check that index is valid
-	if(!CheckFilteredIndex(ulFilteredIndex))
-		return false;
-
 	if(tuniacApp.m_Preferences.GetShuffleState())
 		m_ActiveRealIndex = RandomFilteredIndexToRealIndex(ulFilteredIndex);
 	else
