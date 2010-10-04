@@ -138,7 +138,7 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 unsigned long CHistory::GetHistoryEntryID(unsigned long ulIndex)
 {
 	if(ulIndex > m_History.GetCount())
-		return NULL;
+		return INVALID_PLAYLIST_INDEX;
 
 	return m_History[ulIndex];
 }

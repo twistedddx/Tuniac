@@ -926,7 +926,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 				for(int x = ulHistorySize - 1; x >= 0; x--)
 				{
 					unsigned long ulEntryID = tuniacApp.m_History.GetHistoryEntryID(x);
-					if(ulEntryID == NULL)
+					if(ulEntryID == INVALID_PLAYLIST_INDEX)
 						continue;
 					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 
