@@ -170,7 +170,7 @@ unsigned long	CmIRCSpammer::ThreadProc(void)
 
 bool			CmIRCSpammer::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("mIRC Spammer Plugin for Tuniac.\r\nBy Blur and Brett Hoyle, 2005-2010.\r\n\r\nWill output the current song mIRC"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("mIRC Spammer Plugin for Tuniac.\r\nBy Blur and Brett Hoyle, 2005-2010.\r\n\r\nWill output the current song to mIRC"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

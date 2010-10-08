@@ -185,7 +185,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 
 bool			CNowPlayingTxt::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("NowPlaying .Txt Plugin for Tuniac.\r\nBy Blur, 2005-2008.\r\n\r\nWill output the current song to <My Documents>\\NowPlaying.txt"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("NowPlaying .Txt Plugin for Tuniac.\r\nBy Blur and Brett H, 2005-2010.\r\n\r\nWill output the current song to <My Documents>\\NowPlaying.txt"), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
