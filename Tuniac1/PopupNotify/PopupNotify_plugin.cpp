@@ -478,7 +478,7 @@ void			CPopupNotify::RePaint(HWND hWnd)
 
 bool			CPopupNotify::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Popup Nofity plugin for Tuniac.\r\nBy Blur, 2005-2008.\r\n\r\nWill popup a small window to display the current track when something changes."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Popup Nofity plugin for Tuniac.\r\nBy Blur and Brett H, 2005-2010.\r\n\r\nWill popup a small window to display the current track when the song changes."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
