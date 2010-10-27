@@ -4,6 +4,14 @@
 #include <shellapi.h>
 #include "ITuniacPlugin.h"
 
+enum ManualOnlyMode
+{
+	AlwaysTrigger = 0,
+	ManualTrigger,
+	BlindManualTrigger,
+	AutoTrigger
+};
+
 class CPopupNotify :
 	public ITuniacPlugin
 {
@@ -29,6 +37,8 @@ protected:
 	ITuniacPluginHelper *	m_pHelper;
 
 	BOOL					m_bAllowInhibit;
+	ManualOnlyMode			m_eManualOnlyMode;
+
 	bool					m_bInhibit;
 
 	static LRESULT CALLBACK	WndProcStub(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
