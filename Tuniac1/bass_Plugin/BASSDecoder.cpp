@@ -137,8 +137,6 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 			WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
 			decodehandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT|BASS_STREAM_BLOCK, NULL, 0);
 
-			int x = BASS_ErrorGetCode();
-			int b = x;
 			if(decodehandle)
 			{
 				m_pHelper = pHelper;
@@ -189,7 +187,6 @@ bool CBASSDecoder::Close()
 
 	if(m_Buffer)
 	{
-		//VirtualFree(m_Buffer, 0, MEM_RELEASE);
 		_aligned_free(m_Buffer);
 	}
 

@@ -2331,13 +2331,13 @@ void	CTuniacApp::UpdateState(void)
 }
 
 //update streamtitle eg for mp3 streams
-void	CTuniacApp::UpdateMetaData(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID)
+void	CTuniacApp::UpdateMetaData(LPTSTR szURL, LPTSTR szData, unsigned long ulFieldID)
 {
 	IPlaylistEntry * pIPE = m_MediaLibrary.GetEntryByURL(szURL);
 
 	if(pIPE)
 	{
-		pIPE->SetField(ulFieldID, szTitle);
+		pIPE->SetField(ulFieldID, szData);
 
 		UpdateTitles();
 		//make sure the source selector window exists we can get here before its created
