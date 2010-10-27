@@ -191,7 +191,8 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 					}
 					break;
 
-                case IDOK: 
+                case IDOK:
+				case IDCANCEL: 
 					{
 						EndDialog(hDlg, wParam); 
 						return TRUE;
