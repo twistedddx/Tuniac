@@ -3,6 +3,19 @@ Oct, 2010
 -fix repeat mode
 -fix history issue causing "corruption" message
 -update about boxes
+-Standardize naming between standard, extended and cd playlists etc.
+-create plugin notifications for song changes caused by auto, manual or manual blind.
+-Less requirement on extended playlist. More functions now covered in standard playlists.
+-Fix return error codes in functions
+-Remove redundent functions and simplify code
+-Remove pEntry requirement from coreaudio(now just passed URL and replay gain values)
+-Plugins now save like visuals. Doesnt require getting dll name for thread etc
+-Better allocation of EntryID to ML items
+-More checking that things exist in memory before trying to use them
+-Fix enabling plugin after configure button pressed for inactive plugin
+-BASS dll updates
+-Fix SVP pref screen and add pref screen for popup notify
+-Other minor bugfixes
 
 Sep, 2010
 ---------
