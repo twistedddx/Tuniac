@@ -82,18 +82,18 @@ public:
 	bool				SetPlaylistName(LPTSTR szPlaylistName);
 	LPTSTR				GetPlaylistName(void);
 
-	bool				Previous(void);
-	bool				Next(void);
+	unsigned long		Previous(void);
+	unsigned long		Next(void);
 	bool				CheckFilteredIndex(unsigned long ulFilteredIndex);
 
-	unsigned long		GetNextFilteredIndexForActive();
 	unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex);
 	unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex);
 
-	IPlaylistEntry	*	GetActiveItem(void);
-	unsigned long		GetActiveEntryID(void);
+	IPlaylistEntry	*	GetActiveEntry(void);
 
 public:
+
+	unsigned long		GetActiveEntryID(void);
 	unsigned long		GetNumItems(void);
 
 	unsigned long		GetActiveFilteredIndex(void);
@@ -105,6 +105,8 @@ public:
 	unsigned long		GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex);
 	IPlaylistEntry *	GetEntryAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
 	unsigned long		GetEntryIDAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+
+	IPlaylistEntry *	GetEntryByEntryID(unsigned long ulEntryID);
 
 	unsigned long		GetFilteredIndexforEntry(IPlaylistEntry * pIPE);
 	unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID);

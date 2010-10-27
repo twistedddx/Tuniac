@@ -132,7 +132,21 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 		}
 	}
 
-	return tuniacApp.PlayEntryID(ulEntryID, true, true, true);
+	IPlaylistEntry * pIPE = NULL;
+	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+	if(pPlaylist)
+	{
+		if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+			pIPE = ((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(ulEntryID);
+	}
+	if(pIPE == NULL)
+	{
+		tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+		tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
+		pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
+	}
+
+	return tuniacApp.PlayEntry(pIPE, true, true);
 }
 
 unsigned long CHistory::GetHistoryEntryID(unsigned long ulIndex)

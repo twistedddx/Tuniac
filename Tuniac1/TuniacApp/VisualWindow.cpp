@@ -674,8 +674,8 @@ void	CVisualWindow::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR s
 	if(iFromCurrent == 0)
 	{
 		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		pIPE = pPlaylist->GetActiveItem();
+		if(pPlaylist)
+			pIPE = pPlaylist->GetActiveEntry();
 	}
 	else
 		pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);

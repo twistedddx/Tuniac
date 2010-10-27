@@ -56,14 +56,13 @@ LRESULT crapProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 CMediaLibrary::CMediaLibrary() :
-	m_hAddingWindow(NULL)
+	m_hAddingWindow(NULL),
+	ulEntryID(0)
 {
-
 }
 
 CMediaLibrary::~CMediaLibrary()
 {
-
 }
 
 unsigned long CMediaLibrary::GetCount(void)
@@ -175,9 +174,11 @@ bool CMediaLibrary::EndAdd(void)
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 
 	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-	if(pPlaylistEX->GetActiveFilteredIndex() == INVALID_PLAYLIST_INDEX)
-		pPlaylistEX->SetActiveNormalFilteredIndex(0);
+	if(pPlaylist)
+	{
+		if(pPlaylist->GetActiveFilteredIndex() == INVALID_PLAYLIST_INDEX)
+			pPlaylist->SetActiveNormalFilteredIndex(0);
+	}
 
 
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
@@ -248,10 +249,9 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
 	// fill in media library specific stuff
-	unsigned long dwEntryID = m_MediaLibrary.GetCount();
-	while(GetEntryByEntryID(dwEntryID))
+	while(GetEntryByEntryID(ulEntryID))
 	{
-		dwEntryID++;
+		ulEntryID++;
 	}
 	// we need to set the streampath here plus a nice name
 	StrCpy(libraryEntry.szArtist, szURL);
@@ -263,7 +263,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	libraryEntry.dwKind = ENTRY_KIND_URL;
 
 	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
-	pIPE->SetEntryID(dwEntryID);
+	pIPE->SetEntryID(ulEntryID);
 	m_MediaLibrary.AddTail(pIPE);
 
 	//create or add to Streams playlist
@@ -282,9 +282,12 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	{
 		if(StrCmpI(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i)->GetPlaylistName(), L"Streams") == 0)
 		{
-			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i);
-			pPlaylistEX->AddEntryArray(playlistEntries);
-			bStreamPlaylist=true;
+			IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i);
+			if(pPlaylist)
+			{
+				((IPlaylistEX *)pPlaylist)->AddEntryArray(playlistEntries);
+				bStreamPlaylist=true;
+			}
 		}
 
 	}
@@ -293,6 +296,8 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 		tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(L"Streams", playlistEntries);
 	}
 	tuniacApp.m_SourceSelectorWindow->UpdateList();
+
+	ulEntryID++;
 
 	return true;
 }
@@ -317,10 +322,9 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
 			// fill in media library specific stuff
-			unsigned long dwEntryID = m_MediaLibrary.GetCount();
-			while(GetEntryByEntryID(dwEntryID))
+			while(GetEntryByEntryID(ulEntryID))
 			{
-				dwEntryID++;
+				ulEntryID++;
 			}
 
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
@@ -373,10 +377,12 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pIPE->SetEntryID(dwEntryID);
+			pIPE->SetEntryID(ulEntryID);
 			m_MediaLibrary.AddTail(pIPE);
 
 			AddingFilesIncrement(false);
+
+			ulEntryID++;
 
 			return true;
 		}
@@ -600,14 +606,14 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 				StrCpy(libraryEntry.szTitle, szFileTitle);
 			}
 
-			//we could do dwEntryID = GetCount() - ulMLIndex; while(GetEntryByID(dwEntryID)){ dwEntryID++ } to "compact" the entryID's again
+			//we could do ulEntryID = GetCount() - ulMLIndex; while(GetEntryByID(ulEntryID)){ ulEntryID++ } to "compact" the entryID's again
 			//if UpdateIndex was called backwards through the list, fastest i can think of but still what would the speed be with 30,000 files?
 			//I could see this growing out of control eventually I suppose with a well hacked up ML
-			unsigned long dwEntryID = pIPE->GetEntryID();
+			unsigned long ulEntryID = pIPE->GetEntryID();
 
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pIPE->SetEntryID(dwEntryID);
+			pIPE->SetEntryID(ulEntryID);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
 
@@ -859,7 +865,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 		{
 			if(x % 100 == 0)
 				SendDlgItemMessage(hSaveWnd, IDC_SAVINGLIBRARY_PROGRESS, PBM_STEPIT, 0, 0);
-			unsigned long RealID = tuniacApp.m_PlaylistManager.m_LibraryPlaylist.GetIDAtRealIndex(x);
+			unsigned long RealID = tuniacApp.m_PlaylistManager.m_LibraryPlaylist.GetEntryIDAtRealIndex(x);
 			
 			WriteFile(hLibraryFile, &RealID, sizeof(unsigned long), &BytesWritten, NULL);
 			if(BytesWritten != sizeof(unsigned long))

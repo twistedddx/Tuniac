@@ -47,6 +47,8 @@ typedef struct
 	unsigned long							m_ulAddingCountFiles;
 	unsigned long							m_ulAddingCountDirs;
 
+	unsigned long							ulEntryID;
+
 	bool AddFileToLibrary(LPTSTR			szURL);
 	bool AddStreamToLibrary(LPTSTR			szURL);
 	bool AddDirectoryToLibrary(LPTSTR		szDirectory);
@@ -81,9 +83,9 @@ public:
 	CMediaLibraryPlaylistEntry *	GetEntryByEntryID(unsigned long		ulEntryID);
 	CMediaLibraryPlaylistEntry *	GetEntryByURL(LPTSTR		szURL);
 
-	unsigned long	GetEntryIDByIndex(unsigned long	ulIndex);
-	unsigned long	GetEntryIDByItem(CMediaLibraryPlaylistEntry *		pIPE);
-	unsigned long	GetEntryIDByURL(LPTSTR		szURL);
+	unsigned long			GetEntryIDByIndex(unsigned long	ulIndex);
+	unsigned long			GetEntryIDByItem(CMediaLibraryPlaylistEntry *		pIPE);
+	unsigned long			GetEntryIDByURL(LPTSTR		szURL);
 
 	IInfoManager	*		GetInfoManagerForFilename(LPTSTR szItemToAdd);
 };

@@ -185,17 +185,15 @@ bool			CCoreAudio::Shutdown(void)
 	return true;
 }
 
-// TODO: Make core audio just take in a filename, we shouldn't be reliant on IPlaylistEntries for any of this!!!!!
-bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
+bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio)
 {
+	if(bResetAudio)
+		Reset();
+
 	{
 		CAutoLock	t(&m_Lock);
 		CheckOldStreams();
 	}
-
-	LPTSTR szSource = (LPTSTR)pEntry->GetField(FIELD_URL);
-	float *fReplayGainAlbum = (float *)pEntry->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN);
-	float *fReplayGainTrack = (float *)pEntry->GetField(FIELD_REPLAYGAIN_TRACK_GAIN);
 
 	for(unsigned long x=0; x<m_AudioSources.GetCount(); x++)
 	{
@@ -291,15 +289,6 @@ bool			CCoreAudio::TransitionTo(IPlaylistEntry * pEntry)
 	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
 
 	return false;
-}
-
-bool			CCoreAudio::SetSource(IPlaylistEntry * pEntry)
-{
-	Reset();
-	if(pEntry)
-		return(TransitionTo(pEntry));
-
-	return true;
 }
 
 bool			CCoreAudio::Reset(void)

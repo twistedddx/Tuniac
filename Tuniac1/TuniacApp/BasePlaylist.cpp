@@ -282,8 +282,8 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 //
 //	playlist controls
 
-//will set m_ActiveRealIndex to the previous song and return that songs index or -1 if it fails
-bool				CBasePlaylist::Previous(void)
+//return the previous song index
+unsigned long		CBasePlaylist::Previous(void)
 {
 	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
 
@@ -305,37 +305,11 @@ bool				CBasePlaylist::Previous(void)
 		//try to set active as -1 of current active
 		ulFilteredIndex = ulActiveFilteredIndex - 1;
 	
-	return SetActiveFilteredIndex(ulFilteredIndex);
+	return ulFilteredIndex;
 }
 
-//will set m_ActiveRealIndex to the next song and return that songs index or -1 if it fails
-bool				CBasePlaylist::Next(void)
-{
-	unsigned long ulFilteredIndex = GetNextFilteredIndexForActive();
-
-	//set our found next index
-	return SetActiveFilteredIndex(ulFilteredIndex);
-}
-
-bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
-{
-	//invalid
-	if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
-		return false;
-
-	//too low
-	if(ulFilteredIndex < 0)
-		return false;
-
-	//too high, m_NormalIndexArray/m_RandomIndexArray should be the same length
-	if(ulFilteredIndex >= m_NormalIndexArray.GetCount())
-		return false;
-
-	return true;
-}
-
-//will return the next song index
-unsigned long		CBasePlaylist::GetNextFilteredIndexForActive()
+//return the next song index
+unsigned long		CBasePlaylist::Next(void)
 {
 	//there is no files, there is no next
 	if(GetNumItems() == 0)
@@ -382,6 +356,23 @@ unsigned long		CBasePlaylist::GetNextFilteredIndexForActive()
 	return INVALID_PLAYLIST_INDEX;
 }
 
+bool				CBasePlaylist::CheckFilteredIndex(unsigned long ulFilteredIndex)
+{
+	//invalid
+	if(ulFilteredIndex == INVALID_PLAYLIST_INDEX)
+		return false;
+
+	//too low
+	if(ulFilteredIndex < 0)
+		return false;
+
+	//too high, m_NormalIndexArray/m_RandomIndexArray should be the same length
+	if(ulFilteredIndex >= m_NormalIndexArray.GetCount())
+		return false;
+
+	return true;
+}
+
 //will return the next song index for the index given. DOES NOT follow queues
 unsigned long		CBasePlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex)
 {
@@ -412,7 +403,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long
 //////////////////////////////////////////////////////////
 
 //get the active item(any active item should be in the current playlist?
-IPlaylistEntry	*	CBasePlaylist::GetActiveItem(void)
+IPlaylistEntry	*	CBasePlaylist::GetActiveEntry(void)
 {
 	if(m_ActiveRealIndex == INVALID_PLAYLIST_INDEX)
 		return NULL;
@@ -519,7 +510,7 @@ unsigned long	CBasePlaylist::GetEntryIDAtFilteredIndex(unsigned long ulFilteredI
 		return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 	}
 
-	return NULL;
+	return INVALID_PLAYLIST_INDEX;
 }
 
 //get the item at filtered ulIndex for m_NormalIndexArray/m_RandomIndexArray
@@ -545,6 +536,16 @@ unsigned long	CBasePlaylist::GetEntryIDAtNormalFilteredIndex(unsigned long ulFil
 		return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 	}
 
+	return INVALID_PLAYLIST_INDEX;
+}
+
+IPlaylistEntry *	CBasePlaylist::GetEntryByEntryID(unsigned long ulEntryID)
+{
+	for(unsigned long x=0; x < m_PlaylistArray.GetCount(); x++)
+	{
+		if(m_PlaylistArray[x].pIPE->GetEntryID() == ulEntryID)
+				return m_PlaylistArray[x].pIPE;
+	}
 	return NULL;
 }
 
@@ -725,7 +726,7 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	{
 	  return false;
 	}
-	IPlaylistEntry * pIPE = GetActiveItem();
+	IPlaylistEntry * pIPE = GetActiveEntry();
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 

@@ -43,7 +43,7 @@ unsigned long		CStandardPlaylist::GetRealCount(void)
 	return m_PlaylistArray.GetCount();
 }
 
-unsigned long		CStandardPlaylist::GetIDAtRealIndex(unsigned long ulRealIndex)
+unsigned long		CStandardPlaylist::GetEntryIDAtRealIndex(unsigned long ulRealIndex)
 {
 	return m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 }

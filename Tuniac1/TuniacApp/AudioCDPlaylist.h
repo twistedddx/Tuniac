@@ -32,7 +32,7 @@ protected:
 	TCHAR						m_AlbumTitle[256];
 	char						m_DriveLetter;
 
-	int							m_ActiveItem;
+	unsigned long				m_ActiveItem;
 	
 	EntryArray					m_TrackList;
 
@@ -47,11 +47,19 @@ public:
 
 	char GetDriveLetter(void) { return m_DriveLetter; }
 
-	unsigned long		GetNumCDTracks(void);
+	unsigned long		GetNumItems(void);
 	IPlaylistEntry *	GetEntryAtIndex(unsigned long Index);
 
-	unsigned long		GetActiveIndex();
-	bool				SetActiveIndex(int iIndex);
+	unsigned long		GetActiveFilteredIndex(void);
+	bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex);
+	unsigned long		GetActiveNormalFilteredIndex(void);
+	bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+
+	IPlaylistEntry *	GetEntryAtFilteredIndex(unsigned long ulFilteredIndex);
+	IPlaylistEntry *	GetEntryAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex);
+
+	unsigned long		GetFilteredIndexforEntry(IPlaylistEntry * pIPE);
+	unsigned long		GetNormalFilteredIndexforEntry(IPlaylistEntry * pIPE);
 
 public:
 	unsigned long		GetFlags(void);
@@ -60,10 +68,11 @@ public:
 	bool				SetPlaylistName(LPTSTR szPlaylistName);
 	LPTSTR				GetPlaylistName(void);
 
-	bool				Previous(void);
-	int					GetNextIndex(void);
-	bool				Next(void);
+	unsigned long		Previous(void);
+	unsigned long		Next(void);
 
-	IPlaylistEntry	*	GetActiveItem(void);
-	unsigned long		GetActiveEntryID(void);
+	unsigned long		GetNextFilteredIndexForActive(void);
+	unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex);
+
+	IPlaylistEntry	*	GetActiveEntry(void);
 };

@@ -540,7 +540,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 							if(pPE->pPlugin == NULL)
 							{
-								if(IDOK == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
+								if(IDYES == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
 								{
 									tuniacApp.m_PluginManager.EnablePlugin(iSel, TRUE);
 									SendMessage(hDlg, WM_USER, 0, 0);
@@ -926,8 +926,11 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 									for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
 									{
 										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-										IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-										pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
+										if(pPlaylist)
+										{
+											if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+												((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereIDEquals(ulEntryID);
+										}
 									}
 									tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
 									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
@@ -940,8 +943,6 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(ulRealIndex);
 							}
 
-
-
 							for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 							{
 								for(unsigned long ulRealIndex = 0; ulRealIndex < tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->GetRealCount(); ulRealIndex++)
@@ -949,6 +950,7 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateIndex(ulRealIndex);
 								}
 							}
+
 							tuniacApp.m_SourceSelectorWindow->UpdateView();
 						}
 						break;
@@ -2473,8 +2475,11 @@ void CPreferences::SetShuffleState(BOOL bEnabled)
 	if(bEnabled)
 	{
 		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		pPlaylistEX->RebuildPlaylistArrays();
+		if(pPlaylist)
+		{
+			if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+				((IPlaylistEX *)pPlaylist)->RebuildPlaylistArrays();
+		}
 	}
 }
 

@@ -763,7 +763,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(m_iLastClickedItem < 0) break;
 
 							tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-							tuniacApp.PlayEntryID(m_pPlaylist->GetEntryIDAtNormalFilteredIndex(m_iLastClickedItem), true, true, true);
+							tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem), true, true);
 						}
 						break;
 
@@ -847,7 +847,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								m_pPlaylist->DeleteNormalFilteredIndexArray(m_DeleteArray);
 								m_DeleteArray.RemoveAll();
 
-								if((m_pPlaylist->GetActiveItem() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
+								if((m_pPlaylist->GetActiveEntry() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
 								{
 									CCoreAudio::Instance()->Reset();
 								}
@@ -879,8 +879,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
 										{
 											IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-											pPlaylistEX->DeleteAllItemsWhereIDEquals(ulEntryID);
+											if(pPlaylist)
+											{
+												if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+													((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereIDEquals(ulEntryID);
+											}
 										}
 										tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
 										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
@@ -1268,7 +1271,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									if(pIPE->SetField(m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText))
 									{
-										if(pIPE == tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetActiveItem())
+										if(pIPE == tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetActiveEntry())
 										{	
 											tuniacApp.m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
 										}
@@ -1422,9 +1425,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if(m_pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 										{
-											IPlaylistEX * pPlaylistEX = (IPlaylistEX *)m_pPlaylist;
-
-											unsigned ulPlayOrder = pPlaylistEX->GetPlayOrder(pDispInfo->item.iItem);
+											unsigned ulPlayOrder = ((IPlaylistEX *)m_pPlaylist)->GetPlayOrder(pDispInfo->item.iItem);
 
 											if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
 												wnsprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%d"), ulPlayOrder);
@@ -1540,7 +1541,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(lpnmitem->iItem != -1)
 							{
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-								tuniacApp.PlayEntryID(m_pPlaylist->GetEntryIDAtNormalFilteredIndex(lpnmitem->iItem), true, true, true);
+								tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem), true, true);
 							}
 						}
 						break;
@@ -1929,17 +1930,19 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 						}
 
-						IPlaylistEX * pSPlaylist = (IPlaylistEX *)tuniacApp.m_SourceSelectorWindow->GetPlaylistFromPoint(&pt);
+						IPlaylist * pPlaylist = tuniacApp.m_SourceSelectorWindow->GetPlaylistFromPoint(&pt);
 
-						if(pSPlaylist == NULL)
+						if(pPlaylist)
+						{
+							if(pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANADD)
+								((IPlaylistEX *)pPlaylist)->AddEntryArray(entryArray);
+						}
+						else
 						{
 							tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(TEXT("New Dropped Playlist"), entryArray);
 							tuniacApp.m_SourceSelectorWindow->UpdateList();
 						}
-						else if(pSPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANADD)
-						{
-							pSPlaylist->AddEntryArray(entryArray);
-						}
+
 					}
 					else if(ChildWindowFromPoint(hDlg, ptThisWndPt) == hListViewWnd)
 					{
@@ -2023,8 +2026,7 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 	{
 		if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 		{
-			IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-			m_pPlaylist = pPlaylistEX;
+			m_pPlaylist = (IPlaylistEX *)pPlaylist;
 			m_ulActivePlaylistIndex = ulPlaylistIndex;
 			if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
 			{

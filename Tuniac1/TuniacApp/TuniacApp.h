@@ -199,11 +199,8 @@ public:
 	void				UpdateState(void);
 	void				UpdateTitles(void);
 	void				UpdateMetaData(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID);
-	void				UpdateQueues(void);
-	bool				DoSoftPause(void);
 
 	bool				SetArt(LPTSTR szSource);
 
-	bool				PlayItem(IPlaylistEntry * pIPE, bool bStart, bool bManual, bool bSetArt);
-	bool				PlayEntryID(unsigned long ulEntryID, bool bStart, bool bManual, bool bSetArt);
+	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool bResetAudio = true);
 };

@@ -74,8 +74,7 @@ public:
 	bool				Startup(void);
 	bool				Shutdown(void);
 	
-	bool				TransitionTo(IPlaylistEntry * pEntry);
-	bool				SetSource(IPlaylistEntry * pEntry);
+	bool				SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio);
 
 	bool				Reset(void);
 	bool				Play(void);

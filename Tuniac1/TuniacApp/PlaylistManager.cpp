@@ -237,12 +237,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				pPlaylist->ApplyFilter();
 				if(pPlaylist->CheckFilteredIndex(PLDH.ActiveIndex))
 				{
-					if(!tuniacApp.PlayEntryID(pPlaylist->GetEntryIDAtNormalFilteredIndex(PLDH.ActiveIndex), false, false, false))
+					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, true))
 						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
 				else
 				{
-					if(!tuniacApp.PlayEntryID(pPlaylist->GetEntryIDAtNormalFilteredIndex(0), false, false, false))
+					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(0), false, true))
 						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
 					
@@ -264,12 +264,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			m_LibraryPlaylist.ApplyFilter();
 			if(m_LibraryPlaylist.CheckFilteredIndex(PLDH.ActiveIndex))
 			{
-				if(!tuniacApp.PlayEntryID(m_LibraryPlaylist.GetEntryIDAtNormalFilteredIndex(PLDH.ActiveIndex), false, false, false))
+				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, true))
 					m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
 			else
 			{
-				if(!tuniacApp.PlayEntryID(m_LibraryPlaylist.GetEntryIDAtNormalFilteredIndex(0), false, false, false))
+				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(0), false, true))
 				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
 			m_LibraryPlaylist.RebuildPlaylistArrays();
@@ -332,7 +332,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 		else
 		{
 			PLDH.ActivePlaylist	= GetActivePlaylistIndex() - (GetNumPlaylists() - m_StandardPlaylists.GetCount() - 1);
-			PLDH.ActiveIndex = ((IPlaylistEX *)m_ActivePlaylist)->GetActiveNormalFilteredIndex();
+			PLDH.ActiveIndex = m_ActivePlaylist->GetActiveNormalFilteredIndex();
 		}
 	}
 	else
@@ -370,7 +370,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 
 			for(unsigned long x = 0; x < SubHeader.NumItems; x++)
 			{
-				unsigned long ulEntryID = m_StandardPlaylists[playlist]->GetIDAtRealIndex(x);
+				unsigned long ulEntryID = m_StandardPlaylists[playlist]->GetEntryIDAtRealIndex(x);
 				WriteFile(hFile, &ulEntryID, sizeof(unsigned long), &ulBytesWritten, NULL);
 				if(ulBytesWritten != sizeof(unsigned long))
 				{
@@ -446,25 +446,25 @@ unsigned long CPlaylistManager::GetActivePlaylistIndex(void)
 
 bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 {
+	//todo why active and playlist 0?
 	bool bOk= false;
-	if(m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+	for (unsigned long i = 0; i < m_ActivePlaylist->GetNumItems(); i++)
 	{
-		IPlaylistEX * pPlaylist = (IPlaylistEX *)m_ActivePlaylist;
+		if(m_ActivePlaylist->GetEntryAtNormalFilteredIndex(i) == pIPE)
+		{
+			bOk = m_ActivePlaylist->SetActiveNormalFilteredIndex(i);
+		}
+	}
+	tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+	IPlaylist * pPlaylist = GetPlaylistAtIndex(0);
+	if(pPlaylist)
+	{
 		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 		{
 			if(pPlaylist->GetEntryAtNormalFilteredIndex(i) == pIPE)
 			{
 				bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
 			}
-		}
-	}
-	tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
-	IPlaylistEX * pPlaylistEX = (IPlaylistEX *)GetPlaylistAtIndex(0);
-	for (unsigned long i = 0; i < pPlaylistEX->GetNumItems(); i++)
-	{
-		if(pPlaylistEX->GetEntryAtNormalFilteredIndex(i) == pIPE)
-		{
-			bOk = pPlaylistEX->SetActiveNormalFilteredIndex(i);
 		}
 	}
 	//we failed to find our song (its filtered out?)
@@ -483,10 +483,8 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 
 	m_ulActivePlaylistIndex = ulPlaylistNumber;
 
-	if(m_ActivePlaylist != NULL && m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-	{
-		((IPlaylistEX *)m_ActivePlaylist)->SetActiveFilteredIndex(INVALID_PLAYLIST_INDEX);
-	}
+	if(m_ActivePlaylist != NULL)
+		m_ActivePlaylist->SetActiveFilteredIndex(INVALID_PLAYLIST_INDEX);
 
 	if(ulPlaylistNumber == 0)
 	{
@@ -804,7 +802,7 @@ bool			CPlaylistManager::AddCDWithDriveLetter(char cDriveLetter)
 	// create a new playlist for the device here!
 	CAudioCDPlaylist * t = new CAudioCDPlaylist(cDriveLetter);
 
-	if(t->GetNumCDTracks())
+	if(t->GetNumItems())
 	{
 		m_CDPlaylists.AddTail(t);
 		PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);

@@ -98,47 +98,49 @@ public:
 	virtual bool				SetPlaylistName(LPTSTR szPlaylistName)		= 0;
 	virtual LPTSTR				GetPlaylistName(void)						= 0;
 
-	virtual bool				Previous(void)								= 0;
-	virtual bool				Next(void)									= 0;
-
-
-	virtual IPlaylistEntry	*	GetActiveItem(void)							= 0;
-	virtual unsigned long		GetActiveEntryID(void)						= 0;
-};
-
-class IPlaylistEX : public IPlaylist
-{
-public:
-	virtual unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
-	virtual unsigned long		NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
-	virtual unsigned long		RealIndexToRandomFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
-	virtual unsigned long		RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
-
-	virtual unsigned long		GetNumItems(void)													= 0;
-
-	virtual bool				ApplyFilter(void)													= 0;
-	virtual void				RebuildPlaylistArrays(void)											= 0;
+	virtual unsigned long		Previous(void)								= 0;
+	virtual unsigned long		Next(void)									= 0;
 
 	virtual unsigned long		GetActiveFilteredIndex(void)										= 0;
 	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual unsigned long		GetActiveNormalFilteredIndex(void)									= 0;
 	virtual bool				SetActiveNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 
+	virtual unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex)	= 0;
+
+	virtual IPlaylistEntry	*	GetActiveEntry(void)							= 0;
+
 	virtual IPlaylistEntry *	GetEntryAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
-	virtual unsigned long		GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex)				= 0;
 	virtual IPlaylistEntry *	GetEntryAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
-	virtual unsigned long		GetEntryIDAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)	= 0;
 
-	virtual unsigned long		GetFilteredIndexforEntry(IPlaylistEntry	* pIPE)					= 0;
-	virtual unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID)					= 0;
+	virtual unsigned long		GetFilteredIndexforEntry(IPlaylistEntry	* pIPE)						= 0;
+
 	virtual unsigned long		GetNormalFilteredIndexforEntry(IPlaylistEntry * pIPE)				= 0;
-	virtual unsigned long		GetNormalFilteredIndexforEntryID(unsigned long ulEntryID)				= 0;
-	virtual unsigned long		GetRealIndexforEntry(IPlaylistEntry * pIPE)						= 0;
-	virtual unsigned long		GetRealIndexforEntryID(unsigned long ulEntryID)						= 0;
 
-	virtual unsigned long		GetNextFilteredIndexForActive()			= 0;
-	virtual unsigned long		GetNextFilteredIndexForFilteredIndex(unsigned long ulFilteredIndex)			= 0;
-	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)				= 0;
+	virtual unsigned long		GetNumItems(void)							= 0;
+};
+
+class IPlaylistEX : public IPlaylist
+{
+public:
+
+	virtual unsigned long		GetActiveEntryID(void)												= 0;
+	virtual unsigned long		GetEntryIDAtFilteredIndex(unsigned long ulFilteredIndex)			= 0;
+	virtual unsigned long		GetEntryIDAtNormalFilteredIndex(unsigned long ulNormalFilteredIndex)= 0;
+	virtual unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID)					= 0;
+	virtual unsigned long		GetNormalFilteredIndexforEntryID(unsigned long ulEntryID)			= 0;
+
+	virtual IPlaylistEntry *	GetEntryByEntryID(unsigned long ulFilteredIndex)					= 0;
+
+	virtual unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		NormalFilteredIndexToRealIndex(unsigned long ulNormalFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		RealIndexToRandomFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX
+	virtual unsigned long		RandomFilteredIndexToRealIndex(unsigned long ulRandomFilteredIndex)	= 0; // returns a valid real index based on a playlist index or INVALID_PLAYLIST_INDEX
+
+	virtual bool				ApplyFilter(void)								= 0;
+	virtual void				RebuildPlaylistArrays(void)						= 0;
+
+	virtual unsigned long		GetPlayOrder(unsigned long ulNormalFilteredIndex)	= 0;
 
 	virtual bool				SetTextFilter(LPTSTR	szFilterString)			= 0;
 	virtual LPTSTR				GetTextFilter(void)								= 0;
@@ -147,21 +149,24 @@ public:
 	virtual bool				SetTextFilterReversed(bool bReverse)			= 0;
 	virtual bool				GetTextFilterReversed(void)						= 0;
 
+	virtual unsigned long		GetRealIndexforEntry(IPlaylistEntry * pIPE)		= 0;
+	virtual unsigned long		GetRealIndexforEntryID(unsigned long ulEntryID)	= 0;
+
 	virtual void				GetFieldFilteredItemArray(EntryArray & entryArray, unsigned long ulFieldID, LPTSTR szFilterString, bool bReverse) = 0;
 
 	virtual bool				Sort(unsigned long ulSortBy)					= 0;
 
 	virtual bool				AddEntryArray(EntryArray & entryArray)			= 0;
 
-	virtual bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray)		= 0;
+	virtual bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray)							= 0;
 	virtual bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
 
 	virtual bool				DeleteAllItemsWhereIDEquals(unsigned long ID)	= 0;
 	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;
 
-	virtual void				SaveOrder(void)			= 0;
-	virtual void				RestoreOrder(void)		= 0;
-	virtual bool				HasSavedOrder(void)		= 0;
+	virtual void				SaveOrder(void)									= 0;
+	virtual void				RestoreOrder(void)								= 0;
+	virtual bool				HasSavedOrder(void)								= 0;
 };
 
 

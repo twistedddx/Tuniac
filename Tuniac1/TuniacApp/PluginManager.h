@@ -50,7 +50,6 @@ public:
 
 	unsigned int	GetNumPlugins(void);
 	PluginEntry *	GetPluginAtIndex(unsigned int iPlugin);
-	LPTSTR			GetCurrentPluginDll(void);
 
 	bool			IsPluginEnabled(unsigned int iPlugin);
 	bool			EnablePlugin(unsigned int iPlugin, bool bEnabled);
@@ -64,7 +63,7 @@ public:
 	HINSTANCE		GetMainInstance(void);
 	HWND			GetMainWindow(void);
 
-	bool			PreferencesGet(LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
-	bool			PreferencesSet(LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData);
+	bool			PreferencesGet(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData);
+	bool			PreferencesSet(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData);
 
 };
