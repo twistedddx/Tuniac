@@ -93,7 +93,7 @@ public:
 class IAudioSourceHelper
 {
 public:
-	virtual void		UpdateMetaData(LPTSTR szSource, LPTSTR szTitle, unsigned long ulFieldID)		= 0;
+	virtual void		UpdateMetaData(LPTSTR szSource, LPTSTR szData, unsigned long ulFieldID)		= 0;
 	virtual void		LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)		= 0;
 };
 
