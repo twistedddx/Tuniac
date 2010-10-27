@@ -1,3 +1,9 @@
+Oct, 2010
+---------
+-fix repeat mode
+-fix history issue causing "corruption" message
+-update about boxes
+
 Sep, 2010
 ---------
 -improve queue(handle filter changes, clear queue on playlist change, disable queueing in non active playlist, allow multiple song adds, allow current song add)
