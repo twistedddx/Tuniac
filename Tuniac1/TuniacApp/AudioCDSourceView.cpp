@@ -54,13 +54,9 @@ bool	CAudioCDSourceView::DestroySourceView(void)
 bool	CAudioCDSourceView::ShowSourceView(bool bShow)
 {
 	if(bShow)
-	{
 		ShowWindow(m_AudioCDSourceWnd, SW_SHOW);
-	}
 	else
-	{
 		ShowWindow(m_AudioCDSourceWnd, SW_HIDE);
-	}
 
 	return (true);
 }
@@ -207,9 +203,9 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							if(lpnmitem->iItem != -1)
 							{
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-								if(m_pCDPlaylist->SetActiveIndex(lpnmitem->iItem))
+								if(m_pCDPlaylist->SetActiveFilteredIndex(lpnmitem->iItem))
 								{
-									tuniacApp.PlayItem(m_pCDPlaylist->GetActiveItem(), true, true, true);
+									tuniacApp.PlayEntry(m_pCDPlaylist->GetActiveEntry(), true, true);
 								}
 
 								Update();
@@ -230,7 +226,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 									{
 										if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == m_pCDPlaylist)
 										{
-											if(m_pCDPlaylist->GetActiveIndex() == pDispInfo->item.iItem)
+											if(m_pCDPlaylist->GetActiveFilteredIndex() == pDispInfo->item.iItem)
 											{
 												pDispInfo->item.iImage = 1;
 											}
@@ -278,7 +274,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 			{
 				HWND hListView = GetDlgItem(hDlg, IDC_CDSOURCE_TRACKLIST);
 
-				ListView_SetItemCountEx(hListView, m_pCDPlaylist->GetNumCDTracks(), LVSICF_NOSCROLL);
+				ListView_SetItemCountEx(hListView, m_pCDPlaylist->GetNumItems(), LVSICF_NOSCROLL);
 			}
 			break;
 

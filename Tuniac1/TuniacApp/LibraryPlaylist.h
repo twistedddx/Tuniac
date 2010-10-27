@@ -37,7 +37,7 @@ public:
 	bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray);
 
 	unsigned long		GetRealCount(void);
-	unsigned long		GetIDAtRealIndex(unsigned long ulIndex);
+	unsigned long		GetEntryIDAtRealIndex(unsigned long ulIndex);
 
 	bool				RebuildPlaylist(void);
 };

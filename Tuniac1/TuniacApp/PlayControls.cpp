@@ -365,7 +365,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							if(GetKeyState(VK_CONTROL) & 0x8000)
 								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS_BYHISTORY, 0), 0);
 							else
-								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 1), 0);
 						}
 						break;
 
@@ -377,7 +377,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					case 2:
 						{
-							SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+							SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 1), 0);
 						}
 						break;
 				}
@@ -582,34 +582,38 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							38);
 
 				IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-				IPlaylistEntry * pIPE = pPlaylist->GetActiveItem();
 
-				if(pIPE)
+				if(pPlaylist)
 				{
-					LPTSTR  szTitle		= (LPTSTR)pIPE->GetField(FIELD_TITLE);
-					LPTSTR	szArtist	= (LPTSTR)pIPE->GetField(FIELD_ARTIST);
+					IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 
-					if(szTitle == NULL)
-						szTitle = TEXT("No Song Loaded");
+					if(pIPE)
+					{
+						LPTSTR  szTitle		= (LPTSTR)pIPE->GetField(FIELD_TITLE);
+						LPTSTR	szArtist	= (LPTSTR)pIPE->GetField(FIELD_ARTIST);
 
-					if(szArtist == NULL)
-						szArtist = TEXT("");
+						if(szTitle == NULL)
+							szTitle = TEXT("No Song Loaded");
 
-					SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
-					SetBkMode(hDC, TRANSPARENT);
-					DrawText(	hDC, 
-								szTitle,
-								-1, 
-								&SongTitleRect, 
-								DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+						if(szArtist == NULL)
+							szArtist = TEXT("");
 
-					SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
-					SetBkMode(hDC, TRANSPARENT);
-					DrawText(	hDC, 
-								szArtist,
-								-1, 
-								&ArtistTitleRect, 
-								DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX);
+						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
+						SetBkMode(hDC, TRANSPARENT);
+						DrawText(	hDC, 
+									szTitle,
+									-1, 
+									&SongTitleRect, 
+									DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+
+						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
+						SetBkMode(hDC, TRANSPARENT);
+						DrawText(	hDC, 
+									szArtist,
+									-1, 
+									&ArtistTitleRect, 
+									DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX);
+					}
 				}
 
 

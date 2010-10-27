@@ -324,7 +324,7 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				IPlaylist * pList = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 				if(pList)
 				{
-					IPlaylistEntry * pIPE = pList->GetActiveItem();
+					IPlaylistEntry * pIPE = pList->GetActiveEntry();
 					
 					if(pIPE)
 						return (void *)pIPE->GetField(FIELD_TITLE);
@@ -337,7 +337,7 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				IPlaylist * pList = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 				if(pList)
 				{
-					IPlaylistEntry * pIPE = pList->GetActiveItem();
+					IPlaylistEntry * pIPE = pList->GetActiveEntry();
 					
 					if(pIPE)
 						return (void *)pIPE->GetField(FIELD_ARTIST);
@@ -357,8 +357,8 @@ void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR
 	if(iFromCurrent == 0)
 	{
 		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-		IPlaylistEX * pPlaylistEX = (IPlaylistEX *)pPlaylist;
-		pIPE = pPlaylist->GetActiveItem();
+		if(pPlaylist)
+			pIPE = pPlaylist->GetActiveEntry();
 	}
 	else
 		pIPE = tuniacApp.GetFuturePlaylistEntry(iFromCurrent - 1);
@@ -379,7 +379,13 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 	}
 	else if(iFromCurrent > 0)
 	{
-		 return tuniacApp.PlayEntryID(tuniacApp.GetFuturePlaylistEntryID(iFromCurrent - 1), CCoreAudio::Instance()->GetState(), true, true);
+
+		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+		if(pPlaylist)
+		{
+			if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+				return tuniacApp.PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(tuniacApp.GetFuturePlaylistEntryID(iFromCurrent - 1)), true, 2);
+		}
 	}
 	else
 	{
@@ -398,38 +404,16 @@ HWND			CPluginManager::GetMainWindow(void)
 	return tuniacApp.getMainWindow();
 }
 
-LPTSTR			CPluginManager::GetCurrentPluginDll(void)
+bool			CPluginManager::PreferencesGet(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
 {
-	DWORD dwCurrentThreadId = GetCurrentThreadId();
-	for(unsigned long i = 0; i < m_PluginArray.GetCount(); i++)
-	{
-		if(m_PluginArray[i].dwThreadId == dwCurrentThreadId)
-			return m_PluginArray[i].szDllFile;
-	}
-	return NULL;
+	TCHAR szPluginsSubKey[128];
+	wnsprintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
+	return tuniacApp.m_Preferences.PluginGetValue(szPluginsSubKey, lpValueName, lpType, lpData, lpcbData);
 }
 
-bool			CPluginManager::PreferencesGet(LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
+bool			CPluginManager::PreferencesSet(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
 {
-	LPTSTR szCurrent = GetCurrentPluginDll();
-	if(szCurrent == NULL)
-		return false;
-
-	TCHAR szSubKey[128];
-	wnsprintf(szSubKey, 128, TEXT("plugins\\%s"), szCurrent);
-	return tuniacApp.m_Preferences.PluginGetValue(szSubKey, lpValueName, lpType, lpData, lpcbData);
-}
-
-bool			CPluginManager::PreferencesSet(LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
-{
-	if(lpValueName == NULL || wcslen(lpValueName) == 0)
-		return false;
-
-	LPTSTR szCurrent = GetCurrentPluginDll();
-	if(szCurrent == NULL)
-		return false;
-
-	TCHAR szSubKey[128];
-	wnsprintf(szSubKey, 128, TEXT("plugins\\%s"), szCurrent);
-	return tuniacApp.m_Preferences.PluginSetValue(szSubKey, lpValueName, dwType, lpData, cbData);
+	TCHAR szPluginsSubKey[128];
+	wnsprintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
+	return tuniacApp.m_Preferences.PluginSetValue(szPluginsSubKey, lpValueName, dwType, lpData, cbData);
 }

@@ -177,8 +177,11 @@
 #define IDC_EQ_ENABLE                   1188
 #define IDC_CHECK1                      1190
 #define IDC_GENERAL_AUTOSOFTPAUSE       1190
-#define IDC_LIBRARY_SINGLESTREAMADD     1190
 #define IDC_LIBRARY_ADDSINGLESTREAM     1190
+#define IDC_ABOUTBOXTHANKS_TEXT         1191
+#define IDC_ABOUTBOXDEV_TEXT            1192
+#define IDC_ABOUTBOXBUILD_TEXT          1193
+#define IDC_ABOUTBOXTUNIAC_TEXT         1193
 #define ID_FILE_EXIT                    40001
 #define ID_FILE_NEWPLAYLIST_NORMALPLAYLIST 40002
 #define ID_FILE_NEWPLAYLIST_SMARTPLAYLIST 40003
@@ -260,7 +263,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         40149
-#define _APS_NEXT_CONTROL_VALUE         1191
+#define _APS_NEXT_CONTROL_VALUE         1194
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

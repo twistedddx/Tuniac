@@ -397,7 +397,7 @@ bool			CImportExportManager::ExportTo(ITuniacExportPlugin * pExporter, LPTSTR sz
 		for(unsigned long i = 0; i < entryArray.GetCount(); i++)
 		{
 			pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(entryArray[i]->GetEntryID());
-			if(pIPE != NULL)
+			if(pIPE)
 			{
 				CopyMemory(&LE, pIPE->GetLibraryEntry(), sizeof(LE));
 				pExporter->ExportEntry(LE);

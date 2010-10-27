@@ -30,7 +30,7 @@ public:
 	~CStandardPlaylist(void);
 
 	unsigned long		GetRealCount(void);
-	unsigned long		GetIDAtRealIndex(unsigned long ulRealIndex);
+	unsigned long		GetEntryIDAtRealIndex(unsigned long ulRealIndex);
 
 public:
 	unsigned long		GetPlaylistType(void);
