@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PopupNotify_plugin.h"
+#include "resource.h"
 
 #define POPUPWINDOWCLASS		TEXT("TuniacPlugin_PopupNotify")
 
@@ -125,10 +126,15 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	if(m_hWnd == NULL)
 		return false;
 
-	m_bAllowInhibit = false;
+
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
-	m_pHelper->PreferencesGet(TEXT("AllowInhibit"), &lpRegType, (LPBYTE)&m_bAllowInhibit, &iRegSize);
+
+	m_bAllowInhibit = false;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("AllowInhibit"), &lpRegType, (LPBYTE)&m_bAllowInhibit, &iRegSize);
+
+	m_eManualOnlyMode = AlwaysTrigger;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), &lpRegType, (LPBYTE)&m_eManualOnlyMode, &iRegSize);
 
 	m_abd.cbSize = sizeof(APPBARDATA);
 	m_abd.hWnd = m_hWnd;
@@ -197,8 +203,6 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	UnregisterHotKey(m_hWnd, m_aHotkeyShow);
 	GlobalDeleteAtom(m_aHotkeyShow);
 
-	m_pHelper->PreferencesSet(TEXT("AllowInhibit"), REG_DWORD, (LPBYTE)&m_bAllowInhibit, sizeof(int));
-
 	DestroyWindow(m_hWnd);
 	m_hWnd = NULL;
 	UnregisterClass(POPUPWINDOWCLASS, m_pHelper->GetMainInstance());
@@ -227,8 +231,73 @@ LRESULT CALLBACK	CPopupNotify::WndProcStub(HWND hWnd, UINT uMsg, WPARAM wParam, 
 
 LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	CPopupNotify * pPopupNotify = (CPopupNotify *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
 	switch(uMsg)
 	{
+		case WM_INITDIALOG:
+			{
+				SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+				pPopupNotify = (CPopupNotify *)lParam;
+
+				SendDlgItemMessage(hWnd, IDC_FULLSCREENINHIBIT_CHECK, BM_SETCHECK, pPopupNotify->m_bAllowInhibit ? BST_CHECKED : BST_UNCHECKED, 0);
+				
+				SendDlgItemMessage(hWnd, IDC_TRIGGER_ALWAYS, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AlwaysTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hWnd, IDC_TRIGGER_MANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == ManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hWnd, IDC_TRIGGER_BLINDMANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == BlindManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hWnd, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+			}
+			break;
+
+        case WM_COMMAND: 
+            switch (LOWORD(wParam)) 
+            { 
+				case IDC_FULLSCREENINHIBIT_CHECK:
+					{
+						int State = SendDlgItemMessage(hWnd, IDC_FULLSCREENINHIBIT_CHECK, BM_GETCHECK, 0, 0);
+						pPopupNotify->m_bAllowInhibit = State == BST_UNCHECKED ? FALSE : TRUE;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("AllowInhibit"), REG_DWORD, (LPBYTE)&m_bAllowInhibit, sizeof(int));
+					}
+					break;
+
+				case IDC_TRIGGER_ALWAYS:
+					{
+						pPopupNotify->m_eManualOnlyMode = AlwaysTrigger;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+					}
+					break;
+
+				case IDC_TRIGGER_MANUAL:
+					{
+						pPopupNotify->m_eManualOnlyMode = ManualTrigger;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+					}
+					break;
+
+				case IDC_TRIGGER_BLINDMANUAL:
+					{
+						pPopupNotify->m_eManualOnlyMode = BlindManualTrigger;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+					}
+					break;
+
+				case IDC_TRIGGER_AUTO:
+					{
+						pPopupNotify->m_eManualOnlyMode = AutoTrigger;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+					}
+					break;
+
+                case IDOK:
+				case IDCANCEL:
+					{
+						EndDialog(hWnd, wParam); 
+						return TRUE;
+					}
+					break;
+			}
+			break;
+
 		case WM_PAINT:
 			{
 				RePaint(hWnd);
@@ -324,13 +393,29 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 
 		case PLUGINNOTIFY_SONGCHANGE:
+		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
+		case PLUGINNOTIFY_SONGCHANGE_MANUALBLIND:
+		case WM_HOTKEY:
 			{
+				//fullscreen app + inhibit set
 				if(m_bInhibit)
 					break;
-			}
-		case WM_HOTKEY:
 
-			{
+				if(uMsg == PLUGINNOTIFY_SONGCHANGE)
+					//no for manual or blind manual mode, yes for always and auto
+					if(m_eManualOnlyMode == ManualTrigger || m_eManualOnlyMode == BlindManualTrigger)
+						break;
+
+				if(uMsg == PLUGINNOTIFY_SONGCHANGE_MANUAL)
+					//no for auto mode and blind manual, yes for always manual
+					if(m_eManualOnlyMode == AutoTrigger || m_eManualOnlyMode == BlindManualTrigger)
+						break;
+
+				if(uMsg == PLUGINNOTIFY_SONGCHANGE_MANUALBLIND)
+					//no for auto, yes for always and manual and blind manual
+					if(m_eManualOnlyMode == AutoTrigger)
+						break;
+
 				KillTimer(m_hWnd, ID_TIMER_HIDE);
 				KillTimer(m_hWnd, ID_TIMER_FADE);
 				ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
@@ -484,8 +569,7 @@ bool			CPopupNotify::About(HWND hWndParent)
 
 bool			CPopupNotify::Configure(HWND hWndParent)
 {
-	m_bAllowInhibit = !m_bAllowInhibit;
-	if(!m_bAllowInhibit)
-		m_bInhibit = false;
+	DialogBoxParam(GetModuleHandle(L"PopupNotify_Plugin.dll"), MAKEINTRESOURCE(IDD_NOTIFYPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
+
 	return true;
 }

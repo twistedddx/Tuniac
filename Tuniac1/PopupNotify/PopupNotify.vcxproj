@@ -181,7 +181,11 @@
     <ClInclude Include="ITuniacPlugin.h" />
     <ClInclude Include="PluginVariable.h" />
     <ClInclude Include="PopupNotify_plugin.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PopupNotify_Plugin.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
