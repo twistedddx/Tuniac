@@ -202,7 +202,6 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 
 		default:
 			return FALSE;
-			break;
 
     } 
     return TRUE; 

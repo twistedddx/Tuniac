@@ -1227,7 +1227,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 		case WM_NOTIFY:
 			{
-				UINT idCtrl = wParam;
 				LPNMHDR lpNotify = (LPNMHDR)lParam;
 
 				switch(lpNotify->code)

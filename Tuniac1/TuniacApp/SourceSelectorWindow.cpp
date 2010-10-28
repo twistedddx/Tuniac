@@ -902,7 +902,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 		case WM_NOTIFY:
 			{
-				UINT idCtrl = wParam;
 				LPNMHDR lpNotify = (LPNMHDR)lParam;
 
 				switch(lpNotify->code)
@@ -910,7 +909,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 					case LVN_KEYDOWN:
 						{
-							HWND			hListViewWnd	= lpNotify->hwndFrom;
 							LPNMLVKEYDOWN	pnkd			= (LPNMLVKEYDOWN) lParam;
 
 							switch(pnkd->wVKey)

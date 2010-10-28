@@ -295,7 +295,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		}
 		else
 			//notice of setting song from playlist load
-			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUALBLIND, NULL, NULL);
+			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_INIT, NULL, NULL);
 	}
 
 	if(m_Preferences.GetFollowCurrentSongMode())

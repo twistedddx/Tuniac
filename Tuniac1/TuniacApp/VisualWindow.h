@@ -52,12 +52,9 @@ protected:
 
 	HANDLE							hTimer;
 	HANDLE							hTimerQueue;
-	int								m_LastFPS;
 
 	HANDLE							m_hThread;
 	unsigned long					m_dwThreadID;
-
-	//COffsetTimer					m_offsettimer;
 
 	static unsigned long __stdcall ThreadStub(void * in);
 	unsigned long ThreadProc(void);
@@ -89,6 +86,7 @@ public:
 
 	bool			GetFullscreen(void);
 	void			SetFullscreen(bool bFull);
+	void			SetVisualFPS(int iFPS);
 
 public:
 	unsigned long	GetVisData(float * pWaveformData, unsigned long ulNumSamples);
