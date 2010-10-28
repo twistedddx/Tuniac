@@ -208,9 +208,8 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 	hTimer = NULL;
 	hTimerQueue = NULL;
 
-	m_LastFPS = tuniacApp.m_Preferences.GetVisualFPS();
 	hTimerQueue = CreateTimerQueue();
-	CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL, 0, ((1000 / m_LastFPS) + 1), 0);
+	CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL, 0, ((1000 / tuniacApp.m_Preferences.GetVisualFPS()) + 1), 0);
 
 	m_hThread = CreateThread(	NULL,
 								16384,
@@ -306,6 +305,13 @@ bool CVisualWindow::SetPos(int x, int y, int w, int h)
 	}
 
 	return(false);
+}
+
+void		CVisualWindow::SetVisualFPS(int iFPS)
+{
+	DeleteTimerQueue(hTimerQueue);
+	hTimerQueue = CreateTimerQueue();
+	CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL , 0, ((1000 / iFPS) + 1), 0);
 }
 
 bool CVisualWindow::GetFullscreen(void)
@@ -413,7 +419,6 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 		case WM_SIZE:
 		case WM_ERASEBKGND:
 			{
-				//SetEvent(m_hRenderEvent);
 				return TRUE;
 			}
 			break;
@@ -514,12 +519,31 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 			}
 			break;
 
-		case WM_LBUTTONDBLCLK:
+			/* Todo, make this work. WM_NOTIFY nevers comes :(
+		case WM_NOTIFY:
 			{
-				//SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_VIS_FULLSCREEN, 0), 0);
-				return(DefWindowProc(hWnd, message, wParam, lParam));
+				LPNMHDR lpNotify = (LPNMHDR)lParam;
+
+				switch(lpNotify->code)
+				{
+					case LVN_KEYDOWN:
+						{
+							LPNMLVKEYDOWN	pnkd			= (LPNMLVKEYDOWN) lParam;
+
+							switch(pnkd->wVKey)
+							{
+								case VK_ESCAPE:
+									{
+										if(tuniacApp.m_VisualWindow->GetFullscreen())
+											tuniacApp.m_VisualWindow->SetFullscreen(false);
+									}
+									break;
+							}
+						}
+				}
 			}
 			break;
+			*/
 
 		default:
 			return(DefWindowProc(hWnd, message, wParam, lParam));
@@ -608,15 +632,6 @@ unsigned long CVisualWindow::ThreadProc(void)
 		}
 		else
 		{
-			if(m_LastFPS != tuniacApp.m_Preferences.GetVisualFPS())
-			{
-				DeleteTimerQueue(hTimerQueue);
-				m_LastFPS = tuniacApp.m_Preferences.GetVisualFPS();
-				hTimerQueue = CreateTimerQueue();
-				CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL , 0, ((1000 / m_LastFPS) + 1), 0);
-
-			}
-
 			if(::IsWindowVisible(m_hWnd) && !IsIconic(GetParent(m_hWnd)))
 			{
 				CAutoLock t(&m_RenderLock);

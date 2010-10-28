@@ -175,10 +175,8 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 
 		case WM_NOTIFY:
 			{
-				UINT idCtrl = (UINT)wParam;
 				LPNMHDR lpNotify = (LPNMHDR)lParam;
 				HWND hListView = GetDlgItem(hDlg, IDC_CDSOURCE_TRACKLIST);
-
 
 				switch(lpNotify->code)
 				{

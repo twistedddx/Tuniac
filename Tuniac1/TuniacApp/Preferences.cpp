@@ -447,7 +447,6 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 		case WM_NOTIFY:
 			{
-				UINT idCtrl = wParam;
 				LPNMHDR lpNotify = (LPNMHDR)lParam;
 
 				switch(lpNotify->code)
@@ -999,6 +998,7 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							TCHAR	tstr[32];
 							wsprintf(tstr, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
 							SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
+							tuniacApp.m_VisualWindow->SetVisualFPS(pPrefs->m_iVisualFPS);
 						}
 						break;
 				}
@@ -2170,7 +2170,6 @@ LRESULT CALLBACK CPreferences::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 
 		case WM_NOTIFY:
 			{
-				UINT idCtrl = wParam;
 				LPNMHDR lpNotify = (LPNMHDR)lParam;
 
 				switch(lpNotify->code)

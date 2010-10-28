@@ -97,6 +97,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 		{
 			switch(msg.message)
 			{
+				case PLUGINNOTIFY_SONGCHANGE_INIT:
 				case PLUGINNOTIFY_SONGCHANGE_MANUALBLIND:
 				case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 				case PLUGINNOTIFY_SONGCHANGE:

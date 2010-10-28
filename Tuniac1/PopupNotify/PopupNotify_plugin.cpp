@@ -209,43 +209,33 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	return 0;
 }
 
-LRESULT CALLBACK	CPopupNotify::WndProcStub(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+//pref dialog
+LRESULT CALLBACK	CPopupNotify::DlgProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	CPopupNotify * pPlugin;
+	if(uMsg == WM_INITDIALOG)
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
-	if(uMsg == WM_NCCREATE)
-	{
-		LPCREATESTRUCT lpCS = (LPCREATESTRUCT)lParam;
-		pPlugin = (CPopupNotify *)lpCS->lpCreateParams;
-
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pPlugin);
-	}
-	else
-	{
-		pPlugin = (CPopupNotify *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	}
-
-	return(pPlugin->WndProc(hWnd, uMsg, wParam, lParam));
-
+	CPopupNotify * pPopupNotify = (CPopupNotify *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	return(pPopupNotify->DlgProc(hDlg, uMsg, wParam, lParam));
 }
 
-LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK	CPopupNotify::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	CPopupNotify * pPopupNotify = (CPopupNotify *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CPopupNotify * pPopupNotify = (CPopupNotify *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
 	switch(uMsg)
 	{
 		case WM_INITDIALOG:
 			{
-				SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPopupNotify = (CPopupNotify *)lParam;
 
-				SendDlgItemMessage(hWnd, IDC_FULLSCREENINHIBIT_CHECK, BM_SETCHECK, pPopupNotify->m_bAllowInhibit ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_FULLSCREENINHIBIT_CHECK, BM_SETCHECK, pPopupNotify->m_bAllowInhibit ? BST_CHECKED : BST_UNCHECKED, 0);
 				
-				SendDlgItemMessage(hWnd, IDC_TRIGGER_ALWAYS, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AlwaysTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hWnd, IDC_TRIGGER_MANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == ManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hWnd, IDC_TRIGGER_BLINDMANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == BlindManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hWnd, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_ALWAYS, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AlwaysTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == ManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_BLINDMANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == BlindManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
 			}
 			break;
 
@@ -254,7 +244,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             { 
 				case IDC_FULLSCREENINHIBIT_CHECK:
 					{
-						int State = SendDlgItemMessage(hWnd, IDC_FULLSCREENINHIBIT_CHECK, BM_GETCHECK, 0, 0);
+						int State = SendDlgItemMessage(hDlg, IDC_FULLSCREENINHIBIT_CHECK, BM_GETCHECK, 0, 0);
 						pPopupNotify->m_bAllowInhibit = State == BST_UNCHECKED ? FALSE : TRUE;
 						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("AllowInhibit"), REG_DWORD, (LPBYTE)&m_bAllowInhibit, sizeof(int));
 					}
@@ -291,13 +281,47 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
                 case IDOK:
 				case IDCANCEL:
 					{
-						EndDialog(hWnd, wParam); 
+						EndDialog(hDlg, wParam); 
 						return TRUE;
 					}
 					break;
 			}
 			break;
 
+		default:
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+//popup window
+LRESULT CALLBACK	CPopupNotify::WndProcStub(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPopupNotify * pPlugin;
+
+	if(uMsg == WM_NCCREATE)
+	{
+		LPCREATESTRUCT lpCS = (LPCREATESTRUCT)lParam;
+		pPlugin = (CPopupNotify *)lpCS->lpCreateParams;
+
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pPlugin);
+	}
+	else
+	{
+		pPlugin = (CPopupNotify *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	}
+
+	return(pPlugin->WndProc(hWnd, uMsg, wParam, lParam));
+
+}
+
+LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPopupNotify * pPopupNotify = (CPopupNotify *)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+	switch(uMsg)
+	{
 		case WM_PAINT:
 			{
 				RePaint(hWnd);
@@ -392,6 +416,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			}
 			break;
 
+		case PLUGINNOTIFY_SONGCHANGE_INIT:
 		case PLUGINNOTIFY_SONGCHANGE:
 		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 		case PLUGINNOTIFY_SONGCHANGE_MANUALBLIND:
@@ -438,7 +463,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			return(DefWindowProc(hWnd, uMsg, wParam, lParam));
 	}
 
-	return 0;
+	return FALSE;
 }
 
 void			CPopupNotify::RePaint(HWND hWnd)
@@ -569,7 +594,7 @@ bool			CPopupNotify::About(HWND hWndParent)
 
 bool			CPopupNotify::Configure(HWND hWndParent)
 {
-	DialogBoxParam(GetModuleHandle(L"PopupNotify_Plugin.dll"), MAKEINTRESOURCE(IDD_NOTIFYPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
+	DialogBoxParam(GetModuleHandle(L"PopupNotify_Plugin.dll"), MAKEINTRESOURCE(IDD_NOTIFYPREFWINDOW), hWndParent, (DLGPROC)DlgProcStub, (DWORD_PTR)this);
 
 	return true;
 }
