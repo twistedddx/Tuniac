@@ -40,6 +40,7 @@
 #define ARTONSELECTION			TEXT("ArtOnSelection")
 #define FOLLOWCURRENTSONG		TEXT("FollowCurrentSong")
 #define SMARTSORTING			TEXT("SmartSorting")
+#define SCREENSAVEMODE			TEXT("ScreenSaveMode")
 
 #define WINDOWFORMATSTRING		TEXT("WindowFormatString")
 #define PLUGINFORMATSTRING		TEXT("PluginFormatString")
@@ -134,6 +135,9 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_MINIMIZEONCLOSE, BM_SETCHECK, pPrefs->m_bMinimizeOnClose ? BST_CHECKED : BST_UNCHECKED, 0);
 
+				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_ALLOW, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSaveAllow ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENT, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePrevent ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENTFULL, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePreventFull ? BST_CHECKED : BST_UNCHECKED, 0);
 
 				TCHAR szSize[8];
 				wnsprintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
@@ -213,6 +217,24 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_MINIMIZEONCLOSE, BM_GETCHECK, 0, 0);
 							pPrefs->m_bMinimizeOnClose = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+					case IDC_GENERAL_SCREEN_ALLOW:
+						{
+							pPrefs->m_eScreenSaveMode = ScreenSaveAllow;
+						}
+						break;
+
+					case IDC_GENERAL_SCREEN_PREVENT:
+						{
+							pPrefs->m_eScreenSaveMode = ScreenSavePrevent;
+						}
+						break;
+
+					case IDC_GENERAL_SCREEN_PREVENTFULL:
+						{
+							pPrefs->m_eScreenSaveMode = ScreenSavePreventFull;
 						}
 						break;
 
@@ -1253,7 +1275,7 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_iSourceViewDividerX		= 150;
 	m_eTrayIconMode				= TrayIconMinimize;
-	//m_Theme[0] = L'\0';
+	m_eScreenSaveMode			= ScreenSavePreventFull;
 
 	m_bMainWindowMaximized		= FALSE;
 	m_bMainWindowMinimized		= FALSE;
@@ -1355,23 +1377,20 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_iSourceViewDividerX,
 						&Size);
 
-	/*
-	Size = 128 * sizeof(WCHAR);
-	Type = REG_SZ;
-	RegQueryValueEx(	hTuniacPrefKey,
-						ACTIVETHEME,
-						NULL,
-						&Type,
-						(LPBYTE)&m_Theme,
-						&Size);
-	*/
-
 	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						TRAYICONMODE,
 						NULL,
 						&Type,
 						(LPBYTE)&m_eTrayIconMode,
+						&Size);
+	
+	Size = sizeof(int);
+	RegQueryValueEx(	hTuniacPrefKey,
+						SCREENSAVEMODE,
+						NULL,
+						&Type,
+						(LPBYTE)&m_eScreenSaveMode,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1724,23 +1743,18 @@ bool CPreferences::SavePreferences(void)
 					(LPBYTE)&m_bMainWindowMinimized, 
 					sizeof(BOOL));
 
-
-	/*
-	Size = (wcslen(m_Theme) + 1) * sizeof(TCHAR);
-	Type = REG_SZ;
-	RegSetValueEx(	hTuniacPrefKey,
-					ACTIVETHEME,
-					NULL,
-					Type,
-					(LPBYTE)&m_Theme,
-					Size);
-	*/
-
 	RegSetValueEx(	hTuniacPrefKey, 
 					TRAYICONMODE, 
 					0,
 					REG_DWORD,
 					(LPBYTE)&m_eTrayIconMode, 
+					sizeof(int));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					SCREENSAVEMODE, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_eScreenSaveMode, 
 					sizeof(int));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -2454,14 +2468,7 @@ void	CPreferences::SetPlaylistViewColumnWidthAtIndex(int index, int Width)
 {
 	m_PlaylistViewColumnWidths[index] = Width;
 }
-/*
-LPTSTR	CPreferences::GetTheme(void)
-{
-	if(m_Theme[0] == L'\0')
-		return NULL;
-	return m_Theme;
-}
-*/
+
 BOOL CPreferences::GetShuffleState(void)
 {
 	return m_bShuffleState;
@@ -2506,6 +2513,16 @@ TrayIconMode	CPreferences::GetTrayIconMode(void)
 void		CPreferences::SetTrayIconMode(TrayIconMode eMode)
 {
 	m_eTrayIconMode = eMode;
+}
+
+ScreenSaveMode	CPreferences::GetScreenSaveMode(void)
+{
+	return m_eScreenSaveMode;
+}
+
+void		CPreferences::SetScreenSaveMode(ScreenSaveMode eMode)
+{
+	m_eScreenSaveMode = eMode;
 }
 
 BOOL		CPreferences::GetMinimizeOnClose(void)
