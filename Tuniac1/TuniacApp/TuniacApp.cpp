@@ -618,6 +618,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					}
 				}
 			}
+			break;
 
 			//resize limits
 		case WM_GETMINMAXINFO:
@@ -1802,6 +1803,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 			}
 			break;
+
+		case WM_SYSCOMMAND:
+			{
+				if(wParam == SC_SCREENSAVE || (wParam == SC_MONITORPOWER && lParam != -1))
+				{
+					//prevent when focused
+					if(tuniacApp.m_Preferences.GetScreenSaveMode() == 1)
+						return true;
+
+					//prevent when fullscreen
+					if(tuniacApp.m_VisualWindow)
+					{
+						if(tuniacApp.m_Preferences.GetScreenSaveMode() == 2 && tuniacApp.m_VisualWindow->GetFullscreen())
+							return true;
+					}
+				}
+			}
 
 		default:
 			//restore trayicon after explorer restart

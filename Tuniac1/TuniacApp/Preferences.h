@@ -40,6 +40,13 @@ enum TrayIconMode
 	TrayIconBoth
 };
 
+enum ScreenSaveMode
+{
+	ScreenSaveAllow = 0,
+	ScreenSavePrevent,
+	ScreenSavePreventFull
+};
+
 class CPreferences
 {
 protected:
@@ -93,8 +100,6 @@ protected:
 	float		m_fEQHigh;
 	float		m_fAmpGain;
 
-	// TCHAR		m_Theme[128];
-
 	TCHAR		m_szWindowFormatString[256];
 	TCHAR		m_szPluginFormatString[256];
 	TCHAR		m_szListFormatString[256];
@@ -102,7 +107,8 @@ protected:
 	RECT		m_MainWindowRect;
 
 	TrayIconMode	m_eTrayIconMode;
-	RepeatMode	m_eRepeatMode;
+	RepeatMode		m_eRepeatMode;
+	ScreenSaveMode	m_eScreenSaveMode;
 
 	int			m_iPlaylistViewNumColumns;
 	int			m_PlaylistViewColumnIDs[FIELD_MAXFIELD];
@@ -233,6 +239,9 @@ public:
 
 	TrayIconMode	GetTrayIconMode(void);
 	void		SetTrayIconMode(TrayIconMode eMode);
+
+	ScreenSaveMode	GetScreenSaveMode(void);
+	void		SetScreenSaveMode(ScreenSaveMode eMode);
 
 	BOOL		GetMinimizeOnClose(void);
 	BOOL		GetAlwaysOnTop(void);
