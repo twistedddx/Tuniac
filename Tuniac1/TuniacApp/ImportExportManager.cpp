@@ -285,7 +285,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 				bStreamList = PathIsURL(szFilename);
 				if(bStreamList) //auto fill details for streams
 				{
-					TCHAR szTitle[128] = L"";;
+					TCHAR szTitle[128] = L"";
 					if(pImporter->ImportTitle(szTitle, 128))
 					{
 						if(wcscmp((LPTSTR)pPE->GetField(FIELD_TITLE), L"") == 0)
