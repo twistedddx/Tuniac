@@ -86,7 +86,7 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 
 	if(m_File == NULL)
 		return false;
-	
+
 	StrNCpy(m_BaseDir, szSource, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
@@ -96,6 +96,7 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 {
 	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
+	wcscpy_s(szTitle, 128, L"\0");
 
 	if(m_File == NULL)
 		return false;
@@ -107,10 +108,22 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 	{
 		if(fgetws(szDest, iDestSize, m_File) != NULL)
 		{
-			if(szDest[0] == L'#')
-				continue;
 			if(wcslen(szDest) < 2)
 				continue;
+
+			if (!_wcsnicmp(szDest, L"#EXTM3U",7))
+				continue;
+
+			if (!_wcsnicmp(szDest, L"#EXTINF:",8))
+			{
+				TCHAR * szTemp = wcsstr(szDest, L",");
+			
+				if(szTemp[wcslen(szTemp)-1] == L'\n')
+					szTemp[wcslen(szTemp)-1] = L'\0';
+
+				wcscpy_s(szTitle, 128, &szTemp[1]);
+				continue;
+			}
 
 			if(szDest[wcslen(szDest)-1] == L'\n')
 				szDest[wcslen(szDest)-1] = L'\0';
@@ -134,35 +147,10 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 bool			CM3U_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 {
-	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
-
-	if(m_File == NULL)
-		return false;
-
-	if(feof(m_File) != 0)
-		return false;
-
-	while(1)
+	if(szTitle != L"")
 	{
-		if(fgetws(szDest, iDestSize, m_File) != NULL)
-		{
-			if (!_wcsnicmp(szDest, L"#EXTINF:",8))
-			{
-				TCHAR * szTemp = wcsstr(szDest, L",");
-				
-				if(szTemp[wcslen(szTemp)-1] == L'\n')
-					szTemp[wcslen(szTemp)-1] = L'\0';
-
-				wcscpy_s(szDest, iDestSize, &szTemp[1]);
-
-				return true;
-			}
-			return false;
-		}
-		else
-		{
-			break;
-		}
+		wcscpy_s(szDest, 128, &szTitle[0]);
+		return true;
 	}
 
 	return false;
@@ -232,16 +220,11 @@ bool			CM3U_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 	if(m_File == NULL)
 		return false;
 	
-	m_ExtendedM3U = true;
-
 	StrNCpy(m_BaseDir, szSource, MAX_PATH);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
-	if(m_ExtendedM3U)
-	{
-		fputws(TEXT("#EXTM3U\n"), m_File);
-	}
+	fputws(TEXT("#EXTM3U\n"), m_File);
 
 	return true;
 }
@@ -252,6 +235,21 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 		return false;
 
 	TCHAR szData[512];
+	int iTime = (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000);
+	if(wcslen(libraryEntry.szTitle) > 0)
+	{
+		if(wcslen(libraryEntry.szArtist) > 0)
+			wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s - %s"), iTime, libraryEntry.szArtist, libraryEntry.szTitle);
+		else if(wcslen(libraryEntry.szTitle) > 0)
+			wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s"), iTime, libraryEntry.szTitle);
+	}
+	else
+	{
+		wnsprintf(szData, 512, TEXT("#EXTINF:%d,"), iTime);
+	}
+	fputws(szData, m_File);
+	fputws(TEXT("\n"), m_File);
+
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
 		wnsprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
@@ -261,24 +259,6 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);
 
-	if(m_ExtendedM3U)
-	{
-		int iTime = (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000);
-		if(wcslen(libraryEntry.szTitle) > 0)
-		{
-			if(wcslen(libraryEntry.szArtist) > 0)
-				wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s - %s"), iTime, libraryEntry.szArtist, libraryEntry.szTitle);
-			else if(wcslen(libraryEntry.szTitle) > 0)
-				wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s"), iTime, libraryEntry.szTitle);
-		}
-		else
-		{
-			wnsprintf(szData, 512, TEXT("#EXTINF:%d,"), iTime);
-		}
-		fputws(szData, m_File);
-		fputws(TEXT("\n"), m_File);
-
-	}
 
 	return true;
 }

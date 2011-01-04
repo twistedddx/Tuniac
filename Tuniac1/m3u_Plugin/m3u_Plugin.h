@@ -11,6 +11,7 @@ class CM3U_Import :
 protected:
 	TCHAR			m_BaseDir[MAX_PATH];
 	FILE *			m_File;
+	TCHAR			szTitle[128];
 
 public:
 	CM3U_Import(void);
@@ -38,8 +39,6 @@ class CM3U_Export :
 protected:
 	TCHAR			m_BaseDir[512];
 	FILE *			m_File;
-
-	bool			m_ExtendedM3U;
 
 public:
 	CM3U_Export(void);
