@@ -22,8 +22,12 @@
 #include "id3v2tag.h"
 #include "attachedpictureframe.h"
 #include "relativevolumeframe.h"
+
 #include "apetag.h"
+
 #include "xiphcomment.h"
+#include "flacpicture.h"
+
 #include "mp4tag.h"
 #include "mp4item.h"
 #include "mp4atom.h"

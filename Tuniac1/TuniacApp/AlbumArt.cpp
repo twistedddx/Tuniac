@@ -158,7 +158,7 @@ bool CAlbumArt::SetSource(LPVOID pData, unsigned long ulDataLength, LPTSTR szMim
 {
 	CAutoLock lock(&m_ArtLock);
 
-	if( StrStrI(szMimeType, TEXT("image/jpeg")) )
+	if(StrStrI(szMimeType, TEXT("image/jpeg")) || StrStrI(szMimeType, TEXT("image/jpg")))
 	{
 		jpeg_decoder_memory_stream	input_stream(pData, ulDataLength);
 
