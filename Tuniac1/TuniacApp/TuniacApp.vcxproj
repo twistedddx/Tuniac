@@ -112,17 +112,17 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeg-8c\Release;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeg-8c\Debug;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeg-8c\x64\Debug;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeg-8c\x64\Release;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,12 +139,14 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,7 +163,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -181,13 +183,15 @@
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -205,13 +209,15 @@
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <WarningLevel>Level1</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -233,12 +239,8 @@
     <ClCompile Include="CurrentlyPlaying.cpp" />
     <ClCompile Include="DoubleBuffer.cpp" />
     <ClCompile Include="FileAssoc.cpp" />
-    <ClCompile Include="..\jpegdecoder\H2v2.cpp" />
     <ClCompile Include="History.cpp" />
-    <ClCompile Include="..\jpegdecoder\idct.cpp" />
     <ClCompile Include="ImportExportManager.cpp" />
-    <ClCompile Include="..\jpegdecoder\jidctfst.cpp" />
-    <ClCompile Include="..\jpegdecoder\jpegdecoder.cpp" />
     <ClCompile Include="LibraryPlaylist.cpp" />
     <ClCompile Include="LogWindow.cpp" />
     <ClCompile Include="MediaLibrary.cpp" />
@@ -297,11 +299,9 @@
     <ClInclude Include="ITuniacPlugin.h" />
     <ClInclude Include="ITuniacVisPlugin.h" />
     <ClInclude Include="IWindow.h" />
-    <ClInclude Include="..\jpegdecoder\jpegdecoder.h" />
     <ClInclude Include="LibraryEntry.h" />
     <ClInclude Include="LibraryPlaylist.h" />
     <ClInclude Include="LogWindow.h" />
-    <ClInclude Include="..\jpegdecoder\main.h" />
     <ClInclude Include="MediaLibrary.h" />
     <ClInclude Include="MediaLibraryPlaylistEntry.h" />
     <ClInclude Include="ntddcdrm.h" />
@@ -337,38 +337,17 @@
     <ClInclude Include="VisualWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\jpegdecoder\jpegdecoder.inl" />
     <None Include="cursors\addarrow.cur" />
-    <None Include="default-theme\control-next.ico" />
-    <None Include="default-theme\control-pause.ico" />
-    <None Include="default-theme\control-play.ico" />
-    <None Include="default-theme\control-previous.ico" />
-    <None Include="icons\Drive CD.ico" />
-    <None Include="images\editinfo.bmp" />
-    <None Include="icons\empty.ico" />
     <None Include="default-theme\item-active.ico" />
     <None Include="default-theme\item-normal.ico" />
-    <None Include="icons\medialibrary.ico" />
     <None Include="cursors\newplaylistcursor.cur" />
     <None Include="images\next.bmp" />
-    <None Include="default-theme\next.ico" />
     <None Include="images\pause.bmp" />
-    <None Include="default-theme\pause.ico" />
     <None Include="images\play.bmp" />
-    <None Include="default-theme\play.ico" />
-    <None Include="icons\playing.ico" />
     <None Include="default-theme\playlist-cd.ico" />
     <None Include="default-theme\playlist-medialibrary.ico" />
     <None Include="default-theme\playlist-standard.ico" />
-    <None Include="icons\playlist.ico" />
-    <None Include="default-theme\preview.bmp" />
     <None Include="images\previous.bmp" />
-    <None Include="default-theme\previous.ico" />
-    <None Include="images\repeatall.bmp" />
-    <None Include="images\repeatnone.bmp" />
-    <None Include="images\repeatone.bmp" />
-    <None Include="images\shuffleoff.bmp" />
-    <None Include="images\shuffleon.bmp" />
     <None Include="icons\tuniac.ico" />
   </ItemGroup>
   <ItemGroup>

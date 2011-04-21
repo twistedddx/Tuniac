@@ -13,6 +13,9 @@
       <UniqueIdentifier>{f5700a17-b35c-4eb2-9a39-bfc9eebceb6d}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Images">
+      <UniqueIdentifier>{5b255227-87ce-44d4-b6ed-bd3091e4034b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutWindow.cpp">
@@ -51,22 +54,10 @@
     <ClCompile Include="FileAssoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jpegdecoder\H2v2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="History.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jpegdecoder\idct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImportExportManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jpegdecoder\jidctfst.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jpegdecoder\jpegdecoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LibraryPlaylist.cpp">
@@ -239,9 +230,6 @@
     <ClInclude Include="IWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\jpegdecoder\jpegdecoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LibraryEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -249,9 +237,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LogWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jpegdecoder\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MediaLibrary.h">
@@ -355,104 +340,41 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\jpegdecoder\jpegdecoder.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="cursors\addarrow.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\control-next.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\control-pause.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\control-play.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\control-previous.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icons\Drive CD.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\editinfo.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icons\empty.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\item-active.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\item-normal.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icons\medialibrary.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="cursors\newplaylistcursor.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\next.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\next.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\pause.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\pause.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\play.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\play.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icons\playing.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\playlist-cd.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\playlist-medialibrary.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\playlist-standard.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icons\playlist.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\preview.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\previous.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="default-theme\previous.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatall.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatnone.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatone.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\shuffleoff.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\shuffleon.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Images</Filter>
     </None>
     <None Include="icons\tuniac.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\item-active.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\item-normal.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="cursors\newplaylistcursor.cur">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="images\next.bmp">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="images\pause.bmp">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="images\play.bmp">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\playlist-cd.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\playlist-medialibrary.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\playlist-standard.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="images\previous.bmp">
+      <Filter>Resource Files\Images</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
