@@ -82,7 +82,7 @@ public:
 
 	virtual void *	GetField(unsigned long ulFieldID)					= 0;
 	virtual bool	SetField(unsigned long ulFieldID, void * pNewData)	= 0;
-
+	virtual bool	SetFieldNumber(unsigned long ulFieldID, unsigned long pNewData)	= 0;
 	virtual bool	GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars)		= 0;
 };
 

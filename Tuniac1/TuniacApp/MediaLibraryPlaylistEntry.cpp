@@ -209,13 +209,13 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 				LPSYSTEMTIME lpST = (LPSYSTEMTIME)pNewData;
 				CopyMemory(&m_LibraryEntry.stLastPlayed, lpST, sizeof(SYSTEMTIME));
-				m_LibraryEntry.dwPlayCount++;
 			}
 			break;
 
 		case FIELD_RATING:
 			{
-				m_LibraryEntry.dwRating = (int)pNewData;
+				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.dwRating))
+                    return false;
 			}
 			break;
 
@@ -306,6 +306,11 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
                     return false;
 			}
 			break;
+		case FIELD_PLAYCOUNT:
+			{
+				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.dwPlayCount))
+                    return false;
+			}
 
 		default:
 			return false;
@@ -315,6 +320,60 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 	return true;
 }
+
+bool	CMediaLibraryPlaylistEntry::SetFieldNumber(unsigned long ulFieldID, unsigned long pNewData)
+{
+	switch(ulFieldID)
+	{
+		case FIELD_RATING:
+			{
+				m_LibraryEntry.dwRating = pNewData;
+			}
+			break;
+		case FIELD_YEAR:
+			{
+				m_LibraryEntry.iYear = pNewData;
+			}
+			break;
+		case FIELD_TRACKNUM:
+			{
+				m_LibraryEntry.dwTrack[0] = pNewData;
+			}
+			break;
+		case FIELD_NUMCHANNELS:
+			{
+				m_LibraryEntry.iChannels = pNewData;
+			}
+			break;
+		case FIELD_BITRATE:
+			{
+				m_LibraryEntry.iBitRate = pNewData;
+			}
+			break;
+		case FIELD_SAMPLERATE:
+			{
+				m_LibraryEntry.iSampleRate = pNewData;
+			}
+			break;
+		case FIELD_PLAYBACKTIME:
+			{
+				m_LibraryEntry.iPlaybackTime = pNewData;
+			}
+			break;
+		case FIELD_PLAYCOUNT:
+			{
+				m_LibraryEntry.dwPlayCount = pNewData;
+			}
+
+		default:
+			return false;
+	}
+
+	m_bDirty = true;
+
+	return true;
+}
+
 
 bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars)
 {

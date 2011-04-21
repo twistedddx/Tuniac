@@ -606,14 +606,13 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 				StrCpy(libraryEntry.szTitle, szFileTitle);
 			}
 
-			//we could do ulEntryID = GetCount() - ulMLIndex; while(GetEntryByID(ulEntryID)){ ulEntryID++ } to "compact" the entryID's again
-			//if UpdateIndex was called backwards through the list, fastest i can think of but still what would the speed be with 30,000 files?
-			//I could see this growing out of control eventually I suppose with a well hacked up ML
 			unsigned long ulEntryID = pIPE->GetEntryID();
+			unsigned long ulPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT);
 
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
 			pIPE->SetEntryID(ulEntryID);
+			pIPE->SetFieldNumber(FIELD_PLAYCOUNT, ulPlayCount);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
 
