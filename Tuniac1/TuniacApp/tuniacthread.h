@@ -33,7 +33,6 @@ protected:
 public:
 	bool StartThread(threadfunction func, void * pData)
 	{
-		// TODO call CreateThread here innit
 		m_ourfunction	= func;
 		m_pData			= pData;
 		

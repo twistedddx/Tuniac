@@ -546,7 +546,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 						if(!tuniacApp.m_VisualWindow->GetFullscreen())
 						{
 							tuniacApp.m_VisualWindow->SetPos(0, 
-											r.bottom - m_ulAlbumArtX+58,
+											r.bottom - m_ulSeparatorX+58,
 											m_ulSeparatorX,
 											m_ulSeparatorX);
 						}
@@ -555,9 +555,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					{
 						tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
 											2, 
-											r.bottom - m_ulAlbumArtX-2,
-											m_ulSeparatorX-2,
-											m_ulSeparatorX-2);
+											r.bottom - m_ulSeparatorX,
+											m_ulSeparatorX-3,
+											m_ulSeparatorX-3);
 					}
 				}
 				EndPaint(hDlg, &ps);
@@ -575,7 +575,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if(m_ulAlbumArtX)
 					m_ulAlbumArtX = m_ulSeparatorX;
 
-				unsigned long slSrcHeight = Height - m_ulAlbumArtX;
+				unsigned long slSrcHeight = Height - m_ulSeparatorX;
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCESELECTOR),	
 							2,
