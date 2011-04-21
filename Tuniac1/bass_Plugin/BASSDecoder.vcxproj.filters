@@ -34,9 +34,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BASSDecoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -178,7 +178,6 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Array.h" />
     <ClInclude Include="BASSDecoder.h" />
     <ClInclude Include="BASSDecoderPlugin.h" />
     <ClInclude Include="resource.h" />
