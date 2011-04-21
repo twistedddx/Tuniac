@@ -1,3 +1,17 @@
+Apr, 2011
+---------
+-Change jpeg library to jpeglib 8c. Fix b&w jpeg decoding. Change scaling method to HALFTONE.
+-Add SetFieldNumber function. Add/fix setting playcount after file meta update.
+-taglib SVN catchup
+-minor fixes
+
+
+Jan, 2011
+---------
+-BASS, TAK, ogg/vorbis lib updates
+-Correct m3u playlist import/export
+-Add FLAC and ASF picture support. Also allow image/jpg mime type.
+
 Oct, 2010
 ---------
 -allow disabling screensaver and low power state for monitor.

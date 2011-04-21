@@ -49,7 +49,7 @@
 #endif
 
 // return codes
-#define NO_ERROR        0	// No errors found
+//#define NO_ERROR        0	// No errors found
 #define OPEN_ERROR      1	// Can't open file
 #define FORMAT_ERROR    2	// Unknown TTA format version
 #define PLAYER_ERROR    3	// Not supported file format

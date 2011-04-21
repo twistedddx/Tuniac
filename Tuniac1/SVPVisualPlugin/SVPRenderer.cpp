@@ -727,6 +727,8 @@ bool	SVPRenderer::Render(int w, int h)
 			bi.bmiHeader.biHeight=-iVisResHeight;
 			bi.bmiHeader.biPlanes=1;
 			bi.bmiHeader.biBitCount=32;
+			bi.bmiHeader.biCompression	= BI_RGB;
+			bi.bmiHeader.biSizeImage	= 0;
 			hVisBMP = CreateDIBSection(0, &bi, DIB_RGB_COLORS, (void**)&m_textureData, 0, 0);
 			hgdiDC=CreateCompatibleDC(0);
 			hOldVisBMP = (HBITMAP)SelectObject(hgdiDC, hVisBMP);

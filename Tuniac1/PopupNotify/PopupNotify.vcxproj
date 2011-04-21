@@ -178,7 +178,6 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ITuniacPlugin.h" />
     <ClInclude Include="PluginVariable.h" />
     <ClInclude Include="PopupNotify_plugin.h" />
     <ClInclude Include="resource.h" />
