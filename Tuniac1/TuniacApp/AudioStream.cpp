@@ -331,7 +331,6 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 		if(m_Packetizer.GetBuffer(pAudioBuffer))
 		{
 			// do equalization 
-			// TODO: Make this optional with a checkbox
 			if(bEQEnabled)
 			{
 				for(unsigned long ulSample=0; ulSample<NumSamples; ulSample+=m_Channels)
@@ -467,8 +466,6 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 					if(m_FadeState != FADE_NONE)
 					{
 						// apply the crossfade
-						// we REALLY should SSE THIS HERE!!!
-						// TODO: SSE THIS PLEASE
 						pAudioBuffer[i+chan]		*= fVolume;
 					}
 				}
