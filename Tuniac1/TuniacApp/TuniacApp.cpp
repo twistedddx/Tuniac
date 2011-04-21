@@ -892,8 +892,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								GetLocalTime(&st);
 								pIPE->SetField(FIELD_DATELASTPLAYED, &st);
 
-								int iPlayCount = (int)pIPE->GetField(FIELD_PLAYCOUNT)+1;
-								pIPE->SetField(FIELD_PLAYCOUNT, &iPlayCount);
+								unsigned long ulPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT)+1;
+								pIPE->SetFieldNumber(FIELD_PLAYCOUNT, ulPlayCount);
 								
 								m_SourceSelectorWindow->UpdateView();
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);

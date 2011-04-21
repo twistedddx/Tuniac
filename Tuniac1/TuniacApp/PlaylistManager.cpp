@@ -446,7 +446,6 @@ unsigned long CPlaylistManager::GetActivePlaylistIndex(void)
 
 bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 {
-	//todo why active and playlist 0?
 	bool bOk= false;
 	for (unsigned long i = 0; i < m_ActivePlaylist->GetNumItems(); i++)
 	{
@@ -455,15 +454,19 @@ bool CPlaylistManager::SetActiveByEntry(IPlaylistEntry * pIPE)
 			bOk = m_ActivePlaylist->SetActiveNormalFilteredIndex(i);
 		}
 	}
-	tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
-	IPlaylist * pPlaylist = GetPlaylistAtIndex(0);
-	if(pPlaylist)
+	//not found in active, try ML instead
+	if(!bOk)
 	{
-		for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
+		tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+		IPlaylist * pPlaylist = GetPlaylistAtIndex(0);
+		if(pPlaylist)
 		{
-			if(pPlaylist->GetEntryAtNormalFilteredIndex(i) == pIPE)
+			for (unsigned long i = 0; i < pPlaylist->GetNumItems(); i++)
 			{
-				bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
+				if(pPlaylist->GetEntryAtNormalFilteredIndex(i) == pIPE)
+				{
+					bOk = pPlaylist->SetActiveNormalFilteredIndex(i);
+				}
 			}
 		}
 	}
