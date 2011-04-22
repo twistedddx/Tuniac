@@ -575,7 +575,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if(m_ulAlbumArtX)
 					m_ulAlbumArtX = m_ulSeparatorX;
 
-				unsigned long slSrcHeight = Height - m_ulSeparatorX;
+				unsigned long slSrcHeight = Height - m_ulAlbumArtX;
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCESELECTOR),	
 							2,
