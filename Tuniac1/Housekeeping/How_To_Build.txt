@@ -53,7 +53,7 @@ Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
 Open D:\Tuniac\Tuniac1\TuniacApp.sln
 Right click TuniacApp and goto properties
 Under VC++ Directories
-Modify Inlude Directory for all configurations if required, currently set as:
+Modify Include Directory for all configurations if required, currently set as:
 	D:\Code\jpeg-8c
 Modify Library Directory if require, currently set as:
 	Debug Win32	D:\Code\jpeg-8c\Debug
@@ -99,7 +99,7 @@ Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
 Open D:\Tuniac\Tuniac1\TuniacApp.sln
 Right click std_infomanager and goto properties
 Under VC++ Directories
-Modify Inlude Directory for all configurations if required, currently set as:
+Modify Include Directory for all configurations if required, currently set as:
 	D:\Code\git\taglib.git\taglib\taglib
 	D:\Code\git\taglib.git\taglib\taglib\win32
 	D:\Code\git\taglib.git\taglib\taglib\asf
