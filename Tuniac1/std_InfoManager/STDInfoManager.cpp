@@ -153,11 +153,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	tag = fileref.tag();
 	if(tag)
 	{
-		swprintf(libEnt->szTitle, 128, L"%s", tag->title().toWString().c_str());
-		swprintf(libEnt->szArtist, 128, L"%s", tag->artist().toWString().c_str());
-		swprintf(libEnt->szAlbum, 128, L"%s", tag->album().toWString().c_str());
-		swprintf(libEnt->szGenre, 128, L"%s", tag->genre().toWString().c_str());
-		swprintf(libEnt->szComment, 128, L"%s", tag->comment().toWString().c_str());
+		_snwprintf(libEnt->szTitle, 128, L"%s", tag->title().toWString().c_str());
+		_snwprintf(libEnt->szArtist, 128, L"%s", tag->artist().toWString().c_str());
+		_snwprintf(libEnt->szAlbum, 128, L"%s", tag->album().toWString().c_str());
+		_snwprintf(libEnt->szGenre, 128, L"%s", tag->genre().toWString().c_str());
+		_snwprintf(libEnt->szComment, 128, L"%s", tag->comment().toWString().c_str());
 		libEnt->iYear  = tag->year();
 		libEnt->dwTrack[0] = tag->track();
 	}
