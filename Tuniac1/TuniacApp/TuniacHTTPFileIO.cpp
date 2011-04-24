@@ -76,7 +76,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	*szDest = '\0';
 	
 	if(strlen(Request) == 0)
-		strcpy(Request, "/");
+		strcpy_s(Request, 2048, "/");
 
 	
 	if(bChangedPort)
@@ -141,19 +141,19 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	}	
 	
 	char szMessage[4096];
-	strcpy(szMessage, "GET ");
-	strcat(szMessage, Request);
+	strcpy_s(szMessage, 4096, "GET ");
+	strcat_s(szMessage, 4096, Request);
 	// APPARENTLY THIS ISN'T LIKED EH???
 	//strcat(szMessage, " HTTP/1.0\r\n");
-	strcat(szMessage, "\r\n");
-	strcat(szMessage, "Host: ");
-	strcat(szMessage, Address);
-	strcat(szMessage, "\r\n");
-	strcat(szMessage, "User-Agent: Tuniac2BETA/0.1\r\n");
-	strcat(szMessage, "Accept: */*\r\n");
-	strcat(szMessage, "Icy-MetaData: 1\r\n");
-	strcat(szMessage, "Connection: close\r\n");
-	strcat(szMessage, "\r\n\r\n");
+	strcat_s(szMessage, 4096, "\r\n");
+	strcat_s(szMessage, 4096, "Host: ");
+	strcat_s(szMessage, 4096, Address);
+	strcat_s(szMessage, 4096, "\r\n");
+	strcat_s(szMessage, 4096, "User-Agent: Tuniac2BETA/0.1\r\n");
+	strcat_s(szMessage, 4096, "Accept: */*\r\n");
+	strcat_s(szMessage, 4096, "Icy-MetaData: 1\r\n");
+	strcat_s(szMessage, 4096, "Connection: close\r\n");
+	strcat_s(szMessage, 4096, "\r\n\r\n");
 	
 	ret = send(m_Socket, szMessage, strlen(szMessage), 0);
 	if(ret == -1)
@@ -189,7 +189,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 		}
 		if(strncasecmp(szMessage, "content-type:", 13) == 0)
 		{
-			strcpy(contenttype, szMessage+13);
+			strcpy_s(contenttype, 1024, szMessage+13);
 		}
 		
 		if(!ReadString(m_Socket, szMessage, 2048))
