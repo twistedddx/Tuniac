@@ -1,0 +1,152 @@
+How to build Tuniac:
+
+
+This is written with Visual Studio 2010 in mind in April 2011.
+Things may have changed since, use this only as a guide.
+
+For me:
+Tuniac 1 is in D:\Tuniac\Tuniac1
+Jpeglib-8c is in D:\Code\jpeg-8c
+Taglib is in D:\Code\git\taglib.git\taglib\taglib
+You can put things where you like, you just need to adjust your folder paths accordingly.
+
+
+
+
+1)First install Visual Studio 2010.
+
+1a)You should update your Platform SDK if needed.
+
+Platform SDK 7.1:
+http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
+
+
+1b)If you have Visual Studio 2010 Express you will need the Windows Platform SDK as it's not included.
+Dot point 2 of the below link may also need to be done for Express.
+http://msdn.microsoft.com/en-us/library/ms235626%28VS.80%29.aspx
+
+Look here for errors that look like:
+cannot open include file 'winres.h'
+
+
+
+2)For TuniacApp
+
+2a)You need the current DirectX June 2010 SDK for XAudio2.
+http://www.microsoft.com/downloads/en/details.aspx?displaylang=en&FamilyID=3021d52b-514e-41d3-ad02-438a3ba730ba
+
+Look here for errors that look like:
+Cannot open include file: 'xaudio2.h'
+
+
+2b)You need jpeglib-8c
+http://www.ijg.org/
+http://www.ijg.org/files/jpegsr8c.zip
+
+You can use my project if you cant get it to build right:
+http://www.wasteofcash.com/Tuniac/jpeg-8c_vs2010.zip
+
+Extract to the main jpeg-8c source folder, eg where jpeglib.h is.
+Open D:\Code\jpeg-8c\jpeg.sln
+Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
+
+Open D:\Tuniac\Tuniac1\TuniacApp.sln
+Right click TuniacApp and goto properties
+Under VC++ Directories
+Modify Inlude Directory for all configurations if required, currently set as:
+	D:\Code\jpeg-8c
+Modify Library Directory if require, currently set as:
+	Debug Win32	D:\Code\jpeg-8c\Debug
+	Release Win32	D:\Code\jpeg-8c\Release
+	Debug x64	D:\Code\jpeg-8c\x64\Debug
+	Release x64	D:\Code\jpeg-8c\x64\Release
+
+Look here for errors that look like:
+Cannot open include file: 'jpeglib.h'
+
+
+
+3)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
+
+You need the Glew 1.5.8 Binaries Windows 32 zip.
+http://glew.sourceforge.net/
+https://sourceforge.net/projects/glew/files/glew/1.5.8/glew-1.5.8-win32.zip/download
+
+Put glew.h, glxew.h and wglew.h in
+C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL
+And put glew32.lib and glew32s.lib in
+C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
+
+Look here for errors that look like:
+Cannot open include file: 'GL/glew.h'
+
+
+
+
+4)For std_Infomanager
+
+You need TagLib 1.7
+http://developer.kde.org/~wheeler/taglib.html
+http://developer.kde.org/~wheeler/files/src/taglib-1.7.tar.gz
+
+You can use my project if you cant get it to build right:
+http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
+
+Extract to D:\Code\git\taglib.git\taglib\taglib\win32. eg a new folder next to existing ape, asf, flac... folders
+Open D:\Code\git\taglib.git\taglib\taglib\win32\taglib(static).sln
+Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
+
+Open D:\Tuniac\Tuniac1\TuniacApp.sln
+Right click std_infomanager and goto properties
+Under VC++ Directories
+Modify Inlude Directory for all configurations if required, currently set as:
+	D:\Code\git\taglib.git\taglib\taglib
+	D:\Code\git\taglib.git\taglib\taglib\win32
+	D:\Code\git\taglib.git\taglib\taglib\asf
+	D:\Code\git\taglib.git\taglib\taglib\ape
+	D:\Code\git\taglib.git\taglib\taglib\flac
+	D:\Code\git\taglib.git\taglib\taglib\mp4
+	D:\Code\git\taglib.git\taglib\taglib\mpc
+	D:\Code\git\taglib.git\taglib\taglib\mpeg
+	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v1
+	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2
+	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2\frames
+	D:\Code\git\taglib.git\taglib\taglib\ogg
+	D:\Code\git\taglib.git\taglib\taglib\ogg\flac
+	D:\Code\git\taglib.git\taglib\taglib\ogg\speex
+	D:\Code\git\taglib.git\taglib\taglib\ogg\vorbis
+	D:\Code\git\taglib.git\taglib\taglib\riff
+	D:\Code\git\taglib.git\taglib\taglib\riff\aiff
+	D:\Code\git\taglib.git\taglib\taglib\riff\wav
+	D:\Code\git\taglib.git\taglib\taglib\toolkit
+	D:\Code\git\taglib.git\taglib\taglib\trueaudio
+	D:\Code\git\taglib.git\taglib\taglib\wavpack
+
+Modify Library Directory if required, currently set as -
+	Debug Win32	D:\Code\git\taglib.git\taglib\taglib\win32\Win32\Debug
+	Release Win32	D:\Code\git\taglib.git\taglib\taglib\win32\Win32\Release
+	Debug x64	D:\Code\git\taglib.git\taglib\taglib\win32\x64\Debug
+	Release x64	D:\Code\git\taglib.git\taglib\taglib\win32\x64\Release
+
+Look here for errors that look like:
+Cannot open include file: 'tag.h'
+
+
+
+5)To build installer from scripts
+
+You need Inno QuickStart Pack
+http://www.jrsoftware.org/isinfo.php
+http://www.jrsoftware.org/download.php/ispack.exe
+
+Install everything it offers in the installer.
+
+I find it easiest to then install the standard Inno Setup installer over the top of that
+http://www.jrsoftware.org/download.php/is.exe
+
+This adds the right click context "Compile" for *.iss files
+
+Goto D:\Tuniac\Tuniac1\Setup-Scripts
+Right click desired setup iss file
+Select Compile
+New date named exe should be in D:\Tuniac\Tuniac1
