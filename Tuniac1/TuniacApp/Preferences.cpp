@@ -275,11 +275,28 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWALBUMART, BM_GETCHECK, 0, 0);
 							pPrefs->m_bShowAlbumArt = State == BST_UNCHECKED ? FALSE : TRUE;
 
-							if(pPrefs->m_bShowAlbumArt && pPrefs->m_bShowVisArt)
-								tuniacApp.m_VisualWindow->Show();
+							if(pPrefs->m_bShowAlbumArt)
+							{
+								if(pPrefs->m_bShowVisArt)
+								{
+									tuniacApp.m_VisualWindow->Show();
+								}
+								else
+								{
+									IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+									if(pPlaylist)
+									{
+										IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+										if(pIPE)
+											tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+									}
+								}
+							}
 							else
+							{
 								if(wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 									tuniacApp.m_VisualWindow->Hide();
+							}
 
 							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
 

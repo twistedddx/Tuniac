@@ -6,7 +6,7 @@ Things may have changed since, use this only as a guide.
 
 For me:
 Tuniac 1 is in D:\Tuniac\Tuniac1
-Jpeglib-8c is in D:\Code\jpeg-8c
+libjpeg-turbo is in D:\Code\jpeglib-turbo_svn
 Taglib is in D:\Code\git\taglib.git\taglib\taglib
 You can put things where you like, you just need to adjust your folder paths accordingly.
 
@@ -39,27 +39,49 @@ Look here for errors that look like:
 Cannot open include file: 'xaudio2.h'
 
 
-2b)You need jpeglib-8c
-http://www.ijg.org/
-http://www.ijg.org/files/jpegsr8c.zip
+2b)You need libjpeg-turbo 1.1.0
+https://sourceforge.net/projects/libjpeg-turbo/
+http://sourceforge.net/projects/libjpeg-turbo/files/1.1.0/libjpeg-turbo-1.1.0.tar.gz/download
 
-You can use my project if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/jpeg-8c_vs2010.zip
+You can use my files if you cant get it to build right:
+http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.1.0_vs2010.zip
 
-Extract to the main jpeg-8c source folder, eg where jpeglib.h is.
-Open D:\Code\jpeg-8c\jpeg.sln
-Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
+Extract to the main libjpeg-turbo source folder, eg where jpeglib.h is.
+
+Open a command prompt(CMD)
+Navigate to D:\Code\jpeglib-turbo_svn (cd D:\Code\jpeglib-turbo_svn)
+I find it easiest to create a shortcut to cmd in D:\Code\jpeglib-turbo_svn so that when CMD starts it is already in the correct folder.
+Use these build recipes:
+
+For x86:
+del "D:\Code\jpeglib-turbo_svn\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x86 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 "D:\Code\jpeglib-turbo_svn"
+nmake clean
+nmake
+del "D:\Code\jpeglib-turbo_svn\turbojpeg-static32.lib"
+rename turbojpeg-static.lib turbojpeg-static32.lib
+
+For x64:
+del "D:\Code\jpeglib-turbo_svn\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 "D:\Code\jpeglib-turbo_svn"
+nmake clean
+nmake
+del "D:\Code\jpeglib-turbo_svn\turbojpeg-static64.lib"
+rename turbojpeg-static.lib turbojpeg-static64.lib
+
 
 Open D:\Tuniac\Tuniac1\TuniacApp.sln
 Right click TuniacApp and goto properties
 Under VC++ Directories
 Modify Include Directory for all configurations if required, currently set as:
-	D:\Code\jpeg-8c
-Modify Library Directory if require, currently set as:
-	Debug Win32	D:\Code\jpeg-8c\Debug
-	Release Win32	D:\Code\jpeg-8c\Release
-	Debug x64	D:\Code\jpeg-8c\x64\Debug
-	Release x64	D:\Code\jpeg-8c\x64\Release
+	D:\Code\jpeglib-turbo_svn
+Modify Library Directory for all configurations if required, currently set as:
+	D:\Code\jpeglib-turbo_svn
+
 
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
