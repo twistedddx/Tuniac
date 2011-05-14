@@ -187,6 +187,14 @@ bool			CCoreAudio::Shutdown(void)
 
 bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio)
 {
+	//XAudio Voice not valid, try to give the audio engine a boot
+	if(m_pMasteringVoice == NULL)
+	{
+		Shutdown();
+		if(!Startup())
+			return false;
+	}
+
 	if(bResetAudio)
 		Reset();
 
@@ -633,6 +641,7 @@ void CCoreAudio::OnCriticalError(HRESULT Error)
 		default:
 		case XAUDIO2_E_DEVICE_INVALIDATED:
 			{
+				//Soundcard lost(eg unplugged)
 				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
 			}
 			break;

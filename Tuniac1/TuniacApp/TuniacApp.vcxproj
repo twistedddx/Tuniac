@@ -112,17 +112,17 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|x64'" />
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeg-8c\Release;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeg-8c\Debug;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeg-8c\x64\Debug;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeg-8c;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeg-8c\x64\Release;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Code\jpeglib-turbo_svn;$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,14 +139,13 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>xcopy ".\images\NoAlbumArt.jpg" "..\Win32\Debug" /Y</Command>
@@ -166,7 +165,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -185,7 +184,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;SSE;WITH_SIMD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>false</FunctionLevelLinking>
@@ -198,7 +197,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -229,7 +228,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>jpeg.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
