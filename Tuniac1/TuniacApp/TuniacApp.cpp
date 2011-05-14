@@ -294,8 +294,10 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 			m_AlbumArtPanel.SetSource(szURL);
 		}
 		else
+		{
 			//notice of setting song from playlist load
 			m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_INIT, NULL, NULL);
+		}
 	}
 
 	if(m_Preferences.GetFollowCurrentSongMode())
@@ -603,18 +605,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//pause at suspend
 					if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 					{
-						SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 						m_WasPlaying = true;
+						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 					}
 				}
 				if(wParam == PBT_APMRESUMEAUTOMATIC)
 				{
 					//resume
-					if(m_WasPlaying)
+					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+					if(pPlaylist)
 					{
-						Sleep(5000);
-						SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
-						m_WasPlaying = false;
+						IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+						if(pIPE)
+						{
+							Sleep(5000);
+							PlayEntry(pIPE, m_WasPlaying, 0);
+							m_WasPlaying = false;
+						}
 					}
 				}
 			}
@@ -807,7 +814,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, false, false);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0, false);
 									//else
 									//no next song??
 								}
@@ -828,7 +835,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, false);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0);
 									else
 										//no next song??
 										UpdateState();
@@ -862,7 +869,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, false);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0);
 									else
 										//no next song??
 										UpdateState();
@@ -923,7 +930,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 					case NOTIFY_COREAUDIO_RESET:
 						{
-							CCoreAudio::Instance()->Reset();
 							CCoreAudio::Instance()->Shutdown();
 							CCoreAudio::Instance()->Startup();
 						}
@@ -1117,7 +1123,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											{
 												m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 												IPlaylist * pPlaylist = (IPlaylist *)m_PlaylistManager.GetActivePlaylist();
-												PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulMLOldCount), true, true);
+												PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulMLOldCount), true, 2);
 											}
 										}
 										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
@@ -1221,7 +1227,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						if(pPlaylist)
 						{
 							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-								PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(m_FutureMenu[wCmdID - FUTUREMENU_BASE]), true, true);
+								PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(m_FutureMenu[wCmdID - FUTUREMENU_BASE]), true, 2);
 						}
 						return 0;
 					}
@@ -1575,7 +1581,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 									if(pPlaylist)
 										//play the current song
-										PlayEntry(pPlaylist->GetActiveEntry(), true, true);
+										PlayEntry(pPlaylist->GetActiveEntry(), true, 2);
 								}
 
 							}
@@ -2452,14 +2458,15 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool
 	if(pIPE)
 	{
 		//open for art before opening for decode.
-		SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
-
-		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-		if(pPlaylist)
-			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
+		if(m_Preferences.GetShowAlbumArt())
+			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 
 		if(CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
 		{
+			IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+			if(pPlaylist)
+				pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
+
 			if(bStart)
 				CCoreAudio::Instance()->Play();
 
