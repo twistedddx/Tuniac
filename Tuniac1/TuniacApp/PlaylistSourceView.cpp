@@ -1350,7 +1350,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									//arrow up
 								case VK_UP:
 									{
-										if(tuniacApp.m_Preferences.GetArtOnSelection())
+										if(tuniacApp.m_Preferences.GetShowAlbumArt() && tuniacApp.m_Preferences.GetArtOnSelection())
 										{
 											int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
 											if(iPos == -1)
@@ -1366,7 +1366,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									//arrow down
 								case VK_DOWN:
 									{
-										if(tuniacApp.m_Preferences.GetArtOnSelection())
+										if(tuniacApp.m_Preferences.GetShowAlbumArt() && tuniacApp.m_Preferences.GetArtOnSelection())
 										{
 											int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
 											if(iPos == -1)
@@ -1523,7 +1523,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							m_iLastClickedItem = lpnmitem->iItem;
 							// we need to remember this somewhere so that when the inplace editing begins we can edit the correct subitem
 							m_iLastClickedSubitem = lpnmitem->iSubItem;
-							if(tuniacApp.m_Preferences.GetArtOnSelection())
+							if(tuniacApp.m_Preferences.GetShowAlbumArt() && tuniacApp.m_Preferences.GetArtOnSelection())
 							{
 								IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem);
 								if(pIPE)

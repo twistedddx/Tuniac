@@ -45,7 +45,7 @@ CSourceSelectorWindow::CSourceSelectorWindow(void) :
 	m_pVisibleView(NULL),
 	m_ulVisiblePlaylistIndex(INVALID_PLAYLIST_INDEX)
 {
-	m_ulSeparatorX = tuniacApp.m_Preferences.GetSourceViewDividerX();
+	m_ulSeparatorX = m_ulAlbumArtX = tuniacApp.m_Preferences.GetSourceViewDividerX();
 	ToggleAlbumArt(tuniacApp.m_Preferences.GetShowAlbumArt());
 
 	ISourceView	* t;

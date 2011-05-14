@@ -1,10 +1,17 @@
+May, 2011
+---------
+-Better logic at XAudio restarting after failure
+-Better handle UI after trying to play an invalid file
+-Better handle system suspend/resume
+-Update picopng
+-Change jpeg lib to libjpeg-turbo
+
 Apr, 2011
 ---------
 -Change jpeg library to jpeglib 8c. Fix b&w jpeg decoding. Change scaling method to HALFTONE.
 -Add SetFieldNumber function. Add/fix setting playcount after file meta update.
 -taglib SVN catchup
 -minor fixes
-
 
 Jan, 2011
 ---------
