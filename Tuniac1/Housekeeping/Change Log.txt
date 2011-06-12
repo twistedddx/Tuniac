@@ -5,6 +5,8 @@ May, 2011
 -Better handle system suspend/resume
 -Update picopng
 -Change jpeg lib to libjpeg-turbo
+-Detect misnamed png data as jpeg
+-minor fixes
 
 Apr, 2011
 ---------
