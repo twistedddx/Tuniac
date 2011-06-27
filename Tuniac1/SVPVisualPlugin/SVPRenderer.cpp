@@ -412,67 +412,6 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 bool	SVPRenderer::Attach(HDC hDC)
 {
 
-	m_glRC				= NULL;
-	m_hDC				= hDC;
-
-	bPBOSupport			= false;
-	bNonPowerOf2Support	= false;
-
-	iUseOpenGL			= 1;
-	iUsePBO				= 0;
-	iUseMappedPBO		= 0;
-	iVisMaxRes			= 128;
-	iAllowNonPowerOf2	= 0;
-
-	m_LastWidth			= -1;
-	m_LastHeight		= -1;
-	m_SelectedVisual	= 0;
-	m_TheVisual			= NULL;
-	iVisResHeight		= 128;
-	iVisResWidth		= 128;
-
-	bResChange			= true;
-
-	DWORD				lpRegType = REG_DWORD;
-	DWORD				iRegSize = sizeof(int);
-
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), &lpRegType, (LPBYTE)&iUseOpenGL, &iRegSize);
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
-	m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseMappedPBO"), &lpRegType, (LPBYTE)&iUseMappedPBO, &iRegSize);
-
-	if(iUseOpenGL)
-	{
-		if(!InitOpenGL())
-			return false;
-	}
-
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-		return false;
-
-	if(glewIsSupported("GL_VERSION_2_1"))
-		bPBOSupport = true;
-	else
-		iUsePBO = 0;
-
-	if(glewIsSupported("GL_VERSION_2_0"))
-		bNonPowerOf2Support = true;
-	else
-		iAllowNonPowerOf2 = 0;
-
-	if(iUseOpenGL && iUsePBO)
-	{
-		glGenBuffers(1, pboIds);
-	}
-
-	ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
-
-	visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
-
-	m_LastMove = GetTickCount();
-
 	TCHAR szVisualsPath[2048];
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
 	PathRemoveFileSpec(szVisualsPath);
@@ -484,6 +423,69 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 	if(m_VisFilenameArray.GetCount())
 	{
+
+		m_glRC				= NULL;
+		m_hDC				= hDC;
+
+		bPBOSupport			= false;
+		bNonPowerOf2Support	= false;
+
+		iUseOpenGL			= 1;
+		iUsePBO				= 0;
+		iUseMappedPBO		= 0;
+		iVisMaxRes			= 128;
+		iAllowNonPowerOf2	= 0;
+
+		m_LastWidth			= -1;
+		m_LastHeight		= -1;
+		m_SelectedVisual	= 0;
+		m_TheVisual			= NULL;
+		iVisResHeight		= 128;
+		iVisResWidth		= 128;
+
+		bResChange			= true;
+
+		DWORD				lpRegType = REG_DWORD;
+		DWORD				iRegSize = sizeof(int);
+
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("VisMaxRes"), &lpRegType, (LPBYTE)&iVisMaxRes, &iRegSize);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("AllowNonPowerOf2"), &lpRegType, (LPBYTE)&iAllowNonPowerOf2, &iRegSize);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseOpenGL"), &lpRegType, (LPBYTE)&iUseOpenGL, &iRegSize);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
+		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseMappedPBO"), &lpRegType, (LPBYTE)&iUseMappedPBO, &iRegSize);
+
+		if(iUseOpenGL)
+		{
+			if(!InitOpenGL())
+				return false;
+		}
+
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+			return false;
+
+		if(glewIsSupported("GL_VERSION_2_1"))
+			bPBOSupport = true;
+		else
+			iUsePBO = 0;
+
+		if(glewIsSupported("GL_VERSION_2_0"))
+			bNonPowerOf2Support = true;
+		else
+			iAllowNonPowerOf2 = 0;
+
+		if(iUseOpenGL && iUsePBO)
+		{
+			glGenBuffers(1, pboIds);
+		}
+
+		ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
+
+		visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
+
+		m_LastMove = GetTickCount();
+
+
 		lpRegType = REG_DWORD;
 		iRegSize = sizeof(int);
 		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("CurrentVis"), &lpRegType, (LPBYTE)&m_SelectedVisual, &iRegSize);
@@ -491,6 +493,13 @@ bool	SVPRenderer::Attach(HDC hDC)
 			m_SelectedVisual = 0;
 
 		SetActiveVisual(m_SelectedVisual);
+
+		Render(128,128);
+	}
+	else
+	{
+		MessageBox(0, TEXT("You need to add SVP visuals to <tuniacFolder>\\visuals\\vis\\"), TEXT("Error - No visuals"), MB_OK | MB_ICONINFORMATION);
+		return false;
 	}
 
 	return true;
@@ -536,7 +545,7 @@ void	SVPRenderer::Destroy(void)
 
 bool SVPRenderer::RenderVisual(void)
 {
-	if(m_TheVisual && m_pHelper)
+	if(m_pHelper)
 	{
 		ulNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 		if(ulNumChannels == INVALID || ulNumChannels == 0)
@@ -635,220 +644,223 @@ bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
-	if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
+	if(m_TheVisual)
 	{
-		if(w == 0 || h == 0)
-			return false;
-
-		if(iAllowNonPowerOf2)
+		if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)
 		{
-			iVisResHeight = min(h, iVisMaxRes);
-			iVisResWidth = min(w, iVisMaxRes);
-		}
-		else
-		{
+			if(w == 0 || h == 0)
+				return false;
 
-			if(h >= iVisMaxRes || w >= iVisMaxRes)
-				iVisResHeight = iVisResWidth = iVisMaxRes;
+			if(iAllowNonPowerOf2)
+			{
+				iVisResHeight = min(h, iVisMaxRes);
+				iVisResWidth = min(w, iVisMaxRes);
+			}
 			else
 			{
-				int iVisTempRes = max(h, w);
 
-				if(iVisTempRes >= iVisMaxRes)
+				if(h >= iVisMaxRes || w >= iVisMaxRes)
 					iVisResHeight = iVisResWidth = iVisMaxRes;
-				else if(iVisTempRes <= 128)
-					iVisResHeight = iVisResWidth = 128;
-				else if(iVisTempRes <= 256)
-					iVisResHeight = iVisResWidth = 256;
-				else if(iVisTempRes <= 512)
-					iVisResHeight = iVisResWidth = 512;
 				else
-					iVisResHeight = iVisResWidth = 1024;
+				{
+					int iVisTempRes = max(h, w);
+
+					if(iVisTempRes >= iVisMaxRes)
+						iVisResHeight = iVisResWidth = iVisMaxRes;
+					else if(iVisTempRes <= 128)
+						iVisResHeight = iVisResWidth = 128;
+					else if(iVisTempRes <= 256)
+						iVisResHeight = iVisResWidth = 256;
+					else if(iVisTempRes <= 512)
+						iVisResHeight = iVisResWidth = 512;
+					else
+						iVisResHeight = iVisResWidth = 1024;
+				}
 			}
+
+			iTextureSize = iVisResWidth*iVisResHeight*sizeof(unsigned long);
+
+			if(m_textureData)
+			{
+				free(m_textureData);
+				m_textureData = NULL;
+			}
+
+			m_textureData = (unsigned long*)malloc(iTextureSize);
+
+			SetRect(&m_NextVisRect, 
+					w-(64+16),
+					h-(64+16),
+					w-(64+16)+64,
+					h-(64+16)+64);
+
+			SetRect(&m_PrevVisRect, 
+					(16),
+					h-(64+16),
+					(16)+64,
+					h-(64+16)+64);
+
+			if(iUseOpenGL)
+			{
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				gluOrtho2D(0, (float)w, (float)h, 0);
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glViewport(0,0,w,h);
+
+				//bind texture
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				glTexImage2D( GL_TEXTURE_2D, 
+									0,
+									GL_RGB8,
+									iVisResWidth,
+									iVisResHeight,
+									0,
+									GL_BGRA,
+									GL_UNSIGNED_INT_8_8_8_8_REV,
+									0);
+			}
+			else
+			{
+				if(hOldVisBMP)
+					SelectObject(hgdiDC, hOldVisBMP);
+
+				if(hVisBMP)
+					DeleteObject(hVisBMP);
+
+				if(hgdiDC)
+					DeleteDC(hgdiDC);
+
+				bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
+				bi.bmiHeader.biWidth=iVisResWidth;
+				bi.bmiHeader.biHeight=-iVisResHeight;
+				bi.bmiHeader.biPlanes=1;
+				bi.bmiHeader.biBitCount=32;
+				bi.bmiHeader.biCompression	= BI_RGB;
+				bi.bmiHeader.biSizeImage	= 0;
+				hVisBMP = CreateDIBSection(0, &bi, DIB_RGB_COLORS, (void**)&m_textureData, 0, 0);
+				hgdiDC=CreateCompatibleDC(0);
+				hOldVisBMP = (HBITMAP)SelectObject(hgdiDC, hVisBMP);
+			}
+
+			bResChange = false;
+
+			m_LastWidth		= w;
+			m_LastHeight	= h;
 		}
 
-		iTextureSize = iVisResWidth*iVisResHeight*sizeof(unsigned long);
-
-		if(m_textureData)
-		{
-			free(m_textureData);
-			m_textureData = NULL;
-		}
-
-		m_textureData = (unsigned long*)malloc(iTextureSize);
-
-		SetRect(&m_NextVisRect, 
-				w-(64+16),
-				h-(64+16),
-				w-(64+16)+64,
-				h-(64+16)+64);
-
-		SetRect(&m_PrevVisRect, 
-				(16),
-				h-(64+16),
-				(16)+64,
-				h-(64+16)+64);
+		RenderVisual();
 
 		if(iUseOpenGL)
 		{
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(0, (float)w, (float)h, 0);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glViewport(0,0,w,h);
-
-			//bind texture
 			glBindTexture(GL_TEXTURE_2D, 0);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		
+			//update texture
+			if(iUsePBO)
+			{
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
+				glBufferData(GL_PIXEL_UNPACK_BUFFER, iTextureSize, 0, GL_STREAM_DRAW);
+				if(iUseMappedPBO)
+				{
+					ioMem = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+					memcpy( ioMem, m_textureData, iTextureSize );
+					glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+				}
+				else
+				{
+					glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, iTextureSize, m_textureData);
+				}
 
-			glTexImage2D( GL_TEXTURE_2D, 
+				glTexSubImage2D(GL_TEXTURE_2D,
 								0,
-								GL_RGB8,
+								0,
+								0,
 								iVisResWidth,
 								iVisResHeight,
-								0,
 								GL_BGRA,
 								GL_UNSIGNED_INT_8_8_8_8_REV,
 								0);
-		}
-		else
-		{
-			if(hOldVisBMP)
-				SelectObject(hgdiDC, hOldVisBMP);
-
-			if(hVisBMP)
-				DeleteObject(hVisBMP);
-
-			if(hgdiDC)
-				DeleteDC(hgdiDC);
-
-			bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
-			bi.bmiHeader.biWidth=iVisResWidth;
-			bi.bmiHeader.biHeight=-iVisResHeight;
-			bi.bmiHeader.biPlanes=1;
-			bi.bmiHeader.biBitCount=32;
-			bi.bmiHeader.biCompression	= BI_RGB;
-			bi.bmiHeader.biSizeImage	= 0;
-			hVisBMP = CreateDIBSection(0, &bi, DIB_RGB_COLORS, (void**)&m_textureData, 0, 0);
-			hgdiDC=CreateCompatibleDC(0);
-			hOldVisBMP = (HBITMAP)SelectObject(hgdiDC, hVisBMP);
-		}
-
-		bResChange = false;
-
-		m_LastWidth		= w;
-		m_LastHeight	= h;
-	}
-
-	RenderVisual();
-
-	if(iUseOpenGL)
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		
-		//update texture
-		if(iUsePBO)
-		{
-			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
-			glBufferData(GL_PIXEL_UNPACK_BUFFER, iTextureSize, 0, GL_STREAM_DRAW);
-			if(iUseMappedPBO)
-			{
-				ioMem = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
-				memcpy( ioMem, m_textureData, iTextureSize );
-				glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			}
 			else
 			{
-				glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, iTextureSize, m_textureData);
+				glTexSubImage2D(GL_TEXTURE_2D,
+								0,
+								0,
+								0,
+								iVisResWidth,
+								iVisResHeight,
+								GL_BGRA,
+								GL_UNSIGNED_INT_8_8_8_8_REV,
+								m_textureData);
 			}
 
-			glTexSubImage2D(GL_TEXTURE_2D,
-							0,
-							0,
-							0,
-							iVisResWidth,
-							iVisResHeight,
-							GL_BGRA,
-							GL_UNSIGNED_INT_8_8_8_8_REV,
-							0);
-			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-		}
-		else
-		{
-			glTexSubImage2D(GL_TEXTURE_2D,
-							0,
-							0,
-							0,
-							iVisResWidth,
-							iVisResHeight,
-							GL_BGRA,
-							GL_UNSIGNED_INT_8_8_8_8_REV,
-							m_textureData);
-		}
+			glBegin (GL_QUADS);
+				glTexCoord2f(0.0f, 0.0f);
+				glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
+				glTexCoord2f(0.0f, 1.0f);
+				glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
+				glTexCoord2f(1.0f, 1.0f);
+				glVertex2f(w, h);	// Top Right Of The Texture and Quad
+				glTexCoord2f(1.0f, 0.0f);
+				glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
+			glEnd ();
 
-		glBegin (GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex2f(w, h);	// Top Right Of The Texture and Quad
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
-		glEnd ();
-
-		//arrows
-		m_iElaspedTime = GetTickCount() - m_LastMove;
-		if(m_iElaspedTime < 4000)
-		{
-			glBindTexture(GL_TEXTURE_2D, 1);
-			if(m_iElaspedTime < 2000)
+			//arrows
+			m_iElaspedTime = GetTickCount() - m_LastMove;
+			if(m_iElaspedTime < 4000)
 			{
-				//clear arrow
-				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			}
-			else
-			{
-				//fade arrow
-				int val = m_iElaspedTime - 2000;
-				float scale = (2000.0f - (float)val) / 2000.0f;
-				glColor4f(1.0f, 1.0f, 1.0f, scale);
-			}
+				glBindTexture(GL_TEXTURE_2D, 1);
+				if(m_iElaspedTime < 2000)
+				{
+					//clear arrow
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+				}
+				else
+				{
+					//fade arrow
+					int val = m_iElaspedTime - 2000;
+					float scale = (2000.0f - (float)val) / 2000.0f;
+					glColor4f(1.0f, 1.0f, 1.0f, scale);
+				}
 			
-			//left
-			glBegin (GL_QUADS);
-				glTexCoord2f(1.0f, 1.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
-				glTexCoord2f(1.0f, 0.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.bottom);
-				glTexCoord2f(0.0f, 0.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.bottom);
-				glTexCoord2f(0.0f, 1.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.top);
-			glEnd();
+				//left
+				glBegin (GL_QUADS);
+					glTexCoord2f(1.0f, 1.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
+					glTexCoord2f(1.0f, 0.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.bottom);
+					glTexCoord2f(0.0f, 0.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.bottom);
+					glTexCoord2f(0.0f, 1.0f); glVertex2f(m_NextVisRect.right,	m_NextVisRect.top);
+				glEnd();
 
-			//right
-			glBegin (GL_QUADS);
-				glTexCoord2f(0.0f, 0.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.top);
-				glTexCoord2f(0.0f, 1.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.bottom);
-				glTexCoord2f(1.0f, 1.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.bottom);
-				glTexCoord2f(1.0f, 0.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.top);
-			glEnd();
-		}
+				//right
+				glBegin (GL_QUADS);
+					glTexCoord2f(0.0f, 0.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.top);
+					glTexCoord2f(0.0f, 1.0f); glVertex2f(m_PrevVisRect.left,	m_PrevVisRect.bottom);
+					glTexCoord2f(1.0f, 1.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.bottom);
+					glTexCoord2f(1.0f, 0.0f); glVertex2f(m_PrevVisRect.right,	m_PrevVisRect.top);
+				glEnd();
+			}
 		
-		SwapBuffers(m_hDC);
-	}
-	else
-	{
-		StretchDIBits(m_hDC,
-			//destination
-			0, 0, w, h,
-			//source
-			0, 0, iVisResWidth, iVisResHeight,
-			//image
-			hgdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
+			SwapBuffers(m_hDC);
+		}
+		else
+		{
+			StretchDIBits(m_hDC,
+				//destination
+				0, 0, w, h,
+				//source
+				0, 0, iVisResWidth, iVisResHeight,
+				//image
+				hgdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
 
-		//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, hgdiDC, 0,0, SRCCOPY);
-		UpdateWindow(WindowFromDC(m_hDC));
+			//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, hgdiDC, 0,0, SRCCOPY);
+			UpdateWindow(WindowFromDC(m_hDC));
+		}
 	}
-
+	
 	return true;
 }
 

@@ -617,6 +617,12 @@ unsigned long CVisualWindow::ThreadProc(void)
 									{
 										m_iActivePlugin = iPlugin;
 									}
+									//visual wont attach, revert to internal visual
+									else if(m_VisualArray[0].pPlugin->Attach(m_WindowDC))
+									{
+										m_iActivePlugin = 0;
+										tuniacApp.m_Preferences.SetCurrentVisual(0);
+									}
 								}
 							}
 						}
