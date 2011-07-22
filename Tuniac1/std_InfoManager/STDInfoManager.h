@@ -17,6 +17,10 @@
 #include "aifffile.h"
 #include "wavfile.h"
 #include "apefile.h"
+#include "itfile.h"
+#include "modfile.h"
+#include "s3mfile.h"
+#include "xmfile.h"
 
 #include "id3v1tag.h"
 #include "id3v2tag.h"
@@ -50,6 +54,10 @@ protected:
 	TagLib::RIFF::AIFF::File *aiffile;
 	TagLib::RIFF::WAV::File *wavfile;
 	TagLib::APE::File *apefile;
+	TagLib::IT::File *itfile;
+	TagLib::Mod::File *modfile;
+	TagLib::S3M::File *s3mfile;
+	TagLib::XM::File *xmfile;
 
 public:
 	CSTDInfoManager(void);
