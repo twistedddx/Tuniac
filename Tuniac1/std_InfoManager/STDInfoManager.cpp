@@ -46,6 +46,11 @@ CSTDInfoManager::CSTDInfoManager(void)
 	aiffile = NULL;
 	wavfile = NULL;
 	apefile = NULL;
+	itfile = NULL;
+	modfile = NULL;
+	s3mfile = NULL;
+	xmfile = NULL;
+
 }
 
 CSTDInfoManager::~CSTDInfoManager(void)
@@ -59,7 +64,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 22;
+	return 29;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -87,7 +92,15 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".aiff"),
 		TEXT(".wav"),
 		TEXT(".ape"),
-		TEXT(".alac")
+		TEXT(".alac"),
+		TEXT(".it"),
+		TEXT(".mod"),
+		TEXT(".module"),
+		TEXT(".nst"),
+		TEXT(".s3m"),
+		TEXT(".wow"),
+		TEXT(".xm"),
+
 	};
 
 	return exts[ulExtentionNum];
@@ -124,7 +137,14 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(apefile = dynamic_cast<TagLib::APE::File *>( fileref.file() ))
 			return true;
-
+		else if(itfile = dynamic_cast<TagLib::IT::File *>( fileref.file() ))
+			return true;
+		else if(modfile = dynamic_cast<TagLib::Mod::File *>( fileref.file() ))
+			return true;
+		else if(s3mfile = dynamic_cast<TagLib::S3M::File *>( fileref.file() ))
+			return true;
+		else if(xmfile = dynamic_cast<TagLib::XM::File *>( fileref.file() ))
+			return true;
 	}
 
 	return false;
