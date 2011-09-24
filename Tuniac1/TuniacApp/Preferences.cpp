@@ -538,6 +538,12 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 						}
 						break;
+
+					case NM_DBLCLK:
+						{
+							SendMessage(hDlg, WM_COMMAND, MAKELONG(IDC_PLUGINS_CONFIGURE, 0), 0);
+						}
+						break;
 				}
 			}
 			break;
