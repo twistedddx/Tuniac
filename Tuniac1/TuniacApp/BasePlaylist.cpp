@@ -80,11 +80,11 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
-				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
+				/*if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
-				}
+				}*/
 			}
 
 			//single field filter selected. Will include or exclude based solely on the single field
