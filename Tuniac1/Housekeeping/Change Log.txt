@@ -1,3 +1,22 @@
+Sep, 2011
+---------
+-double click to configure plugins
+-Fix failed playback logic
+-change playback notify logic
+-some fixes and cleanups
+
+Jul, 2011
+---------
+-lmza2 for installers
+-taglib it, s2m, mod, xm properties reading
+
+Jun, 2011
+----------
+-BASS, taglib and jpeglib updates
+-SVPRenderer dont attach if no visuals and throw error message
+-VisualWindow handle a visual that doesnt want to attach
+
+
 May, 2011
 ---------
 -Better logic at XAudio restarting after failure
