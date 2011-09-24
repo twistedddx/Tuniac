@@ -133,8 +133,14 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	m_bAllowInhibit = false;
 	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("AllowInhibit"), &lpRegType, (LPBYTE)&m_bAllowInhibit, &iRegSize);
 
-	m_eManualOnlyMode = AlwaysTrigger;
-	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), &lpRegType, (LPBYTE)&m_eManualOnlyMode, &iRegSize);
+	m_bManualTrigger = true;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("Manual"), &lpRegType, (LPBYTE)&m_bManualTrigger, &iRegSize);
+	m_bManualBlindTrigger = true;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("ManualBlind"), &lpRegType, (LPBYTE)&m_bManualBlindTrigger, &iRegSize);
+	m_bAutoTrigger = true;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("Auto"), &lpRegType, (LPBYTE)&m_bAutoTrigger, &iRegSize);
+	m_bAutoBlindTrigger = true;
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("AutoBlind"), &lpRegType, (LPBYTE)&m_bAutoBlindTrigger, &iRegSize);
 
 	m_abd.cbSize = sizeof(APPBARDATA);
 	m_abd.hWnd = m_hWnd;
@@ -232,10 +238,10 @@ LRESULT CALLBACK	CPopupNotify::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 
 				SendDlgItemMessage(hDlg, IDC_FULLSCREENINHIBIT_CHECK, BM_SETCHECK, pPopupNotify->m_bAllowInhibit ? BST_CHECKED : BST_UNCHECKED, 0);
 				
-				SendDlgItemMessage(hDlg, IDC_TRIGGER_ALWAYS, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AlwaysTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == ManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_TRIGGER_BLINDMANUAL, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == BlindManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_eManualOnlyMode == AutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUAL, BM_SETCHECK, pPopupNotify->m_bManualTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUALBLIND, BM_SETCHECK, pPopupNotify->m_bManualBlindTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_bAutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTOBLIND, BM_SETCHECK, pPopupNotify->m_bAutoBlindTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
 			}
 			break;
 
@@ -250,31 +256,35 @@ LRESULT CALLBACK	CPopupNotify::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 					break;
 
-				case IDC_TRIGGER_ALWAYS:
-					{
-						pPopupNotify->m_eManualOnlyMode = AlwaysTrigger;
-						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
-					}
-					break;
-
 				case IDC_TRIGGER_MANUAL:
 					{
-						pPopupNotify->m_eManualOnlyMode = ManualTrigger;
-						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+						int State = SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUAL, BM_GETCHECK, 0, 0);
+						pPopupNotify->m_bManualTrigger = State == BST_UNCHECKED ? FALSE : TRUE;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("Manual"), REG_DWORD, (LPBYTE)&m_bManualTrigger, sizeof(int));
 					}
 					break;
 
-				case IDC_TRIGGER_BLINDMANUAL:
+				case IDC_TRIGGER_MANUALBLIND:
 					{
-						pPopupNotify->m_eManualOnlyMode = BlindManualTrigger;
-						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+						int State = SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUALBLIND, BM_GETCHECK, 0, 0);
+						pPopupNotify->m_bManualBlindTrigger = State == BST_UNCHECKED ? FALSE : TRUE;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualBlind"), REG_DWORD, (LPBYTE)&m_bManualBlindTrigger, sizeof(int));
 					}
 					break;
 
 				case IDC_TRIGGER_AUTO:
 					{
-						pPopupNotify->m_eManualOnlyMode = AutoTrigger;
-						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("ManualOnlyMode"), REG_DWORD, (LPBYTE)&m_eManualOnlyMode, sizeof(int));
+						int State = SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTO, BM_GETCHECK, 0, 0);
+						pPopupNotify->m_bAutoTrigger = State == BST_UNCHECKED ? FALSE : TRUE;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("Auto"), REG_DWORD, (LPBYTE)&m_bAutoTrigger, sizeof(int));
+					}
+					break;
+
+				case IDC_TRIGGER_AUTOBLIND:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTOBLIND, BM_GETCHECK, 0, 0);
+						pPopupNotify->m_bAutoBlindTrigger = State == BST_UNCHECKED ? FALSE : TRUE;
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("AutoBlind"), REG_DWORD, (LPBYTE)&m_bAutoBlindTrigger, sizeof(int));
 					}
 					break;
 
@@ -417,36 +427,58 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 
 		case PLUGINNOTIFY_SONGCHANGE_INIT:
+			{
+				ResetWindow();
+			}
+			break;
+
 		case PLUGINNOTIFY_SONGCHANGE:
+			{
+				//auto with UI
+				if(!m_bAutoTrigger)
+					break;
+
+				ResetWindow();
+			}
+			break;
+
+		case PLUGINNOTIFY_SONGCHANGE_BLIND:
+			{
+				//auto without UI
+				if(!m_bAutoBlindTrigger)
+					break;
+				
+				ResetWindow();
+			}
+			break;
+
 		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
+			{
+				//user with UI
+				if(!m_bManualTrigger)
+					break;
+
+				ResetWindow();
+			}
+			break;
+
 		case PLUGINNOTIFY_SONGCHANGE_MANUALBLIND:
+			{
+				//user without UI
+				if(!m_bManualBlindTrigger)
+					break;
+
+				ResetWindow();
+			}
+			break;
+
 		case WM_HOTKEY:
 			{
 				//fullscreen app + inhibit set
 				if(m_bInhibit)
 					break;
 
-				if(uMsg == PLUGINNOTIFY_SONGCHANGE)
-					//no for manual or blind manual mode, yes for always and auto
-					if(m_eManualOnlyMode == ManualTrigger || m_eManualOnlyMode == BlindManualTrigger)
-						break;
-
-				if(uMsg == PLUGINNOTIFY_SONGCHANGE_MANUAL)
-					//no for auto mode and blind manual, yes for always manual
-					if(m_eManualOnlyMode == AutoTrigger || m_eManualOnlyMode == BlindManualTrigger)
-						break;
-
-				if(uMsg == PLUGINNOTIFY_SONGCHANGE_MANUALBLIND)
-					//no for auto, yes for always and manual and blind manual
-					if(m_eManualOnlyMode == AutoTrigger)
-						break;
-
-				KillTimer(m_hWnd, ID_TIMER_HIDE);
-				KillTimer(m_hWnd, ID_TIMER_FADE);
-				ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
-				SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha = 254, LWA_ALPHA);
-				RedrawWindow(m_hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
-				SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS, NULL);
+				ResetWindow();
 			}
 			break;
 
@@ -464,6 +496,17 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	}
 
 	return FALSE;
+}
+
+void			CPopupNotify::ResetWindow(void)
+{
+	KillTimer(m_hWnd, ID_TIMER_HIDE);
+	KillTimer(m_hWnd, ID_TIMER_FADE);
+	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+	SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha = 254, LWA_ALPHA);
+	RedrawWindow(m_hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+	SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS, NULL);
+	return;
 }
 
 void			CPopupNotify::RePaint(HWND hWnd)
