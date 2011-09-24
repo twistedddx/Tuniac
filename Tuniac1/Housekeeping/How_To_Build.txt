@@ -127,6 +127,8 @@ Modify Include Directory for all configurations if required, currently set as:
 	D:\Code\git\taglib.git\taglib\taglib\asf
 	D:\Code\git\taglib.git\taglib\taglib\ape
 	D:\Code\git\taglib.git\taglib\taglib\flac
+	D:\Code\git\taglib.git\taglib\taglib\it
+	D:\Code\git\taglib.git\taglib\taglib\mod
 	D:\Code\git\taglib.git\taglib\taglib\mp4
 	D:\Code\git\taglib.git\taglib\taglib\mpc
 	D:\Code\git\taglib.git\taglib\taglib\mpeg
@@ -143,6 +145,7 @@ Modify Include Directory for all configurations if required, currently set as:
 	D:\Code\git\taglib.git\taglib\taglib\toolkit
 	D:\Code\git\taglib.git\taglib\taglib\trueaudio
 	D:\Code\git\taglib.git\taglib\taglib\wavpack
+	D:\Code\git\taglib.git\taglib\taglib\xm
 
 Modify Library Directory if required, currently set as -
 	Debug Win32	D:\Code\git\taglib.git\taglib\taglib\win32\Win32\Debug
