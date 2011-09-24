@@ -43,7 +43,7 @@ CBasePlaylist::~CBasePlaylist(void)
 
 bool				CBasePlaylist::ApplyFilter(void)
 {
-	TCHAR szTemp[512];
+	TCHAR szTemp[260];
 
 	//if filter text exists
 	if(lstrlen(m_szTextFilter))
@@ -56,7 +56,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 			//default false = include, true = exclude
 			m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? false : true;
 
-			//default filter(FIELD_MAXFIELD) is any title, artist and album matches
+			//default filter(FIELD_MAXFIELD) is any title, artist, album and filename matches
 			if(m_ulTextFilterField == FIELD_MAXFIELD)
 			{
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_TITLE), m_szTextFilter))
@@ -80,8 +80,15 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
+				{
+					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
+					continue;
+				}
+			}
+
 			//single field filter selected. Will include or exclude based solely on the single field
-			} else if(m_ulTextFilterField == FIELD_ARTIST
+			else if(m_ulTextFilterField == FIELD_ARTIST
 					|| m_ulTextFilterField == FIELD_ALBUM
 					|| m_ulTextFilterField == FIELD_TITLE
 					|| m_ulTextFilterField == FIELD_GENRE
@@ -99,9 +106,8 @@ bool				CBasePlaylist::ApplyFilter(void)
 
 			else
 			{
-				m_PlaylistArray[x].pIPE->GetTextRepresentation(m_ulTextFilterField, szTemp, 512);
+				m_PlaylistArray[x].pIPE->GetTextRepresentation(m_ulTextFilterField, szTemp, 260);
 
-				//reverse filter selected, this will inverse the current filter
 				if (StrCmpI(m_szTextFilter, szTemp) == 0)
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
