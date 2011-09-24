@@ -179,11 +179,11 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,125,92,10
     CONTROL         "Use visual for art",IDC_GENERAL_SHOWVISART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,137,71,10
     CONTROL         "Pause after each song",IDC_GENERAL_AUTOSOFTPAUSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,40,92,10
-    GROUPBOX        "Screensaver and Monitor",IDC_STATIC,12,102,100,46
-    CONTROL         "Allow",IDC_GENERAL_SCREEN_ALLOW,"Button",BS_AUTORADIOBUTTON,12,113,100,10
-    CONTROL         "Prevent when focused",IDC_GENERAL_SCREEN_PREVENT,"Button",BS_AUTORADIOBUTTON,12,122,100,12
+    GROUPBOX        "Screensaver and Monitor",IDC_STATIC,7,102,105,46
+    CONTROL         "Allow",IDC_GENERAL_SCREEN_ALLOW,"Button",BS_AUTORADIOBUTTON,12,113,91,10
+    CONTROL         "Prevent when focused",IDC_GENERAL_SCREEN_PREVENT,"Button",BS_AUTORADIOBUTTON,12,122,91,12
     CONTROL         "Prevent when fullscreen",IDC_GENERAL_SCREEN_PREVENTFULL,
-                    "Button",BS_AUTORADIOBUTTON,12,133,100,9
+                    "Button",BS_AUTORADIOBUTTON,12,133,92,9
 END
 
 IDD_PREFERENCES_FILEASSOC DIALOGEX 0, 0, 235, 176
@@ -907,7 +907,7 @@ IDR_FILTERBYFIELD_MENU MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "Artist, Album && Title",      ID_FILTERBY_NORMAL
+        MENUITEM "Artist, Album, Title && URL", ID_FILTERBY_NORMAL
         MENUITEM SEPARATOR
         MENUITEM "Artist",                      ID_FILTERBY_ARTIST
         MENUITEM "Title",                       ID_FILTERBY_TITLE

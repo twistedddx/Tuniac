@@ -356,6 +356,7 @@
     <None Include="default-theme\item-active.ico" />
     <None Include="default-theme\item-normal.ico" />
     <None Include="cursors\newplaylistcursor.cur" />
+    <None Include="images\editinfo.bmp" />
     <None Include="images\next.bmp" />
     <None Include="images\pause.bmp" />
     <None Include="images\play.bmp" />
@@ -364,6 +365,11 @@
     <None Include="default-theme\playlist-standard.ico" />
     <None Include="images\previous.bmp" />
     <None Include="icons\tuniac.ico" />
+    <None Include="images\repeatall.bmp" />
+    <None Include="images\repeatnone.bmp" />
+    <None Include="images\repeatone.bmp" />
+    <None Include="images\shuffleoff.bmp" />
+    <None Include="images\shuffleon.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="Tuniac.manifest" />

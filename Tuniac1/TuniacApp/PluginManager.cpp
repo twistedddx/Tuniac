@@ -384,7 +384,7 @@ bool			CPluginManager::Navigate(int iFromCurrent)
 		if(pPlaylist)
 		{
 			if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-				return tuniacApp.PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(tuniacApp.GetFuturePlaylistEntryID(iFromCurrent - 1)), true, 2);
+				return tuniacApp.PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(tuniacApp.GetFuturePlaylistEntryID(iFromCurrent - 1)), true, false);
 		}
 	}
 	else

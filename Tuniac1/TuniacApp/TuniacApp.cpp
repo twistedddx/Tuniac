@@ -619,7 +619,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						if(pIPE)
 						{
 							Sleep(5000);
-							PlayEntry(pIPE, m_WasPlaying, 0);
+							PlayEntry(pIPE, m_WasPlaying, true);
 							m_WasPlaying = false;
 						}
 					}
@@ -762,13 +762,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 						case APPCOMMAND_MEDIA_NEXTTRACK:
 							{
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 2), 0);
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_PREVIOUSTRACK:
 							{
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 2), 0);
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
 							break;
 						case APPCOMMAND_MEDIA_FAST_FORWARD:
@@ -791,12 +791,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			{
 				switch (wParam)
 				{
-					//Coreaudio was succesfully called to transitionto
-					case NOTIFY_COREAUDIO_TRANSITIONTO:
-						{
-						}
-						break;
-
 					//start of crossfade. Next Song needed if required
 					case NOTIFY_COREAUDIO_MIXPOINTREACHED:
 						{
@@ -814,7 +808,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0, false);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, true, false);
 									//else
 									//no next song??
 								}
@@ -835,7 +829,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, true);
 									else
 										//no next song??
 										UpdateState();
@@ -869,7 +863,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, 0);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, false);
 									else
 										//no next song??
 										UpdateState();
@@ -957,13 +951,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 
 				else if(wParam == HOTKEY_NEXT)
-					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 2), 0);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 
 				else if(wParam == HOTKEY_RANDNEXT)
-					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 2), 0);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
 
 				else if(wParam == HOTKEY_PREV)
-					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 2), 0);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 
 				else if(wParam == HOTKEY_PREVBYHISTORY)
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS_BYHISTORY, 0), 0);
@@ -976,12 +970,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				else if(wParam == HOTKEY_VOLUP)
 				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 0.5f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 1.0f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == HOTKEY_VOLDOWN)
 				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 0.5f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 1.0f);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == HOTKEY_SEEKFORWARD)
@@ -1051,13 +1045,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0); 
 
 										else if(StrCmpI(szArglist[i], TEXT("-next")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 2), 0);
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 
 										else if(StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 2), 0);
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
 
 										else if(StrCmpI(szArglist[i], TEXT("-prev")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 2), 0);
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 
 										else if(StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0); 
@@ -1123,7 +1117,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											{
 												m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 												IPlaylist * pPlaylist = (IPlaylist *)m_PlaylistManager.GetActivePlaylist();
-												PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulMLOldCount), true, 2);
+												PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulMLOldCount), true, false);
 											}
 										}
 										SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
@@ -1227,7 +1221,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						if(pPlaylist)
 						{
 							if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-								PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(m_FutureMenu[wCmdID - FUTUREMENU_BASE]), true, 2);
+								PlayEntry(((IPlaylistEX *)pPlaylist)->GetEntryByEntryID(m_FutureMenu[wCmdID - FUTUREMENU_BASE]), true, false);
 						}
 						return 0;
 					}
@@ -1581,7 +1575,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 									if(pPlaylist)
 										//play the current song
-										PlayEntry(pPlaylist->GetActiveEntry(), true, 2);
+										PlayEntry(pPlaylist->GetActiveEntry(), true, false);
 								}
 
 							}
@@ -2449,11 +2443,11 @@ bool	CTuniacApp::SetArt(LPTSTR szSource)
 	return bArtSuccess;
 }
 
-//iManual	0 = auto selected song from Tuniac logic
-//			1 = user interaction
-//			2 = user interaction without playlist
+//bAuto		0 = user interaction caused song change
+//			1 = auto selected song from Tuniac logic(eg track ended and next track plays)
 
-bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool bResetAudio)
+
+bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio)
 {
 	if(pIPE)
 	{
@@ -2461,17 +2455,17 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool
 		if(m_Preferences.GetShowAlbumArt())
 			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 
+		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+		if(pPlaylist)
+			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
+
 		if(CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
 		{
-			IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-			if(pPlaylist)
-				pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
-
 			if(bStart)
 				CCoreAudio::Instance()->Play();
 
-			//softpause
-			if(iManual)
+			//reset softpause on manual song changes
+			if(!bAuto)
 			{
 				m_SoftPause.bNow = false;
 				m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
@@ -2534,12 +2528,21 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool
 
 			RebuildFutureMenu();
 
-			if(iManual == 0)
-				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
-			if(iManual == 1)
-				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
-			if(iManual == 2)
-				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUALBLIND, NULL, NULL);
+			if(GetForegroundWindow() == m_hWnd && !IsIconic(m_hWnd))
+			{
+				if(bAuto)
+					m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+				else
+					m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUAL, NULL, NULL);
+			}
+			else
+			{
+				if(bAuto)
+					m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_BLIND, NULL, NULL);
+				//else if(::IsWindowVisible(m_hWnd) && !IsIconic(m_hWnd))
+				else 
+					m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_MANUALBLIND, NULL, NULL);
+			}
 
 			return true;
 		}
