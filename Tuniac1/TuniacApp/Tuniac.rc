@@ -853,16 +853,10 @@ END
 // Bitmap
 //
 
-IDB_EDITINFO            BITMAP                  "images\\editinfo.bmp"
 IDB_NEXT                BITMAP                  "images\\next.bmp"
 IDB_PAUSE               BITMAP                  "images\\pause.bmp"
 IDB_PLAY                BITMAP                  "images\\play.bmp"
 IDB_PREVIOUS            BITMAP                  "images\\previous.bmp"
-IDB_REPEATALL           BITMAP                  "images\\repeatall.bmp"
-IDB_REPEATNONE          BITMAP                  "images\\repeatnone.bmp"
-IDB_REPEATONE           BITMAP                  "images\\repeatone.bmp"
-IDB_SHUFFLEOFF          BITMAP                  "images\\shuffleoff.bmp"
-IDB_SHUFFLEON           BITMAP                  "images\\shuffleon.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

@@ -376,24 +376,6 @@
     <None Include="images\previous.bmp">
       <Filter>Resource Files\Images</Filter>
     </None>
-    <None Include="images\editinfo.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatall.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatnone.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\repeatone.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\shuffleoff.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="images\shuffleon.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="Tuniac.manifest">
