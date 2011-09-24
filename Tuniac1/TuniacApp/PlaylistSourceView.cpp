@@ -763,7 +763,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							if(m_iLastClickedItem < 0) break;
 
 							tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-							tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem), true, true);
+							tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem), true, false);
 						}
 						break;
 
@@ -1533,14 +1533,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						break;
 
 						//doubleclick item in playlist
-					case NM_DBLCLK:
+					//case NM_DBLCLK:
+					case LVN_ITEMACTIVATE:
 						{
 							LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
 
 							if(lpnmitem->iItem != -1)
 							{
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
-								tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem), true, true);
+								tuniacApp.PlayEntry(m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem), true, false);
 							}
 						}
 						break;

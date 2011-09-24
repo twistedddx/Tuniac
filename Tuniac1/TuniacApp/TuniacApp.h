@@ -79,12 +79,6 @@
 
 #define WM_TRAYICON 				WM_USER + 1
 
-#define NOTIFY_AUDIOENGINE_TRACKSTARTED				0
-#define NOTIFY_AUDIOENGINE_TRACKFINISHED			1
-#define NOTIFY_AUDIOENGINE_TRACKMIXPOINTREACHED		2
-#define NOTIFY_AUDIOENGINE_TRACKFAILED				3
-#define NOTIFY_AUDIOENGINE_TRACKPLAYEDPOINTREACHED	4
-
 class CTuniacApp
 {
 protected:
@@ -202,5 +196,5 @@ public:
 
 	bool				SetArt(LPTSTR szSource);
 
-	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, int iManual, bool bResetAudio = true);
+	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio = true);
 };

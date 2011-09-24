@@ -237,12 +237,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 				pPlaylist->ApplyFilter();
 				if(pPlaylist->CheckFilteredIndex(PLDH.ActiveIndex))
 				{
-					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, true))
+					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, false))
 						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
 				else
 				{
-					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(0), false, true))
+					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(0), false, false))
 						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
 					
@@ -264,12 +264,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 			m_LibraryPlaylist.ApplyFilter();
 			if(m_LibraryPlaylist.CheckFilteredIndex(PLDH.ActiveIndex))
 			{
-				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, true))
+				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(PLDH.ActiveIndex), false, false))
 					m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
 			else
 			{
-				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(0), false, true))
+				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(0), false, false))
 				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
 			m_LibraryPlaylist.RebuildPlaylistArrays();

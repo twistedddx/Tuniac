@@ -203,7 +203,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
 								if(m_pCDPlaylist->SetActiveFilteredIndex(lpnmitem->iItem))
 								{
-									tuniacApp.PlayEntry(m_pCDPlaylist->GetActiveEntry(), true, true);
+									tuniacApp.PlayEntry(m_pCDPlaylist->GetActiveEntry(), true, false);
 								}
 
 								Update();

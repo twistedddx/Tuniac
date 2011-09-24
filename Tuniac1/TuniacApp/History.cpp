@@ -146,7 +146,7 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 		pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 	}
 
-	return tuniacApp.PlayEntry(pIPE, true, true);
+	return tuniacApp.PlayEntry(pIPE, true, false);
 }
 
 unsigned long CHistory::GetHistoryEntryID(unsigned long ulIndex)

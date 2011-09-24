@@ -365,7 +365,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							if(GetKeyState(VK_CONTROL) & 0x8000)
 								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS_BYHISTORY, 0), 0);
 							else
-								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 2), 0);
+								SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 						}
 						break;
 
@@ -377,7 +377,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					case 2:
 						{
-							SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 2), 0);
+							SendMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 						}
 						break;
 				}
