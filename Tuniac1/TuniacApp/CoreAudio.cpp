@@ -282,8 +282,6 @@ bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fR
 					if(bShoudStart)
 						pStream->Start();
 
-					tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_TRANSITIONTO, NULL);
-
 					return true;
 				}
 				else
@@ -295,7 +293,6 @@ bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fR
 		}
 	}
 	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
-
 	return false;
 }
 
