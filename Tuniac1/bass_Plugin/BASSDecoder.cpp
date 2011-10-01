@@ -17,7 +17,7 @@ void DoMeta(DWORD handle, void *user)
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
 	TCHAR szTitle[128];
-	TCHAR szBitrate[128];
+	int iBitrate;
 	if(icy)
 	{ // got ICY metadata
 		for(;*icy;icy+=strlen(icy)+1)
@@ -35,9 +35,8 @@ void DoMeta(DWORD handle, void *user)
 			}
 			if (!strnicmp(icy,"icy-br:",7))
 			{
-				MultiByteToWideChar(CP_ACP, 0, icy+7, -1, szBitrate, 128);
-				wcscat(szBitrate, L"000");
-				m_pHelper->UpdateMetaData((LPTSTR)user, szBitrate, FIELD_BITRATE);
+				iBitrate = (atoi(icy+7))*1000;
+				m_pHelper->UpdateMetaData((LPTSTR)user, (void *)iBitrate, FIELD_BITRATE);
 			}
 			/* these should already been known
 			ice-samplerate:
@@ -161,16 +160,9 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 	if(bIsStream) //update unknowns for streams
 	{
-		TCHAR szLength[10];
-		_i64tow(dTime, szLength, 10);
-		m_pHelper->UpdateMetaData(szSource, szLength, FIELD_PLAYBACKTIME);
-
-		TCHAR szChannels[2];
-		_itow(info.chans, szChannels, 10);
-		m_pHelper->UpdateMetaData(szSource, szChannels, FIELD_NUMCHANNELS);
-		TCHAR szSamplerate[6];
-		_itow(info.freq, szSamplerate, 10);
-		m_pHelper->UpdateMetaData(szSource, szSamplerate, FIELD_SAMPLERATE);
+		m_pHelper->UpdateMetaData(szSource, (void *)(int)dTime, FIELD_PLAYBACKTIME);
+		m_pHelper->UpdateMetaData(szSource, (void *)(int)info.chans, FIELD_NUMCHANNELS);
+		m_pHelper->UpdateMetaData(szSource, (void *)(int)info.freq, FIELD_SAMPLERATE);
 	}
 
 	m_Buffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
