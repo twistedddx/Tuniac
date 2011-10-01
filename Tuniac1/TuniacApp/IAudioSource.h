@@ -23,12 +23,21 @@
 
 #define ITUNIACAUDIOSOURCE_VERSION		MAKELONG(0, 2)
 
-
+#define INVALID_ENTRY_ID	0xffffffff
 #define LENGTH_UNKNOWN	0xffffffff
 #define INVALID			0xffffffff
 
 #define STATE_STOPPED	0
 #define STATE_PLAYING	1
+
+#define PLAYTIME_CONTINUOUS	(-1)
+
+#define ENTRY_KIND_FILE					0
+#define ENTRY_KIND_URL					1
+
+#define AVAILABLILITY_AVAILABLE			0
+#define AVAILABLILITY_UNAVAILABLE		1
+#define AVAILABLILITY_UNKNOWN			2
 
 #define FIELD_URL							0
 #define FIELD_FILENAME						1
@@ -56,6 +65,7 @@
 #define FIELD_REPLAYGAIN_TRACK_PEAK			23
 #define FIELD_REPLAYGAIN_ALBUM_GAIN			24
 #define FIELD_REPLAYGAIN_ALBUM_PEAK			25
+#define FIELD_AVAILABILITY					26
 //#define FIELD_STATIONNAME					26
 
 class IAudioFileIO
@@ -93,7 +103,7 @@ public:
 class IAudioSourceHelper
 {
 public:
-	virtual void		UpdateMetaData(LPTSTR szSource, LPTSTR szData, unsigned long ulFieldID)		= 0;
+	virtual void		UpdateMetaData(LPTSTR szSource, void * pNewData, unsigned long ulFieldID)		= 0;
 	virtual void		LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)		= 0;
 };
 

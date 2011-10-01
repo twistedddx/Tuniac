@@ -58,6 +58,12 @@ static ThemeIcon ThemeIconSet[THEMEICON_MAXICON] =
 		NULL
 	},
 	{
+		TEXT("item-unavailable.ico"),
+		IDI_THEMEICON_ITEM_UNAVAILABLE,
+		16,
+		NULL
+	},
+	{
 		TEXT("playlist-medialibrary.ico"),
 		IDI_THEMEICON_PLAYLIST_MEDIALIBRARY,
 		32,

@@ -55,6 +55,7 @@
 #define IDB_SHUFFLEOFF                  187
 #define IDB_SHUFFLEON                   188
 #define IDD_ABOUTBOX                    189
+#define IDI_THEMEICON_ITEM_UNAVAILABLE  190
 #define IDC_ADDOTHER_ADD                1001
 #define IDC_ADDOTHER_EDIT               1002
 #define IDC_ADDOTHER_CANCEL             1003

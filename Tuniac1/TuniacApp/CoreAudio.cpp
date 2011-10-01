@@ -604,9 +604,9 @@ void CCoreAudio::ReplayGainUseAlbumGain(bool bAlbumGain)
 }
 
 
-void	CCoreAudio::UpdateMetaData(LPTSTR szSource, LPTSTR szData, unsigned long ulFieldID)
+void	CCoreAudio::UpdateMetaData(LPTSTR szSource, void * pNewData, unsigned long ulFieldID)
 {
-	tuniacApp.UpdateMetaData(szSource, szData, ulFieldID);
+	tuniacApp.UpdateMetaData(szSource, pNewData, ulFieldID);
 }
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)
