@@ -21,17 +21,6 @@
 
 #pragma once
 
-#define INVALID_ENTRY_ID	0xffffffff
-
-#define PLAYTIME_CONTINUOUS	(-1)
-
-#define ENTRY_KIND_FILE					0
-#define ENTRY_KIND_URL					1
-
-#define AVAILABLILITY_AVAILABLE			0
-#define AVAILABLILITY_UNAVAILABLE		1
-#define AVAILABLILITY_UNKNOWN			2
-
 typedef struct
 {
 public:
@@ -39,7 +28,7 @@ public:
 	TCHAR				szURL[MAX_PATH];
 	unsigned long		dwFilesize;
 
-	unsigned long		dwAvailablility;
+	unsigned long		dwAvailability;
 
 	SYSTEMTIME			stDateAdded;
 	SYSTEMTIME			stFileCreationDate;

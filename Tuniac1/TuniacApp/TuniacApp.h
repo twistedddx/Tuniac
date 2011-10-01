@@ -192,7 +192,7 @@ public:
 
 	void				UpdateState(void);
 	void				UpdateTitles(void);
-	void				UpdateMetaData(LPTSTR szURL, LPTSTR szTitle, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR szURL, void * pNewData, unsigned long ulFieldID);
 
 	bool				SetArt(LPTSTR szSource);
 

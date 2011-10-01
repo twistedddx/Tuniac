@@ -819,6 +819,7 @@ IDI_THEMEICON_PLAYLIST_STANDARD ICON                    ".\\default-theme\\playl
 IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
 IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
 IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
+IDI_THEMEICON_ITEM_UNAVAILABLE ICON               ".\\default-theme\\item-unavailable.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

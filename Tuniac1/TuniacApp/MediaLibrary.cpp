@@ -612,7 +612,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
 			pIPE->SetEntryID(ulEntryID);
-			pIPE->SetFieldNumber(FIELD_PLAYCOUNT, ulPlayCount);
+			pIPE->SetField(FIELD_PLAYCOUNT, (void *)(ulPlayCount+1));
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
 

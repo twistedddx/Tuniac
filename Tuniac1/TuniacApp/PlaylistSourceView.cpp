@@ -572,6 +572,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_ITEM_NORMAL)); 
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_ITEM_ACTIVE)); 
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_ITEM_UNAVAILABLE)); 
 
 				ListView_SetImageList(GetDlgItem(hDlg, IDC_PLAYLIST_LIST), hList, LVSIL_SMALL);
 
@@ -1413,6 +1414,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										pDispInfo->item.iImage = 1;
 									}
+								}
+								if(m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem)->GetField(FIELD_AVAILABILITY))
+								{
+									pDispInfo->item.iImage = 2;
 								}
 							}
 

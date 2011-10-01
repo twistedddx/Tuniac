@@ -101,7 +101,7 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 
 		case FIELD_TRACKNUM:
 			{
-				return & m_LibraryEntry.dwTrack;
+				return (void *)m_LibraryEntry.dwTrack;
 			}
 			break;
 
@@ -131,7 +131,7 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 
 		case FIELD_KIND:
 			{
-				return (void*)(m_LibraryEntry.dwKind);
+				return (void*)m_LibraryEntry.dwKind;
 			}
 			break;
 
@@ -202,6 +202,13 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 				return & m_LibraryEntry.fReplayGain_Album_Peak;
 			}
 			break;
+
+		case FIELD_AVAILABILITY:
+			{
+				return (void *)m_LibraryEntry.dwAvailability;
+			}
+			break;
+
 	}
 
 	return NULL;
@@ -221,8 +228,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 		case FIELD_PLAYCOUNT:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.dwPlayCount))
-                    return false;
+				m_LibraryEntry.dwPlayCount = (unsigned long)pNewData;
 			}
 			break;
 
@@ -264,8 +270,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 		case FIELD_YEAR:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.iYear))
-                    return false;
+				m_LibraryEntry.iYear = (int)pNewData;
 			}
 			break;
 
@@ -278,53 +283,54 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 					bOK = 2 == swscanf_s((LPTSTR)pNewData, TEXT("%u/%u"), &dwNewTrack[0], &dwNewTrack[1]);
 					if(bOK)
 						m_LibraryEntry.dwTrack[1] = dwNewTrack[1];
+					else
+						return false;
 				}
 				else
 				{
-					bOK = 1 == swscanf_s((LPTSTR)pNewData, TEXT("%u"), &dwNewTrack[0]);
-					if(bOK)
-						m_LibraryEntry.dwTrack[1] = 0;
+					dwNewTrack[0] = (unsigned long)pNewData;
+					m_LibraryEntry.dwTrack[1] = 0;
 				}
-				if(!bOK)
-					return false;
 				m_LibraryEntry.dwTrack[0] = dwNewTrack[0];
 			}
 			break;
 
 		case FIELD_NUMCHANNELS:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.iChannels))
-                    return false;
+				m_LibraryEntry.iChannels = (int)pNewData;
 			}
 			break;
 
 		case FIELD_BITRATE:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.iBitRate))
-                    return false;
+				m_LibraryEntry.iBitRate = (int)pNewData;
 			}
 			break;
 
 		case FIELD_SAMPLERATE:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.iSampleRate))
-                    return false;
+				m_LibraryEntry.iSampleRate = (int)pNewData;
 			}
 			break;
 
 		case FIELD_PLAYBACKTIME:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.iPlaybackTime))
-                    return false;
+				m_LibraryEntry.iPlaybackTime = (int)pNewData;
 			}
 			break;
 
 		case FIELD_RATING:
 			{
-				if(1 != swscanf_s((LPTSTR)pNewData, TEXT("%d"), &m_LibraryEntry.dwRating))
-                    return false;
+				m_LibraryEntry.dwRating = (unsigned long)pNewData;
 			}
 			break;
+
+		case FIELD_AVAILABILITY:
+			{
+				m_LibraryEntry.dwAvailability = (unsigned long)pNewData;
+			}
+			break;
+
 
 		default:
 			return false;
@@ -334,7 +340,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 	return true;
 }
-
+/*
 bool	CMediaLibraryPlaylistEntry::SetFieldNumber(unsigned long ulFieldID, unsigned long pNewData)
 {
 	switch(ulFieldID)
@@ -388,7 +394,7 @@ bool	CMediaLibraryPlaylistEntry::SetFieldNumber(unsigned long ulFieldID, unsigne
 
 	return true;
 }
-
+*/
 
 bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars)
 {

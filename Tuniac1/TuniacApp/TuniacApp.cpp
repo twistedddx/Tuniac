@@ -851,6 +851,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has finished a song unexpectedly
 					case NOTIFY_COREAUDIO_PLAYBACKFAILED:
 						{
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							if(pPlaylist)
+							{
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+								if(pIPE)
+								{
+									pIPE->SetField(FIELD_AVAILABILITY, (void *)AVAILABLILITY_UNAVAILABLE);
+									//redraw window
+									m_SourceSelectorWindow->UpdateView();
+								}
+
+							}
+
 							//CoreAudio couldnt open the last song we told it to, try again
 							//after 10 failed songs in a row we stop automatically going to the next song
 							if(m_iFailedSongRetry < 10)
@@ -892,9 +905,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								SYSTEMTIME st;
 								GetLocalTime(&st);
 								pIPE->SetField(FIELD_DATELASTPLAYED, &st);
-
-								unsigned long ulPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT)+1;
-								pIPE->SetFieldNumber(FIELD_PLAYCOUNT, ulPlayCount);
+								pIPE->SetField(FIELD_PLAYCOUNT, (void *)((unsigned long)pIPE->GetField(FIELD_PLAYCOUNT)+1));
 								
 								m_SourceSelectorWindow->UpdateView();
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
@@ -932,6 +943,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					//audiostream has started a song
 					case NOTIFY_COREAUDIO_PLAYBACKSTARTED:
 						{
+
+							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+							if(pPlaylist)
+							{
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+								if(pIPE)
+								{
+									if((int)pIPE->GetField(FIELD_AVAILABILITY) == 1)
+									{
+										pIPE->SetField(FIELD_AVAILABILITY, (void *)AVAILABLILITY_AVAILABLE);
+										//redraw window
+										m_SourceSelectorWindow->UpdateView();
+									}
+								}
+
+							}
+
 							if(m_Preferences.GetAutoSoftPause())
 								m_SoftPause.bNow = true;
 							m_iFailedSongRetry = 0;
@@ -2349,13 +2377,13 @@ void	CTuniacApp::UpdateState(void)
 }
 
 //update streamtitle eg for mp3 streams
-void	CTuniacApp::UpdateMetaData(LPTSTR szURL, LPTSTR szData, unsigned long ulFieldID)
+void	CTuniacApp::UpdateMetaData(LPTSTR szURL, void * pNewData, unsigned long ulFieldID)
 {
 	IPlaylistEntry * pIPE = m_MediaLibrary.GetEntryByURL(szURL);
 
 	if(pIPE)
 	{
-		pIPE->SetField(ulFieldID, szData);
+		pIPE->SetField(ulFieldID, pNewData);
 
 		UpdateTitles();
 		//make sure the source selector window exists we can get here before its created
