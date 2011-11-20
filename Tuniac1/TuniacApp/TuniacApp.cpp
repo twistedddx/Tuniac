@@ -633,8 +633,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(lParam)
 				{	
 					LPMINMAXINFO lpMinMaxInfo = (LPMINMAXINFO)lParam;
-					lpMinMaxInfo->ptMinTrackSize.x = 530;
-					lpMinMaxInfo->ptMinTrackSize.y = 400;
+					lpMinMaxInfo->ptMinTrackSize.x = 500;
+					lpMinMaxInfo->ptMinTrackSize.y = 445;
 				}
 			}
 			break;
