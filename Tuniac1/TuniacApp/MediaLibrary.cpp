@@ -200,7 +200,7 @@ void CMediaLibrary::AddingFilesIncrement(bool bDir)
 		return;
 
 	TCHAR szCount[256];
-	wnsprintf(szCount, 256, TEXT("%d files in %d folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
+	_snwprintf(szCount, 256, TEXT("%d files in %d folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
 	SendDlgItemMessage(m_hAddingWindow, IDC_ADDINGFILES_COUNT, WM_SETTEXT, 0, (WPARAM)szCount);
 }
 
@@ -870,7 +870,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(unsigned long))
 			{
 				TCHAR tstr[256];
-				wsprintf(tstr, TEXT("Error saving playlist entry %d."), x);
+				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %d."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;
@@ -882,7 +882,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(LibraryEntry))
 			{
 				TCHAR tstr[256];
-				wsprintf(tstr, TEXT("Error saving playlist entry %d."), x);
+				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %d."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;

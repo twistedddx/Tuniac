@@ -75,7 +75,7 @@ bool			CImportExportManager::Initialize(void)
 					if(pGTIPVF != NULL)
 					{
 						TCHAR szError[512];
-						wnsprintf(szError, 512, TEXT("Incompatable import plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						_snwprintf(szError, 512, TEXT("Incompatable import plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -101,7 +101,7 @@ bool			CImportExportManager::Initialize(void)
 					if(pGTEPVF != NULL)
 					{
 						TCHAR szError[512];
-						wnsprintf(szError, 512, TEXT("Incompatable export plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						_snwprintf(szError, 512, TEXT("Incompatable export plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -214,7 +214,7 @@ void			CImportExportManager::PopuplateExportMenu(HMENU hMenu, unsigned long ulBa
 	TCHAR szItem[128];
 	for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 	{
-		wnsprintf(szItem, 128, TEXT("%s - %s"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
+		_snwprintf(szItem, 128, TEXT("%s - %s"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
 		AppendMenu(hMenu, MF_STRING, ulBase + i, szItem);
 	}
 }
@@ -334,8 +334,8 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 		for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 		{
 			
-			wnsprintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
-			wnsprintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
+			_snwprintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
+			_snwprintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
 			if((pTemp = realloc((void *)szFilters, (nSize + wcslen(szFilterText) + wcslen(szFilterExt) + 2) * sizeof(TCHAR))) == NULL) break;
 			szFilters = (LPTSTR)pTemp;
 

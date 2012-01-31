@@ -139,7 +139,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;Wtsapi32.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -165,7 +165,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;Wtsapi32.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -197,7 +197,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static32.lib;shlwapi.lib;Wtsapi32.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -228,7 +228,7 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>turbojpeg-static64.lib;shlwapi.lib;Wtsapi32.lib;comctl32.lib;winmm.lib;opengl32.lib;glu32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -251,7 +251,6 @@
     <ClCompile Include="AudioStream.cpp" />
     <ClCompile Include="BasePlaylist.cpp" />
     <ClCompile Include="CoreAudio.cpp" />
-    <ClCompile Include="CurrentlyPlaying.cpp" />
     <ClCompile Include="DoubleBuffer.cpp" />
     <ClCompile Include="FileAssoc.cpp" />
     <ClCompile Include="History.cpp" />
@@ -273,7 +272,6 @@
     <ClCompile Include="SSE_Utils.cpp" />
     <ClCompile Include="StandardPlaylist.cpp" />
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="SysEvents.cpp" />
     <ClCompile Include="TagEditor.cpp" />
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="Tuniac.cpp" />
@@ -297,7 +295,6 @@
     <ClInclude Include="BasePlaylist.h" />
     <ClInclude Include="CoreAudio.h" />
     <ClInclude Include="CriticalSection.h" />
-    <ClInclude Include="CurrentlyPlaying.h" />
     <ClInclude Include="DoubleBuffer.h" />
     <ClInclude Include="FileAssoc.h" />
     <ClInclude Include="generaldefs.h" />
@@ -338,10 +335,8 @@
     <ClInclude Include="StandardPlaylist.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="stdint.h" />
-    <ClInclude Include="SysEvents.h" />
     <ClInclude Include="TagEditor.h" />
     <ClInclude Include="Taskbar.h" />
-    <ClInclude Include="Tuniac-Meta.h" />
     <ClInclude Include="TuniacApp.h" />
     <ClInclude Include="TuniacHTTPFileIO.h" />
     <ClInclude Include="TuniacMemoryFileIO.h" />
@@ -356,6 +351,7 @@
     <None Include="default-theme\item-active.ico" />
     <None Include="default-theme\item-normal.ico" />
     <None Include="cursors\newplaylistcursor.cur" />
+    <None Include="default-theme\item-unavailable.ico" />
     <None Include="images\next.bmp" />
     <None Include="images\pause.bmp" />
     <None Include="images\play.bmp" />

@@ -58,19 +58,19 @@ bool			COGGInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if ((tInfo = ov_comment(&oggFile, -1))) {
 		if ((t = vorbis_comment_query(tInfo, "title", 0)))
-			swprintf(libEnt->szTitle, L"%S", t);
+			_snwprintf(libEnt->szTitle, 128, L"%S", t);
 
 		if ((t = vorbis_comment_query(tInfo, "artist", 0)))
-			swprintf(libEnt->szArtist, L"%S", t);
+			_snwprintf(libEnt->szArtist, 128, L"%S", t);
 
 		if ((t = vorbis_comment_query(tInfo, "album", 0)))
-			swprintf(libEnt->szAlbum, L"%S", t);
+			_snwprintf(libEnt->szAlbum, 128, L"%S", t);
 
 		if ((t = vorbis_comment_query(tInfo, "comment", 0)))
-			swprintf(libEnt->szComment, L"%S", t);
+			_snwprintf(libEnt->szComment, 128, L"%S", t);
 
 		if ((t = vorbis_comment_query(tInfo, "genre", 0)))
-			swprintf(libEnt->szGenre, L"%S", t);
+			_snwprintf(libEnt->szGenre, 128, L"%S", t);
 
 		if ((t = vorbis_comment_query(tInfo, "date", 0)))
 			libEnt->iYear = atoi(t);

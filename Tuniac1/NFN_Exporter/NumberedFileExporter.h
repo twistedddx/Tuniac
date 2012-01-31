@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ITuniacExportPlugin.h"
+#include <stdio.h>
 
 class CNumberedFileExporter :
 	public ITuniacExportPlugin

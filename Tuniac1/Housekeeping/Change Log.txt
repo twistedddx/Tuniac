@@ -1,3 +1,13 @@
+Jan, 2012
+---------
+-handle mp4 art
+-update kissfft
+-rework auto pause/resume for lock/logoff/switch user/screensaver
+-pretty EQ prefs screen
+-fix enable EQ at init
+-dont draw albumart panel when at min/max size
+-tidy up
+
 Sep, 2011
 ---------
 -double click to configure plugins

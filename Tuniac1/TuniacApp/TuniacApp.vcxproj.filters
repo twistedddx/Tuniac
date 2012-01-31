@@ -45,9 +45,6 @@
     <ClCompile Include="CoreAudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CurrentlyPlaying.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DoubleBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -109,9 +106,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SysEvents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TagEditor.cpp">
@@ -177,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CriticalSection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CurrentlyPlaying.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DoubleBuffer.h">
@@ -302,16 +293,10 @@
     <ClInclude Include="stdint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SysEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TagEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Taskbar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tuniac-Meta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TuniacApp.h">
@@ -375,6 +360,9 @@
     </None>
     <None Include="images\previous.bmp">
       <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\item-unavailable.ico">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

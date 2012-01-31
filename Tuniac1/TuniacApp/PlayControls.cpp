@@ -535,7 +535,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				TCHAR tstr[256];
 
-				wsprintf(tstr, TEXT("%01d:%02d:%02d"), (ulPosition / 60) / 60, (ulPosition / 60) % 60, ulPosition % 60);
+				_snwprintf(tstr, 256, TEXT("%01d:%02d:%02d"), (ulPosition / 60) / 60, (ulPosition / 60) % 60, ulPosition % 60);
 
 				SetRect(&TimeRect, 
 						SeekRect.left - 48, 
@@ -551,7 +551,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				if(ulSongLength != LENGTH_UNKNOWN)
 				{
-					wsprintf(tstr, TEXT("%01d:%02d:%02d"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
+					_snwprintf(tstr, 256, TEXT("%01d:%02d:%02d"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
 
 					SetRect(&TimeRect, 
 							m_SeekRect.right +2, 

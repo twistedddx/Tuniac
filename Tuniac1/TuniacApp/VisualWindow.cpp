@@ -675,14 +675,14 @@ void *	CVisualWindow::GetVariable(Variable eVar)
 bool	CVisualWindow::GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
 {
 	TCHAR szVisualSubKey[128];
-	wnsprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	_snwprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginGetValue(szVisualSubKey, lpValueName, lpType, lpData, lpcbData);
 }
 
 bool	CVisualWindow::SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
 {
 	TCHAR szVisualSubKey[128];
-	wnsprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	_snwprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginSetValue(szVisualSubKey, lpValueName, dwType, lpData, cbData);
 }
 

@@ -23,14 +23,14 @@
 #include "iwindow.h"
 #include "ISourceView.h"
 
+#include "DoubleBuffer.h"
+
 #include "PlaylistSourceView.h"
 #include "AudioCDSourceView.h"
-//#include "PlayQueueSourceView.h"
-//#include "RadioSourceView.h"
 
 #define SEPERATOR_WIDTH		5
-
-#define INVALID_PLAYLIST_VALUE	0xffffffff
+#define SPLITMINSIZE		125
+#define SPLITMAXSIZE		300
 
 class CSourceSelectorWindow :
 	public IWindow

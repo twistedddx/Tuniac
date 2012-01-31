@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ITuniacPlugin.h"
-#include "shlwapi.h"
+#include <stdio.h>
 
 class CMSNInfo :
 	public ITuniacPlugin
