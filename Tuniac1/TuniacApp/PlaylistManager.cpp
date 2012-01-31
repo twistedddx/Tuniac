@@ -23,7 +23,7 @@
 
 
 #include "stdafx.h"
-#include ".\playlistmanager.h"
+#include "playlistmanager.h"
 
 
 // only increment this when a change becomes incompatable with older versions!
@@ -64,7 +64,7 @@ bool CPlaylistManager::Initialize(void)
 		if(DriveInMask(DrivesMask, c))
 		{
 			TCHAR tstr[10];
-			wsprintf(tstr, TEXT("%c:\\"), c);
+			_snwprintf(tstr, 10, TEXT("%c:\\"), c);
 
 			if(GetDriveType(tstr) == DRIVE_CDROM)
 			{
@@ -735,7 +735,7 @@ LRESULT CALLBACK CPlaylistManager::WndProc(HWND hWnd, UINT message, WPARAM wPara
 									if(DriveInMask(lpdbv->dbcv_unitmask, c))
 									{
 										TCHAR tstr[10];
-										wsprintf(tstr, TEXT("%c:\\"), c);
+										_snwprintf(tstr, 10, TEXT("%c:\\"), c);
 
 										// is this drive a CD?
 										if(GetDriveType(tstr) == DRIVE_CDROM)
@@ -774,7 +774,7 @@ LRESULT CALLBACK CPlaylistManager::WndProc(HWND hWnd, UINT message, WPARAM wPara
 									if(DriveInMask(lpdbv->dbcv_unitmask, c))
 									{
 										TCHAR tstr[10];
-										wsprintf(tstr, TEXT("%c:\\"), c);
+										_snwprintf(tstr, 10, TEXT("%c:\\"), c);
 
 										// is this drive a CD?
 										if(GetDriveType(tstr) == DRIVE_CDROM)

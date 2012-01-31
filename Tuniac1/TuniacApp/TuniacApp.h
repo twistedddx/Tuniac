@@ -37,7 +37,6 @@
 #include "AlbumArt.h"
 
 #include "PlaylistManager.h"
-#include "SysEvents.h"
 #include "Taskbar.h"
 
 #include "History.h"
@@ -79,6 +78,8 @@
 
 #define WM_TRAYICON 				WM_USER + 1
 
+#define SYSEVENTS_TIMERID		0x500
+
 class CTuniacApp
 {
 protected:
@@ -109,6 +110,7 @@ protected:
 	bool								m_bSaveML;
 
 	bool								m_WasPlaying;
+	bool								m_bScreensaveActive;
 
 	int									m_ActiveScreen;
 
@@ -141,7 +143,6 @@ public:
 	Array<IWindow *,3>			m_WindowArray;
 
 	CPluginManager				m_PluginManager;
-	CSysEvents					m_SysEvents;
 	CTaskbar					m_Taskbar;
 
 	CHistory					m_History;

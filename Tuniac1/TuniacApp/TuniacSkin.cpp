@@ -134,7 +134,7 @@ bool			CTuniacSkin::LoadTheme(LPTSTR szThemeName)
 	TCHAR szFilename[512];
 	for(int i = 0; i < THEMEICON_MAXICON; i++)
 	{
-		wnsprintf(szFilename, 512, TEXT("%s%s"), m_BasePath, ThemeIconSet[i].szFilename);
+		_snwprintf(szFilename, 512, TEXT("%s%s"), m_BasePath, ThemeIconSet[i].szFilename);
 		ThemeIconSet[i].hHandle = (HICON)LoadImage(	tuniacApp.getMainInstance(), 
 													szFilename, 
 													IMAGE_ICON, 

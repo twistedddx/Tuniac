@@ -423,7 +423,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_PLAYCOUNT:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwPlayCount);
+				_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwPlayCount);
 			}
 			break;
 
@@ -460,7 +460,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 		case FIELD_YEAR:
 			{
 				if(m_LibraryEntry.iYear > 0)
-					wnsprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.iYear);
+					_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.iYear);
 			}
 			break;
 
@@ -468,11 +468,11 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.dwTrack[1])
 				{
-					wnsprintf(szString, ulNumChars, TEXT("%d/%d"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
+					_snwprintf(szString, ulNumChars, TEXT("%d/%d"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
 				}
 				else
 				{
-					wnsprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwTrack[0]);
+					_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwTrack[0]);
 				}
 			}
 			break;
@@ -487,22 +487,22 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 				{
 					int time = m_LibraryEntry.iPlaybackTime / 1000;
 					if(time > 3600)
-						wnsprintf(szString, ulNumChars, TEXT("%02d:%02d:%02d"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
+						_snwprintf(szString, ulNumChars, TEXT("%02d:%02d:%02d"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
 					else
-						wnsprintf(szString, ulNumChars, TEXT("%02d:%02d"), (time / 60) % 60, time % 60 );
+						_snwprintf(szString, ulNumChars, TEXT("%02d:%02d"), (time / 60) % 60, time % 60 );
 				}
 			}
 			break;
 
 		case FIELD_BITRATE:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%dkbps"), m_LibraryEntry.iBitRate/1000);
+				_snwprintf(szString, ulNumChars, TEXT("%dkbps"), m_LibraryEntry.iBitRate/1000);
 			}
 			break;
 
 		case FIELD_SAMPLERATE:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%dHz"), m_LibraryEntry.iSampleRate);
+				_snwprintf(szString, ulNumChars, TEXT("%dHz"), m_LibraryEntry.iSampleRate);
 			}
 			break;
 
@@ -542,7 +542,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_RATING:
 			{
-				wnsprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwRating);
+				_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwRating);
 			}
 			break;
 
@@ -550,23 +550,23 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{	// NOTE: optimize divides with bitshifts?? i / 1024 == i >> 10 
 				if (m_LibraryEntry.dwFilesize < 1024)
 				{
-					wnsprintf(szString, ulNumChars, TEXT("%d bytes"), m_LibraryEntry.dwFilesize);
+					_snwprintf(szString, ulNumChars, TEXT("%d bytes"), m_LibraryEntry.dwFilesize);
 					break;
 				}
 				unsigned long ulSize = m_LibraryEntry.dwFilesize / 1024;
 				if (ulSize < 1024)
 				{
-					wnsprintf(szString, ulNumChars, TEXT("%d Kb"), ulSize);
+					_snwprintf(szString, ulNumChars, TEXT("%d Kb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
 				if (ulSize < 1024)
 				{
-					wnsprintf(szString, ulNumChars, TEXT("%d Mb"), ulSize);
+					_snwprintf(szString, ulNumChars, TEXT("%d Mb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
-				wnsprintf(szString, ulNumChars, TEXT("%d Gb"), ulSize);
+				_snwprintf(szString, ulNumChars, TEXT("%d Gb"), ulSize);
 			}
 			break;
 

@@ -66,7 +66,7 @@ bool			CNumberedFileExporter::ExportEntry(LibraryEntry & libraryEntry)
 
 	TCHAR tempBit[32];
 
-	wsprintf(tempBit, TEXT("%04d - "), m_ulCurrentFileIndex);
+	_snwprintf(tempBit, 32, TEXT("%04d - "), m_ulCurrentFileIndex);
 	StrCat(m_szTempFile, tempBit);
 
 	StrCat(m_szTempFile, PathFindFileName(libraryEntry.szURL));

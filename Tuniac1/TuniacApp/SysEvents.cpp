@@ -45,7 +45,7 @@ bool			CSysEvents::Initialize(void)
 	m_WorkstationLocked = false;
 	m_ScreensaverActive = false;
 
-	SetTimer(tuniacApp.getMainWindow(), SYSEVENTS_TIMERID, 5000, NULL);
+
 	return true;
 }
 

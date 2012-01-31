@@ -72,8 +72,16 @@ protected:
 	BOOL		m_bMainWindowMinimized;
 	BOOL		m_bMinimizeOnClose;
 	BOOL		m_bAlwaysOnTop;
-	BOOL		m_bPauseOnLock;
+
 	BOOL		m_bPauseOnScreensave;
+	BOOL		m_bPauseOnLock;
+	BOOL		m_bPauseOnLog;
+	BOOL		m_bPauseOnSwitch;
+	BOOL		m_bResumeOnScreensave;
+	BOOL		m_bResumeOnLock;
+	BOOL		m_bResumeOnLog;
+	BOOL		m_bResumeOnSwitch;
+
 	BOOL		m_bShowAlbumArt;
 	BOOL		m_bArtOnSelection;
 	BOOL		m_bFollowCurrentSong;
@@ -222,8 +230,15 @@ public:
 	void		SetFollowCurrentSongMode(BOOL bEnabled);
 	BOOL		GetFollowCurrentSongMode(void);
 
-	BOOL		GetPauseOnLock(void);
 	BOOL		GetPauseOnScreensave(void);
+	BOOL		GetPauseOnLock(void);
+	BOOL		GetPauseOnLog(void);
+	BOOL		GetPauseOnSwitch(void);
+	BOOL		GetResumeOnScreensave(void);
+	BOOL		GetResumeOnLock(void);
+	BOOL		GetResumeOnLog(void);
+	BOOL		GetResumeOnSwitch(void);
+
 
 	BOOL		GetShowAlbumArt(void);
 	BOOL		GetArtOnSelection(void);

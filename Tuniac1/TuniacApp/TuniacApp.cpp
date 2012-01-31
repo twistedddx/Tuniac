@@ -130,8 +130,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_bSavePrefs = true;
 	m_bSaveML = true;
 
-	//used to pause/resume on Windows suspends like sleep or hibernate
+	//used to pause/resume on Windows suspends like sleep or hibernate or user switch/lock/logoff
 	m_WasPlaying = false;
+	m_bScreensaveActive = false;
 
 	//load everything saved including windows size/postion/ontop
 	m_Preferences.LoadPreferences();
@@ -152,6 +153,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		return false;
 
 	CCoreAudio::Instance()->SetVolumePercent(m_Preferences.GetVolumePercent());
+	CCoreAudio::Instance()->EnableEQ(m_Preferences.GetEQEnabled());
 	CCoreAudio::Instance()->SetEQGain(m_Preferences.GetEQLowGain(), m_Preferences.GetEQMidGain(), m_Preferences.GetEQHighGain());
 	CCoreAudio::Instance()->SetAmpGain(m_Preferences.GetAmpGain());
 	CCoreAudio::Instance()->SetAudioBufferSize(m_Preferences.GetAudioBuffering());
@@ -168,9 +170,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		return false;
 
 	if(!m_PluginManager.Initialize())
-		return false;
-
-	if (!m_SysEvents.Initialize())
 		return false;
 
 	IWindow * t;
@@ -314,6 +313,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	//notify that before we created the playlist window
 	PostMessage(m_hWnd, WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 
+	WTSRegisterSessionNotification(m_hWnd, NOTIFY_FOR_THIS_SESSION);
+	SetTimer(m_hWnd, SYSEVENTS_TIMERID, 5000, NULL);
+
 	return true;
 }
 
@@ -336,7 +338,6 @@ bool CTuniacApp::Shutdown()
 	m_PlaylistManager.Shutdown(m_bSaveML);
 	m_MediaLibrary.Shutdown(m_bSaveML);
 
-	m_SysEvents.Shutdown();
 	m_PluginManager.Shutdown();
 
     while(m_WindowArray.GetCount())
@@ -355,6 +356,9 @@ bool CTuniacApp::Shutdown()
 	CCoreAudio::Instance()->Shutdown();
 
 	m_Taskbar.Shutdown();
+
+	WTSUnRegisterSessionNotification(m_hWnd);
+	KillTimer(m_hWnd, SYSEVENTS_TIMERID);
 
 	::WSACleanup();
 
@@ -407,13 +411,46 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 {
 	switch(message)
 	{
-
-		case WM_TIMER:
+	case WM_TIMER:
+		{
+			if(wParam == SYSEVENTS_TIMERID)
 			{
-				if(wParam == SYSEVENTS_TIMERID)
-					m_SysEvents.CheckSystemState();
+				BOOL bActive = false;
+				SystemParametersInfo(SPI_GETSCREENSAVERRUNNING, 0, &bActive, 0);
+				if(bActive)
+				{
+					m_bScreensaveActive = true;
+					if(m_Preferences.GetPauseOnScreensave())
+					{
+						if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+						{
+							m_WasPlaying = true;
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+						}
+					}
+				}
+				else if(m_bScreensaveActive)
+				{
+					m_bScreensaveActive = false;
+					if(m_Preferences.GetResumeOnScreensave())
+					{
+						IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+						if(pPlaylist)
+						{
+							IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+							if(pIPE)
+							{
+								Sleep(3000);
+								PlayEntry(pIPE, m_WasPlaying, true);
+								m_WasPlaying = false;
+							}
+						}
+					}
+				
+				}
 			}
-			break;
+		}
+		break;
 
 		case WM_CREATE:
 			{
@@ -582,6 +619,38 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+		case WM_WTSSESSION_CHANGE:
+			{
+				if(wParam == WTS_SESSION_LOCK && m_Preferences.GetPauseOnLock() ||
+					wParam == WTS_CONSOLE_DISCONNECT && m_Preferences.GetPauseOnSwitch() ||
+					wParam == WTS_SESSION_LOGOFF && m_Preferences.GetPauseOnLog())
+				{
+					if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+					{
+						m_WasPlaying = true;
+						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+					}
+				}
+
+				if(wParam == WTS_SESSION_UNLOCK && m_Preferences.GetResumeOnLock() ||
+					wParam == WTS_CONSOLE_CONNECT && m_Preferences.GetResumeOnSwitch() ||
+					wParam == WTS_SESSION_LOGON && m_Preferences.GetResumeOnLog())
+				{
+					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+					if(pPlaylist)
+					{
+						IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+						if(pIPE)
+						{
+							Sleep(3000);
+							PlayEntry(pIPE, m_WasPlaying, true);
+							m_WasPlaying = false;
+						}
+					}
+				}
+			}
+			break;
+
 			//the cross at top right of window clicked
 		case WM_CLOSE:
 			{
@@ -597,7 +666,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 			}
 			break;
-
+		/*
 		case WM_POWERBROADCAST:
 			{
 				if(wParam == PBT_APMSUSPEND)
@@ -609,6 +678,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 					}
 				}
+
 				if(wParam == PBT_APMRESUMEAUTOMATIC)
 				{
 					//resume
@@ -618,15 +688,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 						if(pIPE)
 						{
-							Sleep(5000);
+							Sleep(3000);
 							PlayEntry(pIPE, m_WasPlaying, true);
 							m_WasPlaying = false;
 						}
 					}
 				}
+
 			}
 			break;
-
+		*/
 			//resize limits
 		case WM_GETMINMAXINFO:
 			{
@@ -1408,7 +1479,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(bOK)
 								{
 									TCHAR szMessage[128];
-									wnsprintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%d entries total.\n%d standard playlists."), 
+									_snwprintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%d entries total.\n%d standard playlists."), 
 													m_MediaLibrary.GetCount(), 
 													m_PlaylistManager.m_StandardPlaylists.GetCount());
 
@@ -1508,7 +1579,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								CAboutWindow about;
 
 								about.Show();
-								//wnsprintf(szAbout, 512, TEXT("Tuniac Audio Player (Beta)\nBuild: %s\n\nBased on code originally developed by Tony Million.\nNow developed by: Blair 'Blur' McBride.\n\n\nContributers (in chronological order):\n\n%s."), TEXT(__DATE__), TEXT(TUNIACABOUT_CONTRIBUTERS));
 							}
 							break;
 
@@ -2096,17 +2166,17 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 
 		if (lField == 0xFFFF)
 		{
-			wnsprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
 			break;
 		}
 		else if (lField == 0xFFFE)
 		{
-			wnsprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
 			b += 1;
 		}
 		else if (lField == 0xFFFD) 
 		{
-			wnsprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
 			b += 2;
 		}
 		else if (lField == -1)
@@ -2116,23 +2186,23 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			{
 				case STATE_STOPPED:
 					{
-						wnsprintf(szPlayState, 16, TEXT("Paused"));
+						_snwprintf(szPlayState, 16, TEXT("Paused"));
 					}
 					break;
 
 				case STATE_PLAYING:
 					{
-						wnsprintf(szPlayState, 16, TEXT("Playing"));
+						_snwprintf(szPlayState, 16, TEXT("Playing"));
 					}
 					break;
 
 				default:
 					{
-						wnsprintf(szPlayState, 16, TEXT("Stopped"));
+						_snwprintf(szPlayState, 16, TEXT("Stopped"));
 					}
 					break;
 			}
-			wnsprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), szPlayState);
+			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), szPlayState);
 			b += 2;
 		}
 		else
@@ -2174,7 +2244,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				}
 			}
 
-			wnsprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("%s"), szFieldData);
+			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("%s"), szFieldData);
 			b += 2;
 		}
 
@@ -2353,7 +2423,7 @@ void	CTuniacApp::UpdateTitles(void)
 	if(pIPE)
 		FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
 	else
-		wnsprintf(szWinTitle, 512, TEXT("Tuniac"));
+		_snwprintf(szWinTitle, 512, TEXT("Tuniac"));
 
 	SetWindowText(m_hWnd, szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);

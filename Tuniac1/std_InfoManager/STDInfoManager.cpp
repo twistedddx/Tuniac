@@ -425,6 +425,12 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
 			if(wmafile->tag());
 				count = wmafile->tag()->attributeListMap()["WM/Picture"].size();
 		}
+		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
+		{
+			if(mp4file->tag())
+				count = mp4file->tag()->itemListMap()["covr"].toCoverArtList().size();
+		}
+
 	}
 
 	fileref = TagLib::FileRef();
@@ -441,8 +447,6 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 	bool bRet = false;
 
 	TagLib::ID3v2::FrameList id3Tag;
-	TagLib::ASF::AttributeList wmaTag;
-
 	fileref = TagLib::FileRef(szFilename, false);
 
     if( !fileref.isNull() )
@@ -480,7 +484,7 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 		{
 			if(wmafile->tag());
 			{
-				wmaTag = wmafile->tag()->attributeListMap()["WM/Picture"];
+				TagLib::ASF::AttributeList wmaTag = wmafile->tag()->attributeListMap()["WM/Picture"];
 
 				if(!wmaTag.isEmpty() && (ulImageIndex < wmaTag.size()))
 				{
@@ -495,6 +499,39 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 
 						*ulArtType = pic.type();
 
+						bRet = true;
+					}
+				}
+			}
+		}
+		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
+		{
+			if(mp4file->tag())
+			{
+				TagLib::MP4::Item mp4Item = mp4file->tag()->itemListMap()["covr"];
+
+				if(mp4Item.isValid())
+				{
+					if(ulImageIndex < mp4Item.toCoverArtList().size())
+					{
+						TagLib::MP4::CoverArt coverArt = mp4Item.toCoverArtList()[ulImageIndex];
+
+						*ulImageDataSize = coverArt.data().size();
+						*pImageData = malloc(*ulImageDataSize);
+
+						if(coverArt.format() == 13)
+							StrCpy(szMimeType, TEXT("image/jpeg"));
+						else if(coverArt.format() == 14)
+							StrCpy(szMimeType, TEXT("image/png"));
+						else if(coverArt.format() == 27)
+							StrCpy(szMimeType, TEXT("image/bmp"));
+						else if(coverArt.format() == 12)
+							StrCpy(szMimeType, TEXT("image/gif"));
+
+						CopyMemory(*pImageData, coverArt.data().data(), *ulImageDataSize);
+
+						*ulArtType = 3;
+				
 						bRet = true;
 					}
 				}

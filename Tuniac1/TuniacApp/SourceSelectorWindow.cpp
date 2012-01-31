@@ -24,13 +24,10 @@
 #include "resource.h"
 #include "sourceselectorwindow.h"
 
-#include "DoubleBuffer.h"
 
 #define LIGHTCOL				RGB(255,255,255)
 #define DARKCOL					RGB(237,243,254)
 
-#define SPLITMINSIZE			125
-#define SPLITMAXSIZE			300
 
 #define WM_UPDATELIST			(WM_APP+34)
 #define WM_RENAMEITEM			(WM_APP+78)
@@ -392,16 +389,20 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					m_bTrackingMoved = true;
 					if(wParam & MK_LBUTTON)
 					{
-						POINT pt;
-						RECT		rcWindowRect;
 
-						POINTSTOPOINT(pt, MAKEPOINTS(lParam));
+							POINT pt;
+							RECT		rcWindowRect;
 
-						GetClientRect(hDlg, &rcWindowRect);
+							POINTSTOPOINT(pt, MAKEPOINTS(lParam));
 
-						m_ulSeparatorX = min(max(pt.x+m_iDragOffset, SPLITMINSIZE), SPLITMAXSIZE);
+							GetClientRect(hDlg, &rcWindowRect);
 
-						SendMessage(hDlg, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
+							unsigned long ulTemp = m_ulSeparatorX;
+
+							m_ulSeparatorX = min(max(pt.x+m_iDragOffset, SPLITMINSIZE), SPLITMAXSIZE);
+
+							if(ulTemp != SPLITMINSIZE && ulTemp != SPLITMAXSIZE)
+								SendMessage(hDlg, WM_SIZE, 0, MAKELPARAM(rcWindowRect.right, rcWindowRect.bottom));
 					}
 					else
 					{
@@ -617,9 +618,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 					case IDC_SOURCE_ADDPLAYLIST:
 						{
-							TCHAR str[60];
+							TCHAR str[20];
 
-							wsprintf(str, TEXT("Untitled Playlist"));
+							_snwprintf(str, 20, TEXT("Untitled Playlist"));
 
 							if(tuniacApp.m_PlaylistManager.CreateNewStandardPlaylist(str))
 							{

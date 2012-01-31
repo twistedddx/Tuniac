@@ -54,12 +54,11 @@ CAboutWindow::~CAboutWindow(void)
 
 bool CAboutWindow::Show(void)
 {
-	//DialogBox(	NULL, MAKEINTRESOURCE(IDD_ABOUTBOX), tuniacApp.getMainWindow(), (DLGPROC)AboutProc);
 	m_hAboutDlg = CreateDialog(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), tuniacApp.getMainWindow(), (DLGPROC)AboutProc);
 	if(m_hAboutDlg)
 	{
 		TCHAR szBuild[128];
-		wnsprintf(szBuild, 128, TEXT("Build: %s"), TEXT(__DATE__));
+		_snwprintf(szBuild, 128, TEXT("Build: %s"), TEXT(__DATE__));
 		ShowWindow(m_hAboutDlg, SW_SHOW);
 		SetDlgItemText(m_hAboutDlg, IDC_ABOUT_BUILD_TEXT, szBuild);
 	}

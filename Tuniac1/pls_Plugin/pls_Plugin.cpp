@@ -105,7 +105,7 @@ bool			CPLS_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 	TCHAR szBuffer[MAX_PATH];
 	TCHAR szVarName[32];
-	wnsprintf(szVarName, 32, L"File%d", m_Current);
+	_snwprintf(szVarName, 32, L"File%d", m_Current);
 	GetPrivateProfileString(L"playlist", szVarName, NULL, szBuffer, MAX_PATH, m_Source);
 
 	if(szBuffer && wcslen(szBuffer) > 2)
@@ -116,7 +116,7 @@ bool			CPLS_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 		if(!PathIsURL(szBuffer) && PathIsRelative(szBuffer))
 		{
-			wnsprintf(szDest, iDestSize, L"%s%s", m_BaseDir, szBuffer);
+			_snwprintf(szDest, iDestSize, L"%s%s", m_BaseDir, szBuffer);
 		}
 		else
 		{
@@ -132,7 +132,7 @@ bool			CPLS_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
 
 	TCHAR szVarName[32] = L"";
-	wnsprintf(szVarName, 32, L"Title%d", m_Current);
+	_snwprintf(szVarName, 32, L"Title%d", m_Current);
 	GetPrivateProfileString(L"playlist", szVarName, NULL, szDest, iDestSize, m_Source);
 
 	if(wcslen(szDest) > 0)
@@ -219,7 +219,7 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 		return false;
 	
 	TCHAR szVarName[32];
-	wnsprintf(szVarName, 32, L"File%d", ++m_Current);
+	_snwprintf(szVarName, 32, L"File%d", ++m_Current);
 
 	TCHAR szData[MAX_PATH];
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
@@ -233,23 +233,23 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 
 	if(!m_Version2) return true;
 
-	wnsprintf(szVarName, 32, L"Title%d", m_Current);
+	_snwprintf(szVarName, 32, L"Title%d", m_Current);
 	if(wcslen(libraryEntry.szTitle) > 0)
 	{
 		if(wcslen(libraryEntry.szArtist) > 0)
-			wnsprintf(szData, 512, L"%s - %s", libraryEntry.szArtist, libraryEntry.szTitle);
+			_snwprintf(szData, 512, L"%s - %s", libraryEntry.szArtist, libraryEntry.szTitle);
 		else if(wcslen(libraryEntry.szTitle) > 0)
-			wnsprintf(szData, 512, L"%s", libraryEntry.szTitle);
+			_snwprintf(szData, 512, L"%s", libraryEntry.szTitle);
 	}
 	else
 	{
-		wnsprintf(szData, 512, TEXT(""));
+		_snwprintf(szData, 512, TEXT(""));
 	}
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 
-	wnsprintf(szVarName, 32, L"Length%d", m_Current);
-	wnsprintf(szData, 512, L"%d", (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000));
+	_snwprintf(szVarName, 32, L"Length%d", m_Current);
+	_snwprintf(szData, 512, L"%d", (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000));
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 	
@@ -265,7 +265,7 @@ bool			CPLS_Export::EndExport(void)
 	{
 
 		TCHAR szNumEntries[32];
-		wnsprintf(szNumEntries, 32, L"%d", m_Current);
+		_snwprintf(szNumEntries, 32, L"%d", m_Current);
 
 		WritePrivateProfileString(L"playlist", L"NumberOfEntries", szNumEntries, m_Source);
 		WritePrivateProfileString(L"playlist", L"Version", L"2", m_Source);

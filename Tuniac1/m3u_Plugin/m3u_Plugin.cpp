@@ -132,7 +132,7 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 			{
 				TCHAR szTemp[MAX_PATH];
 				StrNCpy(szTemp, szDest, MAX_PATH);
-				wnsprintf(szDest, iDestSize, TEXT("%s%s"), m_BaseDir, szTemp);
+				_snwprintf(szDest, iDestSize, TEXT("%s%s"), m_BaseDir, szTemp);
 			}
 			return true;
 		}
@@ -239,22 +239,22 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 	if(wcslen(libraryEntry.szTitle) > 0)
 	{
 		if(wcslen(libraryEntry.szArtist) > 0)
-			wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s - %s"), iTime, libraryEntry.szArtist, libraryEntry.szTitle);
+			_snwprintf(szData, 512, TEXT("#EXTINF:%d,%s - %s"), iTime, libraryEntry.szArtist, libraryEntry.szTitle);
 		else if(wcslen(libraryEntry.szTitle) > 0)
-			wnsprintf(szData, 512, TEXT("#EXTINF:%d,%s"), iTime, libraryEntry.szTitle);
+			_snwprintf(szData, 512, TEXT("#EXTINF:%d,%s"), iTime, libraryEntry.szTitle);
 	}
 	else
 	{
-		wnsprintf(szData, 512, TEXT("#EXTINF:%d,"), iTime);
+		_snwprintf(szData, 512, TEXT("#EXTINF:%d,"), iTime);
 	}
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);
 
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		wnsprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
+		_snwprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
 	else
-		wnsprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL);
+		_snwprintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL);
 
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);

@@ -48,12 +48,13 @@
 #include <stdio.h>
 #include <memory.h>
 
+#include <Wtsapi32.h>
+
 //#include <math.h>
 //#include <winsock2.h>
 
 #include "Array.h"
 #include "TuniacApp.h"
-#include "Tuniac-Meta.h"
 #include "Random.h"
 
 extern CTuniacApp		tuniacApp;

@@ -103,7 +103,7 @@ unsigned long	CMSNInfo::ThreadProc(void)
 						LPTSTR szArtist = (LPTSTR)m_pHelper->GetVariable(Variable_Artist);
 						LPTSTR szTitle = (LPTSTR)m_pHelper->GetVariable(Variable_SongTitle);
 
-						wnsprintf(buffer, 512, TEXT("\\0Music\\0%d\\0%s\\0%s\\0%s\\0%s\\0"), bShow, TEXT("{0} - {1}"), szArtist, szTitle, TEXT("WMContentID"));
+						_snwprintf(buffer, 512, TEXT("\\0Music\\0%d\\0%s\\0%s\\0%s\\0%s\\0"), bShow, TEXT("{0} - {1}"), szArtist, szTitle, TEXT("WMContentID"));
 
 						COPYDATASTRUCT msndata;
 						msndata.dwData = 0x547;
@@ -123,7 +123,7 @@ unsigned long	CMSNInfo::ThreadProc(void)
 						TCHAR buffer[512];
 						BOOL bShow = FALSE;
 
-						wnsprintf(buffer, 512, TEXT("\\0Music\\0%d\\0%s\\0"), bShow, TEXT("WMContentID"));
+						_snwprintf(buffer, 512, TEXT("\\0Music\\0%d\\0%s\\0"), bShow, TEXT("WMContentID"));
 
 						COPYDATASTRUCT msndata;
 						msndata.dwData = 0x547;
