@@ -79,6 +79,7 @@
 #define WM_TRAYICON 				WM_USER + 1
 
 #define SYSEVENTS_TIMERID		0x500
+#define DELAYEDPLAY_TIMERID		0x501
 
 class CTuniacApp
 {
@@ -110,6 +111,7 @@ protected:
 	bool								m_bSaveML;
 
 	bool								m_WasPlaying;
+	unsigned long						m_WasPlayingTime;
 	bool								m_bScreensaveActive;
 
 	int									m_ActiveScreen;

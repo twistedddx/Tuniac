@@ -75,12 +75,12 @@ protected:
 
 	BOOL		m_bPauseOnScreensave;
 	BOOL		m_bPauseOnLock;
-	BOOL		m_bPauseOnLog;
 	BOOL		m_bPauseOnSwitch;
 	BOOL		m_bResumeOnScreensave;
 	BOOL		m_bResumeOnLock;
-	BOOL		m_bResumeOnLog;
 	BOOL		m_bResumeOnSwitch;
+	BOOL		m_bRememberPos;
+	int			m_iDelayInSecs;
 
 	BOOL		m_bShowAlbumArt;
 	BOOL		m_bArtOnSelection;
@@ -232,13 +232,12 @@ public:
 
 	BOOL		GetPauseOnScreensave(void);
 	BOOL		GetPauseOnLock(void);
-	BOOL		GetPauseOnLog(void);
 	BOOL		GetPauseOnSwitch(void);
 	BOOL		GetResumeOnScreensave(void);
 	BOOL		GetResumeOnLock(void);
-	BOOL		GetResumeOnLog(void);
 	BOOL		GetResumeOnSwitch(void);
-
+	BOOL		GetRememberPos(void);
+	int			GetDelayInSecs(void);
 
 	BOOL		GetShowAlbumArt(void);
 	BOOL		GetArtOnSelection(void);
