@@ -132,6 +132,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//used to pause/resume on Windows suspends like sleep or hibernate or user switch/lock/logoff
 	m_WasPlaying = false;
+	m_WasPlayingTime = 0;
 	m_bScreensaveActive = false;
 
 	//load everything saved including windows size/postion/ontop
@@ -426,6 +427,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						{
 							m_WasPlaying = true;
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+							if(m_Preferences.GetRememberPos())
+								m_WasPlayingTime = CCoreAudio::Instance()->GetPosition();
 						}
 					}
 				}
@@ -433,20 +436,24 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					m_bScreensaveActive = false;
 					if(m_Preferences.GetResumeOnScreensave())
+						SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs()*1000), NULL);
+				}
+			}
+			if(wParam == DELAYEDPLAY_TIMERID)
+			{
+				KillTimer(m_hWnd, DELAYEDPLAY_TIMERID);
+				IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+				if(pPlaylist)
+				{
+					IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+					if(pIPE)
 					{
-						IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-						if(pPlaylist)
-						{
-							IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
-							if(pIPE)
-							{
-								Sleep(3000);
-								PlayEntry(pIPE, m_WasPlaying, true);
-								m_WasPlaying = false;
-							}
-						}
+						PlayEntry(pIPE, m_WasPlaying, true);
+						if(m_Preferences.GetRememberPos())
+							CCoreAudio::Instance()->SetPosition(m_WasPlayingTime);
+						m_WasPlayingTime = 0;
+						m_WasPlaying = false;
 					}
-				
 				}
 			}
 		}
@@ -622,31 +629,21 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		case WM_WTSSESSION_CHANGE:
 			{
 				if(wParam == WTS_SESSION_LOCK && m_Preferences.GetPauseOnLock() ||
-					wParam == WTS_CONSOLE_DISCONNECT && m_Preferences.GetPauseOnSwitch() ||
-					wParam == WTS_SESSION_LOGOFF && m_Preferences.GetPauseOnLog())
+					wParam == WTS_CONSOLE_DISCONNECT && m_Preferences.GetPauseOnSwitch())
 				{
 					if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
 					{
 						m_WasPlaying = true;
 						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+						if(m_Preferences.GetRememberPos())
+							m_WasPlayingTime = CCoreAudio::Instance()->GetPosition();
 					}
 				}
 
 				if(wParam == WTS_SESSION_UNLOCK && m_Preferences.GetResumeOnLock() ||
-					wParam == WTS_CONSOLE_CONNECT && m_Preferences.GetResumeOnSwitch() ||
-					wParam == WTS_SESSION_LOGON && m_Preferences.GetResumeOnLog())
+					wParam == WTS_CONSOLE_CONNECT && m_Preferences.GetResumeOnSwitch())
 				{
-					IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-					if(pPlaylist)
-					{
-						IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
-						if(pIPE)
-						{
-							Sleep(3000);
-							PlayEntry(pIPE, m_WasPlaying, true);
-							m_WasPlaying = false;
-						}
-					}
+					SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs()*1000), NULL);
 				}
 			}
 			break;

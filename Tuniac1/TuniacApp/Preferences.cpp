@@ -37,12 +37,12 @@
 
 #define PAUSEONSCREENSAVE		TEXT("PauseOnScreensave")
 #define PAUSEONLOCK				TEXT("PauseOnLock")
-#define PAUSEONLOG				TEXT("PauseOnLog")
 #define PAUSEONSWITCH			TEXT("PauseOnSwitch")
 #define RESUMEONSCREENSAVE		TEXT("ResumeOnScreensave")
 #define RESUMEONLOCK			TEXT("ResumeOnLock")
-#define RESUMEONLOG				TEXT("ResumeOnLog")
 #define RESUMEONSWITCH			TEXT("ResumeOnSwitch")
+#define REMEMBERPOS				TEXT("RememberPos")
+#define DELAYINSECS				TEXT("DelayInSecs")
 
 #define SHOWALBUMART			TEXT("ShowAlbumArt")
 #define ARTONSELECTION			TEXT("ArtOnSelection")
@@ -132,19 +132,22 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
+				TCHAR szSize[8];
+
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FOLLOWCURRENTSONG, BM_SETCHECK, pPrefs->m_bFollowCurrentSong ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_SETCHECK, pPrefs->m_bSmartSorting ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_SETCHECK, pPrefs->m_bAutoSoftPause ? BST_CHECKED : BST_UNCHECKED, 0);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bPauseOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOCK, BM_SETCHECK, pPrefs->m_bPauseOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOG, BM_SETCHECK, pPrefs->m_bPauseOnLog ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSWITCH, BM_SETCHECK, pPrefs->m_bPauseOnSwitch ? BST_CHECKED : BST_UNCHECKED, 0);
-
 				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bResumeOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOCK, BM_SETCHECK, pPrefs->m_bResumeOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOG, BM_SETCHECK, pPrefs->m_bResumeOnLog ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_SETCHECK, pPrefs->m_bResumeOnSwitch ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_REMEMBERPOS, BM_SETCHECK, pPrefs->m_bRememberPos ? BST_CHECKED : BST_UNCHECKED, 0);
+				_itow(pPrefs->m_iDelayInSecs, szSize, 10);
+				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iDelayInSecs);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_DELAYINSECS, WM_SETTEXT, 0, (LPARAM)szSize);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_TASKBAR_NORMAL, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconNever ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_TASKBAR_MINIMIZE, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconMinimize ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -155,13 +158,14 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENT, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePrevent ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENTFULL, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePreventFull ? BST_CHECKED : BST_UNCHECKED, 0);
 
-				TCHAR szSize[8];
-				_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
+				_itow(pPrefs->m_iHistoryListSize, szSize, 10);
+				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(HISTORY_MAX, 2));
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_HISTORYCOUNT), 0);
  
-				_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
+				_itow(pPrefs->m_iFutureListSize, szSize, 10);
+				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(FUTURE_MAX, 2));
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_FUTURECOUNT), 0);
@@ -215,13 +219,6 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						}
 						break;
 
-					case IDC_GENERAL_PAUSEONLOG:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOG, BM_GETCHECK, 0, 0);
-							pPrefs->m_bPauseOnLog = State == BST_UNCHECKED ? FALSE : TRUE;
-						}
-						break;
-
 					case IDC_GENERAL_PAUSEONSWITCH:
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSWITCH, BM_GETCHECK, 0, 0);
@@ -243,17 +240,30 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						}
 						break;
 
-					case IDC_GENERAL_RESUMEONLOG:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOG, BM_GETCHECK, 0, 0);
-							pPrefs->m_bResumeOnLog = State == BST_UNCHECKED ? FALSE : TRUE;
-						}
-						break;
-
 					case IDC_GENERAL_RESUMEONSWITCH:
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_GETCHECK, 0, 0);
 							pPrefs->m_bResumeOnSwitch = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+					case IDC_GENERAL_REMEMBERPOS:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_REMEMBERPOS, BM_GETCHECK, 0, 0);
+							pPrefs->m_bRememberPos = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+					case IDC_GENERAL_DELAYINSECS:
+						{
+							TCHAR szSize[4];
+							SendDlgItemMessage(hDlg, IDC_GENERAL_DELAYINSECS, WM_GETTEXT, 8, (LPARAM)szSize);
+							int iSize = _wtoi(szSize);
+							if(iSize < 0)
+								iSize = 0;
+							if(iSize > 10)
+								iSize = 10;
+							pPrefs->m_iDelayInSecs = iSize;
 						}
 						break;
 
@@ -1394,12 +1404,12 @@ bool CPreferences::DefaultPreferences(void)
 
 	m_bPauseOnScreensave		= TRUE;
 	m_bPauseOnLock				= TRUE;
-	m_bPauseOnLog				= TRUE;
 	m_bPauseOnSwitch			= TRUE;
 	m_bResumeOnScreensave		= FALSE;
 	m_bResumeOnLock				= FALSE;
-	m_bResumeOnLog				= FALSE;
 	m_bResumeOnSwitch			= FALSE;
+	m_bRememberPos				= TRUE;
+	m_iDelayInSecs				= 0;
 
 	m_bShowAlbumArt				= TRUE;
 	m_bArtOnSelection			= FALSE;
@@ -1534,21 +1544,13 @@ bool CPreferences::LoadPreferences(void)
 						&Type,
 						(LPBYTE)&m_bPauseOnScreensave,
 						&Size);
-
+	
 	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
 						PAUSEONLOCK,
 						NULL,
 						&Type,
 						(LPBYTE)&m_bPauseOnLock,
-						&Size);
-	
-	Size = sizeof(BOOL);
-	RegQueryValueEx(	hTuniacPrefKey,
-						PAUSEONLOG,
-						NULL,
-						&Type,
-						(LPBYTE)&m_bPauseOnLog,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1574,14 +1576,6 @@ bool CPreferences::LoadPreferences(void)
 						&Type,
 						(LPBYTE)&m_bResumeOnLock,
 						&Size);
-	
-	Size = sizeof(BOOL);
-	RegQueryValueEx(	hTuniacPrefKey,
-						RESUMEONLOG,
-						NULL,
-						&Type,
-						(LPBYTE)&m_bResumeOnLog,
-						&Size);
 
 	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
@@ -1589,6 +1583,22 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bResumeOnSwitch,
+						&Size);
+	
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						REMEMBERPOS,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bRememberPos,
+						&Size);
+	
+	Size = sizeof(int);
+	RegQueryValueEx(	hTuniacPrefKey,
+						DELAYINSECS,
+						NULL,
+						&Type,
+						(LPBYTE)&m_iDelayInSecs,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -1952,13 +1962,6 @@ bool CPreferences::SavePreferences(void)
 					sizeof(BOOL));
 	
 	RegSetValueEx(	hTuniacPrefKey, 
-					PAUSEONLOG, 
-					0,
-					REG_DWORD,
-					(LPBYTE)&m_bPauseOnLog, 
-					sizeof(BOOL));
-
-	RegSetValueEx(	hTuniacPrefKey, 
 					PAUSEONSWITCH, 
 					0,
 					REG_DWORD,
@@ -1978,13 +1981,7 @@ bool CPreferences::SavePreferences(void)
 					REG_DWORD,
 					(LPBYTE)&m_bResumeOnLock, 
 					sizeof(BOOL));
-	
-	RegSetValueEx(	hTuniacPrefKey, 
-					RESUMEONLOG, 
-					0,
-					REG_DWORD,
-					(LPBYTE)&m_bResumeOnLog, 
-					sizeof(BOOL));
+
 
 	RegSetValueEx(	hTuniacPrefKey, 
 					RESUMEONSWITCH, 
@@ -1992,6 +1989,20 @@ bool CPreferences::SavePreferences(void)
 					REG_DWORD,
 					(LPBYTE)&m_bResumeOnSwitch, 
 					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					REMEMBERPOS, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bRememberPos, 
+					sizeof(BOOL));
+		
+	RegSetValueEx(	hTuniacPrefKey, 
+					DELAYINSECS, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iDelayInSecs, 
+					sizeof(int));
 
 	RegSetValueEx(	hTuniacPrefKey, 
 					SHOWALBUMART, 
@@ -2773,11 +2784,6 @@ BOOL		CPreferences::GetPauseOnLock(void)
 	return m_bPauseOnLock;
 }
 
-BOOL		CPreferences::GetPauseOnLog(void)
-{
-	return m_bPauseOnLog;
-}
-
 BOOL		CPreferences::GetPauseOnSwitch(void)
 {
 	return m_bPauseOnSwitch;
@@ -2793,14 +2799,19 @@ BOOL		CPreferences::GetResumeOnLock(void)
 	return m_bResumeOnLock;
 }
 
-BOOL		CPreferences::GetResumeOnLog(void)
-{
-	return m_bResumeOnLog;
-}
-
 BOOL		CPreferences::GetResumeOnSwitch(void)
 {
 	return m_bResumeOnSwitch;
+}
+
+BOOL		CPreferences::GetRememberPos(void)
+{
+	return m_bRememberPos;
+}
+
+int		CPreferences::GetDelayInSecs(void)
+{
+	return m_iDelayInSecs;
 }
 
 BOOL		CPreferences::GetShowAlbumArt(void)
