@@ -1,3 +1,12 @@
+Feb, 2012
+---------
+-pretty albumart and visual windows
+-move svp vis ini to %appdata%
+-give svp visuals slightly more memory as some tend to go over slightly
+-enable GDI rendering option
+-update auto lock/resume feature
+-tidy up general prefs layout
+
 Jan, 2012
 ---------
 -handle mp4 art
