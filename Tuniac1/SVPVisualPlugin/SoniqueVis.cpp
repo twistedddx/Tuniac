@@ -26,11 +26,16 @@ bool SoniqueVisExternal::LoadFromExternalDLL(LPTSTR PluginName)
 			p_PluginInfo = (VisInfo*)QueryModule();
 			if(p_PluginInfo)
 			{
-				char settingsdir[2048];
-				StrCat(PluginName, TEXT(".ini"));
-				WideCharToMultiByte(CP_ACP, 0, PluginName, 512, settingsdir, 512, NULL, NULL);
-
-				p_PluginInfo->OpenSettings(settingsdir);
+				TCHAR	szVisSettingDir[MAX_PATH];
+				char	cSettingsDir[MAX_PATH];
+				if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szVisSettingDir ) ) )
+				{
+					StrCat(szVisSettingDir, TEXT("\\Tuniac\\"));
+					StrCat(szVisSettingDir, PathFindFileName(PluginName));
+					StrCat(szVisSettingDir, TEXT(".ini"));
+					WideCharToMultiByte(CP_ACP, 0, szVisSettingDir, MAX_PATH,cSettingsDir, MAX_PATH, NULL, NULL);
+					p_PluginInfo->OpenSettings(cSettingsDir);
+				}
 
 				p_PluginInfo->Initialize();
 

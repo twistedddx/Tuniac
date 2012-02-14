@@ -344,6 +344,12 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				}
 			}
 			break;
+		case Variable_Fullscreen:
+			{
+				return (void *)tuniacApp.m_VisualWindow->GetFullscreen();
+			}
+			break;
+
 	}
 	return NULL;
 }

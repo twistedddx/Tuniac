@@ -330,10 +330,6 @@ SVPRenderer::SVPRenderer(void)
 	m_hDC = NULL;
 	m_glRC = NULL;
 
-	hgdiDC = NULL;
-	hVisBMP = NULL;
-	hOldVisBMP = NULL;
-
 	kiss_cfg = kiss_fftr_alloc(512,0,NULL,NULL);
 	freq_data = (kiss_fft_cpx*)KISS_FFT_MALLOC((512)*sizeof(kiss_fft_cpx));
 }
@@ -454,30 +450,8 @@ bool	SVPRenderer::Attach(HDC hDC)
 		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UsePBO"), &lpRegType, (LPBYTE)&iUsePBO, &iRegSize);
 		m_pHelper->GetVisualPref(TEXT("SVPRenderer"), TEXT("UseMappedPBO"), &lpRegType, (LPBYTE)&iUseMappedPBO, &iRegSize);
 
-		if(iUseOpenGL)
-		{
-			if(!InitOpenGL())
-				return false;
-		}
-
-		GLenum err = glewInit();
-		if (GLEW_OK != err)
+		if(!InitOpenGL())
 			return false;
-
-		if(glewIsSupported("GL_VERSION_2_1"))
-			bPBOSupport = true;
-		else
-			iUsePBO = 0;
-
-		if(glewIsSupported("GL_VERSION_2_0"))
-			bNonPowerOf2Support = true;
-		else
-			iAllowNonPowerOf2 = 0;
-
-		if(iUseOpenGL && iUsePBO)
-		{
-			glGenBuffers(1, pboIds);
-		}
 
 		ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 
@@ -507,10 +481,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 bool	SVPRenderer::Detach()
 {
-	if(iUseOpenGL)
-		ShutdownOpenGL();
-	else
-		ShutdownGDI();
+	ShutdownOpenGL();
 
 	m_hDC = NULL;
 	if(m_textureData)
@@ -686,7 +657,8 @@ bool	SVPRenderer::Render(int w, int h)
 				m_textureData = NULL;
 			}
 
-			m_textureData = (unsigned long*)malloc(iTextureSize);
+			//extra 128 as some visuals have a bad habbit of using too much
+			m_textureData = (unsigned long*)malloc(iTextureSize + iVisResWidth);
 
 			SetRect(&m_NextVisRect, 
 					w-(64+16),
@@ -721,28 +693,6 @@ bool	SVPRenderer::Render(int w, int h)
 									GL_BGRA,
 									GL_UNSIGNED_INT_8_8_8_8_REV,
 									0);
-			}
-			else
-			{
-				if(hOldVisBMP)
-					SelectObject(hgdiDC, hOldVisBMP);
-
-				if(hVisBMP)
-					DeleteObject(hVisBMP);
-
-				if(hgdiDC)
-					DeleteDC(hgdiDC);
-
-				bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
-				bi.bmiHeader.biWidth=iVisResWidth;
-				bi.bmiHeader.biHeight=-iVisResHeight;
-				bi.bmiHeader.biPlanes=1;
-				bi.bmiHeader.biBitCount=32;
-				bi.bmiHeader.biCompression	= BI_RGB;
-				bi.bmiHeader.biSizeImage	= 0;
-				hVisBMP = CreateDIBSection(0, &bi, DIB_RGB_COLORS, (void**)&m_textureData, 0, 0);
-				hgdiDC=CreateCompatibleDC(0);
-				hOldVisBMP = (HBITMAP)SelectObject(hgdiDC, hVisBMP);
 			}
 
 			bResChange = false;
@@ -848,13 +798,32 @@ bool	SVPRenderer::Render(int w, int h)
 		}
 		else
 		{
-			StretchDIBits(m_hDC,
-				//destination
-				0, 0, w, h,
-				//source
-				0, 0, iVisResWidth, iVisResHeight,
-				//image
-				hgdiDC, &bi ,DIB_RGB_COLORS, SRCCOPY);
+			BITMAPINFO		bmi = {0,};
+
+			bmi.bmiHeader.biSize		= sizeof(BITMAPINFOHEADER);
+			bmi.bmiHeader.biWidth		= (long)iVisResWidth;
+			bmi.bmiHeader.biHeight		= -((long)iVisResHeight);
+			bmi.bmiHeader.biPlanes		= 1;
+			bmi.bmiHeader.biBitCount	= 32;
+			bmi.bmiHeader.biCompression	= BI_RGB;
+			bmi.bmiHeader.biSizeImage	= 0;
+
+			SetStretchBltMode(m_hDC, HALFTONE);
+			SetBrushOrgEx(m_hDC, 0, 0, NULL);
+			StretchDIBits(	m_hDC,
+										0,
+										0, 
+										w,
+										h,
+										0,
+										0,
+										iVisResWidth,
+										iVisResHeight,
+										m_textureData,
+										&bmi,
+										DIB_RGB_COLORS,
+										SRCCOPY);
+
 
 			//BitBlt(m_hDC, 0, 0, iVisResWidth, iVisResHeight, hgdiDC, 0,0, SRCCOPY);
 			UpdateWindow(WindowFromDC(m_hDC));
@@ -870,22 +839,28 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 
 	if(m_TheVisual)
 	{
-		TCHAR	szOldVisFilename[2048];
-		char settingsdir[2048];
-		StrCpy(szOldVisFilename, m_VisFilenameArray[m_SelectedVisual]);
-		StrCat(szOldVisFilename, TEXT(".ini"));
-		WideCharToMultiByte(CP_ACP, 0, szOldVisFilename, 512, settingsdir, 512, NULL, NULL);
+		TCHAR	szOldVisSettingDir[MAX_PATH];
+		char	cOldSettingsDir[MAX_PATH];
 
 		SoniqueVisExternal * t = m_TheVisual;
 		m_TheVisual = NULL;
-		t->SaveSettings(settingsdir);
+
+		if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szOldVisSettingDir ) ) )
+		{
+			StrCat(szOldVisSettingDir, TEXT("\\Tuniac\\"));
+			StrCat(szOldVisSettingDir, PathFindFileName(m_VisFilenameArray[m_SelectedVisual]));
+			StrCat(szOldVisSettingDir, TEXT(".ini"));
+			WideCharToMultiByte(CP_ACP, 0, szOldVisSettingDir, MAX_PATH,cOldSettingsDir, MAX_PATH, NULL, NULL);
+ 			t->SaveSettings(cOldSettingsDir);
+		}
+
 		t->Shutdown();
 		delete t;
 	}
 
 	m_SelectedVisual = visindex;
 
-	//freshen up vd. serial experiment lain will crash without
+	//freshen up
 	vd.MillSec = 0;
 	for(int i=0; i<2; i++)
 	{
@@ -993,28 +968,21 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 
 bool	SVPRenderer::Configure(HWND hWndParent)
 {
-	CAutoLock m(&m_RenderLock);
-
-	if(iUseOpenGL)
-		ShutdownOpenGL();
-	else
-		ShutdownGDI();
-
-	DialogBoxParam(GetModuleHandle(L"SVPVisualPlugin.dll"), MAKEINTRESOURCE(IDD_SVPPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
-
 	if(iUseOpenGL)
 	{
-		InitOpenGL();
+		CAutoLock m(&m_RenderLock);
 
-		GLenum err = glewInit();
-		if (GLEW_OK != err)
-			return false;
+		ShutdownOpenGL();
 
-		if(iUsePBO)
-		{
-			glGenBuffers(1, pboIds);
-		}
+		DialogBoxParam(GetModuleHandle(L"SVPVisualPlugin.dll"), MAKEINTRESOURCE(IDD_SVPPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
 	}
+	else
+	{
+		DialogBoxParam(GetModuleHandle(L"SVPVisualPlugin.dll"), MAKEINTRESOURCE(IDD_SVPPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
+	}
+
+	if(iUseOpenGL)
+		InitOpenGL();
 
 	bResChange = true;
 
@@ -1098,6 +1066,25 @@ bool	SVPRenderer::InitOpenGL(void)
 
 	SwapBuffers(m_hDC);
 
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+		return false;
+
+	if(glewIsSupported("GL_VERSION_2_1"))
+		bPBOSupport = true;
+	else
+		iUsePBO = 0;
+
+	if(glewIsSupported("GL_VERSION_2_0"))
+		bNonPowerOf2Support = true;
+	else
+		iAllowNonPowerOf2 = 0;
+
+	if(iUsePBO)
+	{
+		glGenBuffers(1, pboIds);
+	}
+
 	return true;
 }
 
@@ -1122,16 +1109,4 @@ void	SVPRenderer::ShutdownOpenGL(void)
 		wglDeleteContext(m_glRC);
 		m_glRC=NULL;
 	}
-}
-
-void	SVPRenderer::ShutdownGDI(void)
-{
-	if(hOldVisBMP)
-		SelectObject(hgdiDC, hOldVisBMP);
-
-	if(hVisBMP)
-		DeleteObject(hVisBMP);
-
-	if(hgdiDC)
-		DeleteDC(hgdiDC);
 }
