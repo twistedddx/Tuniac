@@ -184,7 +184,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 	if(!RegisterClassEx(&wcex))
 		return(false);
 
-	m_hWnd = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_TOOLWINDOW,
+	m_hWnd = CreateWindowEx(WS_EX_TOOLWINDOW,
 							TEXT("TUNIACVISUALWINDOW"), 
 							TEXT("TUNIACVISUALWINDOW"), 
 							WS_CHILD,
@@ -300,7 +300,7 @@ bool CVisualWindow::SetPos(int x, int y, int w, int h)
 	if(m_hWnd)
 	{
 		SetRect(&m_OldSize, x, y, w, h);
-		SetWindowPos(m_hWnd, HWND_TOP, x, y, w, h, NULL);
+		SetWindowPos(m_hWnd, HWND_TOP, x+2, y+2, w-4, h-4, NULL);
 		return(true);
 	}
 
@@ -328,7 +328,7 @@ void CVisualWindow::SetFullscreen(bool bFull)
 	LONG_PTR Style = GetWindowLongPtr(m_hWnd, GWL_STYLE);
 	if(bFull)
 	{
-		StyleEx &= ~WS_EX_CLIENTEDGE;
+		//StyleEx &= ~WS_EX_CLIENTEDGE;
 		Style &= ~WS_CHILD;
 
 		SetParent(m_hWnd, NULL);
@@ -339,7 +339,7 @@ void CVisualWindow::SetFullscreen(bool bFull)
 	}
 	else
 	{
-		StyleEx |= WS_EX_CLIENTEDGE;
+		//StyleEx |= WS_EX_CLIENTEDGE;
 		Style |= WS_CHILD;
 
 		SetParent(m_hWnd, m_hParentWnd);
@@ -347,7 +347,7 @@ void CVisualWindow::SetFullscreen(bool bFull)
 
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
 	}
-	SetWindowLongPtr(m_hWnd, GWL_EXSTYLE, StyleEx);
+	//SetWindowLongPtr(m_hWnd, GWL_EXSTYLE, StyleEx);
 	SetWindowLongPtr(m_hWnd, GWL_STYLE, Style);
 	m_bFullScreen = bFull;
 }
@@ -520,30 +520,30 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 			break;
 
 			/* Todo, make this work. WM_NOTIFY nevers comes :(
-		case WM_NOTIFY:
-			{
-				LPNMHDR lpNotify = (LPNMHDR)lParam;
-
-				switch(lpNotify->code)
+			case WM_NOTIFY:
 				{
-					case LVN_KEYDOWN:
-						{
-							LPNMLVKEYDOWN	pnkd			= (LPNMLVKEYDOWN) lParam;
+					LPNMHDR lpNotify = (LPNMHDR)lParam;
 
-							switch(pnkd->wVKey)
+					switch(lpNotify->code)
+					{
+						case LVN_KEYDOWN:
 							{
-								case VK_ESCAPE:
-									{
-										if(tuniacApp.m_VisualWindow->GetFullscreen())
-											tuniacApp.m_VisualWindow->SetFullscreen(false);
-									}
-									break;
+								LPNMLVKEYDOWN	pnkd			= (LPNMLVKEYDOWN) lParam;
+
+								switch(pnkd->wVKey)
+								{
+									case VK_ESCAPE:
+										{
+											if(tuniacApp.m_VisualWindow->GetFullscreen())
+												tuniacApp.m_VisualWindow->SetFullscreen(false);
+										}
+										break;
+								}
 							}
-						}
+					}
 				}
-			}
-			break;
-			*/
+				break;
+				*/
 
 		default:
 			return(DefWindowProc(hWnd, message, wParam, lParam));

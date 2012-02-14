@@ -557,8 +557,8 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 						tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
 											2, 
 											r.bottom - m_ulSeparatorX,
-											m_ulSeparatorX-3,
-											m_ulSeparatorX-3);
+											m_ulSeparatorX-4,
+											m_ulSeparatorX-4);
 					}
 				}
 				EndPaint(hDlg, &ps);

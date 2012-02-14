@@ -141,10 +141,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	//start the skin engine
 	m_Skin.Initialize();
 
-	if(m_Preferences.GetAutoSoftPause())
-		m_SoftPause.bNow = true;
-	else
-		m_SoftPause.bNow = false;
+	m_SoftPause.bNow = m_Preferences.GetAutoSoftPause();
 	m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 
 	m_iFailedSongRetry = 0;
@@ -1267,7 +1264,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							 if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
 								 continue;
 
-							//resize visual window to full screen
+							//resize visual window to full visual area
 							if(wcscmp(GetActiveScreenName(), L"Visuals") == 0)
 							{
 								RECT		rcWindowRect;
