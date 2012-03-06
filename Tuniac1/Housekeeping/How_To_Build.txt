@@ -44,20 +44,20 @@ http://www.cmake.org/files/v2.8/cmake-2.8.7-win32-x86.exe
 
 Install them
 
-2a)You need Tuniac svn (http://sourceforge.net/projects/tuniac/)
-Navigate to C:\Code\, right click and select SVN Checkout.
+2a)You need Tuniac SVN (http://sourceforge.net/projects/tuniac/)
+Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 https://tuniac.svn.sourceforge.net/svnroot/tuniac
 Hit OK and wait
 
-2b)You need libjpeg-turbo svn (http://sourceforge.net/projects/libjpeg-turbo/)
-Navigate to C:\Code\, right click and select SVN Checkout.
+2b)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
 Hit OK and wait
 
-2c)You need TagLib svn (http://developer.kde.org/~wheeler/taglib.html)
-Navigate to C:\Code\, right click and select GIT Clone.
+2c)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
+Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
@@ -89,7 +89,7 @@ Look here for errors that look like:
 Cannot open include file: 'xaudio2.h'
 
 
-4b)Build libjpeg-turbo lib
+4b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
@@ -124,7 +124,7 @@ Cannot open include file: 'jpeglib.h'
 
 
 
-5)For std_Infomanager
+5)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
@@ -194,7 +194,7 @@ http://www.jrsoftware.org/download.php/is.exe
 
 This adds the right click context "Compile" for *.iss files
 
-Goto D:\Tuniac\Tuniac1\Setup-Scripts
+Goto D:\Code\tuniac\Tuniac1\Setup-Scripts
 Right click desired setup iss file
 Select Compile
-New date named exe should be in D:\Tuniac\Tuniac1
+New date named exe should be in D:\Code\tuniac\Tuniac1\
