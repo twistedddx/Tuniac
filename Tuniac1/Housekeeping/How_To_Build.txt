@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio 2010 in mind in April 2011.
+This is written with Visual Studio 2010 in mind in March 2012.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -39,12 +39,12 @@ Look here for errors that look like:
 Cannot open include file: 'xaudio2.h'
 
 
-2b)You need libjpeg-turbo 1.1.0
+2b)You need libjpeg-turbo 1.2.0
 https://sourceforge.net/projects/libjpeg-turbo/
-http://sourceforge.net/projects/libjpeg-turbo/files/1.1.0/libjpeg-turbo-1.1.0.tar.gz/download
+http://sourceforge.net/projects/libjpeg-turbo/files/1.2.0/libjpeg-turbo-1.2.0.tar.gz/download
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.1.0_vs2010.zip
+http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
 
 Extract to the main libjpeg-turbo source folder, eg where jpeglib.h is.
 
@@ -90,9 +90,9 @@ Cannot open include file: 'jpeglib.h'
 
 3)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
-You need the Glew 1.5.8 Binaries Windows 32 zip.
+You need the Glew 1.7.0 Binaries Windows 32 zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.5.8/glew-1.5.8-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL

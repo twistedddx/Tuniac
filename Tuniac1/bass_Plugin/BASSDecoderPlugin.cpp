@@ -25,12 +25,12 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 		exts.AddTail(std::wstring(L".mtm"));
 		exts.AddTail(std::wstring(L".umx"));
 
-		TCHAR				szFilename[_MAX_PATH];
-		TCHAR				szFilePath[_MAX_PATH];
+		TCHAR				szFilename[MAX_PATH];
+		TCHAR				szFilePath[MAX_PATH];
 		WIN32_FIND_DATA		w32fd;
 		HANDLE				hFind;
 
-		GetModuleFileName(NULL, szFilePath, _MAX_PATH);
+		GetModuleFileName(NULL, szFilePath, MAX_PATH);
 		PathRemoveFileSpec(szFilePath);
 		PathAddBackslash(szFilePath);
 		StrCat(szFilePath, TEXT("bass"));
@@ -46,13 +46,13 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 				if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 					continue;
 
-				TCHAR szURL[_MAX_PATH];
+				TCHAR szURL[MAX_PATH];
 
 				StrCpy(szURL, szFilePath);
 				StrCat(szURL, w32fd.cFileName);
 
-				char mbURL[_MAX_PATH]; 	 
-				WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, _MAX_PATH, 0, 0);
+				char mbURL[MAX_PATH]; 	 
+				WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, MAX_PATH, 0, 0);
 
 				HPLUGIN plug;
 				if(plug = BASS_PluginLoad(mbURL, 0))
@@ -69,7 +69,7 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 							if(!soundFont)
 							{
 								//creative soundfont not found. attempt to load local soundfont
-								TCHAR szSoundFontFilename[_MAX_PATH];
+								TCHAR szSoundFontFilename[MAX_PATH];
 								StrCpy(szSoundFontFilename, szFilePath);
 								StrCat(szSoundFontFilename, TEXT("*.SF2"));
 
@@ -83,8 +83,8 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 									StrCpy(szSoundFontFilename, szFilePath);
 									StrCat(szSoundFontFilename, w32fdSoundFont.cFileName);
 
-									char mbSoundFontFilename[_MAX_PATH]; 	 
-									WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, _MAX_PATH, 0, 0);
+									char mbSoundFontFilename[MAX_PATH]; 	 
+									WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, MAX_PATH, 0, 0);
 
 									BASS_SetConfigPtr(BASS_CONFIG_MIDI_DEFFONT, mbSoundFontFilename);
 									soundFont = (char *)BASS_GetConfigPtr(BASS_CONFIG_MIDI_DEFFONT);

@@ -14,8 +14,8 @@ COFRDecoder::~COFRDecoder(void)
 
 bool COFRDecoder::Open(LPTSTR szSource)
 {
-	char tempname[_MAX_PATH]; 	 
-	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
+	char tempname[MAX_PATH]; 	 
+	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, MAX_PATH, 0, 0);
 
     decoderInstance = OptimFROG_createInstance();
     if (decoderInstance == NULL)

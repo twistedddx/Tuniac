@@ -172,8 +172,8 @@ bool			CSHNInfoManager::GetInfo(LibraryEntry * libEnt)
 	ShnPlayStream * stream;
 	ShnPlay * state;
 
-	char tempname[_MAX_PATH]; 	 
-	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, _MAX_PATH, 0, 0);
+	char tempname[MAX_PATH]; 	 
+	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, MAX_PATH, 0, 0);
 
 	if (ShnInfoUtil_OpenFileStreamA(&stream, tempname))
 	{

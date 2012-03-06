@@ -53,6 +53,7 @@ Source: ..\Guide\*; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Flags: ignoreversion recursesubdirs
+Source: ..\Win32\Release\visuals\verdana14.glf; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"

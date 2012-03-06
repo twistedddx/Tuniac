@@ -50,8 +50,8 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
     OptimFROG_Info iInfo;
 	OptimFROG_Tags iTags;
 
-	char tempname[_MAX_PATH]; 	 
-	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, _MAX_PATH, 0, 0);
+	char tempname[MAX_PATH]; 	 
+	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, MAX_PATH, 0, 0);
 
 	OptimFROG_infoFile(tempname, &iInfo, &iTags);
 
