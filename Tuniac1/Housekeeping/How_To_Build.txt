@@ -31,18 +31,65 @@ cannot open include file 'winres.h'
 
 
 
-2)For TuniacApp
+2)For tuniac, taglib and libjpeg-turbo you require TortoiseSVN, TortoiseGIT and CMake
 
-2a)You need the current DirectX June 2010 SDK for XAudio2.
+http://tortoisesvn.net/
+http://tortoisesvn.net/downloads.html
+
+http://code.google.com/p/tortoisegit/
+http://code.google.com/p/tortoisegit/downloads/list
+
+http://www.cmake.org/
+http://www.cmake.org/files/v2.8/cmake-2.8.7-win32-x86.exe
+
+Install them
+
+2a)You need Tuniac svn (http://sourceforge.net/projects/tuniac/)
+Navigate to C:\Code\, right click and select SVN Checkout.
+In URL of repository add:
+https://tuniac.svn.sourceforge.net/svnroot/tuniac
+Hit OK and wait
+
+2b)You need libjpeg-turbo svn (http://sourceforge.net/projects/libjpeg-turbo/)
+Navigate to C:\Code\, right click and select SVN Checkout.
+In URL of repository add:
+https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
+Hit OK and wait
+
+2c)You need TagLib svn (http://developer.kde.org/~wheeler/taglib.html)
+Navigate to C:\Code\, right click and select GIT Clone.
+In Clone existing repository add:
+https://github.com/taglib/taglib
+Hit OK and wait
+
+
+
+3)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
+
+You need the Glew 1.7.0 Binaries Windows 32 zip.
+http://glew.sourceforge.net/
+http://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
+
+Put glew.h, glxew.h and wglew.h in
+C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL
+And put glew32.lib and glew32s.lib in
+C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
+
+Look here for errors that look like:
+Cannot open include file: 'GL/glew.h'
+
+
+
+4)For TuniacApp
+
+4a)You need the current DirectX June 2010 SDK for XAudio2.
 http://www.microsoft.com/downloads/en/details.aspx?displaylang=en&FamilyID=3021d52b-514e-41d3-ad02-438a3ba730ba
 
 Look here for errors that look like:
 Cannot open include file: 'xaudio2.h'
 
 
-2b)You need libjpeg-turbo 1.2.0
-http://sourceforge.net/projects/libjpeg-turbo/
-http://sourceforge.net/projects/libjpeg-turbo/files/1.2.0/libjpeg-turbo-1.2.0.tar.gz/download
+4b)Build libjpeg-turbo lib
 
 You can use my files if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
@@ -72,43 +119,12 @@ nmake
 del "turbojpeg-static64.lib"
 rename turbojpeg-static.lib turbojpeg-static64.lib
 
-
-Open D:\Tuniac\Tuniac1\TuniacApp.sln
-Right click TuniacApp and goto properties
-Under VC++ Directories
-Modify Include Directory for all configurations if required, currently set as:
-	D:\Code\jpeglib-turbo_svn
-Modify Library Directory for all configurations if required, currently set as:
-	D:\Code\jpeglib-turbo_svn
-
-
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
 
 
-3)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
-
-You need the Glew 1.7.0 Binaries Windows 32 zip.
-http://glew.sourceforge.net/
-http://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
-
-Put glew.h, glxew.h and wglew.h in
-C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL
-And put glew32.lib and glew32s.lib in
-C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
-
-Look here for errors that look like:
-Cannot open include file: 'GL/glew.h'
-
-
-
-
-4)For std_Infomanager
-
-You need TagLib 1.7
-http://developer.kde.org/~wheeler/taglib.html
-http://developer.kde.org/~wheeler/files/src/taglib-1.7.tar.gz
+5)For std_Infomanager
 
 You can use my project if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
@@ -165,7 +181,7 @@ Cannot open include file: 'tag.h'
 
 
 
-5)To build installer from scripts
+6)To build installer from scripts
 
 You need Inno QuickStart Pack
 http://www.jrsoftware.org/isinfo.php
