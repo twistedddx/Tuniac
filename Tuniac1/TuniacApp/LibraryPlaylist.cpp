@@ -65,7 +65,7 @@ bool				CLibraryPlaylist::AddEntryToPlaylist(IPlaylistEntry * lpPLE)
 bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 {
 	bool			bRemoveFromDisk		= false;
-	TCHAR			szURL[_MAX_PATH + 1];
+	TCHAR			szURL[MAX_PATH + 1];
 
 	//user wants to remove from disk
 	if(GetKeyState(VK_SHIFT) < 0 && MessageBox(tuniacApp.getMainWindow(), TEXT("Would you like to remove the selected items from the harddrive?"), TEXT("Delete Items From Library"), MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) == IDYES)
@@ -99,7 +99,7 @@ bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray
 		unsigned long ulEntryID = m_PlaylistArray[indexArray[0]].pIPE->GetEntryID();
 		if(bRemoveFromDisk)
 		{
-			ZeroMemory(szURL, (_MAX_PATH + 1));
+			ZeroMemory(szURL, (MAX_PATH + 1));
 			StrCpy(szURL, (LPTSTR)m_PlaylistArray[indexArray[0]].pIPE->GetField(FIELD_URL));
 		}
 

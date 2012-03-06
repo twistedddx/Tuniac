@@ -349,7 +349,6 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				return (void *)tuniacApp.m_VisualWindow->GetFullscreen();
 			}
 			break;
-
 	}
 	return NULL;
 }

@@ -76,8 +76,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 				return(0);
 		}
 
-		TCHAR szFilename[_MAX_PATH];
-		GetModuleFileName(NULL, szFilename, _MAX_PATH);
+		TCHAR szFilename[MAX_PATH];
+		GetModuleFileName(NULL, szFilename, MAX_PATH);
 
 		//if we have no command lines so just restore tuniac
 		//the commandline gets quotation marks and a space, so remove 3 chars
@@ -283,8 +283,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	{
 		if(pPlaylist->GetActiveFilteredIndex() == INVALID_PLAYLIST_INDEX)
 		{
-			TCHAR szURL[_MAX_PATH];
-			GetModuleFileName(NULL, szURL, _MAX_PATH);
+			TCHAR szURL[MAX_PATH];
+			GetModuleFileName(NULL, szURL, MAX_PATH);
 			PathRemoveFileSpec(szURL);
 			m_AlbumArtPanel.SetCurrentArtSource(szURL);
 			PathAppend(szURL, TEXT("NoAlbumArt.jpg"));
@@ -1345,12 +1345,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						case ID_FILE_ADDFILES:
 							{
 								//setup open file dialog
-	#define OFNBUFFERSIZE		(32*1024)
 								OPENFILENAME		ofn;
-								TCHAR				szURLBuffer[OFNBUFFERSIZE];
+								TCHAR				szURLBuffer[64*MAX_PATH];
 
 								ZeroMemory(&ofn, sizeof(OPENFILENAME));
-								StringCbCopy(szURLBuffer, OFNBUFFERSIZE, TEXT(""));
+								StringCbCopy(szURLBuffer, 64*MAX_PATH, TEXT(""));
 
 								ofn.lStructSize			= sizeof(OPENFILENAME);
 								ofn.hwndOwner			= hWnd;
@@ -1360,7 +1359,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								ofn.nMaxCustFilter		= 0;
 								ofn.nFilterIndex		= 0;
 								ofn.lpstrFile			= szURLBuffer;
-								ofn.nMaxFile			= OFNBUFFERSIZE;
+								ofn.nMaxFile			= 64*MAX_PATH;
 								ofn.lpstrFileTitle		= NULL;
 								ofn.nMaxFileTitle		= 0;
 								ofn.lpstrInitialDir		= NULL;
@@ -1413,7 +1412,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(::SHGetMalloc(&lpMalloc) == NOERROR)
 								{
 									//setup open directory dialog
-									TCHAR szBuffer[1024];
+									TCHAR szBuffer[MAX_PATH];
 
 									BROWSEINFO browseInfo;
 									LPITEMIDLIST lpItemIDList;
@@ -2486,8 +2485,8 @@ bool	CTuniacApp::SetArt(LPTSTR szSource)
 	//No art from infomanager. Try external file(folder.jpg/png)
 	if(!bArtSuccess)
 	{
-		TCHAR		szJPGPath[_MAX_PATH];
-		TCHAR		szPNGPath[_MAX_PATH];
+		TCHAR		szJPGPath[MAX_PATH];
+		TCHAR		szPNGPath[MAX_PATH];
 		StrCpy(szJPGPath, szSource);
 
 		PathRemoveFileSpec(szJPGPath);
@@ -2515,8 +2514,8 @@ bool	CTuniacApp::SetArt(LPTSTR szSource)
 	//No art found embedded or external. Load default art in tuniac base dir
 	if(!bArtSuccess)
 	{
-		TCHAR szURL[_MAX_PATH];
-		GetModuleFileName(NULL, szURL, _MAX_PATH);
+		TCHAR szURL[MAX_PATH];
+		GetModuleFileName(NULL, szURL, MAX_PATH);
 		PathRemoveFileSpec(szURL);
 
 		if(StrCmpI(szURL, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
