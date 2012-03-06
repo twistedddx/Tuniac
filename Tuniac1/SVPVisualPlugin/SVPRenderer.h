@@ -6,6 +6,10 @@
 
 #include <GL/glew.h>
 
+#include <string>
+#include "glfont2.h"
+using namespace glfont;
+
 #include <gdiplus.h>
 using namespace Gdiplus;
 
@@ -27,6 +31,9 @@ protected:
 	unsigned int						pboIds[1];
 
 	GLvoid							*	ioMem;
+
+	GLFont								myfont;
+	char							*	visName;
 
 	int									m_LastWidth;
 	int									m_LastHeight;
