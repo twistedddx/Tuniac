@@ -360,10 +360,10 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
 
-	TCHAR	szFilename[1024];
+	TCHAR	szFilename[MAX_PATH];
 
-	StrCpyN(szFilename, szFolder, 1024);
-	PathAddBackslash(szFilename);
+	PathAddBackslash(szFolder);
+	StrCpyN(szFilename, szFolder, MAX_PATH);
 	StrCat(szFilename, TEXT("*.*"));
 
 	hFind = FindFirstFile( szFilename, &w32fd); 
@@ -374,7 +374,7 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			TCHAR temp[1024];
+			TCHAR temp[MAX_PATH];
 
 			StrCpy(temp, szFolder);
 			PathAddBackslash(temp);
@@ -390,7 +390,7 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 				if(!StrCmpI(ext, TEXT(".SVP")))
 				{
-					LPTSTR string = (LPTSTR)malloc(2048 * sizeof(TCHAR));
+					LPTSTR string = (LPTSTR)malloc(MAX_PATH * sizeof(TCHAR));
 
 					StrCpy(string, temp);
 
@@ -408,12 +408,10 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 bool	SVPRenderer::Attach(HDC hDC)
 {
 
-	TCHAR szVisualsPath[2048];
-	GetModuleFileName((HMODULE)hInst, szVisualsPath, 512);
+	TCHAR szVisualsPath[MAX_PATH];
+	GetModuleFileName((HMODULE)hInst, szVisualsPath, MAX_PATH);
 	PathRemoveFileSpec(szVisualsPath);
-	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("vis"));
-	PathAddBackslash(szVisualsPath);
+	PathAppend(szVisualsPath, L"vis");
 
 	AddFolderOfSVP(szVisualsPath);
 
@@ -749,20 +747,32 @@ bool	SVPRenderer::Render(int w, int h)
 			}
 
 			glBegin (GL_QUADS);
-				glTexCoord2f(0.0f, 0.0f);
-				glVertex2f(0.0f, 0.0f);	// Bottom Left Of The Texture and Quad
-				glTexCoord2f(0.0f, 1.0f);
-				glVertex2f(0.0f, h);	// Bottom Right Of The Texture and Quad
-				glTexCoord2f(1.0f, 1.0f);
-				glVertex2f(w, h);	// Top Right Of The Texture and Quad
-				glTexCoord2f(1.0f, 0.0f);
-				glVertex2f(w, 0.0f);	// Top Left Of The Texture and Quad
+				glTexCoord2f(0.0f, 0.0f);	glVertex2f(0.0f, 0.0f);
+				glTexCoord2f(0.0f, 1.0f);	glVertex2f(0.0f, h);
+				glTexCoord2f(1.0f, 1.0f);	glVertex2f(w, h);
+				glTexCoord2f(1.0f, 0.0f);	glVertex2f(w, 0.0f);
 			glEnd ();
 
-			//arrows
+			//arrows and visname
 			m_iElaspedTime = GetTickCount() - m_LastMove;
 			if(m_iElaspedTime < 4000)
 			{
+
+				myfont.Begin();
+				if(m_iElaspedTime < 2000)
+				{
+					//clear arrow
+					glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				}
+				else
+				{
+					//fade arrow
+					int val = m_iElaspedTime - 2000;
+					float scale = (2000.0f - (float)val) / 2000.0f;
+					glColor4f(0.0f, 1.0f, 0.0f, scale);
+				}
+				myfont.DrawString(m_TheVisual->GetName(), 5.0F, 25.0F);
+
 				glBindTexture(GL_TEXTURE_2D, 1);
 				if(m_iElaspedTime < 2000)
 				{
@@ -776,7 +786,8 @@ bool	SVPRenderer::Render(int w, int h)
 					float scale = (2000.0f - (float)val) / 2000.0f;
 					glColor4f(1.0f, 1.0f, 1.0f, scale);
 				}
-			
+
+
 				//left
 				glBegin (GL_QUADS);
 					glTexCoord2f(1.0f, 1.0f); glVertex2f(m_NextVisRect.left,	m_NextVisRect.top);
@@ -877,13 +888,13 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 		}
 	}
 
-	TCHAR oldFolder[2048];
-	GetCurrentDirectory(2048, oldFolder);
+	TCHAR oldFolder[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, oldFolder);
 
-	TCHAR	szVisFilename[2048];
+	TCHAR	szVisFilename[MAX_PATH];
 	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
 
-	TCHAR	szPath[2048];
+	TCHAR	szPath[MAX_PATH];
 	StrCpy(szPath, szVisFilename);
 	PathRemoveFileSpec(szPath);
 	SetCurrentDirectory(szPath);
@@ -1064,11 +1075,30 @@ bool	SVPRenderer::InitOpenGL(void)
 					GL_UNSIGNED_BYTE, 
 					m_ArrowBM.bmBits);
 
-	SwapBuffers(m_hDC);
 
+
+	TCHAR szPath[MAX_PATH];
+	char cPath[MAX_PATH];
+	GetModuleFileName((HMODULE)hInst, szPath, MAX_PATH);
+	PathRemoveFileSpec(szPath);
+	PathAppend(szPath, L"verdana14.glf");
+
+	WideCharToMultiByte(CP_ACP, 0, szPath, MAX_PATH, cPath, MAX_PATH, NULL, NULL);
+
+	if (!myfont.Create(cPath, 2))
+	{
+		MessageBox(0, TEXT("You need to add verdana14.glf to <tuniacFolder>\\visuals\\"), TEXT("Error - No font"), MB_OK | MB_ICONINFORMATION);
+		return false;
+	}
+
+	SwapBuffers(m_hDC);
+	 
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 		return false;
+
+
+	//const char *version = (char*)glGetString( GL_VERSION );
 
 	if(glewIsSupported("GL_VERSION_2_1"))
 		bPBOSupport = true;
@@ -1092,6 +1122,8 @@ void	SVPRenderer::ShutdownOpenGL(void)
 {
 	//flush
 	SwapBuffers(m_hDC);
+
+	myfont.Destroy();
 
 	if(iUsePBO)
 	{
