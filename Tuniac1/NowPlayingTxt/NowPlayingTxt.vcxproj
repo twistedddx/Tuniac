@@ -177,7 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NowPlayingTxt.h" />
-    <ClInclude Include="PluginVariable.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

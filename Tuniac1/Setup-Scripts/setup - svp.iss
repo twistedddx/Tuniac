@@ -54,6 +54,7 @@ Source: ..\x64\Release\*.dll; DestDir: {app}\; Check: not InstallLegacyCheck; Fl
 
 Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+Source: ..\Win32\Release\visuals\verdana14.glf; DestDir: {app}\visuals\; Flags: ignoreversion
 Source: ..\Win32\Release\visuals\vis\*.*; DestDir: {app}\visuals\vis\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
 
 

@@ -26,9 +26,6 @@
     <ClInclude Include="MSNInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PluginVariable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>

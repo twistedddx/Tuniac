@@ -130,8 +130,8 @@ CshnDecoder::~CshnDecoder(void)
 
 bool CshnDecoder::Open(LPTSTR szSource)
 {
-	char tempname[_MAX_PATH]; 	 
-	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, _MAX_PATH, 0, 0);
+	char tempname[MAX_PATH]; 	 
+	WideCharToMultiByte(CP_UTF8, 0, szSource, -1, tempname, MAX_PATH, 0, 0);
 
 	if (ShnPlayUtil_OpenFileStreamA(&stream, tempname))
 	{

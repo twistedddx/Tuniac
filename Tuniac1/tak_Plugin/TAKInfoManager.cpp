@@ -51,8 +51,8 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
 	TtakAPEv2Tag				TagInfo;
 	Ttak_str_StreamInfo			StreamInfo;
 
-	char tempname[_MAX_PATH]; 	 
-	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, _MAX_PATH, 0, 0);
+	char tempname[MAX_PATH]; 	 
+	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, MAX_PATH, 0, 0);
 
 	Options.Cpu   = tak_Cpu_Any;
 
