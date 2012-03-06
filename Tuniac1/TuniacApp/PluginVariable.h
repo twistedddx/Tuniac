@@ -29,5 +29,6 @@ enum Variable
 	Variable_LengthMS,
 	Variable_SongTitle,
 	Variable_Artist,
-	Variable_Fullscreen
+	Variable_Fullscreen,
+	Variable_TuniacFilename
 };

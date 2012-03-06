@@ -395,7 +395,7 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 	WIN32_FIND_DATA w32fd; 
 	HANDLE			hFind; 
 
-	TCHAR path[1024];
+	TCHAR path[MAX_PATH];
 
 	StrCpy(path, szDirectory);
 	PathAddBackslash(path);
@@ -413,7 +413,7 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 		if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 			continue;
 
-		TCHAR temp[1024];
+		TCHAR temp[MAX_PATH];
 
 		StrCpy(temp, szDirectory);
 		PathAddBackslash(temp);
