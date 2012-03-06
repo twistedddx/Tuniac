@@ -118,6 +118,7 @@ Navigate to D:\Code\libjpeg-turbo\trunk (cd D:\Code\taglib)
 I find it easiest to copy/paste cmd in to D:\Code\taglib so that when CMD starts it is already in the correct folder.
 Use these build recipes:
 
+Release
 For x86:
 del ".\CMakeCache.txt"
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
@@ -137,6 +138,27 @@ nmake clean
 nmake
 del .\taglib\tag-static64.lib
 rename .\taglib\tag.lib tag-static64.lib
+
+Debug
+For x86:
+del ".\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Debug /x86 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
+nmake clean
+nmake
+del .\taglib\tag-static32d.lib
+rename .\taglib\tag.lib tag-static32d.lib
+
+For x64:
+del ".\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Debug /x64 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
+nmake clean
+nmake
+del .\taglib\tag-static64d.lib
+rename .\taglib\tag.lib tag-static64d.lib
 
 Look here for errors that look like:
 Cannot open include file: 'tag.h'
