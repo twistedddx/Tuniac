@@ -5,9 +5,10 @@ This is written with Visual Studio 2010 in mind in March 2012.
 Things may have changed since, use this only as a guide.
 
 For me:
-Tuniac 1 is in D:\Tuniac\Tuniac1
-libjpeg-turbo is in D:\Code\jpeglib-turbo_svn
-Taglib is in D:\Code\git\taglib.git\taglib\taglib
+
+Tuniac 1 svn is in D:\Code\tuniac\Tuniac1
+libjpeg-turbo svn is in D:\Code\libjpeg-turbo
+Taglib git is in D:\Code\taglib
 You can put things where you like, you just need to adjust your folder paths accordingly.
 
 
@@ -40,37 +41,35 @@ Cannot open include file: 'xaudio2.h'
 
 
 2b)You need libjpeg-turbo 1.2.0
-https://sourceforge.net/projects/libjpeg-turbo/
+http://sourceforge.net/projects/libjpeg-turbo/
 http://sourceforge.net/projects/libjpeg-turbo/files/1.2.0/libjpeg-turbo-1.2.0.tar.gz/download
 
 You can use my files if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
 
-Extract to the main libjpeg-turbo source folder, eg where jpeglib.h is.
-
 Open a command prompt(CMD)
-Navigate to D:\Code\jpeglib-turbo_svn (cd D:\Code\jpeglib-turbo_svn)
-I find it easiest to create a shortcut to cmd in D:\Code\jpeglib-turbo_svn so that when CMD starts it is already in the correct folder.
+Navigate to D:\Code\libjpeg-turbo\trunk (cd D:\Code\libjpeg-turbo\trunk)
+I find it easiest to copy/paste cmd in to D:\Code\libjpeg-turbo\trunk so that when CMD starts it is already in the correct folder.
 Use these build recipes:
 
 For x86:
-del "D:\Code\jpeglib-turbo_svn\CMakeCache.txt"
+del ".\CMakeCache.txt"
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x86 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 "D:\Code\jpeglib-turbo_svn"
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 .
 nmake clean
 nmake
-del "D:\Code\jpeglib-turbo_svn\turbojpeg-static32.lib"
+del ".\turbojpeg-static32.lib"
 rename turbojpeg-static.lib turbojpeg-static32.lib
 
 For x64:
-del "D:\Code\jpeglib-turbo_svn\CMakeCache.txt"
+del ".\CMakeCache.txt"
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
 "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 "D:\Code\jpeglib-turbo_svn"
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 .
 nmake clean
 nmake
-del "D:\Code\jpeglib-turbo_svn\turbojpeg-static64.lib"
+del "turbojpeg-static64.lib"
 rename turbojpeg-static.lib turbojpeg-static64.lib
 
 
@@ -92,7 +91,7 @@ Cannot open include file: 'jpeglib.h'
 
 You need the Glew 1.7.0 Binaries Windows 32 zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
+http://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL
@@ -114,44 +113,30 @@ http://developer.kde.org/~wheeler/files/src/taglib-1.7.tar.gz
 You can use my project if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
 
-Extract to D:\Code\git\taglib.git\taglib\taglib\win32. eg a new folder next to existing ape, asf, flac... folders
-Open D:\Code\git\taglib.git\taglib\taglib\win32\taglib(static).sln
-Build in all types you wish to build TuniacApp in. Eg Release/Debug Win32/x64
+Open a command prompt(CMD)
+Navigate to D:\Code\libjpeg-turbo\trunk (cd D:\Code\taglib)
+I find it easiest to copy/paste cmd in to D:\Code\taglib so that when CMD starts it is already in the correct folder.
+Use these build recipes:
 
-Open D:\Tuniac\Tuniac1\TuniacApp.sln
-Right click std_infomanager and goto properties
-Under VC++ Directories
-Modify Include Directory for all configurations if required, currently set as:
-	D:\Code\git\taglib.git\taglib\taglib
-	D:\Code\git\taglib.git\taglib\taglib\win32
-	D:\Code\git\taglib.git\taglib\taglib\asf
-	D:\Code\git\taglib.git\taglib\taglib\ape
-	D:\Code\git\taglib.git\taglib\taglib\flac
-	D:\Code\git\taglib.git\taglib\taglib\it
-	D:\Code\git\taglib.git\taglib\taglib\mod
-	D:\Code\git\taglib.git\taglib\taglib\mp4
-	D:\Code\git\taglib.git\taglib\taglib\mpc
-	D:\Code\git\taglib.git\taglib\taglib\mpeg
-	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v1
-	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2
-	D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2\frames
-	D:\Code\git\taglib.git\taglib\taglib\ogg
-	D:\Code\git\taglib.git\taglib\taglib\ogg\flac
-	D:\Code\git\taglib.git\taglib\taglib\ogg\speex
-	D:\Code\git\taglib.git\taglib\taglib\ogg\vorbis
-	D:\Code\git\taglib.git\taglib\taglib\riff
-	D:\Code\git\taglib.git\taglib\taglib\riff\aiff
-	D:\Code\git\taglib.git\taglib\taglib\riff\wav
-	D:\Code\git\taglib.git\taglib\taglib\toolkit
-	D:\Code\git\taglib.git\taglib\taglib\trueaudio
-	D:\Code\git\taglib.git\taglib\taglib\wavpack
-	D:\Code\git\taglib.git\taglib\taglib\xm
+For x86:
+del ".\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x86 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
+nmake clean
+nmake
+del .\taglib\tag-static32.lib
+rename .\taglib\tag.lib tag-static32.lib
 
-Modify Library Directory if required, currently set as -
-	Debug Win32	D:\Code\git\taglib.git\taglib\taglib\win32\Win32\Debug
-	Release Win32	D:\Code\git\taglib.git\taglib\taglib\win32\Win32\Release
-	Debug x64	D:\Code\git\taglib.git\taglib\taglib\win32\x64\Debug
-	Release x64	D:\Code\git\taglib.git\taglib\taglib\win32\x64\Release
+For x64:
+del ".\CMakeCache.txt"
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
+"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
+nmake clean
+nmake
+del .\taglib\tag-static64.lib
+rename .\taglib\tag.lib tag-static64.lib
 
 Look here for errors that look like:
 Cannot open include file: 'tag.h'
