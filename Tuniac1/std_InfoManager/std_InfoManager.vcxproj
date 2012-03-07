@@ -87,14 +87,14 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib\taglib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib\taglib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib\taglib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib\taglib;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\e\git\taglib.git\taglib\taglib\ape;D:\Code\git\taglib.git\taglib\taglib\flac;D:\Code\git\taglib.git\taglib\taglib\it;D:\Code\git\taglib.git\taglib\taglib\mod;D:\Code\git\taglib.git\taglib\taglib\mp4;D:\Code\git\taglib.git\taglib\taglib\mpc;D:\Code\git\taglib.git\taglib\taglib\mpeg;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v1;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2\frames;D:\Code\git\taglib.git\taglib\taglib\ogg;D:\Code\git\taglib.git\taglib\taglib\ogg\flac;D:\Code\git\taglib.git\taglib\taglib\ogg\speex;D:\Code\git\taglib.git\taglib\taglib\ogg\vorbis;D:\Code\git\taglib.git\taglib\taglib\riff;D:\Code\git\taglib.git\taglib\taglib\riff\aiff;D:\Code\git\taglib.git\taglib\taglib\riff\wav;D:\Code\git\taglib.git\taglib\taglib\s3m;D:\Code\git\taglib.git\taglib\taglib\toolkit;D:\Code\git\taglib.git\taglib\taglib\trueaudio;D:\Code\git\taglib.git\taglib\taglib\wavpack;D:\Code\git\taglib.git\taglib\taglib\xm;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\e\git\taglib.git\taglib\taglib\ape;D:\Code\git\taglib.git\taglib\taglib\flac;D:\Code\git\taglib.git\taglib\taglib\it;D:\Code\git\taglib.git\taglib\taglib\mod;D:\Code\git\taglib.git\taglib\taglib\mp4;D:\Code\git\taglib.git\taglib\taglib\mpc;D:\Code\git\taglib.git\taglib\taglib\mpeg;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v1;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2\frames;D:\Code\git\taglib.git\taglib\taglib\ogg;D:\Code\git\taglib.git\taglib\taglib\ogg\flac;D:\Code\git\taglib.git\taglib\taglib\ogg\speex;D:\Code\git\taglib.git\taglib\taglib\ogg\vorbis;D:\Code\git\taglib.git\taglib\taglib\riff;D:\Code\git\taglib.git\taglib\taglib\riff\aiff;D:\Code\git\taglib.git\taglib\taglib\riff\wav;D:\Code\git\taglib.git\taglib\taglib\s3m;D:\Code\git\taglib.git\taglib\taglib\toolkit;D:\Code\git\taglib.git\taglib\taglib\trueaudio;D:\Code\git\taglib.git\taglib\taglib\wavpack;D:\Code\git\taglib.git\taglib\taglib\xm;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\e\git\taglib.git\taglib\taglib\ape;D:\Code\git\taglib.git\taglib\taglib\flac;D:\Code\git\taglib.git\taglib\taglib\it;D:\Code\git\taglib.git\taglib\taglib\mod;D:\Code\git\taglib.git\taglib\taglib\mp4;D:\Code\git\taglib.git\taglib\taglib\mpc;D:\Code\git\taglib.git\taglib\taglib\mpeg;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v1;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2;D:\Code\git\taglib.git\taglib\taglib\mpeg\id3v2\frames;D:\Code\git\taglib.git\taglib\taglib\ogg;D:\Code\git\taglib.git\taglib\taglib\ogg\flac;D:\Code\git\taglib.git\taglib\taglib\ogg\speex;D:\Code\git\taglib.git\taglib\taglib\ogg\vorbis;D:\Code\git\taglib.git\taglib\taglib\riff;D:\Code\git\taglib.git\taglib\taglib\riff\aiff;D:\Code\git\taglib.git\taglib\taglib\riff\wav;D:\Code\git\taglib.git\taglib\taglib\s3m;D:\Code\git\taglib.git\taglib\taglib\toolkit;D:\Code\git\taglib.git\taglib\taglib\trueaudio;D:\Code\git\taglib.git\taglib\taglib\wavpack;D:\Code\git\taglib.git\taglib\taglib\xm;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;..\..\..\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib\taglib;..\..\..\zlib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib\taglib;..\..\..\zlib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib\taglib;..\..\..\zlib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib\taglib;..\..\..\zlib;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;..\..\..\zlib;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;..\..\..\zlib;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;..\..\..\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,7 +107,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;tag-static32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;tag-static32d.lib;zlib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -131,7 +131,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;tag-static64d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;tag-static64d.lib;zlib64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -151,7 +151,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;tag-static32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;tag-static32.lib;zlib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -173,7 +173,7 @@
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>shlwapi.lib;tag-static64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;tag-static64.lib;zlib64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
