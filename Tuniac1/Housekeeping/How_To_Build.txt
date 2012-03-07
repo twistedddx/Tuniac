@@ -8,9 +8,13 @@ For me:
 
 Tuniac 1 svn is in D:\Code\tuniac\Tuniac1
 libjpeg-turbo svn is in D:\Code\libjpeg-turbo
+zlib git is in D:\Code\zlib
 Taglib git is in D:\Code\taglib
 You can put things where you like, you just need to adjust your folder paths accordingly.
 
+I *strongly* recommend creating the repositories as listed in a single folder.
+Eg you can have E:\monkey\libjpeg-turbo but you should have also E:\monkey\tuniac\Tuniac1 etc
+Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tuniac1
 
 
 
@@ -21,7 +25,6 @@ You can put things where you like, you just need to adjust your folder paths acc
 Platform SDK 7.1:
 http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
 
-
 1b)If you have Visual Studio 2010 Express you will need the Windows Platform SDK as it's not included.
 Dot point 2 of the below link may also need to be done for Express.
 http://msdn.microsoft.com/en-us/library/ms235626%28VS.80%29.aspx
@@ -31,7 +34,7 @@ cannot open include file 'winres.h'
 
 
 
-2)For tuniac, taglib and libjpeg-turbo you require TortoiseSVN, TortoiseGIT and CMake
+2)You require TortoiseSVN, TortoiseGIT and CMake or equals
 
 http://tortoisesvn.net/
 http://tortoisesvn.net/downloads.html
@@ -44,19 +47,29 @@ http://www.cmake.org/files/v2.8/cmake-2.8.7-win32-x86.exe
 
 Install them
 
-2a)You need Tuniac SVN (http://sourceforge.net/projects/tuniac/)
+
+
+3)Gather repositories
+
+3a)You need Tuniac SVN (http://sourceforge.net/projects/tuniac/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 https://tuniac.svn.sourceforge.net/svnroot/tuniac
 Hit OK and wait
 
-2b)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+3b)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
 Hit OK and wait
 
-2c)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
+3d)You should get zlib GIT (http://zlib.net/)
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+https://github.com/madler/zlib
+Hit OK and wait
+
+3d)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
@@ -64,7 +77,16 @@ Hit OK and wait
 
 
 
-3)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
+4)Build depencies (turbojpeglib, taglib/zlib)
+
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
+This cmd assumes Win7 x64 and Visual Studio 2010 if you have anything else you will need to mod the file.
+You can also get all the build recipes for individual building of libs in there.
+
+
+
+5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
 You need the Glew 1.7.0 Binaries Windows 32 zip.
 http://glew.sourceforge.net/
@@ -80,108 +102,38 @@ Cannot open include file: 'GL/glew.h'
 
 
 
-4)For TuniacApp
+6)For TuniacApp
 
-4a)You need the current DirectX June 2010 SDK for XAudio2.
+6a)You need the current DirectX June 2010 SDK for XAudio2.
 http://www.microsoft.com/downloads/en/details.aspx?displaylang=en&FamilyID=3021d52b-514e-41d3-ad02-438a3ba730ba
 
 Look here for errors that look like:
 Cannot open include file: 'xaudio2.h'
 
 
-4b)Build libjpeg-turbo static lib
+6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
-
-Open a command prompt(CMD)
-Navigate to D:\Code\libjpeg-turbo\trunk (cd D:\Code\libjpeg-turbo\trunk)
-I find it easiest to copy/paste cmd in to D:\Code\libjpeg-turbo\trunk so that when CMD starts it is already in the correct folder.
-Use these build recipes:
-
-For x86:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x86 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 .
-nmake clean
-nmake
-del ".\turbojpeg-static32.lib"
-rename turbojpeg-static.lib turbojpeg-static32.lib
-
-For x64:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 .
-nmake clean
-nmake
-del "turbojpeg-static64.lib"
-rename turbojpeg-static.lib turbojpeg-static64.lib
+http://www.wasteofcash.com/Tuniac/turbojpeglib_1.2.0_vs2010.zip
+extract to D:\Code\libjpeg-turbo\trunk
 
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
 
 
-5)std_Infomanager, build taglib static lib
+7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
-
-Open a command prompt(CMD)
-Navigate to D:\Code\libjpeg-turbo\trunk (cd D:\Code\taglib)
-I find it easiest to copy/paste cmd in to D:\Code\taglib so that when CMD starts it is already in the correct folder.
-Use these build recipes:
-
-Release
-For x86:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x86 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
-nmake clean
-nmake
-del .\taglib\tag-static32.lib
-rename .\taglib\tag.lib tag-static32.lib
-
-For x64:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
-nmake clean
-nmake
-del .\taglib\tag-static64.lib
-rename .\taglib\tag.lib tag-static64.lib
-
-Debug
-For x86:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Debug /x86 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
-nmake clean
-nmake
-del .\taglib\tag-static32d.lib
-rename .\taglib\tag.lib tag-static32d.lib
-
-For x64:
-del ".\CMakeCache.txt"
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
-"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Debug /x64 /win7
-"C:\Program Files (x86)\CMake 2.8\bin\cmake" -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DWITH_MP4=1 -DWITH_MP4=1 .
-nmake clean
-nmake
-del .\taglib\tag-static64d.lib
-rename .\taglib\tag.lib tag-static64d.lib
+extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:
 Cannot open include file: 'tag.h'
 
 
 
-6)To build installer from scripts
+8)To build installer from scripts
 
 You need Inno QuickStart Pack
 http://www.jrsoftware.org/isinfo.php
