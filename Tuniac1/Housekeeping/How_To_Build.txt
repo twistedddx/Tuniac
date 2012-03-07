@@ -125,6 +125,9 @@ Cannot open include file: 'jpeglib.h'
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
+http://www.wasteofcash.com/Tuniac/zlib_1.2.6_vs2010.zip
+extract to D:\Code\taglib\zlib
+
 http://www.wasteofcash.com/Tuniac/taglib_1.7_vs2010.zip
 extract to D:\Code\taglib\taglib
 
