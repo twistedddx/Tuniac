@@ -19,6 +19,7 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 
 1)First install Visual Studio 2010.
+During the installer remember to also instill the 64bit compiler.
 
 1a)You should update your Platform SDK if needed.
 
