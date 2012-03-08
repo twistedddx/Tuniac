@@ -115,7 +115,7 @@ Cannot open include file: 'xaudio2.h'
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/turbojpeglib_1.2.0_vs2010.zip
+http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
 extract to D:\Code\libjpeg-turbo\trunk
 
 Look here for errors that look like:
