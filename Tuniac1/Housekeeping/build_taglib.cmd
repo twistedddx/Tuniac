@@ -1,12 +1,16 @@
 cd ..\..\..\
 
-set 32bitonly=false
+
 set ProgFilesRoot=%ProgramFiles%
 set ProgFiles86Root=%ProgramFiles(x86)%
-if not "%ProgFiles86Root%"=="" GOTO 64bit
+if not "%ProgFiles86Root%"=="" GOTO 64bitWindows
 set ProgFiles86Root=%ProgramFiles%
-set 32bitonly=true
-:64bit
+:64bitWindows
+
+set 64bitcl=true
+if not exist "%ProgFiles86Root%\Microsoft Visual Studio 10.0\VC\bin\amd64\cl.exe" goto 32bitcl
+set 64bitcl=false
+:32bitcl
 
 
 rem ######## zlib
@@ -22,7 +26,7 @@ nmake
 mkdir .\Release\x86
 move /Y zlib.lib .\Release\x86\zlib.lib
 
-if "32bitonly"=="true" goto taglibrelease
+if "64bitcl"=="false" goto taglibrelease
 
 rem #Release x64
 del ".\CMakeCache.txt"
@@ -52,7 +56,7 @@ nmake
 mkdir .\taglib\Release\x86
 move /Y .\taglib\tag.lib .\taglib\Release\x86\tag.lib
 
-if "32bitonly"=="true" goto taglibdebug
+if "64bitcl"=="false" goto taglibdebug
 
 rem #Release x64
 del ".\CMakeCache.txt"
@@ -77,7 +81,7 @@ mkdir .\taglib\Debug\x86
 move /Y .\taglib\tag.lib .\taglib\Debug\x86\tag.lib
 move /Y .\taglib\tag.pdb .\taglib\Debug\x86\tag.pdb
 
-if "32bitonly"=="true" goto done
+if "64bitcl"=="false" goto done
 
 rem #Debug x64
 del ".\CMakeCache.txt"
