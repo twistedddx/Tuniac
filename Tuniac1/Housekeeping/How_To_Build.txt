@@ -13,7 +13,7 @@ Taglib git is in D:\Code\taglib
 You can put things where you like, you just need to adjust your folder paths accordingly.
 
 I *strongly* recommend creating the repositories as listed in a single folder.
-Eg you can have E:\monkey\libjpeg-turbo but you should have also E:\monkey\tuniac\Tuniac1 etc
+Eg you can have E:\monkey\libjpeg-turbo but you also should have E:\monkey\tuniac\Tuniac1 etc
 Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tuniac1
 
 
@@ -78,7 +78,7 @@ Hit OK and wait
 
 
 
-4)Build depencies (turbojpeglib, taglib/zlib)
+4)Build dependencies (turbojpeglib, taglib/zlib)
 
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
@@ -89,7 +89,7 @@ You can also get all the build recipes for individual building of libs in there.
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
-You need the Glew 1.7.0 Binaries Windows 32 zip.
+You need the Glew 1.7.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
 http://sourceforge.net/projects/glew/files/glew/1.7.0/glew-1.7.0-win32.zip/download
 
