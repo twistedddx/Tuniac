@@ -1,3 +1,9 @@
+Mar, 2012
+---------
+-add text for current SVP loaded
+-update taglib and libjpeg-turbo
+-tidy up of code
+
 Feb, 2012
 ---------
 -pretty albumart and visual windows
