@@ -1,9 +1,11 @@
 cd ..\..\..\
 
+set 32bitonly=false
 set ProgFilesRoot=%ProgramFiles%
 set ProgFiles86Root=%ProgramFiles(x86)%
 if not "%ProgFiles86Root%"=="" GOTO 64bit
 set ProgFiles86Root=%ProgramFiles%
+set 32bitonly=true
 :64bit
 
 
@@ -20,6 +22,8 @@ nmake
 mkdir .\Release\x86
 move /Y turbojpeg-static.lib .\Release\x86\turbojpeg-static.lib
 
+if "32bitonly"=="true" goto done
+
 rem #Release x64:
 del ".\CMakeCache.txt"
 call "%ProgFilesRoot%\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
@@ -29,5 +33,7 @@ nmake clean
 nmake
 mkdir .\Release\x64
 move /Y turbojpeg-static.lib .\Release\x64\turbojpeg-static.lib
+
+:done
 
 cd ..\..\

@@ -1,9 +1,11 @@
 cd ..\..\..\
 
+set 32bitonly=false
 set ProgFilesRoot=%ProgramFiles%
 set ProgFiles86Root=%ProgramFiles(x86)%
 if not "%ProgFiles86Root%"=="" GOTO 64bit
 set ProgFiles86Root=%ProgramFiles%
+set 32bitonly=true
 :64bit
 
 
@@ -20,6 +22,8 @@ nmake
 mkdir .\Release\x86
 move /Y zlib.lib .\Release\x86\zlib.lib
 
+if "32bitonly"=="true" goto taglibrelease
+
 rem #Release x64
 del ".\CMakeCache.txt"
 call "%ProgFilesRoot%\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
@@ -32,6 +36,8 @@ move /Y zlib.lib .\Release\x64\zlib.lib
 
 cd ..\
 
+
+:taglibrelease
 
 rem ######## Taglib
 cd taglib\
@@ -46,6 +52,8 @@ nmake
 mkdir .\taglib\Release\x86
 move /Y .\taglib\tag.lib .\taglib\Release\x86\tag.lib
 
+if "32bitonly"=="true" goto taglibdebug
+
 rem #Release x64
 del ".\CMakeCache.txt"
 call "%ProgFilesRoot%\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /Release /x64 /win7
@@ -55,6 +63,8 @@ nmake clean
 nmake
 mkdir .\taglib\Release\x64
 move /Y .\taglib\tag.lib .\taglib\Release\x64\tag.lib
+
+:taglibdebug
 
 rem #Debug x86
 del ".\CMakeCache.txt"
@@ -67,6 +77,7 @@ mkdir .\taglib\Debug\x86
 move /Y .\taglib\tag.lib .\taglib\Debug\x86\tag.lib
 move /Y .\taglib\tag.pdb .\taglib\Debug\x86\tag.pdb
 
+if "32bitonly"=="true" goto done
 
 rem #Debug x64
 del ".\CMakeCache.txt"
@@ -78,5 +89,7 @@ nmake
 mkdir .\taglib\Debug\x64
 move /Y .\taglib\tag.lib .\taglib\Debug\x64\tag.lib
 move /Y .\taglib\tag.pdb .\taglib\Debug\x64\tag.pdb
+
+:done
 
 cd ..\
