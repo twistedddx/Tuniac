@@ -1969,6 +1969,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED);
 							}
 
+							ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
+
 							int ItemHit = ListView_HitTest(hListViewWnd, &HitTest);
 							if(ItemHit == -1)
 							{

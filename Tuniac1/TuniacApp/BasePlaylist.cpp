@@ -732,12 +732,15 @@ bool CBasePlaylist::Sort (unsigned long ulSortBy)
 	{
 	  return false;
 	}
-	IPlaylistEntry * pIPE = GetActiveEntry();
+	unsigned long ulTempActive = GetActiveEntryID();
 	Sort_Algorithm(0, m_PlaylistArray.GetCount() - 1, scratch, ulSortBy, reversesort);
 	delete[] scratch;
 
-	m_ActiveRealIndex = GetRealIndexforEntry(pIPE);
+	m_ActiveRealIndex = GetRealIndexforEntryID(ulTempActive);
+
 	RebuildPlaylistArrays();
+	tuniacApp.RebuildFutureMenu();
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
 }
@@ -1042,55 +1045,66 @@ bool				CBasePlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 
 bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray)
 {
-	EntryArray		theEntries;
-	bool			bIDActive = false;
-	unsigned long	ulIDActive = -1;
+	PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
 
-	for(unsigned long x=0; x<indexArray.GetCount(); x++)
+	unsigned long ulRealMoveIndex = NormalFilteredIndexToRealIndex(ToIndex);
+
+	if(ToIndex != 0)
 	{
-		unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(indexArray[x]);
-		theEntries.AddTail(m_PlaylistArray[ulRealIndex].pIPE);
-
-		if((indexArray[x] <= ToIndex) && (ToIndex > 0))
-			ToIndex--;
-
-		if(ulRealIndex == m_ActiveRealIndex)
+		for(unsigned long x=0; x<indexArray.GetCount(); x++)
 		{
-			bIDActive = true;
-			ulIDActive = x;
+			if(NormalFilteredIndexToRealIndex(indexArray[x]) < ulRealMoveIndex)
+				ToIndex--;
 		}
 	}
 
 
-	DeleteNormalFilteredIndexArray(indexArray);
+	bool bActiveFound = false;
+	unsigned long ulFound = 0;
+	unsigned long ulOthers = 0;
+	unsigned long ulRealIndex = NormalFilteredIndexToRealIndex(indexArray[0]);
 
-	if(ToIndex > m_PlaylistArray.GetCount())
+	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
 	{
-		ToIndex = m_PlaylistArray.GetCount();
-	}
-
-	for(unsigned long id = 0; id < theEntries.GetCount(); id ++)
-	{
-		PlaylistEntry	PLE;
-		PLE.pIPE		= theEntries[id];
-
-		m_PlaylistArray.InsertBefore(ToIndex + id, PLE);
-		if(m_ActiveRealIndex >= ToIndex + id)
+		if(ulRealIndex == x)
 		{
-			m_ActiveRealIndex++;
-		}
-
-		if(bIDActive)
-		{
-			if(id == ulIDActive)
+			scratch[ToIndex + ulFound] = m_PlaylistArray[x];
+			if(x == m_ActiveRealIndex && !bActiveFound)
 			{
-				m_ActiveRealIndex = ToIndex + id;
-				bIDActive = false;
+				bActiveFound = true;
+				 m_ActiveRealIndex = ToIndex + ulFound;
 			}
+			 
+			ulFound++;
+
+			ulRealIndex = NormalFilteredIndexToRealIndex(indexArray[ulFound]);
+		}
+		else
+		{
+			if(ulOthers == ToIndex)
+				ulOthers += indexArray.GetCount();
+
+			scratch[ulOthers] = m_PlaylistArray[x];
+			if(x == m_ActiveRealIndex && !bActiveFound)
+			{
+				bActiveFound = true;
+				 m_ActiveRealIndex = ulOthers;
+			}
+
+			ulOthers++;
+
 		}
 	}
 
-	ApplyFilter();
+	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
+	{
+		m_PlaylistArray[x] = scratch[x];
+	}
+
+	delete [] scratch;
+
+	RebuildPlaylistArrays();
+	tuniacApp.RebuildFutureMenu();
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
