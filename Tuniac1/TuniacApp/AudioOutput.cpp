@@ -292,6 +292,10 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 		{
 			speakerconfig = KSAUDIO_SPEAKER_STEREO;
 		}
+		else if(Channels == 3)
+		{
+			speakerconfig = (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY);
+		}
 		else if(Channels == 4)
 		{
 			speakerconfig = KSAUDIO_SPEAKER_QUAD;
@@ -303,6 +307,10 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 		else if(Channels == 6)
 		{
 			speakerconfig = KSAUDIO_SPEAKER_5POINT1;
+		}
+		else if(Channels == 8)
+		{
+			speakerconfig = KSAUDIO_SPEAKER_7POINT1;
 		}
 		else
 		{
