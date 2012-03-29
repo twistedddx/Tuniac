@@ -118,6 +118,23 @@ You can use my files if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.0_vs2010.zip
 extract to D:\Code\libjpeg-turbo\trunk
 
+If you want to stop the warnings about FAR macro redefinition replace:
+#ifdef NEED_FAR_POINTERS
+#define FAR  far
+#else
+#define FAR
+#endif
+
+with:
+#ifdef NEED_FAR_POINTERS
+#define FAR  far
+#else
+#ifdef FAR
+#undef FAR
+#endif
+#define FAR
+#endif
+
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
