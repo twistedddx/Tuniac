@@ -1048,13 +1048,14 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 	PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
 
 	unsigned long ulRealMoveIndex = NormalFilteredIndexToRealIndex(ToIndex);
+	unsigned long ulRealMoveToIndex = ulRealMoveIndex;
 
 	if(ToIndex != 0)
 	{
 		for(unsigned long x=0; x<indexArray.GetCount(); x++)
 		{
 			if(NormalFilteredIndexToRealIndex(indexArray[x]) < ulRealMoveIndex)
-				ToIndex--;
+				ulRealMoveToIndex--;
 		}
 	}
 
@@ -1068,11 +1069,11 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 	{
 		if(ulRealIndex == x)
 		{
-			scratch[ToIndex + ulFound] = m_PlaylistArray[x];
+			scratch[ulRealMoveToIndex + ulFound] = m_PlaylistArray[x];
 			if(x == m_ActiveRealIndex && !bActiveFound)
 			{
 				bActiveFound = true;
-				 m_ActiveRealIndex = ToIndex + ulFound;
+				 m_ActiveRealIndex = ulRealMoveToIndex + ulFound;
 			}
 			 
 			ulFound++;
@@ -1081,7 +1082,7 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 		}
 		else
 		{
-			if(ulOthers == ToIndex)
+			if(ulOthers == ulRealMoveToIndex)
 				ulOthers += indexArray.GetCount();
 
 			scratch[ulOthers] = m_PlaylistArray[x];
