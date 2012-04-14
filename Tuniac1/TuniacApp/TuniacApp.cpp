@@ -1412,7 +1412,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(::SHGetMalloc(&lpMalloc) == NOERROR)
 								{
 									//setup open directory dialog
-									TCHAR szBuffer[MAX_PATH];
 
 									BROWSEINFO browseInfo;
 									LPITEMIDLIST lpItemIDList;
@@ -1420,15 +1419,15 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									browseInfo.hwndOwner		= hWnd;
 									browseInfo.pidlRoot			= NULL; 
 									browseInfo.pszDisplayName	= NULL;
-									browseInfo.lpszTitle		= TEXT("Select a directory...");   // passed in
-									browseInfo.ulFlags			= BIF_RETURNONLYFSDIRS | BIF_USENEWUI;   // also passed in
-									browseInfo.lpfn				= NULL;      // not used
-									browseInfo.lParam			= 0;      // not used   
+									browseInfo.lpszTitle		= TEXT("Select a directory...");
+									browseInfo.ulFlags			= BIF_USENEWUI;
+									browseInfo.lpfn				= NULL;
+									browseInfo.lParam			= 0; 
 
 									if((lpItemIDList = ::SHBrowseForFolder(&browseInfo)) != NULL)
 									{
-										//something valid was selected for open
-										if(::SHGetPathFromIDList(lpItemIDList, szBuffer))
+										TCHAR szBuffer[MAX_PATH];
+										if(::SHGetPathFromIDList(lpItemIDList, szBuffer)) //something valid was selected for open
 										{
 											if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 											{
@@ -1437,13 +1436,112 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 												m_MediaLibrary.EndAdd();
 											}
 										}
+										else //possible library eg Music
+										{
+											LPTSTR szParsingName;
+											::SHGetNameFromIDList(lpItemIDList, SIGDN_DESKTOPABSOLUTEPARSING, &szParsingName); //get parsing name for selected shell id
+
+											IShellLibrary *pslLibrary;
+											HRESULT hr =  ::SHLoadLibraryFromParsingName(szParsingName, STGM_READWRITE, IID_PPV_ARGS(&pslLibrary));  //load library for that parsing name
+											if(SUCCEEDED(hr))
+											{
+												IShellItemArray *psiaFolders;
+												hr = pslLibrary->GetFolders(LFF_STORAGEITEMS, IID_PPV_ARGS(&psiaFolders)); //get Shell Items for library (library folders)
+												IEnumShellItems *penumShellItems;
+												psiaFolders->EnumItems(&penumShellItems);
+
+												DWORD dwCount = 0;
+												psiaFolders->GetCount(&dwCount);
+												IShellItem *psiFolder;
+												for(DWORD dwIndex = 0; dwIndex < dwCount; ++dwIndex )
+												{
+													psiaFolders->GetItemAt(dwIndex, &psiFolder );
+													LPTSTR strFolderName;
+													hr = psiFolder->GetDisplayName(SIGDN_FILESYSPATH, &strFolderName); //get full path string for Shell Item
+													if(SUCCEEDED(hr))
+													{
+														if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+														{
+															//straight url to directory
+															m_MediaLibrary.AddItem(strFolderName);
+															m_MediaLibrary.EndAdd();
+														}
+													}
+													psiFolder->Release();
+												}
+												psiaFolders->Release();
+											}
+											pslLibrary->Release();
+										}
 
 										lpMalloc->Free(lpItemIDList);
 									}
 
 									lpMalloc->Release();
-
 								}
+
+								/*
+								IFileDialog *pfd = NULL;
+								HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, 
+													NULL, 
+													CLSCTX_INPROC_SERVER, 
+													IID_PPV_ARGS(&pfd));
+								if (SUCCEEDED(hr))
+								{
+									FILEOPENDIALOGOPTIONS fileOptions;
+									pfd->GetOptions(&fileOptions);
+									fileOptions |= FOS_PICKFOLDERS;
+									fileOptions &= ~FOS_FORCEFILESYSTEM;
+									pfd->SetOptions(fileOptions);
+
+									pfd->Show ( m_hWnd );
+									IShellItem *psiResult;
+									hr = pfd->GetResult(&psiResult);
+									if ( SUCCEEDED(hr) )
+									{
+										LPTSTR pwsz = NULL;
+										hr = psiResult->GetDisplayName (SIGDN_FILESYSPATH, &pwsz);
+ 										if ( SUCCEEDED(hr) )
+										{
+											if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+											{
+												m_MediaLibrary.AddItem(pwsz);
+												m_MediaLibrary.EndAdd();
+											}
+											CoTaskMemFree(pwsz);
+										}
+										else
+										{
+											IEnumShellItems* pEnum = nullptr;
+											hr = psiResult->BindToHandler(nullptr, BHID_EnumItems, IID_PPV_ARGS(&pEnum));
+											if (SUCCEEDED(hr))
+											{
+												IShellItem* pChildItem = nullptr;
+												ULONG ulFetched = 0;
+												do
+												{
+													hr = pEnum->Next(1, & pChildItem, &ulFetched);
+													if (FAILED(hr)) break;
+													if (ulFetched != 0)
+													{
+														LPTSTR szChildName = NULL;
+														pChildItem->GetDisplayName(SIGDN_FILESYSPATH, &szChildName);
+														if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+														{
+															m_MediaLibrary.AddItem(szChildName);
+															m_MediaLibrary.EndAdd();
+														}
+														CoTaskMemFree(szChildName);
+														pChildItem ->Release();
+													}
+												} while (hr != S_FALSE);
+												pEnum->Release();
+											}
+										}
+									}
+									pfd->Release();
+								}
+								*/
 							}
 							break;
 
