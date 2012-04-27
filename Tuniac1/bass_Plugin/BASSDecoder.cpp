@@ -155,7 +155,7 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 	dTime = LENGTH_UNKNOWN;
 	long long len = BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE);
-	if(len)
+	if(len > 0)
 		dTime = BASS_ChannelBytes2Seconds(decodehandle, len) * 1000;
 
 	if(bIsStream) //update unknowns for streams
@@ -202,6 +202,7 @@ bool		CBASSDecoder::GetFormat(unsigned long * SampleRate, unsigned long * Channe
 bool		CBASSDecoder::GetLength(unsigned long * MS)
 {
 	*MS = dTime;
+
 	return(true);
 }
 
