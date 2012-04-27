@@ -503,6 +503,11 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 							tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
 						}
 					}
+					else
+					{
+						m_bMixNotify = true;
+						tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_MIXPOINTREACHED, NULL);
+					}
 				}
 			}
 

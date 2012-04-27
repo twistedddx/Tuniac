@@ -520,7 +520,12 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				float Width = SeekRect.right - SeekRect.left;
 
 				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition() / 1000;
-				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength() / 1000;
+				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength();
+				if(ulSongLength != LENGTH_UNKNOWN)
+					ulSongLength = ulSongLength / 1000;
+				else
+					ulSongLength = 0;
+
 				float fProgress = 0.0f;
 				if(ulSongLength != 0)
 					fProgress = (float)ulPosition / (float)ulSongLength;
