@@ -197,6 +197,21 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				// 4: CD playlist
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_CD)); 
 
+				// 5 : unknown playlist active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
+
+				// 6: Library active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE));
+
+				// 7: Standard Playlist active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
+
+				// 8: smart playlist active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
+
+				// 9: CD playlist active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_CD_ACTIVE)); 
+
 				// 5: Radio!
 				//ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_RADIO)); 
 
@@ -945,7 +960,10 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 								if(pList)
 								{
 									pDispInfo->item.pszText = pList->GetPlaylistName();
-									pDispInfo->item.iImage	= pList->GetPlaylistType();
+									if(x == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex())
+										pDispInfo->item.iImage	= pList->GetPlaylistType() + PLAYLIST_TYPE_COUNT;
+									else
+										pDispInfo->item.iImage	= pList->GetPlaylistType();
 								}
 
 							}

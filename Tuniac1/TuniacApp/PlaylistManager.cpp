@@ -493,9 +493,10 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 	{
 		// medialibrary
 		m_ActivePlaylist = &m_LibraryPlaylist;
-/*
-		return true;
+		//return true;
 	}
+/*
+
 	iPlaylistNumber -= 1;
 
 	if(iPlaylistNumber == 0)
@@ -504,7 +505,6 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 		m_ActivePlaylist = &m_RadioPlaylist;
 		return true;
 */
-	}
 	ulPlaylistNumber -= 1;
 
 	if(ulPlaylistNumber < m_CDPlaylists.GetCount())
@@ -521,6 +521,10 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 		m_ActivePlaylist = m_StandardPlaylists[ulPlaylistNumber];
 		//return true;
 	}
+
+	if(tuniacApp.m_SourceSelectorWindow)
+		tuniacApp.m_SourceSelectorWindow->UpdateList();
+
 	return true;
 }
 

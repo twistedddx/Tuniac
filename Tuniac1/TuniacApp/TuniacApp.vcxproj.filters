@@ -364,6 +364,15 @@
     <None Include="default-theme\item-unavailable.ico">
       <Filter>Resource Files\Images</Filter>
     </None>
+    <None Include="default-theme\playlist-medialibrary-active.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\playlist-radio-active.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="default-theme\playlist-standard-active.ico">
+      <Filter>Resource Files\Images</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="Tuniac.manifest">

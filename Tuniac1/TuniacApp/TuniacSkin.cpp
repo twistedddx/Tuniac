@@ -80,7 +80,27 @@ static ThemeIcon ThemeIconSet[THEMEICON_MAXICON] =
 		IDI_THEMEICON_PLAYLIST_STANDARD,
 		32,
 		NULL
+	},
+	{
+		TEXT("playlist-medialibrary-active.ico"),
+		IDI_THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE,
+		32,
+		NULL
+	},
+	{
+		TEXT("playlist-cd-active.ico"),
+		IDI_THEMEICON_PLAYLIST_CD_ACTIVE,
+		32,
+		NULL
+	},
+	{
+		TEXT("playlist-standard-active.ico"),
+		IDI_THEMEICON_PLAYLIST_STANDARD_ACTIVE,
+		32,
+		NULL
 	}
+
+
 /*
 	{
 		TEXT("playlist-radio.ico"),
