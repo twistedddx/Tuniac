@@ -352,6 +352,9 @@
     <None Include="default-theme\item-normal.ico" />
     <None Include="cursors\newplaylistcursor.cur" />
     <None Include="default-theme\item-unavailable.ico" />
+    <None Include="default-theme\playlist-medialibrary-active.ico" />
+    <None Include="default-theme\playlist-radio-active.ico" />
+    <None Include="default-theme\playlist-standard-active.ico" />
     <None Include="images\next.bmp" />
     <None Include="images\pause.bmp" />
     <None Include="images\play.bmp" />

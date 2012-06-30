@@ -61,7 +61,8 @@
 #define PLAYLIST_TYPE_SMARTPLAYLIST			3
 #define PLAYLIST_TYPE_CD					4
 //#define PLAYLIST_TYPE_RADIO					5
-#define PLAYLIST_TYPE_USER					6
+//#define PLAYLIST_TYPE_USER					6
+#define PLAYLIST_TYPE_COUNT					5
 
 #define INVALID_PLAYLIST_INDEX			0xffffffff
 
