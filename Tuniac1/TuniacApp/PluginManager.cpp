@@ -349,6 +349,14 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				return (void *)tuniacApp.m_VisualWindow->GetFullscreen();
 			}
 			break;
+		case Variable_VolumePercent:
+			{
+				unsigned long vol;
+				vol = (unsigned long)CCoreAudio::Instance()->GetVolumePercent();
+				return (void *)vol;
+			}
+			break;
+
 	}
 	return NULL;
 }
