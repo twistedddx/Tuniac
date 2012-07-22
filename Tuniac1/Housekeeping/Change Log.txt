@@ -1,3 +1,31 @@
+Jul, 2012
+---------
+-update bass
+-exposes Tuniac volume to plugins.
+-exposes Tuniac build date to plugins
+-change volume internally to int, because I am lazy this will likely reset your volume back to 100% :)
+-add GetTuniacVisPluginVersion to support booting out incompatible visuals in the future
+-return INVALID instead of NULL for invalid variable requests
+-other minor internal things
+
+Jun, 2012
+-----------
+-bass lib updates
+-tuniacapp active playlist icons
+
+Apr, 2012
+-----------
+-Add Windows 7 Library adding
+-fix BASS plugin to return inf length correctly
+-AudioStream force crossfade start if track is shorter than cross fade timers
+-fix inf length display in PlayControls
+
+Mar, 2012
+-----------
+-add a 2.1 and 7.1 channel map
+-redo file moves in playlists, allows file moving in ML now
+-deselect selection after move
+
 Mar, 2012
 ---------
 -add text for current SVP loaded
