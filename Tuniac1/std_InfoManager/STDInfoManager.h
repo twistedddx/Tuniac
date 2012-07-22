@@ -3,24 +3,24 @@
 
 #include "tag.h"
 #include "tfile.h"
-#include "fileref.h"
+#include "fileRef.h"
 #include "mpegfile.h"
-#include "mpcfile.h"
+#include "mpcFile.h"
 #include "trueaudiofile.h"
 #include "wavpackfile.h"
-#include "flacfile.h"
+#include "flacFile.h"
 #include "vorbisfile.h"
 #include "speexfile.h"
 #include "oggflacfile.h"
-#include "mp4file.h"
+#include "mp4File.h"
 #include "asffile.h"
 #include "aifffile.h"
-#include "wavfile.h"
-#include "apefile.h"
-#include "itfile.h"
-#include "modfile.h"
-#include "s3mfile.h"
-#include "xmfile.h"
+#include "wavFile.h"
+#include "apeFile.h"
+#include "itFile.h"
+#include "modFile.h"
+#include "s3mFile.h"
+#include "xmFile.h"
 
 #include "id3v1tag.h"
 #include "id3v2tag.h"
@@ -40,24 +40,24 @@ class CSTDInfoManager :
 	public IInfoManager
 {
 protected:
-	TagLib::FileRef fileref;
-	TagLib::FLAC::File *flacfile;
-	TagLib::MPEG::File *mp3file;
-	TagLib::MP4::File *mp4file;
-	TagLib::MPC::File *mpcfile;
-	TagLib::TrueAudio::File *ttafile;
-	TagLib::WavPack::File *wvfile;
-	TagLib::Ogg::Vorbis::File *oggfile;
-	TagLib::Ogg::FLAC::File *ogafile;
-	TagLib::Ogg::Speex::File *spxfile;
-	TagLib::ASF::File *wmafile;
-	TagLib::RIFF::AIFF::File *aiffile;
-	TagLib::RIFF::WAV::File *wavfile;
-	TagLib::APE::File *apefile;
-	TagLib::IT::File *itfile;
-	TagLib::Mod::File *modfile;
-	TagLib::S3M::File *s3mfile;
-	TagLib::XM::File *xmfile;
+	TagLib::FileRef fileRef;
+	TagLib::FLAC::File *flacFile;
+	TagLib::MPEG::File *mp3File;
+	TagLib::MP4::File *mp4File;
+	TagLib::MPC::File *mpcFile;
+	TagLib::TrueAudio::File *ttaFile;
+	TagLib::WavPack::File *wvFile;
+	TagLib::Ogg::Vorbis::File *oggFile;
+	TagLib::Ogg::FLAC::File *ogaFile;
+	TagLib::Ogg::Speex::File *spxFile;
+	TagLib::ASF::File *wmaFile;
+	TagLib::RIFF::AIFF::File *aiffFile;
+	TagLib::RIFF::WAV::File *wavFile;
+	TagLib::APE::File *apeFile;
+	TagLib::IT::File *itFile;
+	TagLib::Mod::File *modFile;
+	TagLib::S3M::File *s3mFile;
+	TagLib::XM::File *xmFile;
 
 public:
 	CSTDInfoManager(void);

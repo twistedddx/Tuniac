@@ -149,8 +149,8 @@ public:
 	unsigned long	GetState(void);
 	unsigned long	GetFadeState(void);
 
-	bool			SetVolumeScale(float scale);
-	bool			SetAmpGain(float scale);
+	bool			SetVolumeScale(int iVolPercent);
+	bool			SetAmpGain(float fScale);
 
 	void			EnableEQ(bool bEnable = true);
 	void			SetEQGain(float low, float mid, float high);

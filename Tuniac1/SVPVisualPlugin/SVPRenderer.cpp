@@ -407,7 +407,6 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 bool	SVPRenderer::Attach(HDC hDC)
 {
-
 	TCHAR szVisualsPath[MAX_PATH];
 	GetModuleFileName((HMODULE)hInst, szVisualsPath, MAX_PATH);
 	PathRemoveFileSpec(szVisualsPath);

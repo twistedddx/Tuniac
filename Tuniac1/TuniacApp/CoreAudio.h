@@ -52,7 +52,7 @@ protected:
 	unsigned long						m_ulCrossfadeTimeMS;
 	unsigned long						m_BufferSizeMS;
 
-	float								m_fVolume;
+	int									m_iVolPercent;
 
 	bool								m_bEQEnabled;
 	float								m_fEQLow;
@@ -96,8 +96,8 @@ public:
 
 	void				CheckOldStreams(void);
 
-	float				GetVolumePercent();
-	void				SetVolumePercent(float fPercent);
+	int					GetVolumePercent();
+	void				SetVolumePercent(int iVolPercent);
 
 	void				EnableEQ(bool bEnabled);
 	float				GetEQLowGain(void);

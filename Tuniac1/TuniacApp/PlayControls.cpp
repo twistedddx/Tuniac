@@ -111,9 +111,7 @@ bool CPlayControls::Move(int x, int y, int w, int h)
 
 bool CPlayControls::UpdateVolume(void)
 {
-	float volume = CCoreAudio::Instance()->GetVolumePercent();
-	//int iVol = volume;
-	SendMessage(m_hVolumeWnd, TBM_SETPOS, TRUE, (LPARAM)volume);
+	SendMessage(m_hVolumeWnd, TBM_SETPOS, TRUE, (LPARAM)CCoreAudio::Instance()->GetVolumePercent());
 
 	return true;
 }
@@ -472,8 +470,8 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 		case WM_HSCROLL:
 			{
-				int vol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
-				CCoreAudio::Instance()->SetVolumePercent((float)vol);
+				int iVol = SendMessage(m_hVolumeWnd, TBM_GETPOS, 0, 0);
+				CCoreAudio::Instance()->SetVolumePercent(iVol);
 			}
 			break;
 

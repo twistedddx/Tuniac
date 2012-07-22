@@ -100,7 +100,7 @@ protected:
 	BOOL		m_bReplayGain;
 	BOOL		m_bReplayGainAlbum;
 
-	float		m_fVolume;
+	int			m_iVolPercent;
 
 	BOOL		m_bEQEnabled;
 	float		m_fEQLow;
@@ -197,8 +197,8 @@ public:
 	BOOL	ReplayGainEnabled(void);
 	BOOL	ReplayGainUseAlbumGain(void);
 
-	float	GetVolumePercent(void);
-	void	SetVolumePercent(float percent);
+	int		GetVolumePercent(void);
+	void	SetVolumePercent(int iVolPercent);
 
 	BOOL	GetEQEnabled(void);
 	void	SetEQEnabled(BOOL bEnabled);

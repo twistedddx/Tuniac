@@ -1433,7 +1433,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bReplayGain				= FALSE;
 	m_bReplayGainAlbum			= FALSE;
 
-	m_fVolume					= 100.0f;
+	m_iVolPercent				= 100;
 
 	m_bEQEnabled				= FALSE;
 	m_fEQLow					= 1.0f;
@@ -1761,12 +1761,12 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_bShowVisArt,
 						&Size);
 
-	Size = sizeof(float);
+	Size = sizeof(int);
 	RegQueryValueEx(	hTuniacPrefKey,
 						VOLUME,
 						NULL,
 						&Type,
-						(LPBYTE)&m_fVolume,
+						(LPBYTE)&m_iVolPercent,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -2064,8 +2064,8 @@ bool CPreferences::SavePreferences(void)
 					VOLUME, 
 					0,
 					REG_DWORD,
-					(LPBYTE)&m_fVolume, 
-					sizeof(float));
+					(LPBYTE)&m_iVolPercent, 
+					sizeof(int));
 
 	RegSetValueEx(	hTuniacPrefKey, 
 					EQENABLED, 
@@ -2616,14 +2616,14 @@ BOOL CPreferences::ReplayGainUseAlbumGain(void)
 	return m_bReplayGainAlbum;
 }
 
-float	CPreferences::GetVolumePercent(void)
+int	CPreferences::GetVolumePercent(void)
 {
-	return m_fVolume;
+	return m_iVolPercent;
 }
 
-void	CPreferences::SetVolumePercent(float fPercent)
+void	CPreferences::SetVolumePercent(int iVolPercent)
 {
-	m_fVolume = fPercent;
+	m_iVolPercent = iVolPercent;
 }
 
 BOOL		CPreferences::GetEQEnabled(void)

@@ -33,23 +33,23 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacInfoManagerVersion(void
 
 CSTDInfoManager::CSTDInfoManager(void)
 {
-	flacfile = NULL;
-	mp3file = NULL;
-	mp4file = NULL;
-	mpcfile = NULL;
-	ttafile = NULL;
-	wvfile = NULL;
-	oggfile = NULL;
-	ogafile = NULL;
-	spxfile = NULL;
-	wmafile = NULL;
-	aiffile = NULL;
-	wavfile = NULL;
-	apefile = NULL;
-	itfile = NULL;
-	modfile = NULL;
-	s3mfile = NULL;
-	xmfile = NULL;
+	flacFile = NULL;
+	mp3File = NULL;
+	mp4File = NULL;
+	mpcFile = NULL;
+	ttaFile = NULL;
+	wvFile = NULL;
+	oggFile = NULL;
+	ogaFile = NULL;
+	spxFile = NULL;
+	wmaFile = NULL;
+	aiffFile = NULL;
+	wavFile = NULL;
+	apeFile = NULL;
+	itFile = NULL;
+	modFile = NULL;
+	s3mFile = NULL;
+	xmFile = NULL;
 
 }
 
@@ -108,42 +108,42 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 {
-	fileref = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
-    if( !fileref.isNull() )
+	fileRef = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
+    if( !fileRef.isNull() )
     {
-		if(flacfile = dynamic_cast<TagLib::FLAC::File *>( fileref.file() ))
+		if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
 			return true;
-		else if(mp3file = dynamic_cast<TagLib::MPEG::File *>( fileref.file() ))
+		else if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 			return true;
-		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
+		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
 			return true;
-		else if(mpcfile = dynamic_cast<TagLib::MPC::File *>( fileref.file() ))
+		else if(mpcFile = dynamic_cast<TagLib::MPC::File *>( fileRef.file() ))
 			return true;
-		else if(ttafile = dynamic_cast<TagLib::TrueAudio::File *>( fileref.file() ))
+		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
 			return true;
-		else if(wvfile = dynamic_cast<TagLib::WavPack::File *>( fileref.file() ))
+		else if(wvFile = dynamic_cast<TagLib::WavPack::File *>( fileRef.file() ))
 			return true;
-		else if(oggfile = dynamic_cast<TagLib::Ogg::Vorbis::File *>( fileref.file() ))
+		else if(oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>( fileRef.file() ))
 			return true;
-		else if(ogafile = dynamic_cast<TagLib::Ogg::FLAC::File *>( fileref.file() ))
+		else if(ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File *>( fileRef.file() ))
 			return true;
-		else if(spxfile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileref.file() ))
+		else if(spxFile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileRef.file() ))
 			return true;
-		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 			return true;
-		else if(aiffile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileref.file() ))
+		else if(aiffFile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileRef.file() ))
 			return true;
-		else if(wavfile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileref.file() ))
+		else if(wavFile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileRef.file() ))
 			return true;
-		else if(apefile = dynamic_cast<TagLib::APE::File *>( fileref.file() ))
+		else if(apeFile = dynamic_cast<TagLib::APE::File *>( fileRef.file() ))
 			return true;
-		else if(itfile = dynamic_cast<TagLib::IT::File *>( fileref.file() ))
+		else if(itFile = dynamic_cast<TagLib::IT::File *>( fileRef.file() ))
 			return true;
-		else if(modfile = dynamic_cast<TagLib::Mod::File *>( fileref.file() ))
+		else if(modFile = dynamic_cast<TagLib::Mod::File *>( fileRef.file() ))
 			return true;
-		else if(s3mfile = dynamic_cast<TagLib::S3M::File *>( fileref.file() ))
+		else if(s3mFile = dynamic_cast<TagLib::S3M::File *>( fileRef.file() ))
 			return true;
-		else if(xmfile = dynamic_cast<TagLib::XM::File *>( fileref.file() ))
+		else if(xmFile = dynamic_cast<TagLib::XM::File *>( fileRef.file() ))
 			return true;
 	}
 
@@ -153,25 +153,25 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 
 bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 {
-	TagLib::Ogg::FieldListMap vorbisTag;
-	TagLib::APE::ItemListMap apeTag;
-	TagLib::ID3v2::FrameListMap id3v2Tag;
-	TagLib::MP4::ItemListMap mp4Tag;
-	TagLib::ASF::AttributeListMap wmaTag;
+	TagLib::Ogg::FieldListMap vorbisTagListMap;
+	TagLib::APE::ItemListMap apeTagListMap;
+	TagLib::ID3v2::FrameListMap id3v2TagListMap;
+	TagLib::MP4::ItemListMap mp4TagListMap;
+	TagLib::ASF::AttributeListMap wmaTagListMap;
 	
-	TagLib::AudioProperties *audprops = 0;
-	TagLib::Tag *tag = 0;
+	TagLib::AudioProperties * audioProps = 0;
+	TagLib::Tag * tag = 0;
 
-	audprops = fileref.audioProperties();
-	if(audprops)
+	audioProps = fileRef.audioProperties();
+	if(audioProps)
 	{
-		libEnt->iBitRate		= audprops->bitrate() * 1000;
-		libEnt->iChannels		= audprops->channels();
-		libEnt->iPlaybackTime	= audprops->length() * 1000;
-		libEnt->iSampleRate		= audprops->sampleRate();
+		libEnt->iBitRate		= audioProps->bitrate() * 1000;
+		libEnt->iChannels		= audioProps->channels();
+		libEnt->iPlaybackTime	= audioProps->length() * 1000;
+		libEnt->iSampleRate		= audioProps->sampleRate();
 	}
 
-	tag = fileref.tag();
+	tag = fileRef.tag();
 	if(tag)
 	{
 		_snwprintf(libEnt->szTitle, 128, L"%s", tag->title().toWString().c_str());
@@ -183,72 +183,72 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->dwTrack[0] = tag->track();
 	}
 
-	if(flacfile)
+	if(flacFile)
 	{
-		if(flacfile->xiphComment())
-			vorbisTag = flacfile->xiphComment()->fieldListMap();
-		else if(flacfile->ID3v2Tag())
-			id3v2Tag = flacfile->ID3v2Tag()->frameListMap();
+		if(flacFile->xiphComment())
+			vorbisTagListMap = flacFile->xiphComment()->fieldListMap();
+		else if(flacFile->ID3v2Tag())
+			id3v2TagListMap = flacFile->ID3v2Tag()->frameListMap();
 	}
-	else if(mp3file)
+	else if(mp3File)
 	{
-		if(mp3file->APETag())
-			apeTag = mp3file->APETag()->itemListMap();
-		else if(mp3file->ID3v2Tag())
-			id3v2Tag = mp3file->ID3v2Tag()->frameListMap();
+		if(mp3File->APETag())
+			apeTagListMap = mp3File->APETag()->itemListMap();
+		else if(mp3File->ID3v2Tag())
+			id3v2TagListMap = mp3File->ID3v2Tag()->frameListMap();
 	}
-	else if(mp4file)
+	else if(mp4File)
 	{
-		if(mp4file->tag())
-			mp4Tag = mp4file->tag()->itemListMap();
+		if(mp4File->tag())
+			mp4TagListMap = mp4File->tag()->itemListMap();
 	}
-	else if(mpcfile)
+	else if(mpcFile)
 	{
-		if(mpcfile->APETag())
-			apeTag = mpcfile->APETag()->itemListMap();
+		if(mpcFile->APETag())
+			apeTagListMap = mpcFile->APETag()->itemListMap();
 	}
-	else if(ttafile)
+	else if(ttaFile)
 	{
-		if(ttafile->ID3v2Tag())
-			id3v2Tag = ttafile->ID3v2Tag()->frameListMap();
+		if(ttaFile->ID3v2Tag())
+			id3v2TagListMap = ttaFile->ID3v2Tag()->frameListMap();
 	}
-	else if(wvfile)
+	else if(wvFile)
 	{
-		if(wvfile->APETag())
-			apeTag = wvfile->APETag()->itemListMap();;
+		if(wvFile->APETag())
+			apeTagListMap = wvFile->APETag()->itemListMap();;
 	}
-	else if(oggfile)
+	else if(oggFile)
 	{
-		if(oggfile->tag())
-			vorbisTag = oggfile->tag()->fieldListMap();
+		if(oggFile->tag())
+			vorbisTagListMap = oggFile->tag()->fieldListMap();
 	}
-	else if(ogafile)
+	else if(ogaFile)
 	{
-		if(ogafile->tag())
-			vorbisTag = ogafile->tag()->fieldListMap();
+		if(ogaFile->tag())
+			vorbisTagListMap = ogaFile->tag()->fieldListMap();
 	}
-	else if(spxfile)
+	else if(spxFile)
 	{
-		if(spxfile->tag())
-			vorbisTag = spxfile->tag()->fieldListMap();
+		if(spxFile->tag())
+			vorbisTagListMap = spxFile->tag()->fieldListMap();
 	}
-	else if(wmafile)
+	else if(wmaFile)
 	{
-		if(wmafile->tag())
-			wmaTag = wmafile->tag()->attributeListMap();
+		if(wmaFile->tag())
+			wmaTagListMap = wmaFile->tag()->attributeListMap();
 	}
-	else if(apefile)
+	else if(apeFile)
 	{
-		if(apefile->APETag())
-			apeTag = apefile->APETag()->itemListMap();
+		if(apeFile->APETag())
+			apeTagListMap = apeFile->APETag()->itemListMap();
 	}
 
-	if(!id3v2Tag.isEmpty())
+	if(!id3v2TagListMap.isEmpty())
 	{
-		if(!id3v2Tag["TRCK"].isEmpty())
+		if(!id3v2TagListMap["TRCK"].isEmpty())
 		{
 			//std::cout << l.front()->toString() << std::endl;
-			TagLib::String pszData = id3v2Tag["TRCK"].front()->toString();
+			TagLib::String pszData = id3v2TagListMap["TRCK"].front()->toString();
 			int val = pszData.find("/");
 			if(val != -1)
 			{
@@ -257,10 +257,10 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 		}
 
-		if(!id3v2Tag["TPOS"].isEmpty())
+		if(!id3v2TagListMap["TPOS"].isEmpty())
 		{
 			//std::cout << l.front()->toString() << std::endl;
-			TagLib::String pszData = id3v2Tag["TPOS"].front()->toString();
+			TagLib::String pszData = id3v2TagListMap["TPOS"].front()->toString();
 			int val = pszData.find("/");
 			if(val == -1)
 			{
@@ -276,10 +276,10 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		}
 
 		/* we dont get pictures here see GetAlbumArt()
-		if(!id3v2Tag["APIC"].isEmpty())
+		if(!id3v2TagListMap["APIC"].isEmpty())
 		{
-				TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2Tag["APIC"].front());
-				picframe->mimeType();
+				TagLib::ID3v2::AttachedPictureFrame *id3v2Pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2TagListMap["APIC"].front());
+				id3v2Pic->mimeType();
 		}
 		*/
 
@@ -296,52 +296,52 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		In the RGAD frame, the flags state that the frame should be preserved if the ID3v2 
 		tag is altered, but discarded if the audio data is altered.
-		if(!id3v2Tag["RGAD"].isEmpty())
+		if(!id3v2TagListMap["RGAD"].isEmpty())
 		{
 				//_ASSERT(0);
 				// we dont actually support this yet and need to decode the data
 		}
 		*/
 
-		if(!id3v2Tag["RVA2"].isEmpty())
+		if(!id3v2TagListMap["RVA2"].isEmpty())
 		{
-			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2Tag["RVA2"].front());
+			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2TagListMap["RVA2"].front());
 			libEnt->fReplayGain_Album_Gain  = relVol->volumeAdjustment();
 			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
 		}
 	}
 
-	if(!mp4Tag.isEmpty())
+	if(!mp4TagListMap.isEmpty())
 	{
-		if(mp4Tag["disc"].isValid())
-			libEnt->dwDisc[0] = mp4Tag["disc"].toInt();
+		if(mp4TagListMap["disc"].isValid())
+			libEnt->dwDisc[0] = mp4TagListMap["disc"].toInt();
 
-		if(mp4Tag["trkn"].isValid())
-			libEnt->dwTrack[1] = mp4Tag["trkn"].toIntPair().second;
+		if(mp4TagListMap["trkn"].isValid())
+			libEnt->dwTrack[1] = mp4TagListMap["trkn"].toIntPair().second;
 	}
 
-	if(!vorbisTag.isEmpty())
+	if(!vorbisTagListMap.isEmpty())
 	{
-		if(!vorbisTag["DISCNUMBER"].isEmpty())
-			libEnt->dwDisc[0] = vorbisTag["DISCNUMBER"].toString().toInt();
-		if(!vorbisTag["TOTALTRACKS"].isEmpty())
-			libEnt->dwTrack[1] = vorbisTag["TOTALTRACKS"].toString().toInt();
+		if(!vorbisTagListMap["DISCNUMBER"].isEmpty())
+			libEnt->dwDisc[0] = vorbisTagListMap["DISCNUMBER"].toString().toInt();
+		if(!vorbisTagListMap["TOTALTRACKS"].isEmpty())
+			libEnt->dwTrack[1] = vorbisTagListMap["TOTALTRACKS"].toString().toInt();
 
-		if(!vorbisTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-			libEnt->fReplayGain_Track_Gain = atof(vorbisTag["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
-		if(!vorbisTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-			libEnt->fReplayGain_Track_Peak = atof(vorbisTag["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
-		if(!vorbisTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-			libEnt->fReplayGain_Album_Gain = atof(vorbisTag["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
-		if(!vorbisTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-			libEnt->fReplayGain_Album_Peak = atof(vorbisTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+		if(!vorbisTagListMap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+			libEnt->fReplayGain_Track_Gain = atof(vorbisTagListMap["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+		if(!vorbisTagListMap["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+			libEnt->fReplayGain_Track_Peak = atof(vorbisTagListMap["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+		if(!vorbisTagListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+			libEnt->fReplayGain_Album_Gain = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+		if(!vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+			libEnt->fReplayGain_Album_Peak = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 	}
 
-	if(!apeTag.isEmpty())
+	if(!apeTagListMap.isEmpty())
 	{
-		if(!apeTag["Track"].isEmpty())
+		if(!apeTagListMap["Track"].isEmpty())
 		{
-			TagLib::String pszData = apeTag["Track"].toString();
+			TagLib::String pszData = apeTagListMap["Track"].toString();
 			int val = pszData.find("/");
 			if(val != -1)
 			{
@@ -349,19 +349,19 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 				libEnt->dwTrack[1] = trackMax.toInt();
 			}
 		}
-		if(!apeTag["disc"].isEmpty())
-			libEnt->dwDisc[0] = apeTag["disc"].toString().toInt();
+		if(!apeTagListMap["disc"].isEmpty())
+			libEnt->dwDisc[0] = apeTagListMap["disc"].toString().toInt();
 
-		if(!apeTag["REPLAYGAIN_TRACK_GAIN"].isEmpty())
-			libEnt->fReplayGain_Track_Gain = atof(apeTag["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
-		if(!apeTag["REPLAYGAIN_TRACK_PEAK"].isEmpty())
-			libEnt->fReplayGain_Track_Peak = atof(apeTag["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
-		if(!apeTag["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-			libEnt->fReplayGain_Album_Gain = atof(apeTag["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
-		if(!apeTag["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-			libEnt->fReplayGain_Album_Peak = atof(apeTag["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+		if(!apeTagListMap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+			libEnt->fReplayGain_Track_Gain = atof(apeTagListMap["REPLAYGAIN_TRACK_GAIN"].toString().toCString());
+		if(!apeTagListMap["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+			libEnt->fReplayGain_Track_Peak = atof(apeTagListMap["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
+		if(!apeTagListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+			libEnt->fReplayGain_Album_Gain = atof(apeTagListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+		if(!apeTagListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+			libEnt->fReplayGain_Album_Peak = atof(apeTagListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
 	}
-	fileref = TagLib::FileRef();
+	fileRef = TagLib::FileRef();
 	return true;
 }
 
@@ -369,9 +369,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 //bool			CSTDInfoManager::SetInfo(LPTSTR szFilename, unsigned long ulFieldID, void * pNewData)
 bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 {
-	TagLib::Tag *tag = 0;
+	TagLib::Tag * tag = 0;
 
-	tag = fileref.tag();
+	tag = fileRef.tag();
 	if(tag)
 	{
 		tag->setAlbum(libEnt->szAlbum);
@@ -382,14 +382,14 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 		tag->setTrack(libEnt->dwTrack[0]);
 		tag->setYear(libEnt->iYear);
 
-		if(fileref.save())
+		if(fileRef.save())
 		{
-			fileref = TagLib::FileRef();
+			fileRef = TagLib::FileRef();
 			return true;
 		}
 	}
 
-	fileref = TagLib::FileRef();
+	fileRef = TagLib::FileRef();
 	return false;
 }
 
@@ -397,43 +397,44 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
 {
 	int count = 0;
 
-	fileref = TagLib::FileRef(szFilename, false);
+	TagLib::ID3v2::FrameList id3TagList;
+	fileRef = TagLib::FileRef(szFilename, false);
 
-    if( !fileref.isNull() )
+    if( !fileRef.isNull() )
     {
-		if(mp3file = dynamic_cast<TagLib::MPEG::File *>( fileref.file() ))
+		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 		{
-			if(mp3file->ID3v2Tag()) 
-				count = mp3file->ID3v2Tag()->frameListMap()["APIC"].size();
+			if(mp3File->ID3v2Tag()) 
+				count = mp3File->ID3v2Tag()->frameListMap()["APIC"].size();
 		}
 
-		else if(ttafile = dynamic_cast<TagLib::TrueAudio::File *>( fileref.file() ))
+		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
 		{
-			if(ttafile->ID3v2Tag()) 
-				count = ttafile->ID3v2Tag()->frameListMap()["APIC"].size();
+			if(ttaFile->ID3v2Tag()) 
+				count = ttaFile->ID3v2Tag()->frameListMap()["APIC"].size();
 		}
 
-		else if(flacfile = dynamic_cast<TagLib::FLAC::File *>( fileref.file() ))
+		else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
 		{
-			if(flacfile->pictureList().size())
-				count = flacfile->pictureList().size();
-			else if(flacfile->ID3v2Tag()) 
-				count = flacfile->ID3v2Tag()->frameListMap()["APIC"].size();
+			if(flacFile->pictureList().size())
+				count = flacFile->pictureList().size();
+			else if(flacFile->ID3v2Tag()) 
+				count = flacFile->ID3v2Tag()->frameListMap()["APIC"].size();
 		}
-		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 		{
-			if(wmafile->tag());
-				count = wmafile->tag()->attributeListMap()["WM/Picture"].size();
+			if(wmaFile->tag());
+				count = wmaFile->tag()->attributeListMap()["WM/Picture"].size();
 		}
-		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
+		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
 		{
-			if(mp4file->tag())
-				count = mp4file->tag()->itemListMap()["covr"].toCoverArtList().size();
+			if(mp4File->tag())
+				count = mp4File->tag()->itemListMap()["covr"].toCoverArtList().size();
 		}
 
 	}
 
-	fileref = TagLib::FileRef();
+	fileRef = TagLib::FileRef();
 	return count;
 }
 
@@ -446,75 +447,75 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 {
 	bool bRet = false;
 
-	TagLib::ID3v2::FrameList id3Tag;
-	fileref = TagLib::FileRef(szFilename, false);
+	TagLib::ID3v2::FrameList id3v2TagList;
+	fileRef = TagLib::FileRef(szFilename, false);
 
-    if( !fileref.isNull() )
+    if( !fileRef.isNull() )
     {
 
-		if(mp3file = dynamic_cast<TagLib::MPEG::File *>( fileref.file() ))
+		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 		{
-			if(mp3file->ID3v2Tag()) 
-				id3Tag = mp3file->ID3v2Tag()->frameListMap()["APIC"];
+			if(mp3File->ID3v2Tag()) 
+				id3v2TagList = mp3File->ID3v2Tag()->frameListMap()["APIC"];
 		}
-		else if(ttafile = dynamic_cast<TagLib::TrueAudio::File *>( fileref.file() ))
+		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
 		{
-			if(ttafile->ID3v2Tag()) 
-				id3Tag = ttafile->ID3v2Tag()->frameListMap()["APIC"];
+			if(ttaFile->ID3v2Tag()) 
+				id3v2TagList = ttaFile->ID3v2Tag()->frameListMap()["APIC"];
 		}
-		else if(flacfile = dynamic_cast<TagLib::FLAC::File *>( fileref.file() ))
+		else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
 		{
-			if(ulImageIndex < flacfile->pictureList().size())
+			if(ulImageIndex < flacFile->pictureList().size())
 			{
-				TagLib::FLAC::Picture *pic = flacfile->pictureList()[ulImageIndex];
+				TagLib::FLAC::Picture * flacPic = flacFile->pictureList()[ulImageIndex];
 
-				*ulImageDataSize = pic->data().size();
+				*ulImageDataSize = flacPic->data().size();
 				*pImageData = malloc(*ulImageDataSize);
 
-				CopyMemory(*pImageData, pic->data().data(), *ulImageDataSize);
-				StrCpy((LPWSTR)szMimeType, (LPTSTR)pic->mimeType().toWString().c_str());
+				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+				StrCpy((LPWSTR)szMimeType, (LPTSTR)flacPic->mimeType().toWString().c_str());
 
-				*ulArtType = pic->type();
+				*ulArtType = flacPic->type();
 				 bRet = true;
 			}
-			else if(flacfile->ID3v2Tag()) 
-				id3Tag = flacfile->ID3v2Tag()->frameListMap()["APIC"];
+			else if(flacFile->ID3v2Tag()) 
+				id3v2TagList = flacFile->ID3v2Tag()->frameListMap()["APIC"];
 		}
-		else if(wmafile = dynamic_cast<TagLib::ASF::File *>( fileref.file() ))
+		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 		{
-			if(wmafile->tag());
+			if(wmaFile->tag());
 			{
-				TagLib::ASF::AttributeList wmaTag = wmafile->tag()->attributeListMap()["WM/Picture"];
+				TagLib::ASF::AttributeList wmaTagList = wmaFile->tag()->attributeListMap()["WM/Picture"];
 
-				if(!wmaTag.isEmpty() && (ulImageIndex < wmaTag.size()))
+				if(!wmaTagList.isEmpty() && (ulImageIndex < wmaTagList.size()))
 				{
-					TagLib::ASF::Picture pic = wmaTag[ulImageIndex].toPicture();
-					if(pic.isValid())
+					TagLib::ASF::Picture asfPic = wmaTagList[ulImageIndex].toPicture();
+					if(asfPic.isValid())
 					{
-						*ulImageDataSize = pic.picture().size();
+						*ulImageDataSize = asfPic.picture().size();
 						*pImageData = malloc(*ulImageDataSize);
 
-						CopyMemory(*pImageData, pic.picture().data(), *ulImageDataSize);
-						StrCpy((LPWSTR)szMimeType, (LPTSTR)pic.mimeType().toWString().c_str());
+						CopyMemory(*pImageData, asfPic.picture().data(), *ulImageDataSize);
+						StrCpy((LPWSTR)szMimeType, (LPTSTR)asfPic.mimeType().toWString().c_str());
 
-						*ulArtType = pic.type();
+						*ulArtType = asfPic.type();
 
 						bRet = true;
 					}
 				}
 			}
 		}
-		else if(mp4file = dynamic_cast<TagLib::MP4::File *>( fileref.file() ))
+		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
 		{
-			if(mp4file->tag())
+			if(mp4File->tag())
 			{
-				TagLib::MP4::Item mp4Item = mp4file->tag()->itemListMap()["covr"];
+				TagLib::MP4::Item mp4TagItem = mp4File->tag()->itemListMap()["covr"];
 
-				if(mp4Item.isValid())
+				if(mp4TagItem.isValid())
 				{
-					if(ulImageIndex < mp4Item.toCoverArtList().size())
+					if(ulImageIndex < mp4TagItem.toCoverArtList().size())
 					{
-						TagLib::MP4::CoverArt coverArt = mp4Item.toCoverArtList()[ulImageIndex];
+						TagLib::MP4::CoverArt coverArt = mp4TagItem.toCoverArtList()[ulImageIndex];
 
 						*ulImageDataSize = coverArt.data().size();
 						*pImageData = malloc(*ulImageDataSize);
@@ -538,21 +539,21 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 			}
 		}
 
-		if(!id3Tag.isEmpty() && (ulImageIndex < id3Tag.size()))
+		if(!id3v2TagList.isEmpty() && (ulImageIndex < id3v2TagList.size()))
 		{
-			TagLib::ID3v2::AttachedPictureFrame *picframe = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3Tag[ulImageIndex]);
+			TagLib::ID3v2::AttachedPictureFrame * id3v2Pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2TagList[ulImageIndex]);
 
-			*ulImageDataSize = picframe->picture().size();
+			*ulImageDataSize = id3v2Pic->picture().size();
 			*pImageData = malloc(*ulImageDataSize);
 
-			CopyMemory(*pImageData, picframe->picture().data(), *ulImageDataSize);
-			StrCpy((LPWSTR)szMimeType, (LPTSTR)picframe->mimeType().toWString().c_str());
+			CopyMemory(*pImageData, id3v2Pic->picture().data(), *ulImageDataSize);
+			StrCpy((LPWSTR)szMimeType, (LPTSTR)id3v2Pic->mimeType().toWString().c_str());
 
-			*ulArtType = picframe->type();
+			*ulArtType = id3v2Pic->type();
 
 			bRet = true;
 		}
-		fileref = TagLib::FileRef();
+		fileRef = TagLib::FileRef();
 	}
 
 	return bRet;

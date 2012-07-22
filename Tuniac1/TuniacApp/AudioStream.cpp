@@ -233,9 +233,9 @@ void			CAudioStream::UseAlbumGain(bool bUse)
 	bUseAlbumGain = bUse;
 }
 
-bool			CAudioStream::SetVolumeScale(float scale)
+bool			CAudioStream::SetVolumeScale(int iVolPercent)
 {
-	fVolumeScale = scale/100.0f;
+	fVolumeScale = (float)iVolPercent/100.0f;
 	return true;
 }
 

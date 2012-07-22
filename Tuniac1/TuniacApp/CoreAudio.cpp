@@ -47,7 +47,7 @@
 CCoreAudio::CCoreAudio(void) : 
 	m_ulCrossfadeTimeMS(6000),
 	m_BufferSizeMS(500),
-	m_fVolume(100.0f),
+	m_iVolPercent(100),
 	m_fAmpGain(-6.0f),
 	m_pXAudio(NULL),
 	m_pMasteringVoice(NULL),
@@ -266,7 +266,7 @@ bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fR
 						bShoudStart = true;
 					}
 
-					pStream->SetVolumeScale(m_fVolume);
+					pStream->SetVolumeScale(m_iVolPercent);
 
 					pStream->EnableEQ(m_bEQEnabled);
 					pStream->SetEQGain(m_fEQLow, m_fEQMid, m_fEQHigh);
@@ -514,23 +514,23 @@ void CCoreAudio::CheckOldStreams(void)
 }
 
 
-float CCoreAudio::GetVolumePercent()
+int CCoreAudio::GetVolumePercent()
 {
-	return m_fVolume;
+	return m_iVolPercent;
 }
 
-void CCoreAudio::SetVolumePercent(float fVolume)
+void CCoreAudio::SetVolumePercent(int iVolPercent)
 {
-	if(fVolume > 100.0f)
-		fVolume = 100.0f;
-	if(fVolume < 0.0f)
-		fVolume = 0.0f;
+	if(iVolPercent > 100)
+		iVolPercent = 100;
+	if(iVolPercent < 0)
+		iVolPercent = 0;
 
-	m_fVolume = fVolume;
+	m_iVolPercent = iVolPercent;
 
 	for(unsigned long x=0; x<m_Streams.GetCount(); x++)
 	{
-		m_Streams[x]->SetVolumeScale(m_fVolume);
+		m_Streams[x]->SetVolumeScale(m_iVolPercent);
 	}
 }
 
