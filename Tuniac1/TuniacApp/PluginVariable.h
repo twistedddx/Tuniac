@@ -21,6 +21,8 @@
 
 #pragma once
 
+#define INVALID			0xffffffff
+
 enum Variable
 {
 	Variable_NumChannels = 0,

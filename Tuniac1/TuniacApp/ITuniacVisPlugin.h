@@ -25,7 +25,7 @@
 #include "PluginVariable.h"
 
 #define MAXVISSAMPLES		4096
-#define INVALID			0xffffffff
+#define ITUNIACVISPLUGIN_VERSION	MAKELONG(0,1)
 
 class ITuniacVisHelper
 {
@@ -70,5 +70,7 @@ public:
 };
 
 typedef ITuniacVisPlugin * (*CreateTuniacVisPluginFunc)(void);
-
 extern "C" __declspec(dllexport) ITuniacVisPlugin * CreateTuniacVisPlugin(void);
+
+typedef unsigned long (*GetTuniacVisPluginVersionFunc)(void);
+extern "C" __declspec(dllexport) unsigned long		GetTuniacVisPluginVersion(void);
