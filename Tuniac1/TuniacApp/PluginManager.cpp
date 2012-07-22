@@ -354,7 +354,11 @@ void *			CPluginManager::GetVariable(Variable eVar)
 				return (void *)CCoreAudio::Instance()->GetVolumePercent();
 			}
 			break;
-
+		case Variable_TuniacBuild:
+			{
+				return (void *)tuniacApp.GetTuniacBuild();
+			}
+			break;
 	}
 	return NULL;
 }

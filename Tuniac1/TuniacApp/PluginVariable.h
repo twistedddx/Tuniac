@@ -31,5 +31,6 @@ enum Variable
 	Variable_Artist,
 	Variable_Fullscreen,
 	Variable_TuniacFilename,
-	Variable_VolumePercent
+	Variable_VolumePercent,
+	Variable_TuniacBuild
 };
