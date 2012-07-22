@@ -2150,6 +2150,11 @@ HFONT	CTuniacApp::GetTuniacFont(int size)
 	return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 }
 
+LPTSTR	CTuniacApp::GetTuniacBuild(void)
+{
+	return TEXT(__DATE__);
+}
+
 bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState)
 {
 	memset(szDest, '\0', iDestSize);

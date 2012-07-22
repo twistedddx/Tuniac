@@ -182,6 +182,8 @@ public:
 
 	HFONT				GetTuniacFont(int size);
 
+	LPTSTR				GetTuniacBuild(void);
+
 	bool				CoreAudioMessage(unsigned long Message, void * Params);
 
 	bool				FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState);
