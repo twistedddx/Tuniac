@@ -1063,12 +1063,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				else if(wParam == HOTKEY_VOLUP)
 				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 1.0f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 1);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == HOTKEY_VOLDOWN)
 				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 1.0f);
+					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 1);
 					m_PlayControls.UpdateVolume();
 				}
 				else if(wParam == HOTKEY_SEEKFORWARD)

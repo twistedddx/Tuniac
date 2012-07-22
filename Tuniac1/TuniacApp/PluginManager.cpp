@@ -351,9 +351,7 @@ void *			CPluginManager::GetVariable(Variable eVar)
 			break;
 		case Variable_VolumePercent:
 			{
-				unsigned long vol;
-				vol = (unsigned long)CCoreAudio::Instance()->GetVolumePercent();
-				return (void *)vol;
+				return (void *)CCoreAudio::Instance()->GetVolumePercent();
 			}
 			break;
 
