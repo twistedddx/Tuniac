@@ -134,8 +134,20 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 			HINSTANCE hDLL = LoadLibrary(temp);
 			if(hDLL)
 			{
-				CreateTuniacVisPluginFunc pCTVPF;
+				GetTuniacVisPluginVersionFunc pGTVPVF = (GetTuniacVisPluginVersionFunc)GetProcAddress(hDLL, "GetTuniacVisPluginVersion");
+				if(pGTVPVF != NULL)
+				{
+					if(pGTVPVF() != ITUNIACVISPLUGIN_VERSION)
+					{
+						TCHAR szError[512];
+						_snwprintf(szError, 512, TEXT("Incompatable visual found: \\visuals\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
+						FreeLibrary(hDLL);
+						continue;
+					}
+				}
 
+				CreateTuniacVisPluginFunc pCTVPF;
 				pCTVPF = (CreateTuniacVisPluginFunc)GetProcAddress(hDLL, "CreateTuniacVisPlugin");
 				if(pCTVPF)
 				{

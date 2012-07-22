@@ -27,3 +27,8 @@ extern "C" __declspec(dllexport) ITuniacVisPlugin * CreateTuniacVisPlugin(void)
 
 	return NULL;
 }
+
+extern "C" __declspec(dllexport) unsigned long		GetTuniacVisPluginVersion(void)
+{
+	return ITUNIACVISPLUGIN_VERSION;
+}

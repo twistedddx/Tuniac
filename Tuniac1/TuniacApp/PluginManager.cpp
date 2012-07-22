@@ -360,7 +360,7 @@ void *			CPluginManager::GetVariable(Variable eVar)
 			}
 			break;
 	}
-	return NULL;
+	return (void *)INVALID;
 }
 
 void		CPluginManager::GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent)
