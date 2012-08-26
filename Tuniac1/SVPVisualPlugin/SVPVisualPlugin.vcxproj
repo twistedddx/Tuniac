@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClCompile Include="glfont2.cpp" />
     <ClCompile Include="kiss_fft.c" />
-    <ClCompile Include="kiss_fftr.c" />
     <ClCompile Include="SoniqueVis.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="SVPRenderer.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="glfont2.h" />
     <ClInclude Include="_kiss_fft_guts.h" />
     <ClInclude Include="kiss_fft.h" />
-    <ClInclude Include="kiss_fftr.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SoniqueVis.h" />
     <ClInclude Include="stdafx.h" />

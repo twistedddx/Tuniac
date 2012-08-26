@@ -1058,6 +1058,7 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					case IDC_REBUILD_ML:
 						{
 							//do update
+							tuniacApp.m_SourceSelectorWindow->m_PlaylistSourceView->ClearTextFilter();
 							for(unsigned long ulMLIndex = 0; ulMLIndex < tuniacApp.m_MediaLibrary.GetCount(); ulMLIndex++)
 							{
 								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(ulMLIndex))
