@@ -1,3 +1,11 @@
+Aug, 2012
+---------
+-correct popup notify behaviour regarding fullscreen and hotkey
+-update SVP fft and it's implementation
+-update bss lib including adding OPUS decoding
+-force clear text for rebuild ML
+
+
 Jul, 2012
 ---------
 -update bass

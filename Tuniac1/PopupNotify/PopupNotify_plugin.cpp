@@ -428,14 +428,16 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 		case PLUGINNOTIFY_SONGCHANGE_INIT:
 			{
-				ResetWindow();
+				//fullscreen inhibit
+				if(m_bInhibit)
+					ResetWindow();
 			}
 			break;
 
 		case PLUGINNOTIFY_SONGCHANGE:
 			{
 				//auto with UI
-				if(!m_bAutoTrigger)
+				if(!m_bAutoTrigger || m_bInhibit)
 					break;
 
 				ResetWindow();
@@ -445,7 +447,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case PLUGINNOTIFY_SONGCHANGE_BLIND:
 			{
 				//auto without UI
-				if(!m_bAutoBlindTrigger)
+				if(!m_bAutoBlindTrigger || m_bInhibit)
 					break;
 				
 				ResetWindow();
@@ -455,7 +457,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case PLUGINNOTIFY_SONGCHANGE_MANUAL:
 			{
 				//user with UI
-				if(!m_bManualTrigger)
+				if(!m_bManualTrigger || m_bInhibit)
 					break;
 
 				ResetWindow();
@@ -465,7 +467,7 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case PLUGINNOTIFY_SONGCHANGE_MANUALBLIND:
 			{
 				//user without UI
-				if(!m_bManualBlindTrigger)
+				if(!m_bManualBlindTrigger || m_bInhibit)
 					break;
 
 				ResetWindow();
@@ -474,10 +476,6 @@ LRESULT CALLBACK	CPopupNotify::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 		case WM_HOTKEY:
 			{
-				//fullscreen app + inhibit set
-				if(m_bInhibit)
-					break;
-
 				ResetWindow();
 			}
 			break;

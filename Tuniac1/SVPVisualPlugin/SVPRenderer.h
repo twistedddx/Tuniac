@@ -16,7 +16,7 @@ using namespace Gdiplus;
 #include "SoniqueVis.h"
 #include "Array.h"
 #include "CriticalSection.h"
-#include "kiss_fftr.h"
+#include "kiss_fft.h"
 
 class SVPRenderer :
 	public ITuniacVisPlugin
@@ -45,7 +45,6 @@ protected:
 
 	VisData								vd;
 	float							*	visdata;
-	float								fSamples[2][512];
 
 	unsigned long						ulNumChannels;
 	unsigned long						ulOldNumChannels;
@@ -64,8 +63,9 @@ protected:
     BITMAP								m_ArrowBM;
 	HBITMAP								m_hArrow;
 
-	kiss_fftr_cfg						kiss_cfg;
-	kiss_fft_cpx					*	freq_data;
+	kiss_fft_cfg						kiss_cfg;
+	kiss_fft_cpx					*	in_freq_data;
+	kiss_fft_cpx					*	out_freq_data;
 
 	int									iUseOpenGL;
 	int									iVisMaxRes;
