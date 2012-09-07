@@ -146,6 +146,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	m_iFailedSongRetry = 0;
 
+	m_ActiveScreen = m_Preferences.GetActiveWindow();
+
 	//fail if we cant start something
 	if(!CCoreAudio::Instance()->Startup())
 		return false;
@@ -302,7 +304,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(m_Preferences.GetShowVisArt())
 		m_VisualWindow->Show();
 
-	m_SourceSelectorWindow->Show();
+	m_WindowArray[m_Preferences.GetActiveWindow()]->Show();
 
 	//set always ontop state
 	if(m_Preferences.GetAlwaysOnTop())
@@ -337,6 +339,8 @@ bool CTuniacApp::Shutdown()
 	m_MediaLibrary.Shutdown(m_bSaveML);
 
 	m_PluginManager.Shutdown();
+
+	m_Preferences.SetActiveWindow(m_ActiveScreen);
 
     while(m_WindowArray.GetCount())
 	{
@@ -733,7 +737,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				for(unsigned long x=0; x < m_WindowArray.GetCount(); x++)
 				{
-					if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[x]->GetName(), L"Visuals") == 0)
+					if(m_Preferences.GetShowVisArt() && (wcscmp(GetActiveScreenName(), L"Source Selector") == 0) && (wcscmp(m_WindowArray[x]->GetName(), L"Visuals") == 0))
 						continue;
 
 					m_WindowArray[x]->SetPos(	0,
@@ -1705,6 +1709,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										continue;
  									m_WindowArray[item]->Hide();
 	 							}
+
+								m_ActiveScreen = 0;
+
 								//reshow visual window in source view
 								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
 									m_VisualWindow->Show();

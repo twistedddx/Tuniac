@@ -373,6 +373,9 @@
     <None Include="default-theme\playlist-standard-active.ico">
       <Filter>Resource Files\Images</Filter>
     </None>
+    <None Include="default-theme\playlist-cd-active.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="Tuniac.manifest">

@@ -67,6 +67,7 @@ protected:
 	HWND		m_hTextFormatToolTip;
 
 	int			m_iSourceViewDividerX;
+	int			m_iActiveWindow;
 
 	BOOL		m_bMainWindowMaximized;
 	BOOL		m_bMainWindowMinimized;
@@ -177,6 +178,9 @@ public:
 // preference accessor methods here!
 	void	SetSourceViewDividerX(int iPixels);
 	int		GetSourceViewDividerX(void);
+
+	void	SetActiveWindow(int iActiveWindow);
+	int		GetActiveWindow(void);
 
 	void	SetMainWindowRect(RECT * lpRect);
 	RECT *	GetMainWindowRect(void);

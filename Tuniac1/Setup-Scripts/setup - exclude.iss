@@ -33,9 +33,6 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-
-Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
-
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\gpl.txt; DestDir: {app}\; Flags: ignoreversion

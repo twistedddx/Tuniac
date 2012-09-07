@@ -33,7 +33,6 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-
 Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\*.dll; DestDir: {app}\; Flags: ignoreversion
 
 Source: .\DirectX\*.dll; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
@@ -41,8 +40,6 @@ Source: .\DirectX\*.exe; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreve
 Source: .\DirectX\dxdllreg_x86.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
 Source: .\DirectX\dxupdate.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
 Source: .\DirectX\Jun2010_XAudio_x86.cab; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
-
-Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
