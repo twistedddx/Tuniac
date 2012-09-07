@@ -34,13 +34,10 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-
 Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\*.dll; Check: InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
 Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\*.dll; Check: not InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
 
 Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
-
-Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
 
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion

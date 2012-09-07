@@ -29,7 +29,7 @@
 #define MAINWINDOWMAXIMIZED		TEXT("MainWindowMaximized")
 #define MAINWINDOWMINIMIZED		TEXT("MainWindowMinimized")
 #define SOURCEVIEWDIVIDERX		TEXT("SourceViewDividerX")
-#define ACTIVETHEME				TEXT("ActiveTheme")
+#define ACTIVEWINDOW			TEXT("ActiveWindow")
 
 #define TRAYICONMODE			TEXT("TrayIconMode")
 #define MINIMIZEONCLOSE			TEXT("MinimizeOnClose")
@@ -1394,6 +1394,8 @@ bool CPreferences::DefaultPreferences(void)
 {
 	SetRect(&m_MainWindowRect, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT);
 
+
+	m_iActiveWindow				= 0;
 	m_iSourceViewDividerX		= 150;
 	m_eTrayIconMode				= TrayIconMinimize;
 	m_eScreenSaveMode			= ScreenSavePreventFull;
@@ -1504,6 +1506,14 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_iSourceViewDividerX,
+						&Size);
+
+	Size = sizeof(int);
+	RegQueryValueEx(	hTuniacPrefKey,
+						ACTIVEWINDOW,
+						NULL,
+						&Type,
+						(LPBYTE)&m_iActiveWindow,
 						&Size);
 
 	Size = sizeof(int);
@@ -2041,6 +2051,13 @@ bool CPreferences::SavePreferences(void)
 					sizeof(int));
 
 	RegSetValueEx(	hTuniacPrefKey, 
+					ACTIVEWINDOW, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_iActiveWindow, 
+					sizeof(int));
+
+	RegSetValueEx(	hTuniacPrefKey, 
 					CROSSFADEENABLED, 
 					0,
 					REG_DWORD,
@@ -2555,6 +2572,16 @@ void	CPreferences::SetSourceViewDividerX(int iPixels)
 int		CPreferences::GetSourceViewDividerX(void)
 {
 	return m_iSourceViewDividerX;
+}
+
+void	CPreferences::SetActiveWindow(int iActiveWindow)
+{
+	m_iActiveWindow = iActiveWindow;
+}
+
+int		CPreferences::GetActiveWindow(void)
+{
+	return m_iActiveWindow;
 }
 
 void	CPreferences::SetMainWindowRect(RECT * lpRect)

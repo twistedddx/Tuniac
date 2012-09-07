@@ -347,6 +347,8 @@ void CVisualWindow::SetFullscreen(bool bFull)
 		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
 		SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING);
 
+
+
 		SetTimer(m_hWnd, 0, MOUSE_TIMEOUT, NULL);
 	}
 	else
@@ -531,31 +533,16 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 			}
 			break;
 
-			/* Todo, make this work. WM_NOTIFY nevers comes :(
-			case WM_NOTIFY:
+			case WM_KEYDOWN:
 				{
-					LPNMHDR lpNotify = (LPNMHDR)lParam;
-
-					switch(lpNotify->code)
+					if(wParam == VK_ESCAPE)
 					{
-						case LVN_KEYDOWN:
-							{
-								LPNMLVKEYDOWN	pnkd			= (LPNMLVKEYDOWN) lParam;
-
-								switch(pnkd->wVKey)
-								{
-									case VK_ESCAPE:
-										{
-											if(tuniacApp.m_VisualWindow->GetFullscreen())
-												tuniacApp.m_VisualWindow->SetFullscreen(false);
-										}
-										break;
-								}
-							}
+						if(tuniacApp.m_VisualWindow->GetFullscreen())
+							tuniacApp.m_VisualWindow->SetFullscreen(false);
 					}
 				}
 				break;
-				*/
+
 
 		default:
 			return(DefWindowProc(hWnd, message, wParam, lParam));

@@ -40,8 +40,6 @@ Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Micros
 
 Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
 
-Source: "WizModernSmallImage-IS.bmp"; Flags: dontcopy
-
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\gpl.txt; DestDir: {app}\; Flags: ignoreversion
