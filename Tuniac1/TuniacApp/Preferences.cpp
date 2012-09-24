@@ -387,7 +387,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
 							if(pPrefs->m_bShowVisArt)
 								tuniacApp.m_VisualWindow->Show();
-							else
+							else if(wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 								tuniacApp.m_VisualWindow->Hide();
 						}
 						break;

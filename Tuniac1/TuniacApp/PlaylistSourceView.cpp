@@ -55,7 +55,7 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		300,
 		LVCFMT_LEFT,
 		false,
-		true
+		false
 	},
 	{
 		TEXT("Artist"),
@@ -76,7 +76,7 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		320,
 		LVCFMT_LEFT,
 		true,
-		true
+		false
 	},
 	{
 		TEXT("Track"),
