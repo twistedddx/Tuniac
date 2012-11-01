@@ -194,7 +194,7 @@ bool CAudioOutput::Initialize(void)
 
 	HRESULT chr = m_pXAudio->CreateSourceVoice(	&m_pSourceVoice, 
 												(const WAVEFORMATEX*)&m_waveFormatPCMEx, 
-												XAUDIO2_VOICE_MUSIC, 
+												NULL, 
 												1.0f, 
 												this);
 	if(chr != S_OK)

@@ -11,6 +11,7 @@
 #include "flacFile.h"
 #include "vorbisfile.h"
 #include "speexfile.h"
+#include "opusfile.h"
 #include "oggflacfile.h"
 #include "mp4File.h"
 #include "asffile.h"
@@ -50,6 +51,7 @@ protected:
 	TagLib::Ogg::Vorbis::File *oggFile;
 	TagLib::Ogg::FLAC::File *ogaFile;
 	TagLib::Ogg::Speex::File *spxFile;
+	TagLib::Ogg::Opus::File *opusFile;
 	TagLib::ASF::File *wmaFile;
 	TagLib::RIFF::AIFF::File *aiffFile;
 	TagLib::RIFF::WAV::File *wavFile;

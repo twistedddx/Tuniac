@@ -42,6 +42,7 @@ CSTDInfoManager::CSTDInfoManager(void)
 	oggFile = NULL;
 	ogaFile = NULL;
 	spxFile = NULL;
+	opusFile = NULL;
 	wmaFile = NULL;
 	aiffFile = NULL;
 	wavFile = NULL;
@@ -64,7 +65,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 29;
+	return 30;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -88,6 +89,7 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".wma"),
 		TEXT(".tta"),
 		TEXT(".spx"),
+		TEXT(".opus"),
 		TEXT(".aif"),
 		TEXT(".aiff"),
 		TEXT(".wav"),
@@ -128,6 +130,8 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 		else if(ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File *>( fileRef.file() ))
 			return true;
 		else if(spxFile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileRef.file() ))
+			return true;
+		else if(opusFile = dynamic_cast<TagLib::Ogg::Opus::File *>( fileRef.file() ))
 			return true;
 		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 			return true;
@@ -231,6 +235,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(spxFile->tag())
 			vorbisTagListMap = spxFile->tag()->fieldListMap();
+	}
+	else if(opusFile)
+	{
+		if(opusFile->tag())
+			vorbisTagListMap = opusFile->tag()->fieldListMap();
 	}
 	else if(wmaFile)
 	{
