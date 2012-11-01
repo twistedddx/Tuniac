@@ -83,7 +83,10 @@ You can also get all the build recipes for individual building of libs in there.
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
-You need the Glew 1.9.0 Binaries Windows 32-bit zip.
+5a)You need Direct X SDK June 2010.
+http://www.microsoft.com/en-us/download/details.aspx?id=6812
+
+5b)You need the Glew 1.9.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
 http://sourceforge.net/projects/glew/files/glew/1.9.0/glew-1.9.0-win32.zip/download
 
@@ -106,7 +109,7 @@ http://www.nasm.us/pub/nasm/releasebuilds/2.10.05/win32/nasm-2.10.05-win32.zip
 Put nasm.exe in
 C:\Windows\
 
-6a)Build libjpeg-turbo static lib
+6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
 http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.1_vs2012.zip
