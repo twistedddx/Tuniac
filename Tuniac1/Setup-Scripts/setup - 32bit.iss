@@ -33,7 +33,7 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-Source: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\*.dll; DestDir: {app}\; Flags: ignoreversion
+Source: C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvc*.dll; DestDir: {app}\; Flags: ignoreversion
 
 Source: .\DirectX\*.dll; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
 Source: .\DirectX\*.exe; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion

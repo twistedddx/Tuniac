@@ -1,3 +1,14 @@
+Sep, 2012
+---------
+-save/load last active window
+-fix wrong vis art/active screen behaviour
+-fix radio button groups in settings
+-escape key for fullscreen visual added
+-fix slight misplacement of control in prefs
+-fix vis art logic
+-prevent nonsense filters
+
+
 Aug, 2012
 ---------
 -correct popup notify behaviour regarding fullscreen and hotkey

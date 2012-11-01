@@ -28,26 +28,26 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -87,14 +87,14 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\ogg\opus;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\ogg\opus;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\ogg\opus;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\ogg\opus;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\taglib\taglib\Release\x86;..\..\..\zlib\Release\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib\taglib\Release\x64;..\..\..\zlib\Release\x64;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib\taglib\Debug\x86;..\..\..\zlib\Release\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib\taglib\Debug\x64;..\..\..\zlib\Release\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\taglib;..\..\..\taglib\taglib;..\..\..\taglib\taglib\asf;..\..\..\taglib\taglib\ape;..\..\..\taglib\taglib\flac;..\..\..\taglib\taglib\it;..\..\..\taglib\taglib\mod;..\..\..\taglib\taglib\mp4;..\..\..\taglib\taglib\mpc;..\..\..\taglib\taglib\mpeg;..\..\..\taglib\taglib\mpeg\id3v1;..\..\..\taglib\taglib\mpeg\id3v2;..\..\..\taglib\taglib\mpeg\id3v2\frames;..\..\..\taglib\taglib\ogg;..\..\..\taglib\taglib\ogg\flac;..\..\..\taglib\taglib\ogg\speex;..\..\..\taglib\taglib\ogg\vorbis;..\..\..\taglib\taglib\riff;..\..\..\taglib\taglib\riff\aiff;..\..\..\taglib\taglib\riff\wav;..\..\..\taglib\taglib\s3m;..\..\..\taglib\taglib\toolkit;..\..\..\taglib\taglib\trueaudio;..\..\..\taglib\taglib\wavpack;..\..\..\taglib\taglib\xm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

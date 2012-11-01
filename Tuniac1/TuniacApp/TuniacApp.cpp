@@ -72,7 +72,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		{
 			Sleep(100);
 			hOtherWnd = FindWindow(szClassName, NULL);
-			if(counttry++>100)
+			if(counttry++>1000)
 				return(0);
 		}
 
