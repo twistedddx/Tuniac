@@ -34,7 +34,7 @@ public:
 	SYSTEMTIME			stFileCreationDate;
 	SYSTEMTIME			stLastPlayed;
 
-	unsigned long		dwPlayCount;
+	int					iPlayCount;
 	unsigned long		dwRating;
 
 	// filled in by the relevent media type handler

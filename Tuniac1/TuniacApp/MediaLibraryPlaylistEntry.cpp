@@ -169,7 +169,7 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 
 		case FIELD_PLAYCOUNT:
 			{
-				return (void *)m_LibraryEntry.dwPlayCount;
+				return (void *)m_LibraryEntry.iPlayCount;
 			}
 			break;
 
@@ -226,12 +226,6 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 			}
 			break;
 
-		case FIELD_PLAYCOUNT:
-			{
-				m_LibraryEntry.dwPlayCount = (unsigned long)pNewData;
-			}
-			break;
-
 		case FIELD_FILENAME:
 			{
 				StrCpyN(PathFindFileName(m_LibraryEntry.szURL), (LPTSTR)pNewData, 128);
@@ -270,10 +264,21 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 		case FIELD_YEAR:
 			{
-				m_LibraryEntry.iYear = (int)pNewData;
+				if(StrCmpI((LPTSTR)pNewData, L"") == 0)
+					pNewData = L"0";
+				m_LibraryEntry.iYear = _wtoi((LPTSTR)pNewData);
 			}
 			break;
 
+		case FIELD_PLAYCOUNT:
+			{
+				if(StrCmpI((LPTSTR)pNewData, L"") == 0)
+					pNewData = L"0";
+				m_LibraryEntry.iPlayCount = _wtoi((LPTSTR)pNewData);
+			}
+			break;
+
+//always string
 		case FIELD_TRACKNUM:
 			{
 				bool bOK = false;
@@ -288,13 +293,17 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 				}
 				else
 				{
-					dwNewTrack[0] = (unsigned long)pNewData;
+					if(StrCmpI((LPTSTR)pNewData, L"") == 0)
+						dwNewTrack[0] = 0;
+					else
+						dwNewTrack[0] = _wtoi((LPTSTR)pNewData);
 					m_LibraryEntry.dwTrack[1] = 0;
 				}
+
 				m_LibraryEntry.dwTrack[0] = dwNewTrack[0];
 			}
 			break;
-
+/*
 		case FIELD_NUMCHANNELS:
 			{
 				m_LibraryEntry.iChannels = (int)pNewData;
@@ -318,7 +327,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 				m_LibraryEntry.iPlaybackTime = (int)pNewData;
 			}
 			break;
-
+*/
 		case FIELD_RATING:
 			{
 				m_LibraryEntry.dwRating = (unsigned long)pNewData;
@@ -347,7 +356,7 @@ bool	CMediaLibraryPlaylistEntry::SetFieldNumber(unsigned long ulFieldID, unsigne
 	{
 		case FIELD_PLAYCOUNT:
 			{
-				m_LibraryEntry.dwPlayCount = pNewData;
+				m_LibraryEntry.iPlayCount = pNewData;
 			}
 			break;
 		case FIELD_YEAR:
@@ -421,12 +430,6 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			}
 			break;
 
-		case FIELD_PLAYCOUNT:
-			{
-				_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwPlayCount);
-			}
-			break;
-
 		case FIELD_TITLE:
 			{
 				StrCpyN(szString, m_LibraryEntry.szTitle, ulNumChars);
@@ -459,8 +462,16 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_YEAR:
 			{
-				if(m_LibraryEntry.iYear > 0)
+				if(m_LibraryEntry.iYear < 1)
+					StrCpyN(szString, TEXT("Unknown"), ulNumChars);
+				else
 					_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.iYear);
+			}
+			break;
+
+		case FIELD_PLAYCOUNT:
+			{
+				_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.iPlayCount);
 			}
 			break;
 
@@ -588,7 +599,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_DATELASTPLAYED:
 			{
-				if(m_LibraryEntry.dwPlayCount > 0)
+				if(m_LibraryEntry.iPlayCount > 0)
 				{
 					int x = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stLastPlayed, NULL, szString, 100);
 					StrCpy(&szString[x-1], TEXT(" "));

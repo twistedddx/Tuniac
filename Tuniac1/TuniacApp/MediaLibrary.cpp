@@ -259,7 +259,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	GetLocalTime(&libraryEntry.stDateAdded);
 
 	libraryEntry.dwRating = 0;
-	libraryEntry.dwPlayCount = 0;
+	libraryEntry.iPlayCount = 0;
 	libraryEntry.dwKind = ENTRY_KIND_URL;
 
 	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
@@ -353,7 +353,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			CloseHandle(hFile);
 
 			libraryEntry.dwRating = 0;
-			libraryEntry.dwPlayCount = 0;
+			libraryEntry.iPlayCount = 0;
 			libraryEntry.dwKind = ENTRY_KIND_FILE;
 
 			// let the info manager get the format specific stuff here!
@@ -612,7 +612,11 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
 			pIPE->SetEntryID(ulEntryID);
-			pIPE->SetField(FIELD_PLAYCOUNT, (void *)(ulPlayCount+1));
+
+			int iPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT);
+			TCHAR szPlayCount[128];
+			_itow(iPlayCount, szPlayCount, 10);
+			pIPE->SetField(FIELD_PLAYCOUNT, (void *)szPlayCount);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
 
