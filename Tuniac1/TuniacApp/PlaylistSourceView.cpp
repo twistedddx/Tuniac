@@ -145,8 +145,8 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		TEXT("Played"),
 		50,
 		LVCFMT_RIGHT,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Rating"),
@@ -1269,7 +1269,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pdi->item.iItem);
 								if(pIPE)
 								{
-									if(pIPE->SetField(m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText))
+									if(pIPE->SetField(m_ColumnIDArray[m_iLastClickedSubitem-1], (void *)pdi->item.pszText))
 									{
 										if(pIPE == tuniacApp.m_PlaylistManager.GetActivePlaylist()->GetActiveEntry())
 										{	
@@ -1278,7 +1278,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 										//todo bits: per column tag writing?
 										//tuniacApp.m_MediaLibrary.WriteFileTags(pIPE, m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText);
-										tuniacApp.m_MediaLibrary.WriteFileTags(pIPE);
+										if(HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem-1]].szHeaderText != L"Played")
+											tuniacApp.m_MediaLibrary.WriteFileTags(pIPE);
+
 										//update title bar etc
 										tuniacApp.UpdateTitles();
 									}
@@ -1415,9 +1417,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										pDispInfo->item.iImage = 1;
 									}
 								}
-								if(m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem)->GetField(FIELD_AVAILABILITY))
+								if(m_pPlaylist)
 								{
-									pDispInfo->item.iImage = 2;
+									if(m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem))
+									{
+										if(m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem)->GetField(FIELD_AVAILABILITY))
+										{
+											pDispInfo->item.iImage = 2;
+										}
+									}
 								}
 							}
 
@@ -1443,13 +1451,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									}
 									else
 									{
-										IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem);
-
-										if(pIPE)
+										if(m_pPlaylist)
 										{
-											pIPE->GetTextRepresentation(	m_ColumnIDArray[pDispInfo->item.iSubItem-1],
-																		pDispInfo->item.pszText,
-																		pDispInfo->item.cchTextMax);
+											IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem);
+											if(pIPE)
+											{
+												pIPE->GetTextRepresentation(	m_ColumnIDArray[pDispInfo->item.iSubItem-1],
+																			pDispInfo->item.pszText,
+																			pDispInfo->item.cchTextMax);
+											}
 										}
 									}
 								}
