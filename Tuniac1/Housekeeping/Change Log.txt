@@ -1,3 +1,13 @@
+Nov, 2012
+---------
+-dont increment playcount on ML item update
+-allow sorting by play count
+-allow editing play count
+-fix editing number based fields (eg year, play count, track)
+-prevent crash when removing items from ML
+-update to VS 2012
+
+
 Sep, 2012
 ---------
 -save/load last active window
