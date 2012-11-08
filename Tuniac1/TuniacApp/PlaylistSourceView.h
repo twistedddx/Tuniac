@@ -78,7 +78,7 @@ public:
 	~CPlaylistSourceView(void);
 
 	bool SetPlaylistSource(unsigned long ulPlaylist);
-	bool Redraw(void);
+	void Redraw(void);
 	bool UpdateColumns(void);
 
 public:
@@ -91,14 +91,15 @@ public:
 	bool	MoveSourceView(int x, int y, int w, int h);
 
 	bool	Update(void);
-
-	bool	EditTrackInfo(void);
 	bool	ShowCurrentItem(void);
+
+	void	ClearTextFilter(void);
+	void	SetFocusFilter(void);
+	bool	EditTrackInfo(void);
 
 	void	DeselectItem(unsigned long ulIndex);
 	bool	GetSelectedIndexes(IndexArray & indexArray);
 	bool	SelectedAll(IndexArray & indexArray);
 
-	void	ClearTextFilter(void);
 
 };

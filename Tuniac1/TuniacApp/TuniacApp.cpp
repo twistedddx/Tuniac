@@ -1069,7 +1069,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
 
 				else if(wParam == HOTKEY_FIND)
-					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FIND, 0), 0);
 
 				else if(wParam == HOTKEY_VOLUP)
 				{
@@ -1963,6 +1963,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								ShowWindow(hWnd, SW_RESTORE);
 								ShowWindow(hWnd, SW_SHOW);
+
+								ShowWindowAsync(hWnd, SW_SHOWDEFAULT);
+								ShowWindowAsync(hWnd, SW_SHOW);
+								SetForegroundWindow(hWnd);
+
+								m_SourceSelectorWindow->m_PlaylistSourceView->SetFocusFilter();
+
 							}
 							break;
 					}
@@ -2123,7 +2130,7 @@ bool CTuniacApp::RegisterHotkeys(void)
 	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);
 	RegisterHotKey(m_hWnd, HOTKEY_RANDNEXT,		MOD_WIN, VK_NUMPAD9);
 	RegisterHotKey(m_hWnd, HOTKEY_PREV,			MOD_WIN, VK_NUMPAD4);
-	RegisterHotKey(m_hWnd, HOTKEY_PREVBYHISTORY,	MOD_WIN | MOD_CONTROL, VK_NUMPAD4);
+	RegisterHotKey(m_hWnd, HOTKEY_PREVBYHISTORY,	MOD_WIN + MOD_CONTROL, VK_NUMPAD4);
 
 	RegisterHotKey(m_hWnd, HOTKEY_VOLUP,		MOD_WIN, VK_NUMPAD8);
 	RegisterHotKey(m_hWnd, HOTKEY_VOLDOWN,		MOD_WIN, VK_NUMPAD2);
@@ -2131,9 +2138,9 @@ bool CTuniacApp::RegisterHotkeys(void)
 	RegisterHotKey(m_hWnd, HOTKEY_SEEKBACK,		MOD_WIN, VK_NUMPAD1);
 	RegisterHotKey(m_hWnd, HOTKEY_SEEKFORWARD,	MOD_WIN, VK_NUMPAD3);
 
-	RegisterHotKey(m_hWnd, HOTKEY_SHUFFLE,		MOD_CONTROL + MOD_SHIFT, 'S');
-	RegisterHotKey(m_hWnd, HOTKEY_REPEAT,		MOD_CONTROL + MOD_SHIFT, 'R');
-	RegisterHotKey(m_hWnd, HOTKEY_FIND,			MOD_CONTROL + MOD_SHIFT, 'F');
+	RegisterHotKey(m_hWnd, HOTKEY_SHUFFLE,		MOD_WIN + MOD_CONTROL, 'S');
+	RegisterHotKey(m_hWnd, HOTKEY_REPEAT,		MOD_WIN + MOD_CONTROL, 'R');
+	RegisterHotKey(m_hWnd, HOTKEY_FIND,			MOD_WIN, VK_DECIMAL);
 	return true;
 }
 

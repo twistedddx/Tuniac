@@ -683,8 +683,8 @@ BEGIN
         MENUITEM "&Preferences\tCtrl+P",        ID_EDIT_PREFERENCES
         MENUITEM "C&olumn Selection",           ID_EDIT_SHOWCOLUMNSELECTION
         MENUITEM "Always On &Top",              ID_EDIT_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "&Edit Track Info\tCtrl+E",    ID_EDIT_EDITFILEINFORMATION, GRAYED
+        //MENUITEM SEPARATOR
+        //MENUITEM "&Edit Track Info\tCtrl+E",    ID_EDIT_EDITFILEINFORMATION, GRAYED
     END
     POPUP "&Playback"
     BEGIN
