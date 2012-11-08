@@ -57,10 +57,9 @@ bool			CTaskbar::Initialize(HWND hTargetWindow, unsigned long AppMessage)
 	m_TrayIconData.uCallbackMessage = AppMessage;
 	m_TrayIconData.hIcon			= tuniacApp.m_Skin.GetIcon(THEMEICON_WINDOW_SMALL);
 	m_TrayIconData.uVersion			= NOTIFYICON_VERSION;
-	m_TrayIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	m_TrayIconData.uFlags			= NIF_ICON | NIF_MESSAGE | NIF_TIP;
 
 	Shell_NotifyIcon(NIM_SETVERSION, &m_TrayIconData);
-	
 	return true;
 }
 

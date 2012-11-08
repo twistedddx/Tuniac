@@ -12,17 +12,41 @@
 #endif
 #define IDC_STATIC      (-1)
 
-#include "winresrc.h"
-
+#include "winresrc.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English (United Kingdom) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 #pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winresrc.h""\r\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -107,8 +131,8 @@ IDD_CDAUDIOSOURCE DIALOGEX 0, 0, 391, 262
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_CDSOURCE_TRACKLIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,32,377,204
-    PUSHBUTTON      "Import CD",IDC_CDSOURCE_IMPORT,326,241,58,14
+    CONTROL         "",IDC_CDSOURCE_TRACKLIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,32,377,204
+    PUSHBUTTON      "Import CD",IDC_CDSOURCE_IMPORT,326,241,58,14,NOT WS_VISIBLE
 END
 
 IDD_PREFERENCES_IMPORTING DIALOGEX 0, 0, 235, 176
@@ -630,16 +654,6 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (United Kingdom) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
-#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -775,120 +789,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_TUNIAC              ICON                    ".\\icons\\tuniac.ico"
-IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON                    ".\\default-theme\\playlist-medialibrary.ico"
-IDI_THEMEICON_PLAYLIST_STANDARD ICON                    ".\\default-theme\\playlist-standard.ico"
-IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
-IDI_THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE ICON                    ".\\default-theme\\playlist-medialibrary-active.ico"
-IDI_THEMEICON_PLAYLIST_STANDARD_ACTIVE ICON                    ".\\default-theme\\playlist-standard-active.ico"
-IDI_THEMEICON_PLAYLIST_CD_ACTIVE ICON                    ".\\default-theme\\playlist-cd-active.ico"
-IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
-IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
-IDI_THEMEICON_ITEM_UNAVAILABLE ICON                    ".\\default-theme\\item-unavailable.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Cursor
-//
-
-IDC_ADDARROW            CURSOR                  ".\\cursors\\addarrow.cur"
-IDC_NEWPLAYLISTARROW    CURSOR                  ".\\cursors\\newplaylistcursor.cur"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDR_MAINWINDOWACCEL ACCELERATORS
-BEGIN
-    "I",            ID_EDIT_EDITFILEINFORMATION, VIRTKEY, ALT, NOINVERT
-    "P",            ID_EDIT_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
-    "L",            ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
-    VK_F1,          ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
-    "I",            ID_FILE_ADDFILES,       VIRTKEY, CONTROL, NOINVERT
-    VK_RIGHT,       ID_PLAYBACK_NEXT,       VIRTKEY, CONTROL, NOINVERT
-    VK_SPACE,       ID_PLAYBACK_PLAYPAUSE,  VIRTKEY, CONTROL, NOINVERT
-    VK_LEFT,        ID_PLAYBACK_PREVIOUS,   VIRTKEY, CONTROL, NOINVERT
-    VK_SPACE,       ID_PLAYBACK_SOFTPAUSE,  VIRTKEY, SHIFT, CONTROL, NOINVERT
-    "S",            ID_PLAYBACK_TOGGLE_SHUFFLE, VIRTKEY, CONTROL, NOINVERT
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_NEXT                BITMAP                  "images\\next.bmp"
-IDB_PAUSE               BITMAP                  "images\\pause.bmp"
-IDB_PLAY                BITMAP                  "images\\play.bmp"
-IDB_PREVIOUS            BITMAP                  "images\\previous.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// RT_MANIFEST
-//
-
-1                       RT_MANIFEST             "Tuniac.manifest"
-#endif    // English (United Kingdom) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (Australia) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
-#pragma code_page(1252)
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-#endif    // English (Australia) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (New Zealand)  resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENZ)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_NZ
-#pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
 IDR_SOURCESELECT_MENU MENU
 BEGIN
     POPUP ""
@@ -944,7 +844,63 @@ BEGIN
     END
 END
 
-#endif    // English (New Zealand)  resources
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TUNIAC              ICON                    ".\\default-theme\\window.ico"
+IDI_THEMEICON_PLAYLIST_MEDIALIBRARY ICON                    ".\\default-theme\\playlist-medialibrary.ico"
+IDI_THEMEICON_PLAYLIST_STANDARD ICON                    ".\\default-theme\\playlist-standard.ico"
+IDI_THEMEICON_PLAYLIST_CD ICON                    ".\\default-theme\\playlist-cd.ico"
+IDI_THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE ICON                    ".\\default-theme\\playlist-medialibrary-active.ico"
+IDI_THEMEICON_PLAYLIST_STANDARD_ACTIVE ICON                    ".\\default-theme\\playlist-standard-active.ico"
+IDI_THEMEICON_PLAYLIST_CD_ACTIVE ICON                    ".\\default-theme\\playlist-cd-active.ico"
+IDI_THEMEICON_ITEM_NORMAL ICON                    ".\\default-theme\\item-normal.ico"
+IDI_THEMEICON_ITEM_ACTIVE ICON                    ".\\default-theme\\item-active.ico"
+IDI_THEMEICON_ITEM_UNAVAILABLE ICON                    ".\\default-theme\\item-unavailable.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_ADDARROW            CURSOR                  ".\\cursors\\addarrow.cur"
+IDC_NEWPLAYLISTARROW    CURSOR                  ".\\cursors\\newplaylistcursor.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINWINDOWACCEL ACCELERATORS
+BEGIN
+    "I",            ID_EDIT_EDITFILEINFORMATION, VIRTKEY, ALT, NOINVERT
+    "P",            ID_EDIT_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
+    "L",            ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK, VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_FILE_ADDFILES,       VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_PLAYBACK_NEXT,       VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_PLAYBACK_PLAYPAUSE,  VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_PLAYBACK_PREVIOUS,   VIRTKEY, CONTROL, NOINVERT
+    VK_SPACE,       ID_PLAYBACK_SOFTPAUSE,  VIRTKEY, SHIFT, CONTROL, NOINVERT
+    "S",            ID_PLAYBACK_TOGGLE_SHUFFLE, VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_NEXT                BITMAP                  "images\\next.bmp"
+IDB_PAUSE               BITMAP                  "images\\pause.bmp"
+IDB_PLAY                BITMAP                  "images\\play.bmp"
+IDB_PREVIOUS            BITMAP                  "images\\previous.bmp"
+#endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
