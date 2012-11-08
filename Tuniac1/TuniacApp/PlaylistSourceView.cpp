@@ -26,6 +26,7 @@
 
 #define WM_UPDATE					(WM_APP+2)
 #define WM_SHOWACTIVEITEM			(WM_APP+3)
+#define WM_SETFOCUSFILTER			(WM_APP+4)
 
 #define DARKCOL						RGB(236, 243, 254)
 #define BARCOLOR					GetSysColor(COLOR_MENUHILIGHT)
@@ -2027,6 +2028,19 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 				}
 				break;
 
+			case WM_SETFOCUSFILTER:
+				{
+
+
+						//SetForegroundWindow(m_PlaylistSourceWnd);
+						//BringWindowToTop(m_PlaylistSourceWnd);
+						//SetActiveWindow(m_PlaylistSourceWnd);
+
+						PostMessage(m_PlaylistSourceWnd, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER), TRUE);
+				}
+				break;
+
+
 		default:
 			return FALSE;
 			break;
@@ -2104,13 +2118,28 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 bool CPlaylistSourceView::Update(void)
 {
 	PostMessage(m_PlaylistSourceWnd, WM_UPDATE, 0, 0);
-	return false;
+	return true;
 }
 
-bool CPlaylistSourceView::Redraw(void)
+bool	CPlaylistSourceView::ShowCurrentItem(void)
+{
+	PostMessage(m_PlaylistSourceWnd, WM_SHOWACTIVEITEM, 0, 0);
+	return true;
+}
+
+void CPlaylistSourceView::Redraw(void)
 {
 	RedrawWindow(m_PlaylistSourceWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-	return false;
+}
+
+void	CPlaylistSourceView::SetFocusFilter(void)
+{
+	PostMessage(m_PlaylistSourceWnd, WM_SETFOCUSFILTER, 0, 0);
+}
+
+void	CPlaylistSourceView::ClearTextFilter(void)
+{
+	SetDlgItemText(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER, TEXT(""));
 }
 
 bool CPlaylistSourceView::UpdateColumns(void)
@@ -2189,12 +2218,6 @@ bool CPlaylistSourceView::EditTrackInfo(void)
 	return	m_TagEditor.ShowEditor(m_PlaylistSourceWnd);
 }
 
-bool	CPlaylistSourceView::ShowCurrentItem(void)
-{
-	PostMessage(m_PlaylistSourceWnd, WM_SHOWACTIVEITEM, 0, 0);
-	return true;
-}
-
 void	CPlaylistSourceView::DeselectItem(unsigned long ulIndex)
 {
 		ListView_SetItemState(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST), ulIndex, 0, LVIS_SELECTED);
@@ -2214,9 +2237,4 @@ bool	CPlaylistSourceView::GetSelectedIndexes(IndexArray & indexArray)
 		iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED);
 	}
 	return true;
-}
-
-void	CPlaylistSourceView::ClearTextFilter(void)
-{
-	SetDlgItemText(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER, TEXT(""));
 }
