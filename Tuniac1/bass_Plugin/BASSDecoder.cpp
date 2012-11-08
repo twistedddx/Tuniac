@@ -138,8 +138,6 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 			if(decodehandle)
 			{
-				m_pHelper = pHelper;
-
 				DoMeta(decodehandle, szSource);
 				BASS_ChannelSetSync(decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
 				BASS_ChannelSetSync(decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
@@ -150,6 +148,8 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 	if(!decodehandle)
 		return false;
+
+	m_pHelper = pHelper;
 
 	BASS_ChannelGetInfo(decodehandle,&info);
 

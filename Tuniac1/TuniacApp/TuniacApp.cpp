@@ -1068,6 +1068,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				else if(wParam == HOTKEY_REPEAT)
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
 
+				else if(wParam == HOTKEY_FIND)
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
+
 				else if(wParam == HOTKEY_VOLUP)
 				{
 					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 1);
@@ -1443,7 +1446,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 												m_MediaLibrary.EndAdd();
 											}
 										}
-										else //possible library eg Music
+										else if(tuniacApp.m_dwWinVer >= 6) //possible library eg Music
 										{
 											LPTSTR szParsingName;
 											::SHGetNameFromIDList(lpItemIDList, SIGDN_DESKTOPABSOLUTEPARSING, &szParsingName); //get parsing name for selected shell id
@@ -1954,6 +1957,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								RebuildFutureMenu();
 							}
 							break;
+
+						//toggle repeat mode
+						case ID_FIND:
+							{
+								ShowWindow(hWnd, SW_RESTORE);
+								ShowWindow(hWnd, SW_SHOW);
+							}
+							break;
 					}
 				}
 			}
@@ -2120,8 +2131,9 @@ bool CTuniacApp::RegisterHotkeys(void)
 	RegisterHotKey(m_hWnd, HOTKEY_SEEKBACK,		MOD_WIN, VK_NUMPAD1);
 	RegisterHotKey(m_hWnd, HOTKEY_SEEKFORWARD,	MOD_WIN, VK_NUMPAD3);
 
-	RegisterHotKey(m_hWnd, HOTKEY_SHUFFLE,		MOD_WIN, 'S');
-	RegisterHotKey(m_hWnd, HOTKEY_REPEAT,		MOD_WIN, 'R');
+	RegisterHotKey(m_hWnd, HOTKEY_SHUFFLE,		MOD_CONTROL + MOD_SHIFT, 'S');
+	RegisterHotKey(m_hWnd, HOTKEY_REPEAT,		MOD_CONTROL + MOD_SHIFT, 'R');
+	RegisterHotKey(m_hWnd, HOTKEY_FIND,			MOD_CONTROL + MOD_SHIFT, 'F');
 	return true;
 }
 

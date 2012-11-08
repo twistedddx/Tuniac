@@ -244,6 +244,7 @@
 #define ID_PLAYBACK_CLEARQUEUE          40082
 #define ID_PLAYBACK_PREVIOUS_BYHISTORY  40090
 #define ID_REPEAT_ALLQUEUED             40093
+#define ID_FIND				            40094
 #define ID_FILTERBY_ARTIST              40105
 #define ID_FILTERBY_NORMAL              40106
 #define ID_FILTERBY_TITLE               40107
