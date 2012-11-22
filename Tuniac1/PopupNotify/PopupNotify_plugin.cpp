@@ -500,7 +500,12 @@ void			CPopupNotify::ResetWindow(void)
 {
 	KillTimer(m_hWnd, ID_TIMER_HIDE);
 	KillTimer(m_hWnd, ID_TIMER_FADE);
+
 	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+
+	ShowWindowAsync(m_hWnd, SW_SHOWDEFAULT);
+	ShowWindowAsync(m_hWnd, SW_SHOW);
+
 	SetLayeredWindowAttributes(m_hWnd, 0, m_Alpha = 254, LWA_ALPHA);
 	RedrawWindow(m_hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
 	SetTimer(m_hWnd, ID_TIMER_HIDE, m_ShowTimeMS, NULL);
