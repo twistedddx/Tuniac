@@ -1,5 +1,6 @@
 #pragma once
 
+#include "png.h"
 #include "jpeglib.h"
 
 class CAlbumArt
@@ -16,6 +17,9 @@ protected:
 
 	char					szErrorMessage[JMSG_LENGTH_MAX];
 	TCHAR					szCurrentArtSource[512];
+
+	png_image				image;
+
 
 public:
 	CAlbumArt(void);

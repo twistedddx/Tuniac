@@ -52,31 +52,44 @@ In URL of repository add:
 https://tuniac.svn.sourceforge.net/svnroot/tuniac
 Hit OK and wait
 
-3b)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
-Navigate to C:\Code\, right click empty space and select SVN Checkout.
-In URL of repository add:
-https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
-Hit OK and wait
-
-3d)You should get zlib GIT (http://zlib.net/)
+3b)You should get zlib GIT (http://zlib.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/madler/zlib
 Hit OK and wait
 
-3d)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
 
+3d)You need libpng GIT (http://libpng.sourceforge.net/)
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+Hit OK and wait
+
+3e)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+Navigate to C:\Code\, right click empty space and select SVN Checkout.
+In URL of repository add:
+https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
+Hit OK and wait
+
+
+
+
+
 
 
 4)Build dependencies (turbojpeglib, taglib/zlib)
 
-Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_zlib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
-This cmd assumes Win7 x64 and Visual Studio 2012 if you have anything else you will need to mod the file.
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libpng.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
+
+These cmd assume Win7 x64 and Visual Studio 2012 if you have anything else you may need to mod the file.
 You can also get all the build recipes for individual building of libs in there.
 
 

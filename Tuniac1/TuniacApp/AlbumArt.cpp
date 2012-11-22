@@ -7,14 +7,6 @@
 
 #include "AlbumArt.h"
 
-extern int decodePNG(	std::vector<unsigned char>& out_image_32bit, 
-							unsigned long& image_width, 
-							unsigned long& image_height, 
-							const unsigned char* in_png, 
-							size_t in_size,
-							bool convert_to_rgba32);
-
-
 jmp_buf	CAlbumArt::sSetjmpBuffer ;
 
 void CAlbumArt::errorExit(j_common_ptr cinfo)
@@ -120,42 +112,43 @@ bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LP
 
 	if( StrStrI(szMimeType, TEXT("image/png")) )
 	{
-		std::vector<unsigned char> decompressedData;
 
-		// fills out our std::vector as a 32bit ARGB data stream
-		unsigned long w, h;
-		if(decodePNG(	decompressedData,
-					w,
-					h,
-					(const unsigned char *)pCompressedData,
-					ulDataLength,
-					true) == 0)
+		memset(&image, 0, (sizeof image));
+		image.version = PNG_IMAGE_VERSION;
+
+		if (png_image_begin_read_from_memory(&image, pCompressedData, ulDataLength))
 		{
-			m_ulBitmapWidth		= w;
-			m_ulBitmapHeight	= h;
+			png_bytep buffer;
+			image.format = PNG_FORMAT_BGRA;
+			buffer = (png_bytep)malloc(PNG_IMAGE_SIZE(image));
 
-			if(m_pBitmapData)
+			if (buffer != NULL)
 			{
-				free(m_pBitmapData);
-				m_pBitmapData = NULL;
+				if(png_image_finish_read(&image, NULL, buffer, 0, NULL))
+				{
+
+					m_ulBitmapWidth		= image.width;
+					m_ulBitmapHeight	= image.height;
+
+					if(m_pBitmapData)
+					{
+						free(m_pBitmapData);
+						m_pBitmapData = NULL;
+					}
+
+					m_pBitmapData = malloc(m_ulBitmapWidth * m_ulBitmapHeight * 4);
+					if(!m_pBitmapData)
+						return false;
+
+					CopyMemory(m_pBitmapData, buffer, PNG_IMAGE_SIZE(image));
+					png_image_free(&image);
+					free(buffer);
+					return true;
+				}
+
 			}
-
-			m_pBitmapData = malloc(m_ulBitmapWidth * m_ulBitmapHeight * 4);
-			if(!m_pBitmapData)
-				return false;
-
-			//CopyMemory(m_pBitmapData, &imageData[0], imageData.size());
-			unsigned char * pOutData	= (unsigned char *)m_pBitmapData;
-			unsigned char * pSrc	= (unsigned char *)&decompressedData[0];
-			for(int x=0; x<decompressedData.size(); x+= 4)
-			{
-				pOutData[x]		= pSrc[x+2];
-				pOutData[x+1]	= pSrc[x+1];
-				pOutData[x+2]	= pSrc[x];
-				pOutData[x+3]	= pSrc[x+3];
-			}
-
-			return true;
+			png_image_free(&image);
+			free(buffer);
 		}
 
 		return false;
