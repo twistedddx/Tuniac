@@ -391,7 +391,16 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 		tag->setTrack(libEnt->dwTrack[0]);
 		tag->setYear(libEnt->iYear);
 
-		if(fileRef.save())
+		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
+		{
+			//0xffff = AllTags
+			if(mp3File->save(TagLib::MPEG::File::AllTags, false, 3))
+			{
+				fileRef = TagLib::FileRef();
+				return true;
+			}
+		}
+		else if(fileRef.save())
 		{
 			fileRef = TagLib::FileRef();
 			return true;
