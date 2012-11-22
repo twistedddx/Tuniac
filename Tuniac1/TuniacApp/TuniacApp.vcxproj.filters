@@ -69,9 +69,6 @@
     <ClCompile Include="MediaLibraryPlaylistEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="picopng.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlayControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

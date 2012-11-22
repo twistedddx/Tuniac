@@ -23,7 +23,7 @@ rem #Release x86:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "NMake Makefiles" .
 nmake clean
-nmake
+nmake turbojpeg-static
 mkdir .\Release\x86
 move /Y turbojpeg-static.lib .\Release\x86\turbojpeg-static.lib
 
@@ -36,7 +36,7 @@ rem #Release x64:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "NMake Makefiles" .
 nmake clean
-nmake
+nmake turbojpeg-static
 mkdir .\Release\x64
 move /Y turbojpeg-static.lib .\Release\x64\turbojpeg-static.lib
 
