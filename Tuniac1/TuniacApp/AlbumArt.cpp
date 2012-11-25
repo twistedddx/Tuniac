@@ -92,21 +92,15 @@ bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LP
 
 		unsigned char * pOutData = (unsigned char *)m_pBitmapData;
 
-		JSAMPLE *buffer;
 		int row_stride = cinfo.output_width * cinfo.output_components;
-		if ((buffer = (JSAMPLE *)malloc(row_stride)) == NULL) 
-			return false;
 
 		while (cinfo.output_scanline < m_ulBitmapHeight)
 		{
-			jpeg_read_scanlines(&cinfo, &buffer, 1);
-			CopyMemory(pOutData, buffer, row_stride);
+			jpeg_read_scanlines(&cinfo, &pOutData, 1);
 			pOutData += row_stride;
 		}
 
 		jpeg_finish_decompress(&cinfo);
-		free(buffer);
-
 		return true;
 	}
 
@@ -118,37 +112,28 @@ bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LP
 
 		if (png_image_begin_read_from_memory(&image, pCompressedData, ulDataLength))
 		{
-			png_bytep buffer;
 			image.format = PNG_FORMAT_BGRA;
-			buffer = (png_bytep)malloc(PNG_IMAGE_SIZE(image));
 
-			if (buffer != NULL)
+			m_ulBitmapWidth		= image.width;
+			m_ulBitmapHeight	= image.height;
+
+			if(m_pBitmapData)
 			{
-				if(png_image_finish_read(&image, NULL, buffer, 0, NULL))
-				{
-
-					m_ulBitmapWidth		= image.width;
-					m_ulBitmapHeight	= image.height;
-
-					if(m_pBitmapData)
-					{
-						free(m_pBitmapData);
-						m_pBitmapData = NULL;
-					}
-
-					m_pBitmapData = malloc(m_ulBitmapWidth * m_ulBitmapHeight * 4);
-					if(!m_pBitmapData)
-						return false;
-
-					CopyMemory(m_pBitmapData, buffer, PNG_IMAGE_SIZE(image));
-					png_image_free(&image);
-					free(buffer);
-					return true;
-				}
-
+				free(m_pBitmapData);
+				m_pBitmapData = NULL;
 			}
+
+			m_pBitmapData = malloc(PNG_IMAGE_SIZE(image));
+			if(!m_pBitmapData)
+				return false;
+
+			if(png_image_finish_read(&image, NULL, m_pBitmapData, 0, NULL))
+			{
+				png_image_free(&image);
+				return true;
+			}
+
 			png_image_free(&image);
-			free(buffer);
 		}
 
 		return false;
