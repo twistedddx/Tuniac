@@ -1007,8 +1007,28 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 					case NOTIFY_COREAUDIO_RESET:
 						{
+							bool bWasPlaying = false;
+							unsigned long ulWasPlayingTime = 0;
+
+							if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+							{
+								bWasPlaying = true;
+								ulWasPlayingTime = CCoreAudio::Instance()->GetPosition();
+							}
+
 							CCoreAudio::Instance()->Shutdown();
 							CCoreAudio::Instance()->Startup();
+
+							if(bWasPlaying)
+							{
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+								if(pPlaylist)
+									//play the current song
+									PlayEntry(pPlaylist->GetActiveEntry(), true, false);
+
+								CCoreAudio::Instance()->SetPosition(ulWasPlayingTime);
+							}
+							UpdateState();
 						}
 						break;
 
