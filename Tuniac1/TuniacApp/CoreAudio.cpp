@@ -44,12 +44,17 @@
 // TODO: Derive this from XAudioEngineCallback to let us know if we need to restart XAudio :(
 // TODO: Change AudioStream to have Initialize and Shutdown so we can return audio errors back up the chain!
 
+const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
+const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
+
 CCoreAudio::CCoreAudio(void) : 
 	m_ulCrossfadeTimeMS(6000),
 	m_BufferSizeMS(500),
 	m_iVolPercent(100),
 	m_fAmpGain(-6.0f),
 	m_pXAudio(NULL),
+	_cRef(1),
+	m_pEnumerator(NULL),
 	m_pMasteringVoice(NULL),
 	m_bReplayGainEnabled(true),
 	m_bUseAlbumGain(false),
@@ -83,6 +88,17 @@ bool			CCoreAudio::Startup()
 
 	m_pXAudio->StartEngine();
 	m_pXAudio->RegisterForCallbacks(this);
+
+	if(CoCreateInstance(CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&m_pEnumerator) == S_OK)
+	{
+		if(m_pEnumerator)
+		{
+			if(m_pEnumerator->RegisterEndpointNotificationCallback(this) == S_OK)
+				m_pEnumerator->AddRef();
+		}
+
+	}
+
 
 	HRESULT hr;
 
@@ -154,6 +170,12 @@ bool			CCoreAudio::Startup()
 
 bool			CCoreAudio::Shutdown(void)
 {
+	if(m_pEnumerator)
+	{
+		m_pEnumerator->UnregisterEndpointNotificationCallback(this);
+		SAFE_RELEASE(m_pEnumerator);
+	}
+
 	Reset();
 
 	while(m_AudioSources.GetCount())
@@ -646,3 +668,11 @@ void CCoreAudio::OnCriticalError(HRESULT Error)
 
 	}
 }
+
+HRESULT CCoreAudio::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
+{
+	if (flow == eRender && role == eMultimedia)
+		tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
+
+	return S_OK;
+};

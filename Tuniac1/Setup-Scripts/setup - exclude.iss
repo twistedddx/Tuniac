@@ -4,7 +4,7 @@
 AllowNoIcons=yes
 AppID={{A2A3A9DE-A195-4A66-8DA6-59968E0EF943}
 AppMutex=TUNIACWINDOWCLASS
-AppName=Tuniac
+AppName=Tuniac 1.0
 AppPublisher=Tuniac Dev Team
 AppPublisherURL=http://www.tuniac.org
 AppSupportURL=http://www.tuniac.org

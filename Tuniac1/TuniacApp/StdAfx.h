@@ -41,6 +41,8 @@
 // other windows stuff
 #include <dbt.h>
 
+
+#include <mmdeviceapi.h>
 #include <mmsystem.h>
 #include <mmreg.h>
 #include <ks.h>

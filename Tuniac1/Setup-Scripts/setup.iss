@@ -34,12 +34,8 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-Source: C:\Windows\SysWOW64\msvcp100.dll; Check: InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
-Source: C:\Windows\SysWOW64\msvcr100.dll; Check: InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
-Source: C:\Windows\System32\msvcp100.dll; Check: not InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
-Source: C:\Windows\System32\msvcr100.dll; Check: not InstallLegacyCheck; DestDir: {app}\; Flags: ignoreversion
-
-Source: .\DirectX\*.*; DestDir: {tmp}\; Check: DXJun2010Check; Flags: ignoreversion
+Source: "isxdlfiles\isxdl.dll"; Flags: dontcopy
+Source: "WizardImageSmall.bmp"; Flags: dontcopy
 
 Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
 Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
@@ -55,6 +51,10 @@ Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Check: InstallLegacyChe
 Source: ..\Win32\Release\*.dll; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
 Source: ..\Win32\Release\visuals\verdana14.glf; DestDir: {app}\visuals\; Flags: ignoreversion
 
+;external files
+Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcr110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
+
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
 Root: HKCU; Subkey: "SOFTWARE\MediaScience\Sonique\General Preferences 0.80"; ValueType: string; ValueName: "SoniquePath"; ValueData: "{app}\visuals\"
@@ -68,7 +68,7 @@ Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: desktopicon
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist; Check: DXJun2010Check
+Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
@@ -78,15 +78,19 @@ var
 
   FilesDownloaded: Boolean;
 
-function GetModuleHandle(lpModuleName: LongInt): LongInt;
-external 'GetModuleHandleA@kernel32.dll stdcall';
-function ExtractIcon(hInst: LongInt; lpszExeFileName: PChar; nIconIndex: LongInt): LongInt;
-external 'ExtractIconA@shell32.dll stdcall';
+procedure isxdl_AddFile(URL, Filename: AnsiString);
+external 'isxdl_AddFile@files:isxdl.dll stdcall';
+function isxdl_DownloadFiles(hWnd: Integer): Integer;
+external 'isxdl_DownloadFiles@files:isxdl.dll stdcall';
+function isxdl_SetOption(Option, Value: AnsiString): Integer;
+external 'isxdl_SetOption@files:isxdl.dll stdcall';
+
 function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth, cyWidth: Integer; istepIfAniCur: LongInt; hbrFlickerFreeDraw, diFlags: LongInt): LongInt;
 external 'DrawIconEx@user32.dll stdcall';
 function DestroyIcon(hIcon: LongInt): LongInt;
 external 'DestroyIcon@user32.dll stdcall';
 
+//about window
 procedure AboutButtonOnClick(Sender: TObject);
 begin
   MsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok);
@@ -99,6 +103,7 @@ begin
   ShellExec('open', 'http://www.tuniac.org', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
 end;
 
+//generic page
 function CreateCustomOptionPage(AAfterId: Integer; ACaption, ASubCaption, AIconFileName, ALabel1Caption, ALabel2Caption,
   ACheckCaption: String; var CheckBox: TCheckBox): TWizardPage;
 var
@@ -162,6 +167,7 @@ begin
   Result := Page;
 end;
 
+// 32bit install option for 64bit machines
 procedure CreateCustomPages;
 var
   Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption: String;
@@ -170,57 +176,240 @@ begin
   SubCaption1 := 'Which version of Tuniac would you like to install?';
   IconFileName := 'directx.ico';
   Label1Caption :=
-    'Tuniac comes in 2 flavours, 32bit and 64bit.' + #13#10 +
+    'Tuniac comes in 32bit and 64bit.' + #13#10 +
     'We have detected your system is 64bit capable.' + #13#10#13#10 +
     'Note: Under 64bit the TAK, OptimFROG and SVP plugins are not available.'
   Label2Caption := 'Select below which Tuniac you want, then click Next.';
   CheckCaption := '&Install Tuniac 32bit instead of Tuniac 64bit';
 
   InstallLegacyPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, InstallLegacyCheckBox);
-
 end;
 
-procedure RegisterPreviousData(PreviousDataKey: Integer);
-begin
-  SetPreviousData(PreviousDataKey, 'InstallLegacy', IntToStr(Ord(InstallLegacyCheckBox.Checked)));
-end;
-
+//32bit install on 64bit machine
 function InstallLegacyCheck: Boolean;
 begin
   Result := InstallLegacyCheckBox.Checked;
 end;
 
-function IsNot64Mode: String;
+function IsNot64BitMode: String;
 begin
   if Is64BitInstallMode then
-    Result := '0'
+  begin
+    Result := '0';
+  end
   else
+  begin
     Result := '1';
+  end;
 end;
 
-function TheVersion(Default:String): String;
+function HasVC2012x86Redist: Boolean;
+var
+  VCRedistx86: String;
 begin
-  if Is64BitInstallMode then
-    Result := '64Bit'
+  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then
+  begin
+    Result := True;
+  end
+  else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then
+  begin
+    Result := True;
+  end
   else
-    Result := '32Bit';
+  begin
+    Result := False;
+  end;
 end;
 
-function DXJun2010Check: Boolean;
+function HasVC2012x64Redist: Boolean;
+var
+  VCRedistx64: String;
+begin
+  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then
+  begin
+    Result := True;
+  end
+  else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then
+  begin
+    Result := True;
+  end
+  else
+  begin
+    Result := False;
+  end;
+end;
+
+//check if valid vc redist available
+function Has11VCRedist: Boolean;
+begin
+  //local
+  if FileExists(ExpandConstant('{app}\msvcr110.dll')) then
+  begin
+    Result := True;
+  end
+  //32bit install, x86 redist
+  else if not Is64BitInstallMode and HasVC2012x86Redist then
+  begin
+    Result := True;
+  end
+  //64bit machine, 32bit install, x86 redist
+  else if Is64BitInstallMode and InstallLegacyCheck and HasVC2012x86Redist then
+  begin
+    Result := True;
+  end
+  //64bit machine, 64bit install, x64 redist
+  else if Is64BitInstallMode and not InstallLegacyCheck and HasVC2012x64Redist then
+  begin
+    Result := True;
+  end
+  else
+  begin
+    Result := False;
+  end;
+end;
+
+//check for direct x 2.7
+function HasDXJun2010: Boolean;
 var
   XAudio2: String;
 begin
-  if RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 ) then
-    Result := false
-  else
-    Result := true;
+  Result := RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 );
 end;
 
+//check if we successfully downloaded redist
+function VCRedistInstalling: Boolean;
+begin
+  if not Has11VCRedist then
+  begin 
+    Result:= FilesDownloaded;
+  end
+  else
+  begin
+    Result:= False;
+  end
+end;
+
+//reset previous user setting for 32bit install on 64bit machine
+procedure RegisterPreviousData(PreviousDataKey: Integer);
+begin
+  SetPreviousData(PreviousDataKey, 'InstallLegacy', IntToStr(Ord(InstallLegacyCheckBox.Checked)));
+end;
+
+//skip 32bit install question on 32bit only machines
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if (PageID = InstallLegacyPage.ID) and (IsNot64Mode = '1') then begin
+  if (PageID = InstallLegacyPage.ID) and not Is64BitInstallMode then
+  begin
       Result := true;
-   end;
+  end
+  else
+  begin
+    Result := false;
+  end;
+end;
+
+//download prereq's if needed
+procedure DownloadFiles();
+var
+  ErrorCode: Integer;
+  hWnd: Integer;
+  URL, FileName: String;
+begin
+  isxdl_SetOption('label', 'Downloading extra files');
+  isxdl_SetOption('description', 'Please wait while Setup is downloading extra files to your computer.');
+
+  try
+    FileName := ExpandConstant('{tmp}\WizardImageSmall.bmp');
+    if not FileExists(FileName) then
+      ExtractTemporaryFile(ExtractFileName(FileName));
+    isxdl_SetOption('smallwizardimage', FileName);
+  except
+  end;
+
+  isxdl_SetOption('resume', 'false');
+
+  hWnd := StrToInt(ExpandConstant('{wizardhwnd}'));
+
+  if not HasDXJun2010 then
+  begin
+    URL := 'http://www.tuniac.org/extra/DSETUP.dll';
+    FileName := ExpandConstant('{tmp}\DSETUP.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/dsetup32.dll';
+    FileName := ExpandConstant('{tmp}\dsetup32.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/dxdllreg_x86.cab';
+    FileName := ExpandConstant('{tmp}\dxdllreg_x86.cab');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/DXSETUP.exe';
+    FileName := ExpandConstant('{tmp}\DXSETUP.exe');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/dxupdate.cab';
+    FileName := ExpandConstant('{tmp}\dxupdate.cab');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/Jun2010_XAudio_x64.cab';
+    FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x64.cab');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/Jun2010_XAudio_x86.cab';
+    FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x86.cab');
+    isxdl_AddFile(URL, FileName);
+  end;
+
+  if InstallLegacyCheck and not Has11VCRedist then
+  begin
+    URL := 'http://www.tuniac.org/extra/32bit/msvcp110.dll';
+    FileName := ExpandConstant('{tmp}\msvcp110.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/32bit/msvcr110.dll';
+    FileName := ExpandConstant('{tmp}\msvcr110.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+ 
+  if not InstallLegacyCheck and not Has11VCRedist then
+  begin
+    URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
+    FileName := ExpandConstant('{tmp}\msvcp110.dll');
+    URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
+    FileName := ExpandConstant('{tmp}\msvcr110.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+
+  if isxdl_DownloadFiles(hWnd) <> 0 then
+  begin
+    FilesDownloaded := True;
+  end
+  else
+  begin
+    if not HasDXJun2010 then
+    begin
+      if MsgBox('Setup could not download files and you do not have DirectX End-User Runtimes (June 2010). Go to download?', mbConfirmation, MB_YESNO) = IDYES then
+      begin
+        ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      end;
+    end;
+
+    if not Has11VCRedist then
+    begin
+      if MsgBox('Setup could not download files and you do not have Visual C++ Redistributable for Visual Studio 2012 Update 1. Go to download?', mbConfirmation, MB_YESNO) = IDYES then
+      begin
+        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=30679', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      end;
+    end;
+  end;
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+if not Has11VCRedist or not HasDXJun2010 then
+    DownloadFiles();
+  Result := '';
+end;
+
+function InitializeSetup(): Boolean;
+begin
+  FilesDownloaded := False;
+
+  Result := True;
 end;
 
 procedure InitializeWizard();
@@ -229,8 +418,8 @@ var
   URLLabel: TNewStaticText;
 begin
   CreateCustomPages;
-  
-  InstallLegacyCheckBox.Checked := GetPreviousData('InstallLegacy', IsNot64Mode) = '1';
+
+  InstallLegacyCheckBox.Checked := GetPreviousData('InstallLegacy', IsNot64BitMode) = '1';
 
   { Other custom controls }
 

@@ -28,6 +28,7 @@
 
 #include "Singleton.h"
 
+
 #define NOTIFY_COREAUDIO_MIXPOINTREACHED	0
 #define NOTIFY_COREAUDIO_PLAYBACKFINISHED	1
 #define NOTIFY_COREAUDIO_PLAYBACKSTARTED	2
@@ -37,9 +38,13 @@
 class CCoreAudio : 
 	public CSingleton<CCoreAudio>,
 	public IAudioSourceHelper,
-	public IXAudio2EngineCallback
+	public IXAudio2EngineCallback,
+	public IMMNotificationClient
 {
 protected:
+
+	LONG								_cRef;
+	IMMDeviceEnumerator		*			m_pEnumerator;
 
 	Array<CAudioStream *, 2>			m_Streams;
 	Array<IAudioSourceSupplier *, 2>	m_AudioSources;
@@ -129,4 +134,24 @@ public:
     // Called in the event of a critical system error which requires XAudio2
     // to be closed down and restarted.  The error code is given in Error.
     STDMETHOD_(void, OnCriticalError) (THIS_ HRESULT Error);
+
+//IMMNotificationClient inherited methods
+public:
+	STDMETHOD_(HRESULT, QueryInterface) (THIS_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) { return S_OK; };
+	STDMETHOD_(ULONG, AddRef) (THIS_ void) { return InterlockedIncrement(&_cRef); };
+	STDMETHOD_(ULONG, Release) (THIS_ void) {
+										ULONG ulRef = InterlockedDecrement(&_cRef);
+										if (0 == ulRef)
+										{
+											delete this;
+										}
+										return ulRef;
+									};
+
+	STDMETHOD_(HRESULT, OnDeviceStateChanged) (THIS_ LPCWSTR pwstrDeviceId, DWORD dwNewState) { return S_OK; };
+	STDMETHOD_(HRESULT, OnDeviceAdded) (THIS_ LPCWSTR pwstrDeviceId) { return S_OK; };
+	STDMETHOD_(HRESULT, OnDeviceRemoved) (THIS_ LPCWSTR pwstrDeviceId) { return S_OK; };
+	STDMETHOD_(HRESULT, OnPropertyValueChanged) (THIS_ LPCWSTR pwstrDeviceId, const PROPERTYKEY key) { return S_OK; };
+	STDMETHOD_(HRESULT, OnDefaultDeviceChanged) (THIS_ EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId);
+
 };
