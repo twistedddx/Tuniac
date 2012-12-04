@@ -945,7 +945,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									unsigned long ulNextFilteredIndex = pPlaylist->Next();
 									if(ulNextFilteredIndex != INVALID_PLAYLIST_INDEX)
 										//play the song we got
-										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, false);
+										PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), true, true, false);
 									else
 										//no next song??
 										UpdateState();
@@ -2694,13 +2694,19 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 {
 	if(pIPE)
 	{
-		//open for art before opening for decode.
-		if(m_Preferences.GetShowAlbumArt())
-			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
-
 		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 		if(pPlaylist)
 			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
+
+		if(PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) && m_Preferences.GetSkipStreams() && bAuto)
+		{
+			PostMessage(m_hWnd, WM_APP, NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
+			return true;
+		}
+
+		//open for art before opening for decode.
+		if(m_Preferences.GetShowAlbumArt())
+			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 
 		if(CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
 		{

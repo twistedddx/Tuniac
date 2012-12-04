@@ -25,18 +25,21 @@ void DoMeta(DWORD handle, void *user)
 			if (!strnicmp(icy,"icy-name:",9))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szTitle, 128);
-				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
+				if(m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 			}
 
 			if (!strnicmp(icy,"icy-genre:",10))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+10, -1, szGenre, 128);
-				m_pHelper->UpdateMetaData((LPTSTR)user, szGenre, FIELD_GENRE);
+				if(m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szGenre, FIELD_GENRE);
 			}
 			if (!strnicmp(icy,"icy-br:",7))
 			{
 				iBitrate = (atoi(icy+7))*1000;
-				m_pHelper->UpdateMetaData((LPTSTR)user, (void *)iBitrate, FIELD_BITRATE);
+				if(m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, (void *)iBitrate, FIELD_BITRATE);
 			}
 			/* these should already been known
 			ice-samplerate:
@@ -55,14 +58,16 @@ void DoMeta(DWORD handle, void *user)
 			title=strdup(title+13);
 			strchr(title,';')[-1]=0;
 			MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
-			m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+			if(m_pHelper)
+				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 		}
 		if(url && szArtist == NULL)
 		{
 			url=strdup(url+11);
 			strchr(url,';')[-1]=0;
 			MultiByteToWideChar(CP_ACP, 0, url, -1, szTitle, 128);
-			m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
+			if(m_pHelper)
+				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 		}
 	}
 	else
@@ -83,12 +88,14 @@ void DoMeta(DWORD handle, void *user)
 				char text[100];
 				_snprintf(text,sizeof(text),"%s - %s",artist,title);
 				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
-				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+				if(m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 			else if(title  && szTitle == NULL)
 			{
 				MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
-				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+				if(m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 		}
     }
