@@ -4,6 +4,7 @@ Dec, 2012
 -fix moving files to last playlist position
 -add auto skip streams preference to skip Tuniac play logic picking streams
 -increase preference window size
+-tidy preference windows
 -dont reset audio when playback fails
 -change setup scripts to download Direct X XAudio 2.7 and VC 2012 runtimes if required
 -tidy up setup scripts

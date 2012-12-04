@@ -23,7 +23,6 @@
 #define IDD_PREFERENCES_COREAUDIO       120
 #define IDD_CDAUDIOSOURCE               121
 #define IDI_THEMEICON_PLAYLIST_CD       122
-#define IDD_PREFERENCES_IMPORTING       123
 #define IDD_BUFFERING                   124
 #define IDR_VISMENU                     125
 #define IDD_PREFERENCES_VISUALS         126
