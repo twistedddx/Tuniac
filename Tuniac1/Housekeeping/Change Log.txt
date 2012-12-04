@@ -1,4 +1,33 @@
-Nov, 2012
+Dec, 2012
+---------
+-prevent crash from bass_Plugin if Tuniac starts with Stream loaded
+-fix moving files to last playlist position
+-add auto skip streams preference to skip Tuniac play logic picking streams
+-increase preference window size
+-dont reset audio when playback fails
+-change setup scripts to download Direct X XAudio 2.7 and VC 2012 runtimes if required
+-tidy up setup scripts
+-handle default audio device change (eg HDMI switching)
+-better core audio reset (resume playback)
+-pretty resource names (task manager "Tuniac Media Player" instead of tuniacapp.exe)
+-libpng 1.6 instead of picopng
+-simplify art loading code
+-update about window
+-fix zlib linking in tablig
+-save id3v2.3.0 instead of id3v2.4.0 for better Windows 7 and below explorer support
+
+Nov, 2012 (121108)
+---------
+-BASS plugin correct helper for cd audio files
+-VS 2012 XP compiling
+-delayload shell32.dll to allow XP loading
+-protect SHLoadLibraryFromParsingName from XP users
+-fix resource file
+-update app icon
+-move repeat/shuffle hotkeys
+-add find hotkey
+
+Nov, 2012 (121106)
 ---------
 -dont increment playcount on ML item update
 -allow sorting by play count
@@ -6,7 +35,6 @@ Nov, 2012
 -fix editing number based fields (eg year, play count, track)
 -prevent crash when removing items from ML
 -update to VS 2012
-
 
 Sep, 2012
 ---------
@@ -18,14 +46,12 @@ Sep, 2012
 -fix vis art logic
 -prevent nonsense filters
 
-
 Aug, 2012
 ---------
 -correct popup notify behaviour regarding fullscreen and hotkey
 -update SVP fft and it's implementation
 -update bss lib including adding OPUS decoding
 -force clear text for rebuild ML
-
 
 Jul, 2012
 ---------
@@ -288,7 +314,6 @@ Apr, 2009 part b
 -more svp renderer updates
 -add tail slash SoniquePath in installer
 
-
 Apr, 2009
 ---------
 -SVP renderer now can use track info
@@ -309,13 +334,11 @@ Apr, 2009
 -DirectX March 2009 update
 -bug fixes
 
-
 Mar, 2009 part b
 ---------
 -configure available for nowplayingtxt(enable output to mirc) and popupnotify(disable during fullscreen). Clicking configure on the plugin will toggle its pref on/off
 -add saving settings for plugins
 -better playlist logic. Shuffle list build, Sort, Startup, faster etc
-
 
 Mar, 2009
 ---------
@@ -334,14 +357,12 @@ Mar, 2009
 -Lots of ints changed to unsigned longs so all features support the same max file count. (max files: 4,294,967,295)
 -Tidy up things
 
-
 Feb, 2009
 ---------
 -add ability to change render resolution in SVP renderer
 -Add ability to have visual for album art
 -Add about window to visuals
 -Update various plugins(better unicode, prevent crash, better etc)
-
 
 Jan, 2009
 ---------
@@ -355,7 +376,6 @@ Jan, 2009
 -tak 1.1.0 plus fixes, ape fixes
 -songplayed plugin notify
 
-
 Dec, 2008
 ---------
 -smoother playback, hopefully the end of audio breakups.
@@ -365,7 +385,6 @@ Dec, 2008
 -tidy up about screen
 -standard file i/o interface
 -move flac decoder back to memoryio.
-
 
 Nov, 2008
 ---------
@@ -380,7 +399,6 @@ Nov, 2008
 -Fix playlist menu in tray
 -Prevent nVidia visual crash (visuals are back)
 -Default replaygain off
-
 
 Oct, 2008
 ---------
@@ -408,7 +426,6 @@ Oct, 2008
 -removed ability to sort playlists
 -file creation date -> date added option
 
-
 Aug, 2008
 ---------
 -wma decoder
@@ -430,13 +447,11 @@ Aug, 2008
 -Other minor things
 -Correctly remember activesong with filtering on medialibrary playlist.
 
-
 Jun, 2008
 ---------
 -Update Taglib to latest SVN, includes aiff/riff now even though we dont use it, plus several other fixes and improvements.
 -Update XAudio to DirectX June 2008 (2.0 -> 2.1)
 -Update installer, now DirectX XAudio June 2008 ships inside the installer and will install automatically if required.
-
 
 Apr, 2008
 ---------
@@ -454,12 +469,10 @@ Apr, 2008
 -TAK(x86 only), OptimFROG(ofr/ofs)(x86 only), ALAC, TrueAudio(tta)
 -fix: songs not cut short by the buffer length(080404 fixed?)
 
-
 Mar 24, 2008
 ------------
 -Album Art (mp3 id3v2 apic tag, folder.jpg folder.png)
 -reenable ape tag reader
-
 
 Mar 18, 2008
 ------------
@@ -467,11 +480,9 @@ Mar 18, 2008
 -Wavpack
 -Minor
 
-
 Mar 14, 2008
 ------------
 -Fix 100% CPU usage
-
 
 Mar 13, 2008
 ------------
@@ -481,7 +492,6 @@ Mar 13, 2008
 -add stop to tray/playback menu's
 -update about windows
 
-
 Mar 13, 2008
 ------------
 -Installer update. 32bit/64bit selection(if possible)/text, DirectX test/download
@@ -489,11 +499,9 @@ Mar 13, 2008
 -Speed improvements, visual update and other changes
 -FLAC decoder. Supports multichannel,8/16/24/32 bitdepths and all sample rates. Also has x64 support which is fairly rare for flac.
 
-
 Mar 11, 2008
 ------------
 -Heap mistake fixed
-
 
 Mar 10, 2008
 ------------
@@ -502,18 +510,15 @@ Mar 10, 2008
 -speed improvements
 -millions of other things
 
-
 Mar 02, 2008
 ------------
 -audio engine overhaul/rewrite
-
 
 Feb 24, 2008
 ------------
 -fix "previous" in menu
 -Dont show "next:" on popup notify plugin if not needed
 -various
-
 
 Feb 23, 2008
 ------------

@@ -48,6 +48,7 @@
 #define ARTONSELECTION			TEXT("ArtOnSelection")
 #define FOLLOWCURRENTSONG		TEXT("FollowCurrentSong")
 #define SMARTSORTING			TEXT("SmartSorting")
+#define SKIPSTREAMS				TEXT("SkipStreams")
 #define SCREENSAVEMODE			TEXT("ScreenSaveMode")
 
 #define WINDOWFORMATSTRING		TEXT("WindowFormatString")
@@ -136,6 +137,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FOLLOWCURRENTSONG, BM_SETCHECK, pPrefs->m_bFollowCurrentSong ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_SETCHECK, pPrefs->m_bSmartSorting ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_SKIPSTREAMS, BM_SETCHECK, pPrefs->m_bSkipStreams ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_SETCHECK, pPrefs->m_bAutoSoftPause ? BST_CHECKED : BST_UNCHECKED, 0);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bPauseOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -197,6 +199,12 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						}
 						break;
 
+					case IDC_GENERAL_SKIPSTREAMS:
+						{
+							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SKIPSTREAMS, BM_GETCHECK, 0, 0);
+							pPrefs->m_bSkipStreams = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
 
 					case IDC_GENERAL_AUTOSOFTPAUSE:
 						{
@@ -1418,6 +1426,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bArtOnSelection			= FALSE;
 	m_bFollowCurrentSong		= TRUE;
 	m_bSmartSorting				= TRUE;
+	m_bSkipStreams				= TRUE;
 
 	m_bSetDateAddedToFileCreationTime = FALSE;
 	m_bPlaylistSorting			= FALSE;
@@ -1642,6 +1651,14 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bSmartSorting,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						SKIPSTREAMS,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bSkipStreams,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -2041,6 +2058,13 @@ bool CPreferences::SavePreferences(void)
 					0,
 					REG_DWORD,
 					(LPBYTE)&m_bSmartSorting, 
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey, 
+					SKIPSTREAMS, 
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bSkipStreams, 
 					sizeof(BOOL));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -2800,6 +2824,11 @@ void		CPreferences::SetFollowCurrentSongMode(BOOL bEnabled)
 BOOL		CPreferences::GetSmartSortingEnabled(void)
 {
 	return m_bSmartSorting;
+}
+
+BOOL		CPreferences::GetSkipStreams(void)
+{
+	return m_bSkipStreams;
 }
 
 BOOL		CPreferences::GetPauseOnScreensave(void)

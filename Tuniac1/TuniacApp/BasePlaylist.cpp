@@ -1048,6 +1048,15 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 	PlaylistEntry *scratch = new PlaylistEntry[m_PlaylistArray.GetCount()];
 
 	unsigned long ulRealMoveIndex = NormalFilteredIndexToRealIndex(ToIndex);
+
+
+	if(ToIndex == m_PlaylistArray.GetCount())
+		ulRealMoveIndex = ToIndex;
+
+
+	if(ulRealMoveIndex == INVALID_PLAYLIST_INDEX)
+		return false;
+
 	unsigned long ulRealMoveToIndex = ulRealMoveIndex;
 
 	if(ToIndex != 0)

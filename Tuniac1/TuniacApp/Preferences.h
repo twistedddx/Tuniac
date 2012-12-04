@@ -87,6 +87,7 @@ protected:
 	BOOL		m_bArtOnSelection;
 	BOOL		m_bFollowCurrentSong;
 	BOOL		m_bSmartSorting;
+	BOOL		m_bSkipStreams;
 	BOOL		m_bShuffleState;
 	BOOL		m_bSetDateAddedToFileCreationTime;
 	BOOL		m_bPlaylistSorting;
@@ -274,4 +275,6 @@ public:
 	BOOL		GetAddSingleStream(void);
 	BOOL		GetAutoSoftPause(void);
 	BOOL		GetSmartSortingEnabled(void);
+	BOOL		GetSkipStreams(void);
+
 };
