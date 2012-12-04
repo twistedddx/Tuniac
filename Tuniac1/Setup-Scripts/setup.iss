@@ -382,7 +382,7 @@ begin
   begin
     if not HasDXJun2010 then
     begin
-      if MsgBox('Setup could not download files and you do not have DirectX End-User Runtimes (June 2010). Go to download?', mbConfirmation, MB_YESNO) = IDYES then
+      if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then
       begin
         ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
       end;
@@ -390,7 +390,7 @@ begin
 
     if not Has11VCRedist then
     begin
-      if MsgBox('Setup could not download files and you do not have Visual C++ Redistributable for Visual Studio 2012 Update 1. Go to download?', mbConfirmation, MB_YESNO) = IDYES then
+      if MsgBox('Visual C++ Redistributable for Visual Studio 2012 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then
       begin
         ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=30679', '', '', SW_SHOW, ewNoWait, ErrorCode);
       end;
