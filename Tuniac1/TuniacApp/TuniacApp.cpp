@@ -300,9 +300,19 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	}
 
 	if(m_Preferences.GetFollowCurrentSongMode())
-		m_SourceSelectorWindow->ShowCurrentlyPlaying();
+	{
+		if(m_SourceSelectorWindow)
+		{
+			m_SourceSelectorWindow->ShowCurrentlyPlaying();
+		}
+	}
 	if(m_Preferences.GetShowVisArt())
-		m_VisualWindow->Show();
+	{
+		if(m_VisualWindow)
+		{
+			m_VisualWindow->Show();
+		}
+	}
 
 	m_WindowArray[m_Preferences.GetActiveWindow()]->Show();
 
@@ -1742,8 +1752,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
 									m_VisualWindow->Show();
 
-								m_SourceSelectorWindow->Show();
-								m_SourceSelectorWindow->ShowCurrentlyPlaying();
+								if(m_SourceSelectorWindow)
+								{
+									m_SourceSelectorWindow->Show();
+									m_SourceSelectorWindow->ShowCurrentlyPlaying();
+								}
 							}
 							break;
 
@@ -2694,19 +2707,13 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 {
 	if(pIPE)
 	{
-		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-		if(pPlaylist)
-			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
-
-		if(PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) && m_Preferences.GetSkipStreams() && bAuto)
-		{
-			PostMessage(m_hWnd, WM_APP, NOTIFY_COREAUDIO_PLAYBACKFAILED, NULL);
-			return true;
-		}
-
 		//open for art before opening for decode.
 		if(m_Preferences.GetShowAlbumArt())
 			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+
+		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+		if(pPlaylist)
+			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
 
 		if(CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
 		{

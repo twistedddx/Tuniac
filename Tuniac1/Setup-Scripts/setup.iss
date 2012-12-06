@@ -332,25 +332,25 @@ begin
 
   if not HasDXJun2010 then
   begin
-    URL := 'http://www.tuniac.org/extra/DSETUP.dll';
+    URL := 'http://www.tuniac.org/extra/DirectX/DSETUP.dll';
     FileName := ExpandConstant('{tmp}\DSETUP.dll');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/dsetup32.dll';
+    URL := 'http://www.tuniac.org/extra/DirectX/dsetup32.dll';
     FileName := ExpandConstant('{tmp}\dsetup32.dll');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/dxdllreg_x86.cab';
+    URL := 'http://www.tuniac.org/extra/DirectX/dxdllreg_x86.cab';
     FileName := ExpandConstant('{tmp}\dxdllreg_x86.cab');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/DXSETUP.exe';
+    URL := 'http://www.tuniac.org/extra/DirectX/DXSETUP.exe';
     FileName := ExpandConstant('{tmp}\DXSETUP.exe');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/dxupdate.cab';
+    URL := 'http://www.tuniac.org/extra/DirectX/dxupdate.cab';
     FileName := ExpandConstant('{tmp}\dxupdate.cab');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/Jun2010_XAudio_x64.cab';
+    URL := 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x64.cab';
     FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x64.cab');
     isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/Jun2010_XAudio_x86.cab';
+    URL := 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x86.cab';
     FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x86.cab');
     isxdl_AddFile(URL, FileName);
   end;

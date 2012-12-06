@@ -651,6 +651,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						m_pPlaylist->SetTextFilterReversed(bReverse);
 						m_pPlaylist->ApplyFilter();
 						Update();
+
+						if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+						{
+							if(tuniacApp.m_SourceSelectorWindow)
+							{
+								tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+							}
+						}
+
 						return TRUE;
 					}
 
@@ -682,6 +691,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						m_pPlaylist->SetTextFilterField(ulFilterByField);
 						m_pPlaylist->ApplyFilter();
 						Update();
+
+						if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+						{
+							if(tuniacApp.m_SourceSelectorWindow)
+							{
+								tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+							}
+						}
+
 					}
 					return TRUE;
 				}
@@ -753,6 +771,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											}
 										}
 										Update();
+
+										if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+										{
+											if(tuniacApp.m_SourceSelectorWindow)
+											{
+												tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+											}
+										}
+
 									}
 									break;
 							}

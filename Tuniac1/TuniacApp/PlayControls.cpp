@@ -463,7 +463,10 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				
 				if(PtInRect(&CurrentSongRect, pt))
 				{
-					tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+					if(tuniacApp.m_SourceSelectorWindow)
+					{
+						tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+					}
 				}
 			}
 			break;

@@ -203,6 +203,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SKIPSTREAMS, BM_GETCHECK, 0, 0);
 							pPrefs->m_bSkipStreams = State == BST_UNCHECKED ? FALSE : TRUE;
+							tuniacApp.RebuildFutureMenu();
 						}
 						break;
 
