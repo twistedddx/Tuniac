@@ -18,6 +18,10 @@
 
 	3. This notice may not be removed or altered from any source distribution.
 */
+/*
+	Modification and addition to Tuniac originally written by Tony Million
+	Copyright (C) 2003-2012 Brett Hoyle
+*/
 
 // MediaLibrary.cpp: implementation of the CMediaLibrary class.
 // This is not a viewable playlist LibraryPlaylist is simply based on this

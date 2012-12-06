@@ -1,5 +1,7 @@
 Dec, 2012
 ---------
+-Show currently playing follows while filtering
+-prevent crashes caused by referencing objects that may not exist yet
 -prevent crash from bass_Plugin if Tuniac starts with Stream loaded
 -fix moving files to last playlist position
 -add auto skip streams preference to skip Tuniac play logic picking streams
@@ -14,7 +16,7 @@ Dec, 2012
 -libpng 1.6 instead of picopng
 -simplify art loading code
 -update about window
--fix zlib linking in tablig
+-fix zlib linking in taglib
 -save id3v2.3.0 instead of id3v2.4.0 for better Windows 7 and below explorer support
 
 Nov, 2012 (121108)

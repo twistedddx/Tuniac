@@ -18,6 +18,11 @@
 
 	3. This notice may not be removed or altered from any source distribution.
 */
+/*
+	Modification and addition to Tuniac originally written by Tony Million
+	Copyright (C) 2003-2012 Brett Hoyle
+*/
+
 
 #include "stdafx.h"
 #include "playlistsourceview.h"
@@ -652,7 +657,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						m_pPlaylist->ApplyFilter();
 						Update();
 
-						if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 						{
 							if(tuniacApp.m_SourceSelectorWindow)
 							{
@@ -692,7 +697,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						m_pPlaylist->ApplyFilter();
 						Update();
 
-						if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 						{
 							if(tuniacApp.m_SourceSelectorWindow)
 							{
@@ -772,7 +777,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 										}
 										Update();
 
-										if(tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+										if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 										{
 											if(tuniacApp.m_SourceSelectorWindow)
 											{

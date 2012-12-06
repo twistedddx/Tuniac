@@ -269,7 +269,6 @@
     <ClCompile Include="PlayQueueSourceView.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="Preferences.cpp" />
-    <ClCompile Include="SharedMemorySongInfo.cpp" />
     <ClCompile Include="SourceSelectorWindow.cpp" />
     <ClCompile Include="SSE_Utils.cpp" />
     <ClCompile Include="StandardPlaylist.cpp" />
@@ -331,7 +330,6 @@
     <ClInclude Include="Random.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ringbuffer.h" />
-    <ClInclude Include="SharedMemorySongInfo.h" />
     <ClInclude Include="SourceSelectorWindow.h" />
     <ClInclude Include="SSE_Utils.h" />
     <ClInclude Include="StandardPlaylist.h" />

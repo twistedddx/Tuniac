@@ -18,6 +18,10 @@
 
 	3. This notice may not be removed or altered from any source distribution.
 */
+/*
+	Modification and addition to Tuniac originally written by Tony Million
+	Copyright (C) 2003-2012 Brett Hoyle
+*/
 
 #include "stdafx.h"
 #include "medialibraryplaylistentry.h"
