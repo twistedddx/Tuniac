@@ -1126,6 +1126,8 @@ bool			CSourceSelectorWindow::UpdateList()
 
 bool			CSourceSelectorWindow::UpdateView()
 {
+
+
 	if(m_pVisibleView)
 	{
 		m_pVisibleView->Update();

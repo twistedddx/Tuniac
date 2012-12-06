@@ -291,27 +291,72 @@ LPTSTR				CBasePlaylist::GetPlaylistName(void)
 //return the previous song index
 unsigned long		CBasePlaylist::Previous(void)
 {
+	//there is no files, there is no next
+	if(GetNumItems() == 0)
+		return INVALID_PLAYLIST_INDEX;
+
 	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
 
-	if(ulActiveFilteredIndex == 0)
+	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
-		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
-			return SetActiveFilteredIndex(m_NormalIndexArray.GetCount() - 1);
+		//no active, start from the start
+		if(tuniacApp.m_Preferences.GetSkipStreams())
+		{
+			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
+			{
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				if(pIPE)
+				{
+					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+					return x;
+				}
+			}
+		}
 		else
-			return false;
+			return 0;
 	}
 
-	unsigned long ulFilteredIndex;
+	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
+		return ulActiveFilteredIndex;
 
-	//check if we are repeatingall and play last song in list
-	if( ulActiveFilteredIndex == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll )
-		//m_NormalIndexArray/m_RandomIndexArray should always be the same length
-		ulFilteredIndex = m_NormalIndexArray.GetCount() - 1;
+	if(tuniacApp.m_Preferences.GetSkipStreams())
+	{
+		for(unsigned long x=(ulActiveFilteredIndex - 1); x>=0; x--)
+		{
+			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+			if(pIPE)
+			{
+				if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+					return x;
+			}
+		}
+		//if we didn't find anything and we are repeating start going through the list again
+		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+		{
+			for(unsigned long x=m_NormalIndexArray.GetCount()-1; x>=0; x--)
+			{
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				if(pIPE)
+				{
+					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+						return x;
+				}
+			}
+		}
+	}
 	else
-		//try to set active as -1 of current active
-		ulFilteredIndex = ulActiveFilteredIndex - 1;
-	
-	return ulFilteredIndex;
+	{
+		if(ulActiveFilteredIndex == 0)
+		{
+			if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+				return m_NormalIndexArray.GetCount() - 1;
+		}
+		else
+			//try to set active as -1 of current active
+			return ulActiveFilteredIndex - 1;
+	}
+
+	return INVALID_PLAYLIST_INDEX;
 }
 
 //return the next song index
@@ -321,17 +366,32 @@ unsigned long		CBasePlaylist::Next(void)
 	if(GetNumItems() == 0)
 		return INVALID_PLAYLIST_INDEX;
 
-	unsigned long ulActiveIndex = GetActiveFilteredIndex();
+	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
 
-	if(ulActiveIndex == INVALID_PLAYLIST_INDEX)
+	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
-		return 0;
+		if(tuniacApp.m_Preferences.GetSkipStreams())
+		{
+			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
+			{
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				if(pIPE)
+				{
+					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+					return x;
+				}
+			}
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
-		return ulActiveIndex;
+		return ulActiveFilteredIndex;
 
 	if(tuniacApp.m_PlaySelected.GetCount())
 	{
@@ -350,13 +410,42 @@ unsigned long		CBasePlaylist::Next(void)
 			return ulFilteredIndex;
 	}
 
-	//m_NormalIndexArray/m_RandomIndexArray should be the same length
-	if(ulActiveIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
-		return 0;
-	
-	//try to set active as +1 of current active
-	if(ulActiveIndex < m_NormalIndexArray.GetCount() - 1)
-		return ulActiveIndex + 1;
+	if(tuniacApp.m_Preferences.GetSkipStreams())
+	{
+		for(unsigned long x=(ulActiveFilteredIndex + 1); x<m_NormalIndexArray.GetCount(); x++)
+		{
+			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+			if(pIPE)
+			{
+				if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+					return x;
+			}
+		}
+		//if we didn't find anything and we are repeating start going through the list again
+		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+		{
+			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
+			{
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				if(pIPE)
+				{
+					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+						return x;
+				}
+			}
+		}
+	}
+	else
+	{
+		if(ulActiveFilteredIndex == m_NormalIndexArray.GetCount() - 1)
+		{
+			if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+				return 0;
+		}
+		else
+			//try to set active as -1 of current active
+			return ulActiveFilteredIndex + 1;
+	}
 
 	//this is the end of the line
 	return INVALID_PLAYLIST_INDEX;
@@ -393,14 +482,44 @@ unsigned long		CBasePlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulFilteredIndex;
 
-	//we are at the last song
-	//m_NormalIndexArray/m_RandomIndexArray should be the same length
-	if(ulFilteredIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
-		return 0;
+
+	if(tuniacApp.m_Preferences.GetSkipStreams())
+	{
+		for(unsigned long x=(ulFilteredIndex + 1); x<m_NormalIndexArray.GetCount(); x++)
+		{
+			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+			if(pIPE)
+			{
+				if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+					return x;
+			}
+		}
+		//if we didn't find anything and we are repeating start going through the list again
+		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+		{
+			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
+			{
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				if(pIPE)
+				{
+					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
+						return x;
+				}
+			}
+		}
+
+	}
+	else
+	{
+		//we are at the last song
+		//m_NormalIndexArray/m_RandomIndexArray should be the same length
+		if(ulFilteredIndex == (m_NormalIndexArray.GetCount() - 1) && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+			return 0;
 	
-	//try to set active as +1 of current active
-	if(ulFilteredIndex < m_NormalIndexArray.GetCount() - 1)
-		return ulFilteredIndex + 1;
+		//try to set active as +1 of current active
+		if(ulFilteredIndex < m_NormalIndexArray.GetCount() - 1)
+			return ulFilteredIndex + 1;
+	}
 	
 	//no more files
 	return 0;
