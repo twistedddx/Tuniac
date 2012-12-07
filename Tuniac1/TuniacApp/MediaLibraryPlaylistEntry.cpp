@@ -496,7 +496,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.iPlaybackTime <= 0)
 				{
-					StrCpyN(szString, TEXT("Inf"), ulNumChars);
+					StrCpyN(szString, TEXT("Stream"), ulNumChars);
 				}
 				else
 				{

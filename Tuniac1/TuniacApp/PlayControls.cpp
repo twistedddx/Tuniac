@@ -559,7 +559,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				if(ulSongLength != LENGTH_UNKNOWN)
+				if(ulSongLength != 0)
 				{
 					_snwprintf(tstr, 256, TEXT("%01d:%02d:%02d"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
 

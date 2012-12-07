@@ -17,7 +17,7 @@ DefaultGroupName=Tuniac
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp3
 OutputDir=.
-OutputBaseFilename=..\Tuniac_Setup_{#DateTime}(inc SVP)
+OutputBaseFilename=..\Tuniac_Setup_{#DateTime}(inc 64bit)
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 ShowTasksTreeLines=yes
 SolidCompression=yes
@@ -42,7 +42,7 @@ Source: "..\Housekeeping\Change Log.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\gpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
-Source: "..\Guide\*.*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
+Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: "..\x64\Release\TuniacApp.exe"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
 Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion recursesubdirs
@@ -50,7 +50,6 @@ Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not InstallLegacyCheck; 
 Source: "..\Win32\Release\TuniacApp.exe"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
 Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
-Source: "..\Win32\Release\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
 
 ;external files
 Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
@@ -194,12 +193,9 @@ end;
 
 function IsNot64BitMode: String;
 begin
-  if Is64BitInstallMode then
-  begin
+  if Is64BitInstallMode then begin
     Result := '0';
-  end
-  else
-  begin
+  end else begin
     Result := '1';
   end;
 end;
@@ -208,12 +204,9 @@ function HasVC2012x86Redist: Boolean;
 var
   VCRedistx86: String;
 begin
-  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then
-  begin
+  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then begin
     Result := True;
-  end
-  else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then
-  begin
+  end else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then begin
     Result := True;
   end
   else
@@ -226,47 +219,56 @@ function HasVC2012x64Redist: Boolean;
 var
   VCRedistx64: String;
 begin
-  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then
-  begin
-    Result := True;
+  Result := True;
+  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
+    exit;
+  end else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
+    exit;
   end
-  else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then
-  begin
-    Result := True;
-  end
-  else
-  begin
-    Result := False;
-  end;
+
+  Result := False;
 end;
 
 //check if valid vc redist available
 function Has11VCRedist: Boolean;
+var
+  Size: Integer;
 begin
-  //local
-  if FileExists(ExpandConstant('{app}\msvcr110.dll')) then
-  begin
-    Result := True;
-  end
-  //32bit install, x86 redist
-  else if not Is64BitInstallMode and HasVC2012x86Redist then
-  begin
-    Result := True;
-  end
-  //64bit machine, 32bit install, x86 redist
-  else if Is64BitInstallMode and InstallLegacyCheck and HasVC2012x86Redist then
-  begin
-    Result := True;
-  end
-  //64bit machine, 64bit install, x64 redist
-  else if Is64BitInstallMode and not InstallLegacyCheck and HasVC2012x64Redist then
-  begin
-    Result := True;
-  end
-  else
-  begin
-    Result := False;
+  Result := True;
+
+
+  //32bit machine
+  if not Is64BitInstallMode then begin
+    if FileExists(ExpandConstant('{app}\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\msvcr110.dll'), Size);
+      if Size = 875472 then
+        exit;
+    end;
+    if HasVC2012x86Redist then
+      exit;
   end;
+  //64bit machine, 32bit install
+  if Is64BitInstallMode and InstallLegacyCheck then begin
+    if FileExists(ExpandConstant('{app}\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\msvcr110.dll'), Size);
+      if Size = 875472 then
+        exit;
+    end;
+    if HasVC2012x86Redist then
+      exit;
+  end;
+  //64bit machine, 64bit install
+  if Is64BitInstallMode and not InstallLegacyCheck then begin
+    if FileExists(ExpandConstant('{app}\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\msvcr110.dll'), Size);
+      if Size = 849376 then
+        exit;
+    end;
+    if HasVC2012x64Redist then
+      exit;
+  end;
+
+  Result := False;
 end;
 
 //check for direct x 2.7
@@ -280,12 +282,9 @@ end;
 //check if we successfully downloaded redist
 function VCRedistInstalling: Boolean;
 begin
-  if not Has11VCRedist then
-  begin 
+  if not Has11VCRedist then begin 
     Result:= FilesDownloaded;
-  end
-  else
-  begin
+  end else begin
     Result:= False;
   end
 end;
@@ -299,12 +298,9 @@ end;
 //skip 32bit install question on 32bit only machines
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if (PageID = InstallLegacyPage.ID) and not Is64BitInstallMode then
-  begin
+  if (PageID = InstallLegacyPage.ID) and not Is64BitInstallMode then begin
       Result := true;
-  end
-  else
-  begin
+  end else begin
     Result := false;
   end;
 end;
@@ -331,8 +327,7 @@ begin
 
   hWnd := StrToInt(ExpandConstant('{wizardhwnd}'));
 
-  if not HasDXJun2010 then
-  begin
+  if not HasDXJun2010 then begin
     URL := 'http://www.tuniac.org/extra/DirectX/DSETUP.dll';
     FileName := ExpandConstant('{tmp}\DSETUP.dll');
     isxdl_AddFile(URL, FileName);
@@ -356,8 +351,7 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
 
-  if InstallLegacyCheck and not Has11VCRedist then
-  begin
+  if InstallLegacyCheck and not Has11VCRedist then begin
     URL := 'http://www.tuniac.org/extra/32bit/msvcp110.dll';
     FileName := ExpandConstant('{tmp}\msvcp110.dll');
     isxdl_AddFile(URL, FileName);
@@ -366,33 +360,26 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
  
-  if not InstallLegacyCheck and not Has11VCRedist then
-  begin
+  if not InstallLegacyCheck and not Has11VCRedist then begin
     URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
     FileName := ExpandConstant('{tmp}\msvcp110.dll');
+    isxdl_AddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
     FileName := ExpandConstant('{tmp}\msvcr110.dll');
     isxdl_AddFile(URL, FileName);
   end;
 
-  if isxdl_DownloadFiles(hWnd) <> 0 then
-  begin
+  if isxdl_DownloadFiles(hWnd) <> 0 then begin
     FilesDownloaded := True;
-  end
-  else
-  begin
-    if not HasDXJun2010 then
-    begin
-      if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then
-      begin
+  end else begin
+    if not HasDXJun2010 then begin
+      if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
         ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
       end;
     end;
 
-    if not Has11VCRedist then
-    begin
-      if MsgBox('Visual C++ Redistributable for Visual Studio 2012 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then
-      begin
+    if not Has11VCRedist then begin
+      if MsgBox('Visual C++ Redistributable for Visual Studio 2012 Update 1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
         ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=30679', '', '', SW_SHOW, ewNoWait, ErrorCode);
       end;
     end;
@@ -454,14 +441,11 @@ begin
 	case CurUninstallStep of
 		usUninstall:
 		begin
-			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then
-			begin
-            if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-				    MsgBox('Error removing settings & file associations.', mbError, MB_OK);
-			end
-			else
-			begin
-			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then begin
+        if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then 
+          MsgBox('Error removing settings & file associations.', mbError, MB_OK);
+			end else begin
+			  if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					MsgBox('Error removing file associations.', mbError, MB_OK);
 			end;
 		end;

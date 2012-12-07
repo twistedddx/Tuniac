@@ -562,8 +562,15 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	m_rcHit.bottom = 60;
 
 	TCHAR szTrack[128];
+	TCHAR szURL[MAX_PATH];
 
-	m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 0);
+	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 0);
+
+	if(PathIsURL(szURL))
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 0);
+	else
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 0);
+
 	SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
     SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
 	DrawText(hDC, TEXT("Now:"), -1, &rcStatus, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
@@ -584,7 +591,13 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	rcDetails.top		+= 20;
 	rcDetails.bottom	+= 20;
 
-	m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 1);
+	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 1);
+
+	if(PathIsURL(szURL))
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 1);
+	else
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 1);
+
 	if(wcslen(szTrack) > 0)
 	{
 		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
@@ -608,9 +621,13 @@ void			CPopupNotify::RePaint(HWND hWnd)
 		rcDetails.bottom	+= 20;
 	}
 
+	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 2);
 
+	if(PathIsURL(szURL))
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 2);
+	else
+		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 2);
 
-	m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 2);
 	if(wcslen(szTrack) > 0)
 	{
 		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
@@ -634,7 +651,7 @@ void			CPopupNotify::RePaint(HWND hWnd)
 
 bool			CPopupNotify::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Popup Nofity plugin for Tuniac.\r\nBy Blur and Brett H, 2005-2010.\r\n\r\nWill popup a small window to display the current track when the song changes."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Popup Nofity plugin for Tuniac.\r\nBy Blur and Brett H, 2005-2012.\r\n\r\nWill popup a small window to display the current track when the song changes."), TEXT("About"), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

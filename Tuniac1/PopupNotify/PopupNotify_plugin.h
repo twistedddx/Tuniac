@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <shellapi.h>
+#include <shlwapi.h>
 #include "ITuniacPlugin.h"
 
 class CPopupNotify :

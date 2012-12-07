@@ -33,15 +33,15 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 
 [Files]
-Source: ..\TuniacApp\images\NoAlbumArt.jpg; DestDir: {app}\; Flags: ignoreversion
-Source: ..\Housekeeping\Change Log.txt; DestDir: {app}\; Flags: ignoreversion
-Source: ..\Housekeeping\gpl.txt; DestDir: {app}\; Flags: ignoreversion
-Source: ..\Housekeeping\lgpl.txt; DestDir: {app}\; Flags: ignoreversion
-Source: ..\TuniacApp\icons\*.ico; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
+Source: "..\TuniacApp\images\NoAlbumArt.jpg"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Housekeeping\Change Log.txt"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Housekeeping\gpl.txt"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 
-Source: ..\Win32\Release\TuniacApp.exe; DestDir: {app}\; Flags: ignoreversion
-Source: ..\Win32\Release\*.dll; DestDir: {app}\; Flags: ignoreversion recursesubdirs
-Source: ..\Win32\Release\visuals\verdana14.glf; DestDir: {app}\visuals\; Flags: ignoreversion
+Source: "..\Win32\Release\TuniacApp.exe"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs
+Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
@@ -123,14 +123,11 @@ begin
 	case CurUninstallStep of
 		usUninstall:
 		begin
-			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then
-			begin
-            if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-				    MsgBox('Error removing settings & file associations.', mbError, MB_OK);
-			end
-			else
-			begin
-			    if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then begin
+        if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then 
+          MsgBox('Error removing settings & file associations.', mbError, MB_OK);
+			end else begin
+			  if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					MsgBox('Error removing file associations.', mbError, MB_OK);
 			end;
 		end;
