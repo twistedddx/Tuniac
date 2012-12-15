@@ -131,7 +131,7 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 		if(StrCmpN(szSource, TEXT("AUDIOCD"), 7) == 0)
 		{
 			bIsStream = false;
-			char cDrive;
+			wchar_t cDrive;
 			int iTrack;
 			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
 			_snwprintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
@@ -222,7 +222,17 @@ bool		CBASSDecoder::SetPosition(unsigned long * MS)
 
 bool		CBASSDecoder::SetState(unsigned long State)
 {
+	/*
+	//BASS_Start and BASS_Pause relate to when BASS outputs to soundcard itself
+	//we want to handle these for streams as they timeout while paused.
+	if(State == STATE_PLAYING)
+		BASS_Start();
+
+	if(State == STATE_STOPPED)
+		BASS_Pause();
+	*/
 	return(true);
+
 }
 
 bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)

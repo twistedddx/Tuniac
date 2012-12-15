@@ -75,9 +75,9 @@ bool CAudioCDPlaylist::GetCDInfo(void)
 				libEnt.iPlaybackTime = ((h*60*60) + (m*60) + s) * 1000;
 
 
-				_snwprintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%d"),	m_DriveLetter,		x);
-				_snwprintf(libEnt.szTitle, 128,		TEXT("Track %02d"),		x);
-				_snwprintf(libEnt.szArtist, 128,	TEXT("Unknown Artist"),		x+1);
+				_snwprintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%u"),	m_DriveLetter,		x);
+				_snwprintf(libEnt.szTitle, 128,		TEXT("Track %02u"),		x);
+				_snwprintf(libEnt.szArtist, 128,	TEXT("Unknown Artist"));
 
 				IPlaylistEntry * tt = new CMediaLibraryPlaylistEntry(&libEnt);
 				m_TrackList.AddTail(tt);

@@ -393,7 +393,6 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 
 		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 		{
-			//0xffff = AllTags
 			if(mp3File->save(TagLib::MPEG::File::AllTags, false, 3))
 			{
 				fileRef = TagLib::FileRef();

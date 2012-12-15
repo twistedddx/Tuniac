@@ -141,7 +141,7 @@ public:
 
 //IMMNotificationClient inherited methods
 public:
-	STDMETHOD_(HRESULT, QueryInterface) (THIS_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) { return S_OK; };
+	STDMETHOD_(HRESULT, QueryInterface) (THIS_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) { ppvObject = NULL; return S_OK; };
 	STDMETHOD_(ULONG, AddRef) (THIS_ void) { return InterlockedIncrement(&_cRef); };
 	STDMETHOD_(ULONG, Release) (THIS_ void) {
 										ULONG ulRef = InterlockedDecrement(&_cRef);

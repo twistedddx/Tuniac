@@ -286,10 +286,10 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 		case FIELD_TRACKNUM:
 			{
 				bool bOK = false;
-				unsigned short dwNewTrack[1];
+				unsigned short dwNewTrack[2];
 				if(StrChr((LPTSTR)pNewData, '/') != NULL)
 				{
-					bOK = 2 == swscanf_s((LPTSTR)pNewData, TEXT("%u/%u"), &dwNewTrack[0], &dwNewTrack[1]);
+					bOK = 2 == swscanf_s((LPTSTR)pNewData, TEXT("%hu/%hu"), &dwNewTrack[0], &dwNewTrack[1]);
 					if(bOK)
 						m_LibraryEntry.dwTrack[1] = dwNewTrack[1];
 					else
@@ -483,18 +483,18 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.dwTrack[1])
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%d/%d"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
+					_snwprintf(szString, ulNumChars, TEXT("%hu/%hu"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
 				}
 				else
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwTrack[0]);
+					_snwprintf(szString, ulNumChars, TEXT("%hu"), m_LibraryEntry.dwTrack[0]);
 				}
 			}
 			break;
 
 		case FIELD_PLAYBACKTIME:
 			{
-				if(m_LibraryEntry.iPlaybackTime <= 0)
+				if(m_LibraryEntry.iPlaybackTime == LENGTH_UNKNOWN)
 				{
 					StrCpyN(szString, TEXT("Stream"), ulNumChars);
 				}
@@ -557,7 +557,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_RATING:
 			{
-				_snwprintf(szString, ulNumChars, TEXT("%d"), m_LibraryEntry.dwRating);
+				_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.dwRating);
 			}
 			break;
 
@@ -565,23 +565,23 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{	// NOTE: optimize divides with bitshifts?? i / 1024 == i >> 10 
 				if (m_LibraryEntry.dwFilesize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%d bytes"), m_LibraryEntry.dwFilesize);
+					_snwprintf(szString, ulNumChars, TEXT("%u bytes"), m_LibraryEntry.dwFilesize);
 					break;
 				}
 				unsigned long ulSize = m_LibraryEntry.dwFilesize / 1024;
 				if (ulSize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%d Kb"), ulSize);
+					_snwprintf(szString, ulNumChars, TEXT("%u Kb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
 				if (ulSize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%d Mb"), ulSize);
+					_snwprintf(szString, ulNumChars, TEXT("%u Mb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
-				_snwprintf(szString, ulNumChars, TEXT("%d Gb"), ulSize);
+				_snwprintf(szString, ulNumChars, TEXT("%u Gb"), ulSize);
 			}
 			break;
 

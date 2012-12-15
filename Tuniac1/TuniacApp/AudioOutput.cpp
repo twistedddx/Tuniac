@@ -371,7 +371,7 @@ bool CAudioOutput::Start(void)
 	if(m_pSourceVoice)
 		m_pSourceVoice->Start( 0, 0 );
 
-	m_ulLastTickCount = GetTickCount();
+	m_ulLastTickCount = GetTickCount64();
 
 	return true;
 }
@@ -399,9 +399,6 @@ bool CAudioOutput::Reset(void)
 		m_pSourceVoice->Stop(0);
 		m_pSourceVoice->FlushSourceBuffers();
 
-
-
-
 		if(m_bPlaying)
 			m_pSourceVoice->Start( 0, 0 );
 	}
@@ -420,7 +417,7 @@ unsigned long CAudioOutput::GetVisData(float * ToHere, unsigned long ulNumSample
 {
 	unsigned long samplesperms = ((unsigned long)((float)m_waveFormatPCMEx.Format.nSamplesPerSec / 1000.0f)) * m_waveFormatPCMEx.Format.nChannels;
 
-	unsigned long ulThisTickCount = GetTickCount();
+	unsigned long long ulThisTickCount = GetTickCount64();
 	unsigned long msDif = ulThisTickCount - m_ulLastTickCount;
 	
 	unsigned long offset = min(msDif, m_BlockSize) * samplesperms;

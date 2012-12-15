@@ -590,13 +590,23 @@ bool			CAudioStream::Start(void)
 {
 	m_PlayState = STATE_PLAYING;
 	tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_PLAYBACKSTARTED, NULL);
-	return m_Output->Start();
+	if(m_Output->Start())
+	{
+		m_pSource->SetState(m_PlayState);
+		return true;
+	}
+	return false;
 }
 
 bool			CAudioStream::Stop(void)
 {
 	m_PlayState = STATE_STOPPED;
-	return m_Output->Stop();
+	if(m_Output->Stop())
+	{
+		m_pSource->SetState(m_PlayState);
+		return true;
+	}
+	return false;
 }
 
 unsigned long	CAudioStream::GetLength(void)

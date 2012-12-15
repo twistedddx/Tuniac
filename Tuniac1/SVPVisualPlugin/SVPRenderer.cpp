@@ -455,7 +455,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 		visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
 
-		m_LastMove = GetTickCount();
+		m_LastMove = GetTickCount64();
 
 
 		lpRegType = REG_DWORD;
@@ -754,7 +754,7 @@ bool	SVPRenderer::Render(int w, int h)
 			glEnd ();
 
 			//arrows and visname
-			m_iElaspedTime = GetTickCount() - m_LastMove;
+			m_iElaspedTime = GetTickCount64() - m_LastMove;
 			if(m_iElaspedTime < 4000)
 			{
 
@@ -931,7 +931,7 @@ bool	SVPRenderer::MouseFunction(unsigned long function, int x, int y)
 			if(m_VisFilenameArray.GetCount() == 1)
 				return true;
 
-			m_LastMove = GetTickCount();
+			m_LastMove = GetTickCount64();
 
 			if(m_TheVisual==NULL)
 			{

@@ -134,13 +134,6 @@ CBASSDecoderPlugin::~CBASSDecoderPlugin(void)
 {
 }
 
-
-bool			CBASSDecoderPlugin::DoBASSInit()
-{
-
-	return true;
-}
-
 void			CBASSDecoderPlugin::Destroy(void)
 {
 	BASS_Free();

@@ -238,7 +238,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 	else
 	{
 		int iCount = 100;
-		HWND hPluginWnd;
+		HWND hPluginWnd = NULL;
 		if( m_PluginArray[iPlugin].pPlugin != NULL)
 			hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetMainWindow();
 
