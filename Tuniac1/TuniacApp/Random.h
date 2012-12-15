@@ -61,14 +61,14 @@ private:
 public:
 	CRandom(void)	
 	{
-		RandomInit(GetTickCount());
+		RandomInit(GetTickCount64());
 	}
 
 	~CRandom(void)
 	{
 	}
 
-	void RandomInit(long int seed) 
+	void RandomInit(unsigned long long seed) 
 	{
 		// re-seed generator
 		unsigned long s = (unsigned long)seed;

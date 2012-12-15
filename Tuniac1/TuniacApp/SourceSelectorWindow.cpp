@@ -390,9 +390,9 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(iItemHit != -1 && iItemHit != GetVisiblePlaylistIndex())
 							{
 								m_AltDragDest = iItemHit;
-								POINT pt;
-								GetCursorPos(&pt);
-								TrackPopupMenu(m_hDragMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hSourceWnd, NULL);
+								POINT newpt;
+								GetCursorPos(&newpt);
+								TrackPopupMenu(m_hDragMenu, TPM_RIGHTBUTTON, newpt.x, newpt.y, 0, m_hSourceWnd, NULL);
 							}
 						}
 					}
@@ -1244,7 +1244,8 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 				m_SourceViewArray[x]->ShowSourceView(true);
 		}
 
-		m_pVisibleView->Update();
+		if(m_pVisibleView)
+			m_pVisibleView->Update();
 		ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), m_ulVisiblePlaylistIndex, LVIS_SELECTED, LVIS_SELECTED);
 		return true;
 	}

@@ -1,4 +1,24 @@
-Dec, 2012
+Dec, 2012 (1212??)
+---------
+-update to newer BASS dll's
+-Change from GetTickCount to GetTickCount64 just incase we ever do roll over the 49 day mark somehow.
+-fix incorrect conversions from unsigned to signed integers, multibyte to widechar
+-fix potential buffer under/overruns and incorrect redefinitions of objects
+-add GetState logic to audio engine so plugins know when they are paused/resumed
+-fix incorrect logic(infinate loop) in new code for Previous() for skipping streams
+-dont try to set setposition 0 on streams with unknown length when clicking previous
+-more cleanups of pref screen
+-correctly set maximized state on find hotkey
+-trigger song change notify on streams if metadata updates
+
+Dec, 2012 (121207)
+---------
+-fix issues in setup scripts eg redist downloading
+-simplify setup offerings
+-swap popup notify fields if stream
+-change "inf" to "stream"
+
+Dec, 2012 (121206)
 ---------
 -Show currently playing follows while filtering
 -prevent crashes caused by referencing objects that may not exist yet

@@ -140,7 +140,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 void				CBasePlaylist::RebuildPlaylistArrays(void)
 {
 	//remake our filtered lists(normal and shuffle) based on new filter
-	g_Rand.RandomInit(GetTickCount());
+	g_Rand.RandomInit(GetTickCount64());
 
 	m_NormalIndexArray.RemoveAll();
 	m_RandomIndexArray.RemoveAll();
@@ -276,7 +276,7 @@ bool				CBasePlaylist::SetPlaylistName(LPTSTR szPlaylistName)
 {
 	if(szPlaylistName)
 	{
-		StrCpyN(m_szPlaylistName, szPlaylistName, 255);
+		StrCpyN(m_szPlaylistName, szPlaylistName, 128);
 		return true;
 	}
 
@@ -325,25 +325,25 @@ unsigned long		CBasePlaylist::Previous(void)
 
 	if(tuniacApp.m_Preferences.GetSkipStreams())
 	{
-		for(unsigned long x=(ulActiveFilteredIndex - 1); x>=0; x--)
+		for(unsigned long x=ulActiveFilteredIndex; x=0; x--)
 		{
-			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x-1);
 			if(pIPE)
 			{
 				if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
-					return x;
+					return x-1;
 			}
 		}
 		//if we didn't find anything and we are repeating start going through the list again
 		if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 		{
-			for(unsigned long x=m_NormalIndexArray.GetCount()-1; x>=0; x--)
+			for(unsigned long x=m_NormalIndexArray.GetCount(); x>0; x--)
 			{
-				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x);
+				IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x-1);
 				if(pIPE)
 				{
 					if(!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)))
-						return x;
+						return x-1;
 				}
 			}
 		}
@@ -774,7 +774,7 @@ unsigned long		CBasePlaylist::GetRealIndexforEntryID(unsigned long ulEntryID)
 
 bool				CBasePlaylist::SetTextFilter(LPTSTR	szFilterString)
 {
-	StrCpyN(m_szTextFilter, szFilterString, 255);
+	StrCpyN(m_szTextFilter, szFilterString, 128);
 	return true;
 }
 

@@ -204,7 +204,7 @@ void CMediaLibrary::AddingFilesIncrement(bool bDir)
 		return;
 
 	TCHAR szCount[256];
-	_snwprintf(szCount, 256, TEXT("%d files in %d folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
+	_snwprintf(szCount, 256, TEXT("%u files in %u folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
 	SendDlgItemMessage(m_hAddingWindow, IDC_ADDINGFILES_COUNT, WM_SETTEXT, 0, (WPARAM)szCount);
 }
 
@@ -613,16 +613,16 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			unsigned long ulEntryID = pIPE->GetEntryID();
 			unsigned long ulPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT);
 
-			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
+			CMediaLibraryPlaylistEntry * newpIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pIPE->SetEntryID(ulEntryID);
+			newpIPE->SetEntryID(ulEntryID);
 
-			int iPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT);
+			int iPlayCount = (unsigned long)newpIPE->GetField(FIELD_PLAYCOUNT);
 			TCHAR szPlayCount[128];
 			_itow(iPlayCount, szPlayCount, 10);
-			pIPE->SetField(FIELD_PLAYCOUNT, (void *)szPlayCount);
+			newpIPE->SetField(FIELD_PLAYCOUNT, (void *)szPlayCount);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
-			m_MediaLibrary.InsertBefore(ulMLIndex, pIPE);
+			m_MediaLibrary.InsertBefore(ulMLIndex, newpIPE);
 
 			return true;
 		}
@@ -878,7 +878,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(unsigned long))
 			{
 				TCHAR tstr[256];
-				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %d."), x);
+				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;
@@ -890,7 +890,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(LibraryEntry))
 			{
 				TCHAR tstr[256];
-				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %d."), x);
+				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;

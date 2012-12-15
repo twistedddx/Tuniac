@@ -1473,7 +1473,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											unsigned ulPlayOrder = ((IPlaylistEX *)m_pPlaylist)->GetPlayOrder(pDispInfo->item.iItem);
 
 											if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
-												_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%d"), ulPlayOrder);
+												_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%u"), ulPlayOrder);
 											else
 												_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
@@ -1720,7 +1720,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 						if(pIPE)
 						{
-							TotalTime += (int)pIPE->GetField(FIELD_PLAYBACKTIME) / 1000;
+							if((int)pIPE->GetField(FIELD_PLAYBACKTIME) > 0)
+								TotalTime += (int)pIPE->GetField(FIELD_PLAYBACKTIME) / 1000;
 						}
 					}
 
@@ -1749,9 +1750,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(years)
 					{
 						if(years > 1)
-							_snwprintf(tstr, 256, TEXT("%d Years, "), years);
+							_snwprintf(tstr, 256, TEXT("%u Years, "), years);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Year, "), years);
+							_snwprintf(tstr, 256, TEXT("%u Year, "), years);
 
 						StrCat(Time, tstr);
 					}
@@ -1759,9 +1760,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(weeks)
 					{
 						if(weeks > 1)
-							_snwprintf(tstr, 256, TEXT("%d Weeks, "), weeks);
+							_snwprintf(tstr, 256, TEXT("%u Weeks, "), weeks);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Week, "), weeks);
+							_snwprintf(tstr, 256, TEXT("%u Week, "), weeks);
 
 						StrCat(Time, tstr);
 					}
@@ -1769,9 +1770,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(days)
 					{
 						if(days>1)
-							_snwprintf(tstr, 256, TEXT("%d Days, "), days);
+							_snwprintf(tstr, 256, TEXT("%u Days, "), days);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Day, "), days);
+							_snwprintf(tstr, 256, TEXT("%u Day, "), days);
 
 						StrCat(Time, tstr);
 					}
@@ -1779,9 +1780,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(hours)
 					{
 						if(hours>1)
-							_snwprintf(tstr, 256, TEXT("%d Hours, "), hours);
+							_snwprintf(tstr, 256, TEXT("%u Hours, "), hours);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Hour, "), hours);
+							_snwprintf(tstr, 256, TEXT("%u Hour, "), hours);
 
 						StrCat(Time, tstr);
 					}
@@ -1789,9 +1790,9 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(mins)
 					{
 						if(mins>1)
-							_snwprintf(tstr, 256, TEXT("%d Minutes, "), mins);
+							_snwprintf(tstr, 256, TEXT("%u Minutes, "), mins);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Minute, "), mins);
+							_snwprintf(tstr, 256, TEXT("%u Minute, "), mins);
 
 						StrCat(Time, tstr);
 					}
@@ -1799,15 +1800,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					if(secs)
 					{
 						if(secs>1)
-							_snwprintf(tstr, 256, TEXT("%d Seconds."), secs);
+							_snwprintf(tstr, 256, TEXT("%u Seconds."), secs);
 						else
-							_snwprintf(tstr, 256, TEXT("%d Second."), secs);
+							_snwprintf(tstr, 256, TEXT("%u Second."), secs);
 
 						StrCat(Time, tstr);
 					}
 
 
-					_snwprintf(szStatusText, 1024, TEXT("%s - %d Items - %s"), m_pPlaylist->GetPlaylistName(), Count, Time);
+					_snwprintf(szStatusText, 1024, TEXT("%s - %u Items - %s"), m_pPlaylist->GetPlaylistName(), Count, Time);
 					tuniacApp.SetStatusText(szStatusText);
 
 					ListView_SetItemCountEx(GetDlgItem(hDlg, IDC_PLAYLIST_LIST), m_pPlaylist->GetNumItems(), LVSICF_NOSCROLL);

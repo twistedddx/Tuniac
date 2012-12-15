@@ -13,8 +13,6 @@ protected:
 public:
 	CBASSDecoderPlugin(void);
 	~CBASSDecoderPlugin(void);
-protected:
-	bool					DoBASSInit();
 
 public:
 	virtual void			Destroy(void);
