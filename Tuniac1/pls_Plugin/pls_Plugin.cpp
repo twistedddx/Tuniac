@@ -243,13 +243,13 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 	}
 	else
 	{
-		_snwprintf(szData, 512, TEXT(""));
+		_snwprintf(szData, 260, TEXT(""));
 	}
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 
 	_snwprintf(szVarName, 32, L"Length%d", m_Current);
-	_snwprintf(szData, 512, L"%d", (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000));
+	_snwprintf(szData, 512, L"%u", (libraryEntry.ulPlaybackTime == LENGTH_UNKNOWN || libraryEntry.ulPlaybackTime == LENGTH_STREAM) ? (-1) : (libraryEntry.ulPlaybackTime / 1000));
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 	

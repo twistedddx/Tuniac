@@ -84,12 +84,12 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 		}
 		if(strcmp(iTags.keys[i], "Year") == 0)
 		{
-			libEnt->iYear = atoi(iTags.values[i]);
+			libEnt->ulYear = strtoul(iTags.values[i], NULL, 10);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Track") == 0)
 		{
-			libEnt->dwTrack[0] = atoi(iTags.values[i]);
+			libEnt->dwTrack[0] = strtoul(iTags.values[i], NULL, 10);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "replaygain_track_gain") == 0)
@@ -114,10 +114,10 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 		}
 	}
 
-	libEnt->iBitRate			= (unsigned long)(iInfo.bitrate * 1000.0);
-	libEnt->iChannels			= iInfo.channels;
-	libEnt->iSampleRate			= iInfo.bitspersample;
-	libEnt->iPlaybackTime		= iInfo.length_ms;
+	libEnt->ulBitRate			= (iInfo.bitrate * 1000);
+	libEnt->ulChannels			= iInfo.channels;
+	libEnt->ulSampleRate		= iInfo.bitspersample;
+	libEnt->ulPlaybackTime		= iInfo.length_ms;
 
 	return true;
 }

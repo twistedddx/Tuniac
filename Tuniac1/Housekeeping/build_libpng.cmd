@@ -25,7 +25,7 @@ del ".\CMakeCache.txt"
 nmake clean
 nmake png16_static
 mkdir .\Release\x86
-move /Y libpng16_static.lib .\Release\x86\libpng15_static.lib
+move /Y libpng16_static.lib .\Release\x86\libpng16_static.lib
 
 rem #Debug x86:
 del ".\CMakeCache.txt"
@@ -33,8 +33,8 @@ del ".\CMakeCache.txt"
 nmake clean
 nmake png16_static
 mkdir .\Debug\x86
-move /Y libpng16_staticd.lib .\Debug\x86\libpng15_staticd.lib
-move /Y libpng16_staticd.pdb .\Debug\x86\libpng15_staticd.pdb
+move /Y libpng16_staticd.lib .\Debug\x86\libpng16_staticd.lib
+move /Y libpng16_staticd.pdb .\Debug\x86\libpng16_staticd.pdb
 
 rem if "64bitcl"=="false" goto done
 call "%Programfiles(x86)%\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x64
@@ -54,8 +54,8 @@ del ".\CMakeCache.txt"
 nmake clean
 nmake png16_static
 mkdir .\Debug\x64
-move /Y libpng16_staticd.lib .\Debug\x64\libpng15_staticd.lib
-move /Y libpng16_staticd.pdb .\Debug\x64\libpng15_staticd.pdb
+move /Y libpng16_staticd.lib .\Debug\x64\libpng16_staticd.lib
+move /Y libpng16_staticd.pdb .\Debug\x64\libpng16_staticd.pdb
 
 :done
 

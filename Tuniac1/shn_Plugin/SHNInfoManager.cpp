@@ -182,11 +182,11 @@ bool			CSHNInfoManager::GetInfo(LibraryEntry * libEnt)
 
 			if (ShnPlay_GetInfo(state, &info))
 			{
-				libEnt->iChannels = info.channels;
-				libEnt->iSampleRate = info.sample_rate;
+				libEnt->ulChannels = info.channels;
+				libEnt->ulSampleRate = info.sample_rate;
 				unsigned long ulLength = (__int64)info.sample_count * 1000 / info.sample_rate;
-				libEnt->iPlaybackTime		= ulLength;
-				libEnt->iBitRate = (int)(ShnInfoUtilFileStream_GetLength(stream) * 8 / (ulLength / 1000));
+				libEnt->ulPlaybackTime		= ulLength;
+				libEnt->ulBitRate = (unsigned long)(ShnInfoUtilFileStream_GetLength(stream) * 8 / (ulLength / 1000));
 			}
 			else
 				return false;

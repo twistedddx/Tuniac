@@ -400,7 +400,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				{
 					if(wParam & MK_LBUTTON)
 					{
-						if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN)
+						if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN && CCoreAudio::Instance()->GetLength() != LENGTH_STREAM)
 						{
 							float Width = SeekRect.right - SeekRect.left;
 							float Offset = pt.x - SeekRect.left;
@@ -433,7 +433,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				
 				if(PtInRect(&SeekRect, pt))
 				{
-					if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN)
+					if(CCoreAudio::Instance()->GetLength() != LENGTH_UNKNOWN && CCoreAudio::Instance()->GetLength() != LENGTH_STREAM)
 					{
 						float Width = SeekRect.right - SeekRect.left;
 						float Offset = pt.x - SeekRect.left;
@@ -526,10 +526,8 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition() / 1000;
 				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength();
-				if(ulSongLength != LENGTH_UNKNOWN)
+				if(ulSongLength != LENGTH_UNKNOWN && CCoreAudio::Instance()->GetLength() != LENGTH_STREAM)
 					ulSongLength = ulSongLength / 1000;
-				else
-					ulSongLength = 0;
 
 				float fProgress = 0.0f;
 				if(ulSongLength != 0)
@@ -559,7 +557,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 							&TimeRect, 
 							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-				if(ulSongLength != 0)
+				if(ulSongLength != LENGTH_UNKNOWN && ulSongLength != LENGTH_STREAM)
 				{
 					_snwprintf(tstr, 256, TEXT("%01u:%02u:%02u"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
 

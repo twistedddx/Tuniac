@@ -25,6 +25,52 @@
 
 #pragma once
 
+#define LENGTH_STREAM		0xfffffffe
+#define LENGTH_UNKNOWN		0xffffffff
+
+typedef struct
+{
+public:
+	unsigned long		ulKind;
+	TCHAR				szURL[MAX_PATH];
+	unsigned long		ulFilesize;
+
+	unsigned long		ulAvailability;
+
+	SYSTEMTIME			stDateAdded;
+	SYSTEMTIME			stFileCreationDate;
+	SYSTEMTIME			stLastPlayed;
+
+	unsigned long		ulPlayCount;
+	unsigned long		ulRating;
+
+	// filled in by the relevent media type handler
+	// standard ID3 tag stuff
+	TCHAR				szTitle[128];
+	TCHAR				szArtist[128];
+	TCHAR				szAlbum[128];
+	TCHAR				szComment[128];
+	TCHAR				szGenre[128];
+	unsigned long		ulYear;
+
+	unsigned short		dwTrack[2];		// index 0 == track : index 1 == max track (0 if unavailable)
+	unsigned short		dwDisc[2];		// index 0 == disk  : index 1 == max disc  (0 is unavailable)
+
+	//extra info
+	unsigned long		ulPlaybackTime;
+	unsigned long		ulBitRate;
+	unsigned long		ulSampleRate;
+	unsigned long		ulChannels;
+	float				fReplayGain_Track_Gain;
+	float				fReplayGain_Track_Peak;
+	float				fReplayGain_Album_Gain;
+	float				fReplayGain_Album_Peak;
+
+	unsigned long		ulBPM;
+} LibraryEntry;
+
+
+//Past versions
 typedef struct
 {
 public:
@@ -55,7 +101,6 @@ public:
 
 	//extra info
 	int					iPlaybackTime;
-
 	int					iBitRate;
 	int					iSampleRate;
 	int					iChannels;
@@ -63,4 +108,4 @@ public:
 	float				fReplayGain_Track_Peak;
 	float				fReplayGain_Album_Gain;
 	float				fReplayGain_Album_Peak;
-} LibraryEntry;
+} LibraryEntry05;

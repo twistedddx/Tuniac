@@ -39,7 +39,7 @@ void DoMeta(DWORD handle, void *user)
 			{
 				iBitrate = (atoi(icy+7))*1000;
 				if(m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, (void *)iBitrate, FIELD_BITRATE);
+					m_pHelper->UpdateMetaData((LPTSTR)user, (unsigned long)iBitrate, FIELD_BITRATE);
 			}
 			/* these should already been known
 			ice-samplerate:
@@ -160,16 +160,20 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 	BASS_ChannelGetInfo(decodehandle,&info);
 
-	dTime = LENGTH_UNKNOWN;
+	if(bIsStream)
+		dTime = LENGTH_STREAM;
+	else
+		dTime = LENGTH_UNKNOWN;
+
 	long long len = BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE);
 	if(len > 0)
 		dTime = BASS_ChannelBytes2Seconds(decodehandle, len) * 1000;
 
 	if(bIsStream) //update unknowns for streams
 	{
-		m_pHelper->UpdateMetaData(szSource, (void *)(int)dTime, FIELD_PLAYBACKTIME);
-		m_pHelper->UpdateMetaData(szSource, (void *)(int)info.chans, FIELD_NUMCHANNELS);
-		m_pHelper->UpdateMetaData(szSource, (void *)(int)info.freq, FIELD_SAMPLERATE);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)dTime, FIELD_PLAYBACKTIME);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.chans, FIELD_NUMCHANNELS);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.freq, FIELD_SAMPLERATE);
 	}
 
 	m_Buffer = (float*)_aligned_malloc(BUFFERSIZE, 16);

@@ -64,10 +64,11 @@
 
 #include "Array.h"
 #include "TuniacApp.h"
-#include "Random.h"
+//#include "Random.h"
+#include "sfmt.h"
 
 extern CTuniacApp		tuniacApp;
-extern CRandom			g_Rand;
+extern CRandomSFMT		g_Rand;
 
 // utility macros
 #define TESTFLAG(dwField, dwBits)   (((dwField)&(dwBits)) ? TRUE : FALSE)

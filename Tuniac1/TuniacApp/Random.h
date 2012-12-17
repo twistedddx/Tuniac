@@ -134,12 +134,12 @@ public:
 
 	}
   
-	long IRandom(long min, long max) 
+	unsigned long IRandom(unsigned long min, unsigned long max) 
 	{
 		// output random integer in the interval min <= x <= max
-		long r;
+		unsigned long r;
 
-		r = long((max - min + 1) * Random()) + min; // multiply interval with random and truncate
+		r = unsigned long((max - min + 1) * Random()) + min; // multiply interval with random and truncate
 
 		if (r > max) 
 			r = max;
