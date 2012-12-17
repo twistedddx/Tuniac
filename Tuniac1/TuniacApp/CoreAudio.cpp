@@ -629,8 +629,17 @@ void CCoreAudio::ReplayGainUseAlbumGain(bool bAlbumGain)
 	}
 }
 
-
 void	CCoreAudio::UpdateMetaData(LPTSTR szSource, void * pNewData, unsigned long ulFieldID)
+{
+	tuniacApp.UpdateMetaData(szSource, pNewData, ulFieldID);
+}
+
+void	CCoreAudio::UpdateMetaData(LPTSTR szSource, unsigned long pNewData, unsigned long ulFieldID)
+{
+	tuniacApp.UpdateMetaData(szSource, pNewData, ulFieldID);
+}
+
+void	CCoreAudio::UpdateMetaData(LPTSTR szSource, float pNewData, unsigned long ulFieldID)
 {
 	tuniacApp.UpdateMetaData(szSource, pNewData, ulFieldID);
 }

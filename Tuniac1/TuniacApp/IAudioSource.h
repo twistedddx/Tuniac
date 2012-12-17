@@ -29,8 +29,8 @@
 #define ITUNIACAUDIOSOURCE_VERSION		MAKELONG(0, 2)
 
 #define INVALID_ENTRY_ID	0xffffffff
-#define LENGTH_UNKNOWN	0xffffffff
-#define INVALID			0xffffffff
+#define LENGTH_STREAM		0xfffffffe
+#define LENGTH_UNKNOWN		0xffffffff
 
 #define STATE_STOPPED	0
 #define STATE_PLAYING	1
@@ -71,7 +71,8 @@
 #define FIELD_REPLAYGAIN_ALBUM_GAIN			24
 #define FIELD_REPLAYGAIN_ALBUM_PEAK			25
 #define FIELD_AVAILABILITY					26
-//#define FIELD_STATIONNAME					26
+#define FIELD_BPM							27
+//#define FIELD_STATIONNAME					28
 
 class IAudioFileIO
 {
@@ -109,6 +110,8 @@ class IAudioSourceHelper
 {
 public:
 	virtual void		UpdateMetaData(LPTSTR szSource, void * pNewData, unsigned long ulFieldID)		= 0;
+	virtual void		UpdateMetaData(LPTSTR szSource, unsigned long pNewData, unsigned long ulFieldID)= 0;
+	virtual void		UpdateMetaData(LPTSTR szSource, float pNewData, unsigned long ulFieldID)		= 0;
 	virtual void		LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)		= 0;
 };
 

@@ -33,6 +33,19 @@
 
 #define BEGIN_ADD_UNKNOWNNUMBER		(-1)
 
+// only increment this when a change becomes incompatable with older versions!
+#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 6)
+
+//Past versions
+#define TUNIAC_MEDIALIBRARY_VERSION05		MAKELONG(0, 5)
+
+typedef struct
+{
+	unsigned long Version;
+	unsigned long NumEntries;
+	unsigned long PauseAt;
+} MLDiskHeader;
+
 class CMediaLibrary  
 {
 protected:

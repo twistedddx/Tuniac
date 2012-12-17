@@ -120,7 +120,8 @@
 @C\tComment\r\n\
 @Z\tPlay Count\r\n\
 @R\tRating\r\n\
-@!\tPlay State\
+@!\tPlay State\n\
+@V\tBPM\
 ")
 
 

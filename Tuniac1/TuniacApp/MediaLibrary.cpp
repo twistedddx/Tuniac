@@ -31,9 +31,6 @@
 #include "MediaLibrary.h"
 #include "resource.h"
 
-// only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 5)
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -262,9 +259,10 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
     StrCpy(libraryEntry.szURL, szURL);
 	GetLocalTime(&libraryEntry.stDateAdded);
 
-	libraryEntry.dwRating = 0;
-	libraryEntry.iPlayCount = 0;
-	libraryEntry.dwKind = ENTRY_KIND_URL;
+	libraryEntry.ulPlaybackTime = LENGTH_STREAM;
+	libraryEntry.ulRating = 0;
+	libraryEntry.ulPlayCount = 0;
+	libraryEntry.ulKind = ENTRY_KIND_URL;
 
 	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 	pIPE->SetEntryID(ulEntryID);
@@ -353,12 +351,12 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 				GetLocalTime(&libraryEntry.stDateAdded);
 			}
 
-			libraryEntry.dwFilesize = GetFileSize(hFile, NULL);
+			libraryEntry.ulFilesize = GetFileSize(hFile, NULL);
 			CloseHandle(hFile);
 
-			libraryEntry.dwRating = 0;
-			libraryEntry.iPlayCount = 0;
-			libraryEntry.dwKind = ENTRY_KIND_FILE;
+			libraryEntry.ulRating = 0;
+			libraryEntry.ulPlayCount = 0;
+			libraryEntry.ulKind = ENTRY_KIND_FILE;
 
 			// let the info manager get the format specific stuff here!
 			for(unsigned long plugin=0; plugin<m_InfoManagerArray.GetCount(); plugin++)
@@ -589,7 +587,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			FILETIME ft;
 			GetFileTime(hFile, &ft, NULL, NULL);
 			FileTimeToSystemTime(&ft, &libraryEntry.stFileCreationDate);
-			libraryEntry.dwFilesize = GetFileSize(hFile, NULL);
+			libraryEntry.ulFilesize = GetFileSize(hFile, NULL);
 			CloseHandle(hFile);
 
 			// let the info manager get the format specific stuff here!
@@ -617,10 +615,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 
 			newpIPE->SetEntryID(ulEntryID);
 
-			int iPlayCount = (unsigned long)newpIPE->GetField(FIELD_PLAYCOUNT);
-			TCHAR szPlayCount[128];
-			_itow(iPlayCount, szPlayCount, 10);
-			newpIPE->SetField(FIELD_PLAYCOUNT, (void *)szPlayCount);
+			newpIPE->SetField(FIELD_PLAYCOUNT, ulPlayCount);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, newpIPE);
 
@@ -646,13 +641,6 @@ bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pIPE)
 	}
 	return false;
 }
-
-typedef struct
-{
-	unsigned long Version;
-	unsigned long NumEntries;
-	unsigned long PauseAt;
-} MLDiskHeader;
 
 bool CMediaLibrary::LoadMediaLibrary(void)
 {
@@ -694,7 +682,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 		MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if(MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION)
+	else if(MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
 	{
 		MessageBox(NULL, TEXT("MediaLibrary is saved in an incompatable version, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
@@ -703,7 +691,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 	{
 		tuniacApp.m_SoftPause.ulAt = MLDH.PauseAt;
 		
-		LibraryEntry	MLE;
+
 		unsigned long	TempID;
 
 		for(unsigned long x = 0; x < MLDH.NumEntries; x++)
@@ -717,18 +705,73 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				break;
 			}
 
-			ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry), &BytesRead, NULL);
-			if(BytesRead != sizeof(LibraryEntry))
+			if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION05)
 			{
-				MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
-				m_MediaLibrary.RemoveAll();
-				bOK = false;
-				break;
+				LibraryEntry05 MLE;
+				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry05), &BytesRead, NULL);
+				if(BytesRead != sizeof(LibraryEntry05))
+				{
+					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					m_MediaLibrary.RemoveAll();
+					bOK = false;
+					break;
+				}
+
+				LibraryEntry  libraryEntry;
+
+				ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
+
+				StrCpy(libraryEntry.szURL, MLE.szURL);
+				StrCpy(libraryEntry.szArtist, MLE.szArtist);
+				StrCpy(libraryEntry.szAlbum, MLE.szAlbum);
+				StrCpy(libraryEntry.szTitle, MLE.szTitle);
+				StrCpy(libraryEntry.szGenre, MLE.szGenre);
+				StrCpy(libraryEntry.szComment, MLE.szComment);
+				libraryEntry.stDateAdded = MLE.stDateAdded;
+				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
+				libraryEntry.stLastPlayed = MLE.stLastPlayed;
+				libraryEntry.dwDisc[0] = MLE.dwDisc[0];
+				libraryEntry.dwDisc[1] = MLE.dwDisc[1];
+				libraryEntry.dwTrack[0] = MLE.dwTrack[0];
+				libraryEntry.dwTrack[1] = MLE.dwTrack[1];
+				libraryEntry.ulYear = MLE.iYear;
+				libraryEntry.ulPlaybackTime = MLE.iPlaybackTime;
+				libraryEntry.ulPlayCount = MLE.iPlayCount;
+				libraryEntry.ulBitRate = MLE.iBitRate;
+				libraryEntry.ulSampleRate = MLE.iSampleRate;
+				libraryEntry.ulChannels = MLE.iChannels;
+				libraryEntry.ulAvailability = MLE.dwAvailability;
+				libraryEntry.ulFilesize = MLE.dwFilesize;
+				libraryEntry.ulRating = MLE.dwRating;
+				libraryEntry.ulKind = MLE.dwKind;
+				libraryEntry.fReplayGain_Album_Gain = MLE.fReplayGain_Album_Gain;
+				libraryEntry.fReplayGain_Album_Peak = MLE.fReplayGain_Album_Peak;
+				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
+				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
+				libraryEntry.ulBPM = 0;
+
+				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
+
+				pIPE->SetEntryID(TempID);
+				m_MediaLibrary.AddTail(pIPE);	
+			}
+			else
+			{
+				LibraryEntry MLE;
+				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry), &BytesRead, NULL);
+				if(BytesRead != sizeof(LibraryEntry))
+				{
+					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					m_MediaLibrary.RemoveAll();
+					bOK = false;
+					break;
+				}
+				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&MLE);
+				pIPE->SetEntryID(TempID);
+				m_MediaLibrary.AddTail(pIPE);	
 			}
 
-			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&MLE);
-			pIPE->SetEntryID(TempID);
-			m_MediaLibrary.AddTail(pIPE);			
+		
 		}
 
 		if(bOK)

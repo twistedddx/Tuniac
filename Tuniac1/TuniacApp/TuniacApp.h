@@ -204,6 +204,8 @@ public:
 	void				UpdateState(void);
 	void				UpdateTitles(void);
 	void				UpdateMetaData(LPTSTR szURL, void * pNewData, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR szURL, unsigned long pNewData, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR szURL, float pNewData, unsigned long ulFieldID);
 
 	bool				SetArt(LPTSTR szSource);
 

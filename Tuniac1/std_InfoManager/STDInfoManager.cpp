@@ -169,10 +169,13 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	audioProps = fileRef.audioProperties();
 	if(audioProps)
 	{
-		libEnt->iBitRate		= audioProps->bitrate() * 1000;
-		libEnt->iChannels		= audioProps->channels();
-		libEnt->iPlaybackTime	= audioProps->length() * 1000;
-		libEnt->iSampleRate		= audioProps->sampleRate();
+		libEnt->ulBitRate		= audioProps->bitrate() * 1000;
+		libEnt->ulChannels		= audioProps->channels();
+		if(audioProps->length() > 0)
+			libEnt->ulPlaybackTime = audioProps->length() * 1000;
+		else
+			libEnt->ulPlaybackTime = LENGTH_UNKNOWN;
+		libEnt->ulSampleRate		= audioProps->sampleRate();
 	}
 
 	tag = fileRef.tag();
@@ -183,7 +186,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		_snwprintf(libEnt->szAlbum, 128, L"%s", tag->album().toWString().c_str());
 		_snwprintf(libEnt->szGenre, 128, L"%s", tag->genre().toWString().c_str());
 		_snwprintf(libEnt->szComment, 128, L"%s", tag->comment().toWString().c_str());
-		libEnt->iYear  = tag->year();
+		libEnt->ulYear  = tag->year();
 		libEnt->dwTrack[0] = tag->track();
 	}
 
@@ -191,15 +194,16 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(flacFile->xiphComment())
 			vorbisTagListMap = flacFile->xiphComment()->fieldListMap();
-		else if(flacFile->ID3v2Tag())
+		if(flacFile->ID3v2Tag())
 			id3v2TagListMap = flacFile->ID3v2Tag()->frameListMap();
 	}
 	else if(mp3File)
 	{
+		if(mp3File->ID3v2Tag())
+			id3v2TagListMap = mp3File->ID3v2Tag()->frameListMap();
 		if(mp3File->APETag())
 			apeTagListMap = mp3File->APETag()->itemListMap();
-		else if(mp3File->ID3v2Tag())
-			id3v2TagListMap = mp3File->ID3v2Tag()->frameListMap();
+
 	}
 	else if(mp4File)
 	{
@@ -284,13 +288,17 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			}
 		}
 
-		/* we dont get pictures here see GetAlbumArt()
-		if(!id3v2TagListMap["APIC"].isEmpty())
+		if(!id3v2TagListMap["RVA2"].isEmpty())
 		{
-				TagLib::ID3v2::AttachedPictureFrame *id3v2Pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2TagListMap["APIC"].front());
-				id3v2Pic->mimeType();
+			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2TagListMap["RVA2"].front());
+			libEnt->fReplayGain_Album_Gain  = relVol->volumeAdjustment();
+			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
 		}
-		*/
+
+		if(!id3v2TagListMap["TBPM"].isEmpty())
+		{
+			libEnt->ulBPM = id3v2TagListMap["TBPM"].front()->toString().toInt();
+		}
 
 		/*
 				<Header for 'Replay Gain Adjustment', ID: "RGAD">
@@ -311,13 +319,6 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 				// we dont actually support this yet and need to decode the data
 		}
 		*/
-
-		if(!id3v2TagListMap["RVA2"].isEmpty())
-		{
-			TagLib::ID3v2::RelativeVolumeFrame * relVol = static_cast<TagLib::ID3v2::RelativeVolumeFrame *>(id3v2TagListMap["RVA2"].front());
-			libEnt->fReplayGain_Album_Gain  = relVol->volumeAdjustment();
-			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
-		}
 	}
 
 	if(!mp4TagListMap.isEmpty())
@@ -327,6 +328,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		if(mp4TagListMap["trkn"].isValid())
 			libEnt->dwTrack[1] = mp4TagListMap["trkn"].toIntPair().second;
+
+		if(mp4TagListMap["tmpo"].isValid())
+			libEnt->ulBPM = mp4TagListMap["tmpo"].toInt();
 	}
 
 	if(!vorbisTagListMap.isEmpty())
@@ -341,9 +345,14 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(!vorbisTagListMap["REPLAYGAIN_TRACK_PEAK"].isEmpty())
 			libEnt->fReplayGain_Track_Peak = atof(vorbisTagListMap["REPLAYGAIN_TRACK_PEAK"].toString().toCString());
 		if(!vorbisTagListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
-			libEnt->fReplayGain_Album_Gain = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
+			libEnt->fReplayGain_Album_Gain = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());
 		if(!vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
-			libEnt->fReplayGain_Album_Peak = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+			libEnt->fReplayGain_Album_Peak = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());
+
+		if(!vorbisTagListMap["BPM"].isEmpty())
+			libEnt->ulBPM = vorbisTagListMap["BPM"].toString().toInt();
+		else if(!vorbisTagListMap["TEMPO"].isEmpty())
+			libEnt->ulBPM = vorbisTagListMap["TEMPO"].toString().toInt();
 	}
 
 	if(!apeTagListMap.isEmpty())
@@ -369,7 +378,17 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			libEnt->fReplayGain_Album_Gain = atof(apeTagListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toCString());;
 		if(!apeTagListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			libEnt->fReplayGain_Album_Peak = atof(apeTagListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toCString());;
+
+		if(!apeTagListMap["BPM"].isEmpty())
+			libEnt->ulBPM = apeTagListMap["BPM"].toString().toInt();
 	}
+
+	if(!wmaTagListMap.isEmpty())
+	{
+		if(!wmaTagListMap["WM/BeatsPerMinute"].isEmpty())
+			libEnt->ulBPM = wmaTagListMap["WM/BeatsPerMinute"].front().toUInt();
+	}
+
 	fileRef = TagLib::FileRef();
 	return true;
 }
@@ -389,7 +408,7 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 		tag->setGenre(libEnt->szGenre);
 		tag->setTitle(libEnt->szTitle);
 		tag->setTrack(libEnt->dwTrack[0]);
-		tag->setYear(libEnt->iYear);
+		tag->setYear(libEnt->ulYear);
 
 		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 		{

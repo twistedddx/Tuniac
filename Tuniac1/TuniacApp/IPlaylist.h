@@ -53,10 +53,13 @@
 #define FIELD_REPLAYGAIN_TRACK_PEAK			23
 #define FIELD_REPLAYGAIN_ALBUM_GAIN			24
 #define FIELD_REPLAYGAIN_ALBUM_PEAK			25
-//#define FIELD_STATIONNAME					26
+#define FIELD_AVAILABILITY					26
+#define FIELD_BPM							27
+
+//#define FIELD_STATIONNAME					28
 
 
-#define FIELD_MAXFIELD						26
+#define FIELD_MAXFIELD						28
 
 
 #define PLAYLIST_TYPE_UNKNOWN				0
@@ -87,6 +90,8 @@ public:
 
 	virtual void *	GetField(unsigned long ulFieldID)					= 0;
 	virtual bool	SetField(unsigned long ulFieldID, void * pNewData)	= 0;
+	virtual bool	SetField(unsigned long ulFieldID, unsigned long pNewData)	= 0;
+	virtual bool	SetField(unsigned long ulFieldID, float pNewData)	= 0;
 	virtual bool	GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars)		= 0;
 };
 

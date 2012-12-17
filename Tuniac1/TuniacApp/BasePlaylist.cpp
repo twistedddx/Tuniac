@@ -140,7 +140,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 void				CBasePlaylist::RebuildPlaylistArrays(void)
 {
 	//remake our filtered lists(normal and shuffle) based on new filter
-	g_Rand.RandomInit(GetTickCount64());
+	g_Rand.RandomInit(time(NULL));
 
 	m_NormalIndexArray.RemoveAll();
 	m_RandomIndexArray.RemoveAll();
@@ -874,10 +874,10 @@ void CBasePlaylist::Sort_Algorithm (unsigned long head, unsigned long tail, Play
    
    if (head != tail) // i.e. if we have more than 1 item
    {
-      unsigned long mid = (head+tail)/2;
-      Sort_Algorithm (head, mid, scratch, ulSortBy, reverse);
-      Sort_Algorithm (mid+1, tail, scratch, ulSortBy, reverse);
-      Sort_Merge (head, tail, scratch, ulSortBy, reverse);
+	  unsigned long mid = (head+tail)/2;
+	  Sort_Algorithm (head, mid, scratch, ulSortBy, reverse);
+	  Sort_Algorithm (mid+1, tail, scratch, ulSortBy, reverse);
+	  Sort_Merge (head, tail, scratch, ulSortBy, reverse);
    }
 }
 
@@ -987,6 +987,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
+		case FIELD_BPM:
 		case FIELD_PLAYBACKTIME:
 		case FIELD_BITRATE:
 		case FIELD_SAMPLERATE:

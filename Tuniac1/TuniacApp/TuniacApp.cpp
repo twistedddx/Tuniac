@@ -940,7 +940,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 								if(pIPE)
 								{
-									pIPE->SetField(FIELD_AVAILABILITY, (void *)AVAILABLILITY_UNAVAILABLE);
+									pIPE->SetField(FIELD_AVAILABILITY, (unsigned long)AVAILABLILITY_UNAVAILABLE);
 									//redraw window
 									m_SourceSelectorWindow->UpdateView();
 								}
@@ -987,10 +987,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								SYSTEMTIME st;
 								GetLocalTime(&st);
 								pIPE->SetField(FIELD_DATELASTPLAYED, &st);
-								int iPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT)+1;
-								TCHAR szPlayCount[128];
-								_itow(iPlayCount, szPlayCount, 10);
-								pIPE->SetField(FIELD_PLAYCOUNT, (void *)szPlayCount);
+								pIPE->SetField(FIELD_PLAYCOUNT, (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT)+1);
 								
 								m_SourceSelectorWindow->UpdateView();
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
@@ -1057,7 +1054,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								{
 									if((int)pIPE->GetField(FIELD_AVAILABILITY) == 1)
 									{
-										pIPE->SetField(FIELD_AVAILABILITY, (void *)AVAILABLILITY_AVAILABLE);
+										pIPE->SetField(FIELD_AVAILABILITY, (unsigned long)AVAILABLILITY_AVAILABLE);
 										//redraw window
 										m_SourceSelectorWindow->UpdateView();
 									}
@@ -1866,7 +1863,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 									if(pIPE)
 									{
-										if(PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) && ((int)pIPE->GetField(FIELD_PLAYBACKTIME) == LENGTH_UNKNOWN))
+										if(PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) && ((int)pIPE->GetField(FIELD_PLAYBACKTIME) == LENGTH_STREAM))
 										{
 											//do we have a valid next song, if not we have run out of songs(end of playlist?)
 											unsigned long ulPreviousFilteredIndex = pPlaylist->Previous();
@@ -2341,6 +2338,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			case 'N':
 				lField = FIELD_NUMCHANNELS;
 				break;
+			case 'V':
+				lField = FIELD_BPM;
+				break;
 		}
 
 		if (lField == 0xFFFF)
@@ -2627,6 +2627,56 @@ void	CTuniacApp::UpdateState(void)
 
 //update streamtitle eg for mp3 streams
 void	CTuniacApp::UpdateMetaData(LPTSTR szURL, void * pNewData, unsigned long ulFieldID)
+{
+	IPlaylistEntry * pIPE = m_MediaLibrary.GetEntryByURL(szURL);
+
+	if(pIPE)
+	{
+		pIPE->SetField(ulFieldID, pNewData);
+
+		UpdateTitles();
+		//make sure the source selector window exists we can get here before its created
+		if(m_SourceSelectorWindow)
+			m_SourceSelectorWindow->UpdateView();
+		if(PathIsURL(szURL) && ulFieldID == FIELD_ARTIST)
+		{
+			if(GetForegroundWindow() == m_hWnd && !IsIconic(m_hWnd))
+				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+			else
+				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_BLIND, NULL, NULL);
+		}
+
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+	}
+}
+
+//update streamtitle eg for mp3 streams
+void	CTuniacApp::UpdateMetaData(LPTSTR szURL, unsigned long pNewData, unsigned long ulFieldID)
+{
+	IPlaylistEntry * pIPE = m_MediaLibrary.GetEntryByURL(szURL);
+
+	if(pIPE)
+	{
+		pIPE->SetField(ulFieldID, pNewData);
+
+		UpdateTitles();
+		//make sure the source selector window exists we can get here before its created
+		if(m_SourceSelectorWindow)
+			m_SourceSelectorWindow->UpdateView();
+		if(PathIsURL(szURL) && ulFieldID == FIELD_ARTIST)
+		{
+			if(GetForegroundWindow() == m_hWnd && !IsIconic(m_hWnd))
+				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE, NULL, NULL);
+			else
+				m_PluginManager.PostMessage(PLUGINNOTIFY_SONGCHANGE_BLIND, NULL, NULL);
+		}
+
+		m_PluginManager.PostMessage(PLUGINNOTIFY_SONGINFOCHANGE, NULL, NULL);
+	}
+}
+
+//update streamtitle eg for mp3 streams
+void	CTuniacApp::UpdateMetaData(LPTSTR szURL, float pNewData, unsigned long ulFieldID)
 {
 	IPlaylistEntry * pIPE = m_MediaLibrary.GetEntryByURL(szURL);
 

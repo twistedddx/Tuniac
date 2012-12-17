@@ -31,9 +31,10 @@
 
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 3)
+#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 4)
 
-
+//past
+#define TUNIAC_PLAYLISTLIBRARY_VERSION03		MAKELONG(0, 3)
 
 bool DriveInMask(ULONG uMask, char Letter)
 {
@@ -181,7 +182,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if(PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION)
+	else if(PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION03)
 	{
 		MessageBox(NULL, TEXT("Playlist Library is saved in an incompatable version, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
@@ -229,7 +230,10 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 
 			pPlaylist->AddEntryArray(myEntryArray);
 			
-			pPlaylist->SetTextFilterField(SubHeader.FilterField);
+			if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION03 && SubHeader.FilterField == 26)
+				pPlaylist->SetTextFilterField(28);
+			else
+				pPlaylist->SetTextFilterField(SubHeader.FilterField);
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
 			SubHeader.Filter[127] = L'\0';
 			pPlaylist->SetTextFilter(SubHeader.Filter);
@@ -257,7 +261,12 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		}
 
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
-		m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
+
+		if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION03 && PLDH.LibraryFilterField == 26)
+			m_LibraryPlaylist.SetTextFilterField(28);
+		else
+			m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
+
 		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
 		PLDH.LibraryFilter[127] = L'\0';
 		m_LibraryPlaylist.SetTextFilter(PLDH.LibraryFilter);

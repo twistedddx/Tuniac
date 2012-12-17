@@ -125,6 +125,8 @@ public:
 // IAudioSourceHelper inherited methods
 public:
 	void				UpdateMetaData(LPTSTR m_URL, void * pNewData, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR m_URL, unsigned long pNewData, unsigned long ulFieldID);
+	void				UpdateMetaData(LPTSTR m_URL, float pNewData, unsigned long ulFieldID);
 	void				LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage);
 
 //IXAudio2EngineCallback inherited methods

@@ -29,7 +29,7 @@
 #include "stdafx.h"
 
 CTuniacApp		tuniacApp;
-CRandom			g_Rand;
+CRandomSFMT		g_Rand(time(NULL));
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

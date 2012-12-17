@@ -65,14 +65,14 @@ bool CAudioCDPlaylist::GetCDInfo(void)
 				libEnt.dwTrack[0]			= (unsigned short)x;
 				libEnt.dwTrack[1]			= m_TOC.LastTrack;
 			
-				int h,m,s,f;
+				unsigned long h,m,s,f;
 
 				h = m_TOC.TrackData[x].Address[0] - m_TOC.TrackData[x-1].Address[0];
 				m = m_TOC.TrackData[x].Address[1] - m_TOC.TrackData[x-1].Address[1];
 				s = m_TOC.TrackData[x].Address[2] - m_TOC.TrackData[x-1].Address[2];
 				f = m_TOC.TrackData[x].Address[3] - m_TOC.TrackData[x-1].Address[3];
 
-				libEnt.iPlaybackTime = ((h*60*60) + (m*60) + s) * 1000;
+				libEnt.ulPlaybackTime = ((h*60*60) + (m*60) + s) * 1000;
 
 
 				_snwprintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%u"),	m_DriveLetter,		x);

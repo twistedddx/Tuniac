@@ -52,5 +52,7 @@ public:
 public:	
 	void *	GetField(unsigned long ulFieldID);
 	bool	SetField(unsigned long ulFieldID, void * pNewData);
+	bool	SetField(unsigned long ulFieldID, unsigned long pNewData);
+	bool	SetField(unsigned long ulFieldID, float pNewData);
 	bool	GetTextRepresentation(unsigned long ulFieldID, LPTSTR szString, unsigned long ulNumChars);
 };

@@ -230,8 +230,21 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		LVCFMT_CENTER,
 		false,
 		false
+	},
+	{
+		TEXT("Availability"),
+		80,
+		LVCFMT_CENTER,
+		false,
+		false
+	},
+	{
+		TEXT("BPM"),
+		80,
+		LVCFMT_CENTER,
+		true,
+		true
 	}
-
 };
 
 CPlaylistSourceView::CPlaylistSourceView(void) :
@@ -1720,7 +1733,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 						if(pIPE)
 						{
-							if((int)pIPE->GetField(FIELD_PLAYBACKTIME) > 0)
+							if((int)pIPE->GetField(FIELD_PLAYBACKTIME) != LENGTH_UNKNOWN && (int)pIPE->GetField(FIELD_PLAYBACKTIME) != LENGTH_STREAM)
 								TotalTime += (int)pIPE->GetField(FIELD_PLAYBACKTIME) / 1000;
 						}
 					}

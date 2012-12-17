@@ -235,17 +235,17 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 		return false;
 
 	TCHAR szData[512];
-	int iTime = (libraryEntry.iPlaybackTime == -1) ? (-1) : (libraryEntry.iPlaybackTime / 1000);
+	unsigned long ulTime = (libraryEntry.ulPlaybackTime == LENGTH_UNKNOWN || libraryEntry.ulPlaybackTime == LENGTH_STREAM) ? (-1) : (libraryEntry.ulPlaybackTime / 1000);
 	if(wcslen(libraryEntry.szTitle) > 0)
 	{
 		if(wcslen(libraryEntry.szArtist) > 0)
-			_snwprintf(szData, 512, TEXT("#EXTINF:%d,%s - %s"), iTime, libraryEntry.szArtist, libraryEntry.szTitle);
+			_snwprintf(szData, 512, TEXT("#EXTINF:%u,%s - %s"), ulTime, libraryEntry.szArtist, libraryEntry.szTitle);
 		else if(wcslen(libraryEntry.szTitle) > 0)
-			_snwprintf(szData, 512, TEXT("#EXTINF:%d,%s"), iTime, libraryEntry.szTitle);
+			_snwprintf(szData, 512, TEXT("#EXTINF:%u,%s"), ulTime, libraryEntry.szTitle);
 	}
 	else
 	{
-		_snwprintf(szData, 512, TEXT("#EXTINF:%d,"), iTime);
+		_snwprintf(szData, 512, TEXT("#EXTINF:%u,"), ulTime);
 	}
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);
