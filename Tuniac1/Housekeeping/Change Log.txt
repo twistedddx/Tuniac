@@ -1,4 +1,9 @@
-Dec, 2012 (1212??)
+Dec, 2012 (121231)
+---------
+-Fix Previous
+-Dont change active song while adding files unless playlist was empty
+
+Dec, 2012 (121220)
 ---------
 -update to newer BASS dll's
 -Change from GetTickCount to GetTickCount64 just incase we ever do roll over the 49 day mark somehow.
@@ -10,6 +15,12 @@ Dec, 2012 (1212??)
 -more cleanups of pref screen
 -correctly set maximized state on find hotkey
 -trigger song change notify on streams if metadata updates
+-add overloads for SetField and UpdateMetaData so native datatypes can be sent around better
+-unsigned long for time, bitrate, channels, samplerate, playcount
+-add BPM in ML (and availability viewing)
+-migrate DB from 0.5 to 0.6
+-change to new random number generator
+-differentiate stream and unknown file lengths
 
 Dec, 2012 (121207)
 ---------

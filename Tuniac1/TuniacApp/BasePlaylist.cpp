@@ -325,7 +325,7 @@ unsigned long		CBasePlaylist::Previous(void)
 
 	if(tuniacApp.m_Preferences.GetSkipStreams())
 	{
-		for(unsigned long x=ulActiveFilteredIndex; x=0; x--)
+		for(unsigned long x=ulActiveFilteredIndex; x>0; x--)
 		{
 			IPlaylistEntry * pIPE = GetEntryAtFilteredIndex(x-1);
 			if(pIPE)
