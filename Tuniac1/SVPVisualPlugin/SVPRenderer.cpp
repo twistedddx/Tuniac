@@ -565,7 +565,8 @@ bool SVPRenderer::RenderVisual(void)
 				}
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
 
-				for(int p = 0; p < 256; p++)
+				vd.Spectrum[1][0] = vd.Spectrum[0][0] = min(255,out_freq_data[0].r * 512);
+				for(int p = 1; p < 256; p++)
 				{
 					vd.Spectrum[1][p] = vd.Spectrum[0][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}
@@ -580,7 +581,8 @@ bool SVPRenderer::RenderVisual(void)
 					sample+=ulNumChannels;
 				}
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
-				for(int p = 0; p < 256; p++)
+				vd.Spectrum[0][0] = min(255,out_freq_data[0].r * 512);
+				for(int p = 1; p < 256; p++)
 				{
 					vd.Spectrum[0][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}
@@ -593,7 +595,8 @@ bool SVPRenderer::RenderVisual(void)
 					sample+=ulNumChannels;
 				}
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
-				for(int p = 0; p < 256; p++)
+				vd.Spectrum[1][0] = min(255,out_freq_data[0].r * 512);
+				for(int p = 1; p < 256; p++)
 				{
 					vd.Spectrum[1][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}

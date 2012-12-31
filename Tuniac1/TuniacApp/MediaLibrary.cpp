@@ -174,14 +174,6 @@ bool CMediaLibrary::EndAdd(void)
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 
-	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-	if(pPlaylist)
-	{
-		if(pPlaylist->GetActiveFilteredIndex() == INVALID_PLAYLIST_INDEX)
-			pPlaylist->SetActiveNormalFilteredIndex(0);
-	}
-
-
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
