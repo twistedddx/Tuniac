@@ -4,12 +4,14 @@
 
 #pragma data_seg(".shared")
 HWND hNotifyWnd = NULL;
-HHOOK hShellHook = NULL;							// Handle to the Shell hook
+HHOOK hShellHook = NULL;
+HHOOK hKeyboardHook = NULL;
 #pragma data_seg( )
 
-HINSTANCE hInstance = NULL;							// This instance of the DLL
+HINSTANCE hInstance = NULL;
 
 LRESULT CALLBACK ShellProc (int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK KeyboardProc (int nCode, WPARAM wParam, LPARAM lParam);
 
 BOOL WINAPI DllMain (HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
@@ -43,6 +45,13 @@ DllExport BOOL SetMMShellHook(HWND hWnd)
 					0L
 					);
 
+	hKeyboardHook = SetWindowsHookEx(
+					WH_KEYBOARD,
+					(HOOKPROC) KeyboardProc,
+					hInstance,
+					0L
+					);
+
 	if (hShellHook != NULL)
 	{
 		hNotifyWnd = hWnd;
@@ -67,6 +76,8 @@ DllExport BOOL UnSetMMShellHook(HWND hWnd)
 	{
 		unHooked = UnhookWindowsHookEx(hShellHook);
 		hShellHook = NULL;
+		UnhookWindowsHookEx(hKeyboardHook);
+		hKeyboardHook = NULL;
 	}
 
 	if (unHooked)
@@ -75,6 +86,31 @@ DllExport BOOL UnSetMMShellHook(HWND hWnd)
 	}
 
 	return unHooked;
+}
+
+LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == HC_ACTION)
+	{
+		if (hNotifyWnd != NULL && hNotifyWnd != (HWND)lParam)
+		{
+			switch (wParam)
+			{
+				case VK_MEDIA_NEXT_TRACK:
+				case VK_MEDIA_PREV_TRACK:
+				case VK_MEDIA_PLAY_PAUSE:
+				case VK_MEDIA_STOP:
+				/* these are handled in the OS almost always, so lets not double up
+				case VK_VOLUME_UP:
+				case VK_VOLUME_DOWN:
+				case VK_VOLUME_MUTE:
+				*/
+					::PostMessage(hNotifyWnd,WM_KEYDOWN,wParam,(LPARAM)hNotifyWnd);
+					return 1;
+			}
+		}
+	}
+	return CallNextHookEx(hKeyboardHook, nCode, wParam, lParam);
 }
 
 LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -181,7 +217,8 @@ unsigned long	CMMShellHook::ThreadStub(void * in)
 unsigned long	CMMShellHook::ThreadProc(void)
 {
 	HWND hTuniacWnd = FindWindow(L"TUNIACWINDOWCLASS", NULL);
-	SetMMShellHook(hTuniacWnd);
+	if(!SetMMShellHook(hTuniacWnd))
+		return 0;
 
 	BOOL bIsWow64 = false;
 	IsWow64Process(GetCurrentProcess(), &bIsWow64);
