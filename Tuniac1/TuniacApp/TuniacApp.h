@@ -99,7 +99,6 @@ protected:
 	HWND								m_hWndStatus;
 
 	WNDCLASSEX							m_wc;
-	WNDCLASSEX							m_wcp;
 
 	HMENU								m_hPopupMenu;
 	HMENU								m_hFutureMenu;
@@ -119,6 +118,7 @@ protected:
 	bool								m_WasPlaying;
 	unsigned long						m_WasPlayingTime;
 	bool								m_bScreensaveActive;
+	int									m_iMuteVol;
 
 	int									m_ActiveScreen;
 

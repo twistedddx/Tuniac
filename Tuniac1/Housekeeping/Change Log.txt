@@ -1,3 +1,12 @@
+Jan, 2012
+---------
+-add MMShellHook_Plugin.dll and MMShellHookHelper.exe for globally hooking multimedia keys;pdate setup scripts to suit
+-fix and standardize volume events from hotkeys and other; add mute control
+-support more media keys, eg VK_MEDIA_TRACK_NEXT,
+-initialize plugins after creation of main window so plugins have full access from startup
+-General plugin API clarity; GetMainWindow to GetPluginWindow, SetHelper before CreateThread; bump to version to 0.4
+-remove redundent pluginvariable.h files from general plugin directories
+
 Dec, 2012 (121231)
 ---------
 -Fix Previous

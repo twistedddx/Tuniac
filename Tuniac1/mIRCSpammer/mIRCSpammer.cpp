@@ -71,7 +71,7 @@ HANDLE			CmIRCSpammer::CreateThread(LPDWORD lpThreadId)
 	return m_hThread;
 }
 
-HWND			CmIRCSpammer::GetMainWindow(void)
+HWND			CmIRCSpammer::GetPluginWindow(void)
 {
 	return NULL;
 }

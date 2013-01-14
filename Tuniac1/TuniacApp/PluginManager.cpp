@@ -112,8 +112,8 @@ bool			CPluginManager::Initialize(void)
 					}
 					else
 					{ 
-						PE.hThread = PE.pPlugin->CreateThread(&PE.dwThreadId);
 						PE.pPlugin->SetHelper(this);
+						PE.hThread = PE.pPlugin->CreateThread(&PE.dwThreadId);
 						SetThreadPriority(PE.hThread, THREAD_PRIORITY_LOWEST);
 					}
 					m_PluginArray.AddTail(PE);
@@ -240,16 +240,16 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 		int iCount = 100;
 		HWND hPluginWnd = NULL;
 		if( m_PluginArray[iPlugin].pPlugin != NULL)
-			hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetMainWindow();
+			hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetPluginWindow();
 
 		if(hPluginWnd)
 		{
-			while((hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetMainWindow()) != NULL && iCount--)
+			while((hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetPluginWindow()) != NULL && iCount--)
 			{
 				::PostMessage(hPluginWnd, WM_QUIT, 0, 0);
 				Sleep(5);
 			}
-			if((hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetMainWindow()) != NULL)
+			if((hPluginWnd = m_PluginArray[iPlugin].pPlugin->GetPluginWindow()) != NULL)
 				DestroyWindow(hPluginWnd);
 		}
 		else
@@ -286,7 +286,7 @@ void			CPluginManager::PostMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 		if(m_PluginArray[i].bEnabled == false || m_PluginArray[i].pPlugin == NULL)
 			continue;
 
-		HWND hPluginWnd = m_PluginArray[i].pPlugin->GetMainWindow();
+		HWND hPluginWnd = m_PluginArray[i].pPlugin->GetPluginWindow();
 		if(hPluginWnd)
 			::PostMessage(hPluginWnd, Msg, wParam, lParam);
 		else

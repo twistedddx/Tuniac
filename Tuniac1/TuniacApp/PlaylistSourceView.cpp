@@ -1428,6 +1428,50 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									}
 									break;
 
+								//catch media keys
+								case VK_MEDIA_PLAY_PAUSE:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
+									}
+									break;
+
+								case VK_MEDIA_STOP:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+									}
+									break;
+
+								case VK_MEDIA_NEXT_TRACK:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+									}
+									break;
+
+								case VK_MEDIA_PREV_TRACK:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+									}
+									break;
+
+								/* these are handled in the OS almost always, so lets not double up
+								case VK_VOLUME_UP:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
+									}
+									break;
+
+								case VK_VOLUME_DOWN:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEDOWN, 0), 0);
+									}
+									break;
+
+								case VK_VOLUME_MUTE:
+									{
+										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEMUTE, 0), 0);
+									}
+									break;
+									*/
 								default:
 									return FALSE;
 									break;

@@ -228,7 +228,10 @@
 #define ID_PLAYBACK_PLAY                40054
 #define ID_PLAYBACK_TOGGLE_SHUFFLE      40055
 #define ID_PLAYBACK_TOGGLE_REPEAT       40056
-#define ID_PLAY                         40059
+#define ID_PLAYBACK_VOLUMEUP            40057
+#define ID_PLAYBACK_VOLUMEDOWN          40058
+#define ID_PLAYBACK_VOLUMEMUTE          40059
+#define ID_PLAY                         40060
 #define ID_REMOVE                       40062
 #define ID_UPDATE                       40063
 #define ID_TONEWPLAYLIST                40066

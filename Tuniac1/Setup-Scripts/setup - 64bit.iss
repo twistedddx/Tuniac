@@ -44,11 +44,15 @@ Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
-Source: "..\x64\Release\TuniacApp.exe"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+Source: "..\x64\Release\*.exe"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
+Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
+Source: "..\Win32\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not InstallLegacyCheck;  Flags: ignoreversion
 
-Source: "..\Win32\Release\TuniacApp.exe"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs
+Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
+Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: InstallLegacyCheck; Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: InstallLegacyCheck;  Flags: ignoreversion
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 ;external files

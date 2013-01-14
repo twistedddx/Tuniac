@@ -76,7 +76,7 @@ HANDLE			CPopupNotify::CreateThread(LPDWORD lpThreadId)
 	return m_hThread;
 }
 
-HWND			CPopupNotify::GetMainWindow(void)
+HWND			CPopupNotify::GetPluginWindow(void)
 {
 	return m_hWnd;
 }
