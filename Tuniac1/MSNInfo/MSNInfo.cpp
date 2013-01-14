@@ -66,7 +66,7 @@ HANDLE			CMSNInfo::CreateThread(LPDWORD lpThreadId)
 	return m_hThread;
 }
 
-HWND			CMSNInfo::GetMainWindow(void)
+HWND			CMSNInfo::GetPluginWindow(void)
 {
 	return NULL;
 }

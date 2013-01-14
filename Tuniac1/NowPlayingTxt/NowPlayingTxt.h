@@ -33,7 +33,7 @@ public:
 	bool				SetHelper(ITuniacPluginHelper *pHelper);
 	
 	HANDLE				CreateThread(LPDWORD lpThreadId);
-	HWND				GetMainWindow(void);
+	HWND				GetPluginWindow(void);
 
 	bool				About(HWND hWndParent);
 	bool				Configure(HWND hWndParent);

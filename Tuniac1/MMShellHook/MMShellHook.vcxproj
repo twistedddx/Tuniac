@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>mIRCSpammer_Plugin</ProjectName>
-    <ProjectGuid>{3EA65DF6-01ED-43CB-9EC6-C6F85306C0A5}</ProjectGuid>
-    <RootNamespace>mIRCSpammer_Plugin</RootNamespace>
+    <ProjectName>MMShellHook_Plugin</ProjectName>
+    <ProjectGuid>{F5B70CFE-5F0D-4C02-8725-142E860D53D6}</ProjectGuid>
+    <RootNamespace>MMShellHook_Plugin</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -106,6 +106,7 @@
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions>/def:".\MMShellHook.def"  %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -127,6 +128,7 @@
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalOptions>/def:".\MMShellHook.def"  %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,6 +149,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions>/def:".\MMShellHook.def"  %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,14 +172,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalOptions>/def:".\MMShellHook.def"  %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mIRCSpammer.cpp" />
+    <ClCompile Include="MMShellHook.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mIRCSpammer.h" />
+    <ClInclude Include="MMShellHook.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

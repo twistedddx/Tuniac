@@ -26,7 +26,7 @@
 #pragma once
 #include "PluginVariable.h"
 
-#define ITUNIACPLUGIN_VERSION	MAKELONG(0,3)
+#define ITUNIACPLUGIN_VERSION	MAKELONG(0,4)
 
 class ITuniacPluginHelper
 {
@@ -69,7 +69,7 @@ public:
 	virtual bool			SetHelper(ITuniacPluginHelper *pHelper)	= 0;
 
 	virtual HANDLE			CreateThread(LPDWORD lpThreadId)		= 0;
-	virtual	HWND			GetMainWindow(void)						= 0;
+	virtual	HWND			GetPluginWindow(void)					= 0;
 
 	virtual bool			About(HWND hWndParent)					= 0;
 	virtual bool			Configure(HWND hWndParent)				= 0;

@@ -71,7 +71,7 @@ HANDLE			CNowPlayingTxt::CreateThread(LPDWORD lpThreadId)
 	return m_hThread;
 }
 
-HWND			CNowPlayingTxt::GetMainWindow(void)
+HWND			CNowPlayingTxt::GetPluginWindow(void)
 {
 	return NULL;
 }

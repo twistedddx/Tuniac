@@ -39,8 +39,10 @@ Source: "..\Housekeeping\gpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 
-Source: "..\Win32\Release\TuniacApp.exe"; DestDir: {app}\; Flags: ignoreversion
-Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs
+Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll";  Flags: ignoreversion
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Registry]

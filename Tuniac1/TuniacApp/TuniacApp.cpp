@@ -138,6 +138,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_WasPlaying = false;
 	m_WasPlayingTime = 0;
 	m_bScreensaveActive = false;
+	m_iMuteVol = 0;
 
 	//load everything saved including windows size/postion/ontop
 	m_Preferences.LoadPreferences();
@@ -171,9 +172,6 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		return false;
 
 	if(!m_PlaylistManager.Initialize())
-		return false;
-
-	if(!m_PluginManager.Initialize())
 		return false;
 
 	IWindow * t;
@@ -240,6 +238,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	//window did not create!
 	if(!m_hWnd)
+		return false;
+
+	if(!m_PluginManager.Initialize())
 		return false;
 
 	//create tray menu
@@ -356,7 +357,7 @@ bool CTuniacApp::Shutdown()
 
 	m_Preferences.SetActiveWindow(m_ActiveScreen);
 
-    while(m_WindowArray.GetCount())
+	while(m_WindowArray.GetCount())
 	{
 		m_WindowArray[0]->Destroy();
 		m_WindowArray.RemoveAt(0);
@@ -453,6 +454,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					if(m_Preferences.GetResumeOnScreensave())
 						SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs()*1000), NULL);
 				}
+				break;
 			}
 			if(wParam == DELAYEDPLAY_TIMERID)
 			{
@@ -470,6 +472,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						m_WasPlaying = false;
 					}
 				}
+				break;
 			}
 		}
 		break;
@@ -604,7 +607,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				//create the future menu(right click "next" button)
 				m_hFutureMenu = CreatePopupMenu();
 
-				m_LogWindow->LogMessage(TEXT("Tuniac"), TEXT("Initialization Complete"));
+				//m_LogWindow->LogMessage(TEXT("Tuniac"), TEXT("Initialization Complete"));
 			}
 			break;
 
@@ -819,6 +822,59 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+		//media keys
+		case WM_KEYDOWN:
+			{
+				switch(wParam)
+				{
+					case VK_MEDIA_PLAY_PAUSE:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
+						}
+						break;
+
+					case VK_MEDIA_STOP:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+						}
+						break;
+
+					case VK_MEDIA_NEXT_TRACK:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+						}
+						break;
+
+					case VK_MEDIA_PREV_TRACK:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+						}
+						break;
+
+					/* these are handled in the OS almost always, so lets not double up
+					case VK_VOLUME_UP:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
+						}
+						break;
+
+					case VK_VOLUME_DOWN:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEDOWN, 0), 0);
+						}
+						break;
+
+					case VK_VOLUME_MUTE:
+						{
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEMUTE, 0), 0);
+						}
+						break;
+						*/
+				}
+			}
+			break;
+
+
 			//multimedia keyboard keys
 		case WM_APPCOMMAND:
 			{
@@ -863,16 +919,37 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
 							break;
+
 						case APPCOMMAND_MEDIA_FAST_FORWARD:
 							{
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
 							}
 							break;
+
 						case APPCOMMAND_MEDIA_REWIND:
 							{
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
 							}
 							break;
+						/* these are handled in the OS almost always, so lets not double up
+						case APPCOMMAND_VOLUME_UP:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
+							}
+							break;
+
+						case APPCOMMAND_VOLUME_DOWN:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEDOWN, 0), 0);
+							}
+							break;
+
+						case APPCOMMAND_VOLUME_MUTE:
+							{
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEMUTE, 0), 0);
+							}
+							break;
+							*/
 					}
 				}
 				return(DefWindowProc(hWnd, message, wParam, lParam));
@@ -1111,15 +1188,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FIND, 0), 0);
 
 				else if(wParam == HOTKEY_VOLUP)
-				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 1);
-					m_PlayControls.UpdateVolume();
-				}
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
+
 				else if(wParam == HOTKEY_VOLDOWN)
-				{
-					CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 1);
-					m_PlayControls.UpdateVolume();
-				}
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEDOWN, 0), 0);
+
 				else if(wParam == HOTKEY_SEEKFORWARD)
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
 
@@ -1583,7 +1656,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									{
 										LPTSTR pwsz = NULL;
 										hr = psiResult->GetDisplayName (SIGDN_FILESYSPATH, &pwsz);
- 										if ( SUCCEEDED(hr) )
+										if ( SUCCEEDED(hr) )
 										{
 											if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 											{
@@ -1664,7 +1737,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 													m_MediaLibrary.GetCount(), 
 													m_PlaylistManager.m_StandardPlaylists.GetCount());
 
-									m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+									//m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
 								}
 							}
 							break;
@@ -1789,12 +1862,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						case ID_PLAYBACK_SHOWCURRENTLYPLAYINGTRACK:
 							{
 								for(unsigned long item = 0; item < m_WindowArray.GetCount(); item++)
-	 							{
+								{
 									//dont hide visual windows when showvisart
 									if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && wcscmp(m_WindowArray[item]->GetName(), L"Visuals") == 0)
 										continue;
- 									m_WindowArray[item]->Hide();
-	 							}
+									m_WindowArray[item]->Hide();
+								}
 
 								m_ActiveScreen = 0;
 
@@ -1972,6 +2045,52 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									pos = CCoreAudio::Instance()->GetPosition() - 1300;
 								CCoreAudio::Instance()->SetPosition(pos);
 								m_PluginManager.PostMessage(PLUGINNOTIFY_SEEK_MANUAL, NULL, NULL);
+							}
+							break;
+
+						case ID_PLAYBACK_VOLUMEUP:
+							{
+								if(m_iMuteVol)
+								{
+									CCoreAudio::Instance()->SetVolumePercent(m_iMuteVol + 2);
+									m_iMuteVol = 0;
+								}
+								else
+								{
+									CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) + 2);
+								}
+								m_PlayControls.UpdateVolume();
+							}
+							break;
+
+						case ID_PLAYBACK_VOLUMEDOWN:
+							{
+								if(m_iMuteVol)
+								{
+									CCoreAudio::Instance()->SetVolumePercent(m_iMuteVol - 2);
+									m_iMuteVol = 0;
+								}
+								else
+								{
+									CCoreAudio::Instance()->SetVolumePercent((CCoreAudio::Instance()->GetVolumePercent()) - 2);
+								}
+								m_PlayControls.UpdateVolume();
+							}
+							break;
+
+						case ID_PLAYBACK_VOLUMEMUTE:
+							{
+								if(m_iMuteVol)
+								{
+									CCoreAudio::Instance()->SetVolumePercent(m_iMuteVol);
+									m_iMuteVol = 0;
+								}
+								else
+								{
+									m_iMuteVol = CCoreAudio::Instance()->GetVolumePercent();
+									CCoreAudio::Instance()->SetVolumePercent(0);
+								}
+								m_PlayControls.UpdateVolume();
 							}
 							break;
 
@@ -2226,7 +2345,7 @@ bool CTuniacApp::RegisterHotkeys(void)
 {
 	//our hotkeys
 	if(!RegisterHotKey(m_hWnd, HOTKEY_PLAY,		MOD_WIN, VK_NUMPAD5))
-		m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
+		//m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
 	RegisterHotKey(m_hWnd, HOTKEY_STOP,			MOD_WIN, VK_NUMPAD0);
 	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);
 	RegisterHotKey(m_hWnd, HOTKEY_RANDNEXT,		MOD_WIN, VK_NUMPAD9);
