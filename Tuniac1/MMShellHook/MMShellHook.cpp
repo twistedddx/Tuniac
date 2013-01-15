@@ -158,11 +158,14 @@ extern "C" __declspec(dllexport) unsigned long		GetTuniacPluginVersion(void)
 }
 
 
-CMMShellHook::CMMShellHook(void)
+CMMShellHook::CMMShellHook(void):
+bIsReal64(false),
+bIsWow64(false)
 {
 }
 
 CMMShellHook::~CMMShellHook(void)
+
 {
 }
 
@@ -183,6 +186,32 @@ unsigned long	CMMShellHook::GetFlags(void)
 
 bool			CMMShellHook::SetHelper(ITuniacPluginHelper *pHelper)
 {
+	//this only gets called from tuniacapp.exe but not mmshellhookhelper.exe
+	//so we launch here to stop a loop
+	bIsWow64 = false;
+	IsWow64Process(GetCurrentProcess(), &bIsWow64);
+
+    SYSTEM_INFO systemInfo;
+    ZeroMemory(&systemInfo, sizeof(systemInfo));
+    GetNativeSystemInfo(&systemInfo);
+
+	bIsReal64 = false;
+	if(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+		bIsReal64 = true;
+
+
+	if(bIsWow64 || bIsReal64)
+	{
+		TCHAR szHelperPath[512];
+		GetModuleFileName(NULL, szHelperPath, 512);
+		PathRemoveFileSpec(szHelperPath);
+		PathAddBackslash(szHelperPath);
+		StrCat(szHelperPath, TEXT("plugins\\MMShellHookHelper.exe"));
+
+		ShellExecute(NULL, L"open", szHelperPath, NULL, NULL, SW_HIDE);
+	}
+
+
 	m_pHelper = pHelper;
 	return true;
 }
@@ -220,29 +249,6 @@ unsigned long	CMMShellHook::ThreadProc(void)
 	if(!SetMMShellHook(hTuniacWnd))
 		return 0;
 
-	BOOL bIsWow64 = false;
-	IsWow64Process(GetCurrentProcess(), &bIsWow64);
-
-    SYSTEM_INFO systemInfo;
-    ZeroMemory(&systemInfo, sizeof(systemInfo));
-    GetNativeSystemInfo(&systemInfo);
-
-	BOOL bIsReal64 = false;
-	if(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-		bIsReal64 = true;
-
-
-	if(bIsWow64 || bIsReal64)
-	{
-		TCHAR szHelperPath[512];
-		GetModuleFileName(NULL, szHelperPath, 512);
-		PathRemoveFileSpec(szHelperPath);
-		PathAddBackslash(szHelperPath);
-		StrCat(szHelperPath, TEXT("plugins\\MMShellHookHelper.exe"));
-
-		ShellExecute(NULL, L"open", szHelperPath, NULL, NULL, SW_HIDE);
-	}
-
 	MSG msg;
 	while(GetMessage(&msg, NULL, 0, 0) != 0)
 	{
@@ -252,7 +258,8 @@ unsigned long	CMMShellHook::ThreadProc(void)
 
 	UnSetMMShellHook(hTuniacWnd);
 
-	if(bIsWow64)
+	//kill the helper also
+	if(bIsWow64 || bIsReal64)
 	{
 		HWND hTuniacHelperWnd = FindWindow(L"TUNIACHELPER", NULL);
 		if(hTuniacHelperWnd)

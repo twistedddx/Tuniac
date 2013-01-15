@@ -27,6 +27,9 @@ protected:
 	static unsigned long __stdcall	ThreadStub(void * in);
 	unsigned long			ThreadProc(void);
 
+	BOOL bIsWow64;
+	BOOL bIsReal64;
+
 public:
 	CMMShellHook();
 	~CMMShellHook();

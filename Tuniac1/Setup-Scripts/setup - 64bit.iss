@@ -59,6 +59,9 @@ Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags
 Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
 Source: "{tmp}\msvcr110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
 
+Source: "{tmp}\msvcp110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcr110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
+
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
 Root: HKCU; Subkey: "SOFTWARE\MediaScience\Sonique\General Preferences 0.80"; ValueType: string; ValueName: "SoniquePath"; ValueData: "{app}\visuals\"
@@ -275,6 +278,49 @@ begin
   Result := False;
 end;
 
+
+//check if valid vc redist available
+function PluginsHas11VCRedist: Boolean;
+var
+  Size: Integer;
+begin
+  Result := True;
+
+
+  //32bit machine
+  if not Is64BitInstallMode then begin
+    if FileExists(ExpandConstant('{app}\plugins\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\plugins\msvcr110.dll'), Size);
+      if Size = 849376 then
+        exit;
+    end;
+    if HasVC2012x64Redist then
+      exit;
+  end;
+  //64bit machine, 32bit install
+  if Is64BitInstallMode and InstallLegacyCheck then begin
+    if FileExists(ExpandConstant('{app}\plugins\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\plugins\msvcr110.dll'), Size);
+      if Size = 849376 then
+        exit;
+    end;
+    if HasVC2012x64Redist then
+      exit;
+  end;
+  //64bit machine, 64bit install
+  if Is64BitInstallMode and not InstallLegacyCheck then begin
+    if FileExists(ExpandConstant('{app}\plugins\msvcr110.dll')) then begin
+      FileSize(ExpandConstant('{app}\plugins\msvcr110.dll'), Size);
+      if Size = 875472 then
+        exit;
+    end;
+    if HasVC2012x86Redist then
+      exit;
+  end;
+
+  Result := False;
+end;
+
 //check for direct x 2.7
 function HasDXJun2010: Boolean;
 var
@@ -287,6 +333,15 @@ end;
 function VCRedistInstalling: Boolean;
 begin
   if not Has11VCRedist then begin 
+    Result:= FilesDownloaded;
+  end else begin
+    Result:= False;
+  end
+end;
+
+function PluginsVCRedistInstalling: Boolean;
+begin
+  if not PluginsHas11VCRedist then begin 
     Result:= FilesDownloaded;
   end else begin
     Result:= False;
@@ -363,6 +418,15 @@ begin
     FileName := ExpandConstant('{tmp}\msvcr110.dll');
     isxdl_AddFile(URL, FileName);
   end;
+
+  if InstallLegacyCheck and not PluginsHas11VCRedist then begin
+    URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
+    FileName := ExpandConstant('{tmp}\msvcp110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
+    FileName := ExpandConstant('{tmp}\msvcr110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
  
   if not InstallLegacyCheck and not Has11VCRedist then begin
     URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
@@ -370,6 +434,15 @@ begin
     isxdl_AddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
     FileName := ExpandConstant('{tmp}\msvcr110.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+
+   if not InstallLegacyCheck and not PluginsHas11VCRedist then begin
+    URL := 'http://www.tuniac.org/extra/32bit/msvcp110.dll';
+    FileName := ExpandConstant('{tmp}\msvcp110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/32bit/msvcr110.dll';
+    FileName := ExpandConstant('{tmp}\msvcr110plugins.dll');
     isxdl_AddFile(URL, FileName);
   end;
 
@@ -392,7 +465,7 @@ end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-if not Has11VCRedist or not HasDXJun2010 then
+  if not Has11VCRedist or not PluginsHas11VCRedist or not HasDXJun2010 then
     DownloadFiles();
   Result := '';
 end;

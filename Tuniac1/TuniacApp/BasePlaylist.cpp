@@ -304,7 +304,7 @@ unsigned long		CBasePlaylist::Previous(void)
 	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
-		if(tuniacApp.m_Preferences.GetSkipStreams())
+		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState())
 		{
 			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
 			{
@@ -323,7 +323,7 @@ unsigned long		CBasePlaylist::Previous(void)
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulActiveFilteredIndex;
 
-	if(tuniacApp.m_Preferences.GetSkipStreams())
+	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState())
 	{
 		for(unsigned long x=ulActiveFilteredIndex; x>0; x--)
 		{
@@ -375,7 +375,7 @@ unsigned long		CBasePlaylist::Next(void)
 	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
-		if(tuniacApp.m_Preferences.GetSkipStreams())
+		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState())
 		{
 			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
 			{
@@ -414,7 +414,7 @@ unsigned long		CBasePlaylist::Next(void)
 			return ulFilteredIndex;
 	}
 
-	if(tuniacApp.m_Preferences.GetSkipStreams())
+	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState())
 	{
 		for(unsigned long x=(ulActiveFilteredIndex + 1); x<m_NormalIndexArray.GetCount(); x++)
 		{
