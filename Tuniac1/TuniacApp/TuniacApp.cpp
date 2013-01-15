@@ -2344,7 +2344,7 @@ bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 bool CTuniacApp::RegisterHotkeys(void)
 {
 	//our hotkeys
-	if(!RegisterHotKey(m_hWnd, HOTKEY_PLAY,		MOD_WIN, VK_NUMPAD5))
+	RegisterHotKey(m_hWnd, HOTKEY_PLAY,		MOD_WIN, VK_NUMPAD5);
 		//m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
 	RegisterHotKey(m_hWnd, HOTKEY_STOP,			MOD_WIN, VK_NUMPAD0);
 	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);

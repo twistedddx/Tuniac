@@ -46,13 +46,16 @@ Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
 Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion
-Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll";  Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 Source: "..\Win32\Release\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
 
 ;external files
 Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
 Source: "{tmp}\msvcr110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
+
+Source: "{tmp}\msvcp110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcr110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
@@ -117,6 +120,20 @@ begin
   Result := False;
 end;
 
+function HasVC2012x64Redist: Boolean;
+var
+  VCRedistx64: String;
+begin
+  Result := True;
+  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
+    exit;
+  end else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
+    exit;
+  end
+
+  Result := False;
+end;
+
 //check if valid vc redist available
 function Has11VCRedist: Boolean;
 var
@@ -136,6 +153,24 @@ begin
   Result := False;
 end;
 
+function PluginsHas11VCRedist: Boolean;
+var
+  Size: Integer;
+begin
+  //local
+  Result := True;
+
+  if FileExists(ExpandConstant('{app}\plugins\msvcr110.dll')) then begin
+    FileSize(ExpandConstant('{app}\plugins\msvcr110.dll'), Size);
+    if Size = 849376 then
+      exit;
+  end;
+  if HasVC2012x64Redist then
+    exit;
+
+  Result := False;
+end;
+
 //check for direct x 2.7
 function HasDXJun2010: Boolean;
 var
@@ -148,6 +183,15 @@ end;
 function VCRedistInstalling: Boolean;
 begin
   if not Has11VCRedist then begin 
+    Result:= FilesDownloaded;
+  end else begin
+    Result:= False;
+  end
+end;
+
+function PluginsVCRedistInstalling: Boolean;
+begin
+  if not PluginsHas11VCRedist then begin 
     Result:= FilesDownloaded;
   end else begin
     Result:= False;
@@ -210,6 +254,15 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
 
+  if not PluginsHas11VCRedist then begin
+    URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
+    FileName := ExpandConstant('{tmp}\msvcp110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
+    FileName := ExpandConstant('{tmp}\msvcr110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+
   if isxdl_DownloadFiles(hWnd) <> 0 then begin
     FilesDownloaded := True;
   end else begin
@@ -229,7 +282,7 @@ end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-if not Has11VCRedist then
+  if not Has11VCRedist or not PluginsHas11VCRedist or not HasDXJun2010 then
     DownloadFiles();
   Result := '';
 end;
