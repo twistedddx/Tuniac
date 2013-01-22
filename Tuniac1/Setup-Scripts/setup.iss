@@ -45,18 +45,23 @@ Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
-Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion
-Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion; Check: IsWin64
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion; Check: IsWin64
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 Source: "..\Win32\Release\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
 
 ;external files
-Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
-Source: "{tmp}\msvcr110.dll"; DestDir: {app}\; Check: VCRedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcp110.dll"; DestDir: {app}\; Check: VC11RedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcr110.dll"; DestDir: {app}\; Check: VC11RedistInstalling; Flags: external ignoreversion
 
-Source: "{tmp}\msvcp110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
-Source: "{tmp}\msvcr110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr110.dll"; Check: PluginsVCRedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcp100.dll"; DestDir: {app}\; Check: VC10RedistInstalling; Flags: external ignoreversion
+Source: "{tmp}\msvcr100.dll"; DestDir: {app}\; Check: VC10RedistInstalling; Flags: external ignoreversion
 
+Source: "{tmp}\msvcp110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp110.dll"; Check: PluginsVC11RedistInstalling and IsWin64; Flags: external ignoreversion
+Source: "{tmp}\msvcr110plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr110.dll"; Check: PluginsVC11RedistInstalling and IsWin64; Flags: external ignoreversion
+
+Source: "{tmp}\msvcp100plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp100.dll"; Check: PluginsVC10RedistInstalling and IsWin64; Flags: external ignoreversion
+Source: "{tmp}\msvcr100plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr100.dll"; Check: PluginsVC10RedistInstalling and IsWin64; Flags: external ignoreversion
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
 Root: HKCU; Subkey: "SOFTWARE\MediaScience\Sonique\General Preferences 0.80"; ValueType: string; ValueName: "SoniquePath"; ValueData: "{app}\visuals\"
@@ -106,36 +111,94 @@ begin
   ShellExec('open', 'http://www.tuniac.org', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
 end;
 
-function HasVC2012x86Redist: Boolean;
+function HasVC11x86Redist: Boolean;
 var
-  VCRedistx86: String;
+  Size: Integer;
 begin
   Result := True;
-  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then begin
-    exit;
-  end else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{8e70e4e1-06d7-470b-9f74-a51bef21088e}', 'DisplayVersion', VCRedistx86 ) then begin
-    exit;
+
+  if FileExists(ExpandConstant('{syswow64}\msvcr110.dll')) then begin
+    FileSize(ExpandConstant('{syswow64}\msvcr110.dll'), Size);
+    if Size = 875472 then begin
+      exit;
+    end;
+  end;
+  if FileExists(ExpandConstant('{win}\sysnative\msvcr110.dll')) then begin
+    FileSize(ExpandConstant('{win}\sysnative\msvcr110.dll'), Size);
+    if Size = 875472 then begin
+      exit;
+    end;
+  end;
+
+  Result := False;
+end;
+
+function HasVC10x86Redist: Boolean;
+var
+  Size: Integer;
+begin
+  Result := True;
+  if FileExists(ExpandConstant('{syswow64}\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{syswow64}\msvcr100.dll'), Size);
+    if Size = 773968 then begin
+      exit;
+    end;
+  end;
+  if FileExists(ExpandConstant('{win}\sysnative\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{win}\sysnative\msvcr100.dll'), Size);
+    if Size = 773968 then begin
+      exit;
+    end;
   end
 
   Result := False;
 end;
 
-function HasVC2012x64Redist: Boolean;
+function HasVC11x64Redist: Boolean;
 var
-  VCRedistx64: String;
+  Size: Integer;
 begin
   Result := True;
-  if RegQueryStringValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
-    exit;
-  end else if RegQueryStringValue( HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{6e8f74e0-43bd-4dce-8477-6ff6828acc07}', 'DisplayVersion', VCRedistx64 ) then begin
-    exit;
-  end
+
+  if FileExists(ExpandConstant('{syswow64}\msvcr110.dll')) then begin
+    FileSize(ExpandConstant('{syswow64}\msvcr110.dll'), Size);
+    if Size = 849360 then begin
+      exit;
+    end;
+  end;
+  if FileExists(ExpandConstant('{win}\sysnative\msvcr110.dll')) then begin
+    FileSize(ExpandConstant('{win}\sysnative\msvcr110.dll'), Size);
+    if Size = 849360 then begin
+      exit;
+    end;
+  end;
+
+  Result := False;
+end;
+
+function HasVC10x64Redist: Boolean;
+var
+  Size: Integer;
+begin
+  Result := True;
+  if FileExists(ExpandConstant('{syswow64}\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{syswow64}\msvcr100.dll'), Size);
+    if Size = 829264 then begin
+      exit;
+    end;
+  end;
+  if FileExists(ExpandConstant('{win}\sysnative\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{win}\sysnative\msvcr100.dll'), Size);
+    if Size = 829264 then begin
+      exit;
+    end;
+  end;
 
   Result := False;
 end;
 
 //check if valid vc redist available
-function Has11VCRedist: Boolean;
+function HasVC11Redist: Boolean;
 var
   Size: Integer;
 begin
@@ -144,16 +207,39 @@ begin
 
   if FileExists(ExpandConstant('{app}\msvcr110.dll')) then begin
     FileSize(ExpandConstant('{app}\msvcr110.dll'), Size);
-    if Size = 875472 then
+    if Size = 875472 then begin
       exit;
+    end;
   end;
-  if HasVC2012x86Redist then
+  if HasVC11x86Redist then begin
     exit;
+  end;
 
   Result := False;
 end;
 
-function PluginsHas11VCRedist: Boolean;
+//check if valid vc redist available
+function HasVC10Redist: Boolean;
+var
+  Size: Integer;
+begin
+  //local
+  Result := True;
+
+  if FileExists(ExpandConstant('{app}\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{app}\msvcr100.dll'), Size);
+    if Size = 773968 then begin
+      exit;
+    end;
+  end;
+  if HasVC10x86Redist then begin
+    exit;
+  end;
+
+  Result := False;
+end;
+
+function PluginsHasVC11Redist: Boolean;
 var
   Size: Integer;
 begin
@@ -162,11 +248,33 @@ begin
 
   if FileExists(ExpandConstant('{app}\plugins\msvcr110.dll')) then begin
     FileSize(ExpandConstant('{app}\plugins\msvcr110.dll'), Size);
-    if Size = 849376 then
+    if Size = 849360 then begin
       exit;
+    end;
   end;
-  if HasVC2012x64Redist then
+  if HasVC11x64Redist then begin
     exit;
+  end;
+
+  Result := False;
+end;
+
+function PluginsHasVC10Redist: Boolean;
+var
+  Size: Integer;
+begin
+  //local
+  Result := True;
+
+  if FileExists(ExpandConstant('{app}\plugins\msvcr100.dll')) then begin
+    FileSize(ExpandConstant('{app}\plugins\msvcr100.dll'), Size);
+    if Size = 829264 then begin
+      exit;
+    end;
+  end;
+  if HasVC10x64Redist then begin
+    exit;
+  end;
 
   Result := False;
 end;
@@ -180,22 +288,40 @@ begin
 end;
 
 //check if we successfully downloaded redist
-function VCRedistInstalling: Boolean;
+function VC11RedistInstalling: Boolean;
 begin
-  if not Has11VCRedist then begin 
+  if not HasVC11Redist then begin 
     Result:= FilesDownloaded;
   end else begin
     Result:= False;
-  end
+  end;
 end;
 
-function PluginsVCRedistInstalling: Boolean;
+function VC10RedistInstalling: Boolean;
 begin
-  if not PluginsHas11VCRedist then begin 
+  if not HasVC10Redist then begin 
     Result:= FilesDownloaded;
   end else begin
     Result:= False;
-  end
+  end;
+end;
+
+function PluginsVC11RedistInstalling: Boolean;
+begin
+  if not PluginsHasVC11Redist then begin 
+    Result:= FilesDownloaded;
+  end else begin
+    Result:= False;
+  end;
+end;
+
+function PluginsVC10RedistInstalling: Boolean;
+begin
+  if not PluginsHasVC10Redist then begin 
+    Result:= FilesDownloaded;
+  end else begin
+    Result:= False;
+  end;
 end;
 
 procedure DownloadFiles();
@@ -245,7 +371,7 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
 
-  if not Has11VCRedist then begin
+  if not HasVC11Redist then begin
     URL := 'http://www.tuniac.org/extra/32bit/msvcp110.dll';
     FileName := ExpandConstant('{tmp}\msvcp110.dll');
     isxdl_AddFile(URL, FileName);
@@ -254,12 +380,30 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
 
-  if not PluginsHas11VCRedist then begin
+  if not HasVC10Redist then begin
+    URL := 'http://www.tuniac.org/extra/32bit/msvcp100.dll';
+    FileName := ExpandConstant('{tmp}\msvcp100.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/32bit/msvcr100.dll';
+    FileName := ExpandConstant('{tmp}\msvcr100.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+
+  if not PluginsHasVC11Redist and IsWin64 then begin
     URL := 'http://www.tuniac.org/extra/64bit/msvcp110.dll';
     FileName := ExpandConstant('{tmp}\msvcp110plugins.dll');
     isxdl_AddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/64bit/msvcr110.dll';
     FileName := ExpandConstant('{tmp}\msvcr110plugins.dll');
+    isxdl_AddFile(URL, FileName);
+  end;
+
+  if not PluginsHasVC10Redist and IsWin64 then begin
+    URL := 'http://www.tuniac.org/extra/64bit/msvcp100.dll';
+    FileName := ExpandConstant('{tmp}\msvcp100plugins.dll');
+    isxdl_AddFile(URL, FileName);
+    URL := 'http://www.tuniac.org/extra/64bit/msvcr100.dll';
+    FileName := ExpandConstant('{tmp}\msvcr100plugins.dll');
     isxdl_AddFile(URL, FileName);
   end;
 
@@ -272,9 +416,24 @@ begin
       end;
     end;
 
-    if not Has11VCRedist then begin
+    if not HasVC11Redist then begin
       if MsgBox('Visual C++ Redistributable for Visual Studio 2012 Update 1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
         ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=30679', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      end;
+    end if not PluginsHasVC11Redist and IsWin64 then begin
+      if MsgBox('Visual C++ Redistributable for Visual Studio 2012 Update 1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=30679', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      end;
+    end;
+
+
+    if not HasVC10Redist then begin
+      if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      end;
+    end if not PluginsHasVC10Redist and IsWin64 then begin
+      if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
       end;
     end;
   end;
@@ -282,8 +441,14 @@ end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  if not Has11VCRedist or not PluginsHas11VCRedist or not HasDXJun2010 then
+  if not HasVC11Redist or not HasVC10Redist or not HasDXJun2010 then begin
     DownloadFiles();
+  end else if not PluginsHasVC11Redist and IsWin64 then begin
+    DownloadFiles();
+  end else if not PluginsHasVC10Redist and IsWin64 then begin
+    DownloadFiles();
+  end;
+
   Result := '';
 end;
 
