@@ -1,5 +1,11 @@
-Jan, 2012
+Jan, 2013 (220118)
 ---------
+-Fix up installers ability to work out what runtimes are required
+-revert GetTickCount to keep XP support
+
+Jan, 2013 (130118)
+---------
+-auto skip streams only on shuffle and for ML playlist
 -add MMShellHook_Plugin.dll and MMShellHookHelper.exe for globally hooking multimedia keys;pdate setup scripts to suit
 -fix and standardize volume events from hotkeys and other; add mute control
 -support more media keys, eg VK_MEDIA_TRACK_NEXT,

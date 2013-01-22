@@ -23,18 +23,18 @@ rem #Release x86:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "NMake Makefiles" .
 nmake clean
-nmake png16_static
+nmake png17_static
 mkdir .\Release\x86
-move /Y libpng16_static.lib .\Release\x86\libpng16_static.lib
+move /Y libpng17_static.lib .\Release\x86\libpng17_static.lib
 
 rem #Debug x86:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Debug -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "NMake Makefiles" .
 nmake clean
-nmake png16_static
+nmake png17_static
 mkdir .\Debug\x86
-move /Y libpng16_staticd.lib .\Debug\x86\libpng16_staticd.lib
-move /Y libpng16_staticd.pdb .\Debug\x86\libpng16_staticd.pdb
+move /Y libpng17_staticd.lib .\Debug\x86\libpng17_staticd.lib
+move /Y libpng17_staticd.pdb .\Debug\x86\libpng17_staticd.pdb
 
 rem if "64bitcl"=="false" goto done
 call "%Programfiles(x86)%\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x64
@@ -44,18 +44,18 @@ rem #Release x64:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "NMake Makefiles" .
 nmake clean
-nmake png16_static
+nmake png17_static
 mkdir .\Release\x64
-move /Y libpng16_static.lib .\Release\x64\libpng16_static.lib
+move /Y libpng17_static.lib .\Release\x64\libpng17_static.lib
 
 rem #Debug x64:
 del ".\CMakeCache.txt"
 "%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Debug -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "NMake Makefiles" .
 nmake clean
-nmake png16_static
+nmake png17_static
 mkdir .\Debug\x64
-move /Y libpng16_staticd.lib .\Debug\x64\libpng16_staticd.lib
-move /Y libpng16_staticd.pdb .\Debug\x64\libpng16_staticd.pdb
+move /Y libpng17_staticd.lib .\Debug\x64\libpng17_staticd.lib
+move /Y libpng17_staticd.pdb .\Debug\x64\libpng17_staticd.pdb
 
 :done
 
