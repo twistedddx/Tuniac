@@ -1,7 +1,12 @@
-Jan, 2013 (220118)
+Jan, 2013 (1301??)
+---------
+-retire MSNInfo_Plugin
+
+Jan, 2013 (130122)
 ---------
 -Fix up installers ability to work out what runtimes are required
 -revert GetTickCount to keep XP support
+-switch to building libpng 1.7
 
 Jan, 2013 (130118)
 ---------
