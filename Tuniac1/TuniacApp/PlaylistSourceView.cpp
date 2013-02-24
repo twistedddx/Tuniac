@@ -1202,6 +1202,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 
 			//right click on playlist item
+			//I dont get what this is for; removing 130224
+			/*
 		case WM_INITMENUPOPUP:
 			{
 				HMENU hMenu = GetSubMenu(m_ItemMenu, 7);
@@ -1271,6 +1273,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 				}
 			}
 			break;
+			*/
 
 		case WM_NOTIFY:
 			{
@@ -1676,6 +1679,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									if(pIPE)
 									{
 										CheckMenuItem(m_ItemMenu, ID_PAUSEHERE, tuniacApp.m_SoftPause.ulAt == pIPE->GetEntryID() ? MF_CHECKED : MF_UNCHECKED);
+										EnableMenuItem(m_ItemMenu, ID_SHOWFILE, MF_BYCOMMAND | (!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) ? MF_ENABLED : MF_GRAYED));
 									}
 									EnableMenuItem(m_ItemMenu, ID_PLAYNEXT, MF_BYCOMMAND | (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist() ? MF_ENABLED : MF_GRAYED));
 									EnableMenuItem(m_ItemMenu, ID_QUEUE, MF_BYCOMMAND | (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist() ? MF_ENABLED : MF_GRAYED));

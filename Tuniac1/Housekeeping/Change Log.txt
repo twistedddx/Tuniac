@@ -1,3 +1,11 @@
+Feb, 2013
+---------
+-BASS 2.4.10 update
+-set window title on load
+-correct rebuild ML function so playlist does not disappear
+-prevent showfile for streams
+-prevent MMShellHook sending hotkeys to Tuniac window if it was the focused window.
+
 Jan, 2013 (1301??)
 ---------
 -retire MSNInfo_Plugin

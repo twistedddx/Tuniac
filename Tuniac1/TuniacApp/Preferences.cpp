@@ -1107,6 +1107,8 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 								}
 							}
 
+							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 							tuniacApp.m_SourceSelectorWindow->UpdateView();
 						}
 						break;
