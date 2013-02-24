@@ -117,7 +117,7 @@ LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == HSHELL_APPCOMMAND)
 	{
-		if (hNotifyWnd != NULL && hNotifyWnd != (HWND)wParam)
+		if (hNotifyWnd != NULL && hNotifyWnd != (HWND)wParam && GetForegroundWindow() != hNotifyWnd)
 		{
 			short AppCommand = GET_APPCOMMAND_LPARAM(lParam);
 			switch (AppCommand)
@@ -135,9 +135,10 @@ LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
 				case APPCOMMAND_VOLUME_UP:
 				case APPCOMMAND_VOLUME_MUTE:
 				*/
+				{
 					::PostMessage(hNotifyWnd,WM_APPCOMMAND,(WPARAM)hNotifyWnd,lParam);
-					return 1;
-
+				}
+				return 1;
 			}
 		}
 	}

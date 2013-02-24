@@ -253,10 +253,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_Taskbar.Initialize(m_hWnd, WM_TRAYICON);
 
 	if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
-	{
 		m_Taskbar.Show();
-		m_Taskbar.SetTitle(TEXT("Tuniac"));
-	}
 
 	//use any command lines given(initial open only all others in one instance code)
 	COPYDATASTRUCT cds;
@@ -307,19 +304,18 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(m_Preferences.GetFollowCurrentSongMode())
 	{
 		if(m_SourceSelectorWindow)
-		{
 			m_SourceSelectorWindow->ShowCurrentlyPlaying();
-		}
 	}
 	if(m_Preferences.GetShowVisArt())
 	{
 		if(m_VisualWindow)
-		{
 			m_VisualWindow->Show();
-		}
 	}
 
 	m_WindowArray[m_Preferences.GetActiveWindow()]->Show();
+
+	//set window title
+	UpdateTitles();
 
 	//set always ontop state
 	if(m_Preferences.GetAlwaysOnTop())
