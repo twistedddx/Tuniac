@@ -1,3 +1,8 @@
+Mar, 2013
+---------
+-fix next queue logic
+-fix linker settings
+
 Feb, 2013
 ---------
 -BASS 2.4.10 update
