@@ -1,4 +1,4 @@
-zset ProgFilesRoot=%ProgramFiles%
+set ProgFilesRoot=%ProgramFiles%
 set ProgFiles86Root=%ProgramFiles(x86)%
 if not "%ProgFiles86Root%"=="" goto 64bitWindows
 set ProgFiles86Root=%ProgramFiles%

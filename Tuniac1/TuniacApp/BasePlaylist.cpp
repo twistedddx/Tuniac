@@ -370,8 +370,24 @@ unsigned long		CBasePlaylist::Next(void)
 	if(GetNumItems() == 0)
 		return INVALID_PLAYLIST_INDEX;
 
-	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
+	if(tuniacApp.m_PlaySelected.GetCount())
+	{
+		//playselected is always stored as a normal filtered index, so will need to switch for shuffle
+		if(tuniacApp.m_Preferences.GetShuffleState())
+			return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[0]));
+		else
+			return tuniacApp.m_PlaySelected[0];
+	}
 
+	if (tuniacApp.m_Queue.GetCount())
+	{
+		unsigned long ulFilteredIndex = GetFilteredIndexforEntryID(tuniacApp.m_Queue.GetEntryIDAtIndex(0));
+		//check the queue is for a valid file
+		if(CheckFilteredIndex(ulFilteredIndex))
+			return ulFilteredIndex;
+	}
+
+	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
 	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
@@ -393,26 +409,8 @@ unsigned long		CBasePlaylist::Next(void)
 		}
 	}
 
-
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulActiveFilteredIndex;
-
-	if(tuniacApp.m_PlaySelected.GetCount())
-	{
-		//playselected is always stored as a normal filtered index, so will need to switch for shuffle
-		if(tuniacApp.m_Preferences.GetShuffleState())
-			return RealIndexToRandomFilteredIndex(NormalFilteredIndexToRealIndex(tuniacApp.m_PlaySelected[0]));
-		else
-			return tuniacApp.m_PlaySelected[0];
-	}
-
-	if (tuniacApp.m_Queue.GetCount())
-	{
-		unsigned long ulFilteredIndex = GetFilteredIndexforEntryID(tuniacApp.m_Queue.GetEntryIDAtIndex(0));
-		//check the queue is for a valid file
-		if(CheckFilteredIndex(ulFilteredIndex))
-			return ulFilteredIndex;
-	}
 
 	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
 	{
