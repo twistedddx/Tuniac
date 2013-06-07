@@ -75,9 +75,8 @@ public:
 	bool			GetInfo(LibraryEntry * libEnt);
 	bool			SetInfo(LibraryEntry * libEnt);
 
-	unsigned long	GetNumberOfAlbumArts(LPTSTR		szFilename);
-	bool			GetAlbumArt(LPTSTR				szFilename, 
-								unsigned long		ulImageIndex,
+	unsigned long	GetNumberOfAlbumArts(void);
+	bool			GetAlbumArt(unsigned long		ulImageIndex,
 								LPVOID			*	pImageData,
 								unsigned long	*	ulImageDataSize,
 								LPTSTR				szMimeType,

@@ -170,13 +170,12 @@ bool			CTAKInfoManager::SetInfo(LibraryEntry * libEnt)
     return true;
 }
 
-unsigned long	CTAKInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+unsigned long	CTAKInfoManager::GetNumberOfAlbumArts(void)
 {
     return 0;
 }
 
-bool			CTAKInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
-                                                unsigned long		ulImageIndex,
+bool			CTAKInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
                                                 LPVOID			*	pImageData,
                                                 unsigned long	*	ulImageDataSize,
                                                 LPTSTR				szMimeType,

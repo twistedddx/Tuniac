@@ -370,7 +370,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 									{
 										IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 										if(pIPE)
-											tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+											tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 									}
 								}
 							}

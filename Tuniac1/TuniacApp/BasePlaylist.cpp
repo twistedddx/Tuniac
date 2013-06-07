@@ -304,7 +304,7 @@ unsigned long		CBasePlaylist::Previous(void)
 	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
-		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
+		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
 		{
 			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
 			{

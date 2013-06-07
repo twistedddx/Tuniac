@@ -26,7 +26,7 @@
 #pragma pack(16)
 #pragma once
 
-#define ITUNIACINFOMANAGER_VERSION		MAKELONG(0, 1)
+#define ITUNIACINFOMANAGER_VERSION		MAKELONG(0, 2)
 
 #include "LibraryEntry.h"
 
@@ -42,9 +42,8 @@ public:
 	virtual bool			GetInfo(LibraryEntry * libEnt)						= 0;
 	virtual bool			SetInfo(LibraryEntry * libEnt)						= 0;
 
-	virtual unsigned long	GetNumberOfAlbumArts(LPTSTR	szFilename)				= 0;
-	virtual bool			GetAlbumArt(LPTSTR				szFilename, 
-										unsigned long		ulImageIndex,
+	virtual unsigned long	GetNumberOfAlbumArts(void)							= 0;
+	virtual bool			GetAlbumArt(unsigned long		ulImageIndex,
 										LPVOID			*	pImageData,
 										unsigned long	*	ulImageDataSize,
 										LPTSTR				szMimeType,
