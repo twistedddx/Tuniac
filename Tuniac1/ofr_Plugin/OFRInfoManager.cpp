@@ -127,13 +127,12 @@ bool			COFRInfoManager::SetInfo(LibraryEntry * libEnt)
 	return true;
 }
 
-unsigned long	COFRInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+unsigned long	COFRInfoManager::GetNumberOfAlbumArts(void)
 {
 	return 0;
 }
 
-bool			COFRInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
-												unsigned long		ulImageIndex,
+bool			COFRInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 												LPVOID			*	pImageData,
 												unsigned long	*	ulImageDataSize,
 												LPTSTR				szMimeType,

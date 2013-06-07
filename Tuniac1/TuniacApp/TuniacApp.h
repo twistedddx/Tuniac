@@ -207,7 +207,7 @@ public:
 	void				UpdateMetaData(LPTSTR szURL, unsigned long pNewData, unsigned long ulFieldID);
 	void				UpdateMetaData(LPTSTR szURL, float pNewData, unsigned long ulFieldID);
 
-	bool				SetArt(LPTSTR szSource);
+	bool				GetArt(LPTSTR szSource);
 
 	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio = true);
 };

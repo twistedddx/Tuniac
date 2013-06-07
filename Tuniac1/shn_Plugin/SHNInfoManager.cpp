@@ -209,13 +209,12 @@ bool			CSHNInfoManager::SetInfo(LibraryEntry * libEnt)
 	return true;
 }
 
-unsigned long	CSHNInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+unsigned long	CSHNInfoManager::GetNumberOfAlbumArts(void)
 {
 	return 0;
 }
 
-bool			CSHNInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
-												unsigned long		ulImageIndex,
+bool			CSHNInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 												LPVOID			*	pImageData,
 												unsigned long	*	ulImageDataSize,
 												LPTSTR				szMimeType,

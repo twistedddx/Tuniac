@@ -194,7 +194,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 								LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
 								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtIndex(lpnmitem->iItem);
 								if(pIPE)
-									tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+									tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 							}
 						}
 						break;

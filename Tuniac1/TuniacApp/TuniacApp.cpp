@@ -2865,7 +2865,7 @@ void	CTuniacApp::UpdateMetaData(LPTSTR szURL, float pNewData, unsigned long ulFi
 	}
 }
 
-bool	CTuniacApp::SetArt(LPTSTR szSource)
+bool	CTuniacApp::GetArt(LPTSTR szSource)
 {
 	bool bArtSuccess = false;
 
@@ -2880,7 +2880,7 @@ bool	CTuniacApp::SetArt(LPTSTR szSource)
 		unsigned long ulSize;
 		TCHAR	szMimeType[128];
 		unsigned long artType;
-		if(pManager->GetAlbumArt(szSource, 0, &art, &ulSize, szMimeType, &artType))
+		if(pManager->GetAlbumArt(0, &art, &ulSize, szMimeType, &artType))
 		{
 			if(m_AlbumArtPanel.SetSource(art, ulSize, szMimeType))
 			{
@@ -2953,7 +2953,7 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 	{
 		//open for art before opening for decode.
 		if(m_Preferences.GetShowAlbumArt())
-			SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+			GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 
 		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 		if(pPlaylist)

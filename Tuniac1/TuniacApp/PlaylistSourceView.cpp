@@ -1410,7 +1410,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 											IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos-1);
 											if(pIPE)
-												tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+												tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 										}
 									}
 									break;
@@ -1426,7 +1426,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 											IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(iPos+1);
 											if(pIPE)
-												tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+												tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 										}
 									}
 									break;
@@ -1635,7 +1635,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							{
 								IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem);
 								if(pIPE)
-									tuniacApp.SetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+									tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 							}
 						}
 						break;

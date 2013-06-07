@@ -429,53 +429,48 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 	return false;
 }
 
-unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(LPTSTR		szFilename)
+unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(void)
 {
 	int count = 0;
 
 	TagLib::ID3v2::FrameList id3TagList;
-	fileRef = TagLib::FileRef(szFilename, false);
 
-    if( !fileRef.isNull() )
-    {
-		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
-		{
-			if(mp3File->ID3v2Tag()) 
-				count = mp3File->ID3v2Tag()->frameListMap()["APIC"].size();
-		}
 
-		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
-		{
-			if(ttaFile->ID3v2Tag()) 
-				count = ttaFile->ID3v2Tag()->frameListMap()["APIC"].size();
-		}
+	if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
+	{
+		if(mp3File->ID3v2Tag()) 
+			count = mp3File->ID3v2Tag()->frameListMap()["APIC"].size();
+	}
 
-		else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
-		{
-			if(flacFile->pictureList().size())
-				count = flacFile->pictureList().size();
-			else if(flacFile->ID3v2Tag()) 
-				count = flacFile->ID3v2Tag()->frameListMap()["APIC"].size();
-		}
-		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
-		{
-			if(wmaFile->tag());
-				count = wmaFile->tag()->attributeListMap()["WM/Picture"].size();
-		}
-		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
-		{
-			if(mp4File->tag())
-				count = mp4File->tag()->itemListMap()["covr"].toCoverArtList().size();
-		}
+	else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
+	{
+		if(ttaFile->ID3v2Tag()) 
+			count = ttaFile->ID3v2Tag()->frameListMap()["APIC"].size();
+	}
 
+	else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
+	{
+		if(flacFile->pictureList().size())
+			count = flacFile->pictureList().size();
+		else if(flacFile->ID3v2Tag()) 
+			count = flacFile->ID3v2Tag()->frameListMap()["APIC"].size();
+	}
+	else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
+	{
+		if(wmaFile->tag());
+			count = wmaFile->tag()->attributeListMap()["WM/Picture"].size();
+	}
+	else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
+	{
+		if(mp4File->tag())
+			count = mp4File->tag()->itemListMap()["covr"].toCoverArtList().size();
 	}
 
 	fileRef = TagLib::FileRef();
 	return count;
 }
 
-bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename, 
-												unsigned long		ulImageIndex,
+bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 												LPVOID			*	pImageData,
 												unsigned long	*	ulImageDataSize,
 												LPTSTR				szMimeType,
@@ -484,113 +479,108 @@ bool			CSTDInfoManager::GetAlbumArt(	LPTSTR				szFilename,
 	bool bRet = false;
 
 	TagLib::ID3v2::FrameList id3v2TagList;
-	fileRef = TagLib::FileRef(szFilename, false);
 
-    if( !fileRef.isNull() )
-    {
-
-		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
+	if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
+	{
+		if(mp3File->ID3v2Tag()) 
+			id3v2TagList = mp3File->ID3v2Tag()->frameListMap()["APIC"];
+	}
+	else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
+	{
+		if(ttaFile->ID3v2Tag()) 
+			id3v2TagList = ttaFile->ID3v2Tag()->frameListMap()["APIC"];
+	}
+	else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
+	{
+		if(ulImageIndex < flacFile->pictureList().size())
 		{
-			if(mp3File->ID3v2Tag()) 
-				id3v2TagList = mp3File->ID3v2Tag()->frameListMap()["APIC"];
-		}
-		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
-		{
-			if(ttaFile->ID3v2Tag()) 
-				id3v2TagList = ttaFile->ID3v2Tag()->frameListMap()["APIC"];
-		}
-		else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
-		{
-			if(ulImageIndex < flacFile->pictureList().size())
-			{
-				TagLib::FLAC::Picture * flacPic = flacFile->pictureList()[ulImageIndex];
+			TagLib::FLAC::Picture * flacPic = flacFile->pictureList()[ulImageIndex];
 
-				*ulImageDataSize = flacPic->data().size();
-				*pImageData = malloc(*ulImageDataSize);
-
-				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
-				StrCpy((LPWSTR)szMimeType, (LPTSTR)flacPic->mimeType().toWString().c_str());
-
-				*ulArtType = flacPic->type();
-				 bRet = true;
-			}
-			else if(flacFile->ID3v2Tag()) 
-				id3v2TagList = flacFile->ID3v2Tag()->frameListMap()["APIC"];
-		}
-		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
-		{
-			if(wmaFile->tag());
-			{
-				TagLib::ASF::AttributeList wmaTagList = wmaFile->tag()->attributeListMap()["WM/Picture"];
-
-				if(!wmaTagList.isEmpty() && (ulImageIndex < wmaTagList.size()))
-				{
-					TagLib::ASF::Picture asfPic = wmaTagList[ulImageIndex].toPicture();
-					if(asfPic.isValid())
-					{
-						*ulImageDataSize = asfPic.picture().size();
-						*pImageData = malloc(*ulImageDataSize);
-
-						CopyMemory(*pImageData, asfPic.picture().data(), *ulImageDataSize);
-						StrCpy((LPWSTR)szMimeType, (LPTSTR)asfPic.mimeType().toWString().c_str());
-
-						*ulArtType = asfPic.type();
-
-						bRet = true;
-					}
-				}
-			}
-		}
-		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
-		{
-			if(mp4File->tag())
-			{
-				TagLib::MP4::Item mp4TagItem = mp4File->tag()->itemListMap()["covr"];
-
-				if(mp4TagItem.isValid())
-				{
-					if(ulImageIndex < mp4TagItem.toCoverArtList().size())
-					{
-						TagLib::MP4::CoverArt coverArt = mp4TagItem.toCoverArtList()[ulImageIndex];
-
-						*ulImageDataSize = coverArt.data().size();
-						*pImageData = malloc(*ulImageDataSize);
-
-						if(coverArt.format() == 13)
-							StrCpy(szMimeType, TEXT("image/jpeg"));
-						else if(coverArt.format() == 14)
-							StrCpy(szMimeType, TEXT("image/png"));
-						else if(coverArt.format() == 27)
-							StrCpy(szMimeType, TEXT("image/bmp"));
-						else if(coverArt.format() == 12)
-							StrCpy(szMimeType, TEXT("image/gif"));
-
-						CopyMemory(*pImageData, coverArt.data().data(), *ulImageDataSize);
-
-						*ulArtType = 3;
-				
-						bRet = true;
-					}
-				}
-			}
-		}
-
-		if(!id3v2TagList.isEmpty() && (ulImageIndex < id3v2TagList.size()))
-		{
-			TagLib::ID3v2::AttachedPictureFrame * id3v2Pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2TagList[ulImageIndex]);
-
-			*ulImageDataSize = id3v2Pic->picture().size();
+			*ulImageDataSize = flacPic->data().size();
 			*pImageData = malloc(*ulImageDataSize);
 
-			CopyMemory(*pImageData, id3v2Pic->picture().data(), *ulImageDataSize);
-			StrCpy((LPWSTR)szMimeType, (LPTSTR)id3v2Pic->mimeType().toWString().c_str());
+			CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+			StrCpy((LPWSTR)szMimeType, (LPTSTR)flacPic->mimeType().toWString().c_str());
 
-			*ulArtType = id3v2Pic->type();
-
-			bRet = true;
+			*ulArtType = flacPic->type();
+				bRet = true;
 		}
-		fileRef = TagLib::FileRef();
+		else if(flacFile->ID3v2Tag()) 
+			id3v2TagList = flacFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
+	else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
+	{
+		if(wmaFile->tag());
+		{
+			TagLib::ASF::AttributeList wmaTagList = wmaFile->tag()->attributeListMap()["WM/Picture"];
+
+			if(!wmaTagList.isEmpty() && (ulImageIndex < wmaTagList.size()))
+			{
+				TagLib::ASF::Picture asfPic = wmaTagList[ulImageIndex].toPicture();
+				if(asfPic.isValid())
+				{
+					*ulImageDataSize = asfPic.picture().size();
+					*pImageData = malloc(*ulImageDataSize);
+
+					CopyMemory(*pImageData, asfPic.picture().data(), *ulImageDataSize);
+					StrCpy((LPWSTR)szMimeType, (LPTSTR)asfPic.mimeType().toWString().c_str());
+
+					*ulArtType = asfPic.type();
+
+					bRet = true;
+				}
+			}
+		}
+	}
+	else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
+	{
+		if(mp4File->tag())
+		{
+			TagLib::MP4::Item mp4TagItem = mp4File->tag()->itemListMap()["covr"];
+
+			if(mp4TagItem.isValid())
+			{
+				if(ulImageIndex < mp4TagItem.toCoverArtList().size())
+				{
+					TagLib::MP4::CoverArt coverArt = mp4TagItem.toCoverArtList()[ulImageIndex];
+
+					*ulImageDataSize = coverArt.data().size();
+					*pImageData = malloc(*ulImageDataSize);
+
+					if(coverArt.format() == 13)
+						StrCpy(szMimeType, TEXT("image/jpeg"));
+					else if(coverArt.format() == 14)
+						StrCpy(szMimeType, TEXT("image/png"));
+					else if(coverArt.format() == 27)
+						StrCpy(szMimeType, TEXT("image/bmp"));
+					else if(coverArt.format() == 12)
+						StrCpy(szMimeType, TEXT("image/gif"));
+
+					CopyMemory(*pImageData, coverArt.data().data(), *ulImageDataSize);
+
+					*ulArtType = 3;
+				
+					bRet = true;
+				}
+			}
+		}
+	}
+
+	if(!id3v2TagList.isEmpty() && (ulImageIndex < id3v2TagList.size()))
+	{
+		TagLib::ID3v2::AttachedPictureFrame * id3v2Pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(id3v2TagList[ulImageIndex]);
+
+		*ulImageDataSize = id3v2Pic->picture().size();
+		*pImageData = malloc(*ulImageDataSize);
+
+		CopyMemory(*pImageData, id3v2Pic->picture().data(), *ulImageDataSize);
+		StrCpy((LPWSTR)szMimeType, (LPTSTR)id3v2Pic->mimeType().toWString().c_str());
+
+		*ulArtType = id3v2Pic->type();
+
+		bRet = true;
+	}
+	fileRef = TagLib::FileRef();
 
 	return bRet;
 }
