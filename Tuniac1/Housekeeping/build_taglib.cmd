@@ -20,20 +20,18 @@ cd taglib\
 
 rem #taglib Release x86
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "NMake Makefiles" .
-nmake clean
-nmake tag
+"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 11" .
+devenv taglib.sln /project "tag" /Clean
+devenv taglib.sln /project "tag" /Rebuild "Release"
 mkdir .\taglib\Release\x86
-move /Y .\taglib\tag.lib .\taglib\Release\x86\tag.lib
+move /Y .\taglib\Release\tag.lib .\taglib\Release\x86\tag.lib
 
 rem #taglib Debug x86
-del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "NMake Makefiles" .
-nmake clean
-nmake tag
+devenv taglib.sln /project "tag" /Clean
+devenv taglib.sln /project "tag" /Rebuild "Debug"
 mkdir .\taglib\Debug\x86
-move /Y .\taglib\tag.lib .\taglib\Debug\x86\tag.lib
-move /Y .\taglib\tag.pdb .\taglib\Debug\x86\tag.pdb
+move /Y .\taglib\Debug\tag.lib .\taglib\Debug\x86\tag.lib
+move /Y .\taglib\Debug\tag.pdb .\taglib\Debug\x86\tag.pdb
 
 
 rem if "64bitcl"=="false" goto done
@@ -45,20 +43,18 @@ rem ######## Taglib x64
 
 rem #taglib Release x64
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "NMake Makefiles" .
-nmake clean
-nmake tag
+"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 11 Win64" .
+devenv taglib.sln /project "tag" /Clean
+devenv taglib.sln /project "tag" /Rebuild "Release"
 mkdir .\taglib\Release\x64
-move /Y .\taglib\tag.lib .\taglib\Release\x64\tag.lib
+move /Y .\taglib\Release\tag.lib .\taglib\Release\x64\tag.lib
 
 rem #taglib Debug x64
-del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Debug -DENABLE_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "NMake Makefiles" .
-nmake clean
-nmake tag
+devenv taglib.sln /project "tag" /Clean
+devenv taglib.sln /project "tag" /Rebuild "Debug"
 mkdir .\taglib\Debug\x64
-move /Y .\taglib\tag.lib .\taglib\Debug\x64\tag.lib
-move /Y .\taglib\tag.pdb .\taglib\Debug\x64\tag.pdb
+move /Y .\taglib\Debug\tag.lib .\taglib\Debug\x64\tag.lib
+move /Y .\taglib\Debug\tag.pdb .\taglib\Debug\x64\tag.pdb
 
 
 :done 

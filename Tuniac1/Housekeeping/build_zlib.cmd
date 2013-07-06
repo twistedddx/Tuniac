@@ -20,11 +20,11 @@ cd zlib\
 
 rem #zlib Release x86
 del ".\CMakeCache.txt"
-"%ProgramFiles(x86)%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -G "NMake Makefiles" zlibstatic .
-nmake clean
-nmake zlibstatic
+"%ProgramFiles(x86)%\CMake 2.8\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 11" zlibstatic .
+devenv zlib.sln /project "zlibstatic" /Clean
+devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 mkdir .\Release\x86
-move /Y zlibstatic.lib .\Release\x86\zlibstatic.lib
+move /Y .\Release\zlibstatic.lib .\Release\x86\zlibstatic.lib
 
 
 rem if "64bitcl"=="false" goto done
@@ -35,11 +35,11 @@ rem ######## zlib x64
 
 rem #zlib Release x64
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -G "NMake Makefiles" zlibstatic .
-nmake clean
-nmake zlibstatic
+"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 11 Win64" zlibstatic .
+devenv zlib.sln /project "zlibstatic" /Clean
+devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 mkdir .\Release\x64
-move /Y zlibstatic.lib .\Release\x64\zlibstatic.lib
+move /Y .\Release\zlibstatic.lib .\Release\x64\zlibstatic.lib
 
 cd ..\
 

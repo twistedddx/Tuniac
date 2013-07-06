@@ -226,6 +226,12 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 {
 	switch(ulFieldID)
 	{
+		case FIELD_URL:
+			{
+				StrCpyN(m_LibraryEntry.szURL, (LPTSTR)pNewData, MAX_PATH);
+			}
+			break;
+
 		case FIELD_TITLE:
 			{
 				StrCpyN(m_LibraryEntry.szTitle, (LPTSTR)pNewData, 128);

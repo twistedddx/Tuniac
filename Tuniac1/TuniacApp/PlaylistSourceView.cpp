@@ -53,7 +53,7 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		TEXT("URL"),
 		300,
 		LVCFMT_LEFT,
-		false,
+		true,
 		true
 	},
 	{
@@ -1327,7 +1327,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 										//todo bits: per column tag writing?
 										//tuniacApp.m_MediaLibrary.WriteFileTags(pIPE, m_ColumnIDArray[m_iLastClickedSubitem-1], pdi->item.pszText);
-										if(HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem-1]].szHeaderText != L"Played")
+										if(m_ColumnIDArray[m_iLastClickedSubitem-1] != FIELD_PLAYCOUNT || m_ColumnIDArray[m_iLastClickedSubitem-1] != FIELD_URL)
 											tuniacApp.m_MediaLibrary.WriteFileTags(pIPE);
 
 										//update title bar etc

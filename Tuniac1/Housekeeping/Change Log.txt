@@ -1,3 +1,14 @@
+Jul, 2013
+---------
+-Allow editing URL
+
+Jun, 2013
+---------
+-Use name SetArt instead of GetArt
+-Stop opening files twice to read art. File is only opened in CanHandle()
+-Remove szSource field from art fields as it is no longer needed
+-Get ML by type instead of name as name is adjustable.
+
 Apr, 2013
 ---------
 -update lib's
