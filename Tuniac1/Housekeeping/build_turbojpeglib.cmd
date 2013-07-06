@@ -21,11 +21,11 @@ cd libjpeg-turbo\trunk\
 
 rem #Release x86:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "NMake Makefiles" .
-nmake clean
-nmake turbojpeg-static
+"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 11" .
+devenv libjpeg-turbo.sln /project "turbojpeg-static" /Clean
+devenv libjpeg-turbo.sln /project "turbojpeg-static" /Rebuild "Release"
 mkdir .\Release\x86
-move /Y turbojpeg-static.lib .\Release\x86\turbojpeg-static.lib
+move /Y .\Release\turbojpeg-static.lib .\Release\x86\turbojpeg-static.lib
 
 
 rem if "64bitcl"=="false" goto done
@@ -34,11 +34,11 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x64
 
 rem #Release x64:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "NMake Makefiles" .
-nmake clean
-nmake turbojpeg-static
+"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 11 Win64" .
+devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Clean
+devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Rebuild "Release"
 mkdir .\Release\x64
-move /Y turbojpeg-static.lib .\Release\x64\turbojpeg-static.lib
+move /Y .\Release\turbojpeg-static.lib .\Release\x64\turbojpeg-static.lib
 
 :done
 
