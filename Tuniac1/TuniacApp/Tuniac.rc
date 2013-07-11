@@ -90,11 +90,9 @@ BEGIN
     CONTROL         "",IDC_CROSSFADE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,7,10,10
     CONTROL         "",IDC_CROSSFADE_TIME_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,13,18,208,20
     CTEXT           "%d Seconds",IDC_CROSSFADE_TIME_TEXT,13,39,200,8
-
     GROUPBOX        "Audio Buffering",IDC_STATIC,7,56,222,50
     CONTROL         "",IDC_BUFFER_TIME_SLIDER,"msctls_trackbar32",WS_TABSTOP,13,67,208,20
     CTEXT           "%d Milliseconds",IDC_BUFFER_TIME_TEXT,20,90,200,8
-
     GROUPBOX        "      Use ReplayGain",IDC_STATIC,7,112,222,57
     CONTROL         "",IDC_AUDIO_REPLAYGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,112,10,10
     CONTROL         "Use Album Gain Over Track",IDC_AUDIO_REPLAYGAINALBUM,
@@ -116,7 +114,7 @@ BEGIN
     PUSHBUTTON      "...",IDC_MEDIALIBRARYBROWSE_BUTTON,205,19,16,12,WS_DISABLED
     PUSHBUTTON      "Consolidate Media Library",IDC_CONSOLIDATE_BUTTON,131,60,90,14,WS_DISABLED
     LTEXT           "Any files Tuniac imports will be imported here.",IDC_STATIC,14,34,207,8
-    CONTROL         "Set Date Added to File Creation Time",IDC_LIBRARY_FILETIMETODATEADDED,
+    CONTROL         "Skip playlist files during import",IDC_LIBRARY_SKIPPLAYLISTIMPORT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,120,207,10
     CONTROL         "Allow playlist sorting",IDC_LIBRARY_PLAYLISTSORTING,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,130,207,10
@@ -175,32 +173,28 @@ BEGIN
     CONTROL         "Normal",IDC_GENERAL_TASKBAR_NORMAL,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,19,92,10
     CONTROL         "Minimize to tray",IDC_GENERAL_TASKBAR_MINIMIZE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,12,31,92,10
     CONTROL         "Minimize on close",IDC_GENERAL_MINIMIZEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,43,92,10
-
     GROUPBOX        "Album Art",IDC_STATIC,7,64,105,50
     CONTROL         "Show album art panel",IDC_GENERAL_SHOWALBUMART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,76,92,10
     CONTROL         "Change art on selection",IDC_GENERAL_ARTONSELECTION,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,88,92,10
     CONTROL         "Use visual for art",IDC_GENERAL_SHOWVISART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,100,92,10
-
     GROUPBOX        "Screensaver and Monitor",IDC_STATIC,7,118,105,50
     CONTROL         "Allow",IDC_GENERAL_SCREEN_ALLOW,"Button",BS_AUTORADIOBUTTON | WS_GROUP,12,130,92,10
     CONTROL         "Prevent when focused",IDC_GENERAL_SCREEN_PREVENT,"Button",BS_AUTORADIOBUTTON,12,142,92,10
     CONTROL         "Prevent when fullscreen",IDC_GENERAL_SCREEN_PREVENTFULL,
                     "Button",BS_AUTORADIOBUTTON,12,154,92,10
-
     GROUPBOX        "Miscellaneous",IDC_STATIC,122,7,107,107
     CONTROL         "Follow current song",IDC_GENERAL_FOLLOWCURRENTSONG,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,19,92,10
     CONTROL         "Enable smart sorting",IDC_GENERAL_SMARTSORTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,31,92,10
     CONTROL         "Pause after each song",IDC_GENERAL_AUTOSOFTPAUSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,43,92,10
-    CONTROL         "Auto Skip Streams",IDC_GENERAL_SKIPSTREAMS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,55,92,10 
+    CONTROL         "Auto Skip Streams",IDC_GENERAL_SKIPSTREAMS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,55,92,10
     CONTROL         "",IDC_GENERAL_HISTORYCOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,148,70,11,14
     EDITTEXT        IDC_GENERAL_HISTORYCOUNT,130,70,18,14,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "Items in history list",IDC_STATIC,160,72,62,8,NOT WS_GROUP
     CONTROL         "",IDC_GENERAL_FUTURECOUNT_SPINNER,"msctls_updown32",UDS_SETBUDDYINT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,148,91,11,14
     EDITTEXT        IDC_GENERAL_FUTURECOUNT,130,91,18,14,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "Items in future list",IDC_STATIC,160,93,62,8,NOT WS_GROUP
-
     GROUPBOX        "Auto               Pause   Resume",IDC_STATIC,122,118,107,75
     LTEXT           "Screensaver",IDC_GENERAL_ONSCREENSAVETEXT,130,129,40,8
     LTEXT           "User lock",IDC_GENERAL_ONLOCKTEXT,130,141,40,8
@@ -676,8 +670,6 @@ BEGIN
         MENUITEM "&Preferences\tCtrl+P",        ID_EDIT_PREFERENCES
         MENUITEM "C&olumn Selection",           ID_EDIT_SHOWCOLUMNSELECTION
         MENUITEM "Always On &Top",              ID_EDIT_ALWAYSONTOP
-        //MENUITEM SEPARATOR
-        //MENUITEM "&Edit Track Info\tCtrl+E",    ID_EDIT_EDITFILEINFORMATION, GRAYED
     END
     POPUP "&Playback"
     BEGIN
@@ -893,25 +885,11 @@ IDB_NEXT                BITMAP                  "images\\next.bmp"
 IDB_PAUSE               BITMAP                  "images\\pause.bmp"
 IDB_PLAY                BITMAP                  "images\\play.bmp"
 IDB_PREVIOUS            BITMAP                  "images\\previous.bmp"
-#endif    // English (United Kingdom) resources
+
 /////////////////////////////////////////////////////////////////////////////
-
-
-
-
-#define VER_FILEVERSION             1,0
-#define VER_FILEVERSION_STR         "1.0\0"
-
-#define VER_PRODUCTVERSION          1,0
-#define VER_PRODUCTVERSION_STR      "1.0\0"
-
-#ifndef DEBUG
-#define VER_DEBUG                   0
-#else
-#define VER_DEBUG                   VS_FF_DEBUG
-#endif
-
-
+//
+// Version
+//
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,0,0
@@ -930,11 +908,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "InternalName", "Tuniac\0"
-            VALUE "ProductName", "Tuniac\0"
-            VALUE "ProductVersion", "1.0\0"
-            VALUE "CompanyName", "Tuniac\0"
-            VALUE "FileDescription", "Tuniac Media Player\0"
+            VALUE "InternalName", "Tuniac"
+            VALUE "ProductName", "Tuniac"
+            VALUE "ProductVersion", "1.0"
+            VALUE "CompanyName", "Tuniac"
+            VALUE "FileDescription", "Tuniac Media Player"
         END
     END
     BLOCK "VarFileInfo"
@@ -943,8 +921,8 @@ BEGIN
     END
 END
 
-
-
+#endif    // English (United Kingdom) resources
+/////////////////////////////////////////////////////////////////////////////
 
 
 

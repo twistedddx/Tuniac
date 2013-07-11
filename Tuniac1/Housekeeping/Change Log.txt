@@ -1,6 +1,17 @@
-Jul, 2013
+Jul, 2013 (130709c)
+---------
+-On intial import do not check for doubles unless imported a playlist or multiple library folders.
+-On intial import simple increment EntryID
+-Sort by URL after initial import
+-Remove setting "Set Date Added To File Creation Time", there is now a separate file creation column
+-Add setting "Skip playlist files during import" so playlist files will be ignored if found during import
+-work around issue in taglib not handling ape files correctly.
+-Fix buffer overflow in m3u importer and other buffer issues
+
+Jul, 2013 (130706)
 ---------
 -Allow editing URL
+-change from cmake/nmake top cmake/vs for lib building due to cmake incorrectly making 64bit nmake projects
 
 Jun, 2013
 ---------

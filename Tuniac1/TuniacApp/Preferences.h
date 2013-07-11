@@ -93,7 +93,7 @@ protected:
 	BOOL		m_bSmartSorting;
 	BOOL		m_bSkipStreams;
 	BOOL		m_bShuffleState;
-	BOOL		m_bSetDateAddedToFileCreationTime;
+	BOOL		m_bSkipPlaylistImport;
 	BOOL		m_bPlaylistSorting;
 	BOOL		m_bAutoAddPlaylist;
 	BOOL		m_bAddSingleStream;
@@ -273,7 +273,7 @@ public:
 	int			GetHistoryListSize(void);
 	int			GetFutureListSize(void);
 
-	BOOL		GetDateAddedToFileCreationTime(void);
+	BOOL		GetSkipPlaylistImport(void);
 	BOOL		GetCanPlaylistsSort(void);
 	BOOL		GetAutoAddPlaylists(void);
 	BOOL		GetAddSingleStream(void);

@@ -153,7 +153,8 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 							}
 							
 							LPTSTR lptstrCopy = (LPTSTR)GlobalLock(hglbCopy); 
-							memcpy(lptstrCopy, szData, (wcslen(szData) + 1) * sizeof(TCHAR)); 
+							if(lptstrCopy)
+								memcpy(lptstrCopy, szData, (wcslen(szData) + 1) * sizeof(TCHAR)); 
 							GlobalUnlock(hglbCopy); 
   
 							SetClipboardData(CF_UNICODETEXT, hglbCopy); 

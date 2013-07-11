@@ -37,7 +37,7 @@ class CM3U_Export :
 {
 
 protected:
-	TCHAR			m_BaseDir[512];
+	TCHAR			m_BaseDir[MAX_PATH];
 	FILE *			m_File;
 
 public:

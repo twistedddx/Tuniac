@@ -58,7 +58,8 @@ LRESULT crapProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 CMediaLibrary::CMediaLibrary() :
 	m_hAddingWindow(NULL),
-	ulEntryID(0)
+	m_ulEntryID(0),
+	m_bNotInitialML(false)
 {
 }
 
@@ -151,6 +152,11 @@ bool CMediaLibrary::BeginAdd(unsigned long ulNumItems)
 	m_ulAddingCountFiles = 0;
 	m_ulAddingCountDirs = 0;
 
+	if(m_MediaLibrary.GetCount())
+		m_bNotInitialML = true;
+	else
+		m_bNotInitialML = false;
+
 	if(m_hAddingWindow)
 	{
 		ShowWindow(m_hAddingWindow, SW_SHOW);
@@ -174,7 +180,17 @@ bool CMediaLibrary::EndAdd(void)
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 	tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 
+
+	if(!m_bNotInitialML && m_MediaLibrary.GetCount())
+	{
+		tuniacApp.m_PlaylistManager.m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
+		tuniacApp.m_PlaylistManager.m_LibraryPlaylist.Sort(FIELD_URL);
+	}
+
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
+	m_bNotInitialML = true;
+
+
 
 	return true;
 }
@@ -197,7 +213,7 @@ void CMediaLibrary::AddingFilesIncrement(bool bDir)
 	SendDlgItemMessage(m_hAddingWindow, IDC_ADDINGFILES_COUNT, WM_SETTEXT, 0, (WPARAM)szCount);
 }
 
-bool CMediaLibrary::AddItem(LPTSTR szItemToAdd)
+bool CMediaLibrary::AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck)
 {
 	SendDlgItemMessage(m_hAddingWindow, IDC_ADDINGFILES_PROGRESS, PBM_STEPIT, 0, 0);
 	if(m_hAddingWindow)
@@ -213,6 +229,9 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd)
 			}
 		}
 	}
+
+	if(bForceDuplicateCheck)
+		m_bNotInitialML = true;
 
 	if(PathIsURL(szItemToAdd))
 	{
@@ -234,18 +253,22 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd)
 
 bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 {
-	if(GetEntryByURL(szURL))
-		return true;
+	if(m_bNotInitialML)
+	{
+		if(GetEntryByURL(szURL))
+			return false;
+
+		// fill in media library specific stuff
+		while(GetEntryByEntryID(m_ulEntryID))
+		{
+			m_ulEntryID++;
+		}
+	}
 
 	LibraryEntry  libraryEntry;
 
 	ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
-	// fill in media library specific stuff
-	while(GetEntryByEntryID(ulEntryID))
-	{
-		ulEntryID++;
-	}
 	// we need to set the streampath here plus a nice name
 	StrCpy(libraryEntry.szArtist, szURL);
     StrCpy(libraryEntry.szURL, szURL);
@@ -257,7 +280,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	libraryEntry.ulKind = ENTRY_KIND_URL;
 
 	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
-	pIPE->SetEntryID(ulEntryID);
+	pIPE->SetEntryID(m_ulEntryID);
 	m_MediaLibrary.AddTail(pIPE);
 
 	//create or add to Streams playlist
@@ -291,19 +314,25 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	}
 	tuniacApp.m_SourceSelectorWindow->UpdateList();
 
-	ulEntryID++;
+	m_ulEntryID++;
 
 	return true;
 }
 
 bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 {
-	if(GetEntryByURL(szURL))
-		return false;
+	if(m_bNotInitialML)
+	{
+		if(GetEntryByURL(szURL))
+			return false;
+	}
 
 	//if its a playlist file import it
-	if(m_ImportExport.Import(szURL))
-		return true;
+	if(!tuniacApp.m_Preferences.GetSkipPlaylistImport())
+	{
+		if(m_ImportExport.Import(szURL))
+			return true;
+	}
 
 	//decoders are more vital than infomanagers
 	for(unsigned long i=0; i < CCoreAudio::Instance()->GetNumPlugins(); i++)
@@ -316,14 +345,16 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
 			// fill in media library specific stuff
-			while(GetEntryByEntryID(ulEntryID))
+			if(m_bNotInitialML)
 			{
-				ulEntryID++;
+				while(GetEntryByEntryID(m_ulEntryID))
+				{
+					m_ulEntryID++;
+				}
 			}
 
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
 			StrCpy(libraryEntry.szURL, szURL);
-
 
 			// extract generic info from the file (creation time/size)
 			HANDLE hFile = CreateFile(szURL, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
@@ -333,7 +364,10 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			FILETIME ft;
 			GetFileTime(hFile, &ft, NULL, NULL);
 			FileTimeToSystemTime(&ft, &libraryEntry.stFileCreationDate);
+			GetLocalTime(&libraryEntry.stDateAdded);
 
+		/*
+			//why do we need to fill two fields with the same data?
 			if(tuniacApp.m_Preferences.GetDateAddedToFileCreationTime())
 			{
 				FileTimeToSystemTime(&ft, &libraryEntry.stDateAdded);
@@ -342,6 +376,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			{
 				GetLocalTime(&libraryEntry.stDateAdded);
 			}
+		*/
 
 			libraryEntry.ulFilesize = GetFileSize(hFile, NULL);
 			CloseHandle(hFile);
@@ -371,12 +406,12 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-			pIPE->SetEntryID(ulEntryID);
+			pIPE->SetEntryID(m_ulEntryID);
 			m_MediaLibrary.AddTail(pIPE);
 
 			AddingFilesIncrement(false);
 
-			ulEntryID++;
+			m_ulEntryID++;
 
 			return true;
 		}
@@ -413,7 +448,7 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 		PathAddBackslash(temp);
 		StrCat(temp, w32fd.cFileName);
 
-		AddItem(temp);
+		AddItem(temp, false);
 
 	} while(FindNextFile( hFind, &w32fd));
 

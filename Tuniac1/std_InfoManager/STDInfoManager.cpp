@@ -110,7 +110,7 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 {
-	fileRef = TagLib::FileRef(szSource, 1, TagLib::AudioProperties::Fast);
+	fileRef = TagLib::FileRef(szSource, true, TagLib::AudioProperties::Fast);
     if( !fileRef.isNull() )
     {
 		if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
@@ -390,6 +390,43 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 
 	fileRef = TagLib::FileRef();
+	if(flacFile)
+		flacFile = NULL;
+	if(mp3File)
+		mp3File = NULL;
+	if(mp4File)
+		mp4File = NULL;
+	if(mpcFile)
+		mpcFile = NULL;
+	if(ttaFile)
+		ttaFile = NULL;
+	if(wvFile)
+		wvFile = NULL;
+	if(oggFile)
+		oggFile = NULL;
+	if(ogaFile)
+		ogaFile = NULL;
+	if(spxFile)
+		spxFile = NULL;
+	if(opusFile)
+		opusFile = NULL;
+	if(wmaFile)
+		wmaFile = NULL;
+	if(aiffFile)
+		aiffFile = NULL;
+	if(wavFile)
+		wavFile = NULL;
+	if(apeFile)
+		apeFile = NULL;
+	if(itFile)
+		itFile = NULL;
+	if(modFile)
+		modFile = NULL;
+	if(s3mFile)
+		s3mFile = NULL;
+	if(xmFile)
+		xmFile = NULL;
+
 	return true;
 }
 

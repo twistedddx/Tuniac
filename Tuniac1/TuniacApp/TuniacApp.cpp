@@ -772,24 +772,15 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 					UINT uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, NULL);
 
-					unsigned long ulOldMLCount = m_MediaLibrary.GetCount();
-
 					if(m_MediaLibrary.BeginAdd(uNumFiles))
 					{
 						for(UINT file = 0; file<uNumFiles; file++)
 						{
 							DragQueryFile(hDrop, file, szURL, MAX_PATH);
-							m_MediaLibrary.AddItem(szURL);
+							m_MediaLibrary.AddItem(szURL, false);
 						}
 
 						m_MediaLibrary.EndAdd();
-
-						if(ulOldMLCount == 0 && m_MediaLibrary.GetCount())
-						{
-							IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-							if(pPlaylist)
-								pPlaylist->SetActiveNormalFilteredIndex(0);
-						}
 					}
 
 					DragFinish(hDrop);
@@ -1235,7 +1226,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 												bWantFocus = true;
 											}
 
-											m_MediaLibrary.AddItem(szArglist[i]);
+											m_MediaLibrary.AddItem(szArglist[i], false);
 										}
 										else if(StrCmpI(szArglist[i], TEXT("-queue")) == 0)
 											bQueueAddedFiles = true;
@@ -1317,12 +1308,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									if(bAddingFiles)
 									{
 										m_MediaLibrary.EndAdd();
-										if(ulMLOldCount == 0 && m_MediaLibrary.GetCount())
-										{
-											IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-											if(pPlaylist)
-												pPlaylist->SetActiveNormalFilteredIndex(0);
-										}
 									}
 
 									if(bPlayAddedFiles)
@@ -1495,15 +1480,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								//something valid was selected to be opened
 								if(GetOpenFileName(&ofn))
 								{
-
-									unsigned long ulOldMLCount = m_MediaLibrary.GetCount();
-
 									if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 									{
 										//single file was selected(straight url to file)
 										if(ofn.nFileOffset < lstrlen(szURLBuffer))
 										{
-											m_MediaLibrary.AddItem(szURLBuffer);
+											m_MediaLibrary.AddItem(szURLBuffer, false);
 										}
 										//multiple files were selected(path + multiple filenames, need to join)
 										else
@@ -1520,20 +1502,13 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 												StringCbCat( szURL, MAX_PATH, TEXT("\\") );
 												StringCbCat( szURL, MAX_PATH, szOFNName );
 
-												m_MediaLibrary.AddItem(szURL);
+												m_MediaLibrary.AddItem(szURL, false);
 
 												szOFNName = &szOFNName[lstrlen(szOFNName) + 1];
 											}
 										}
 
 										m_MediaLibrary.EndAdd();
-
-										if(ulOldMLCount == 0 && m_MediaLibrary.GetCount())
-										{
-											IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-											if(pPlaylist)
-												pPlaylist->SetActiveNormalFilteredIndex(0);
-										}
 									}
 								}
 							}
@@ -1564,19 +1539,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										TCHAR szBuffer[MAX_PATH];
 										if(::SHGetPathFromIDList(lpItemIDList, szBuffer)) //something valid was selected for open
 										{
-											unsigned long ulOldMLCount = m_MediaLibrary.GetCount();
 											if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 											{
 												//straight url to directory
-												m_MediaLibrary.AddItem(szBuffer);
+												m_MediaLibrary.AddItem(szBuffer, false);
 												m_MediaLibrary.EndAdd();
-
-												if(ulOldMLCount == 0 && m_MediaLibrary.GetCount())
-												{
-													IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-													if(pPlaylist)
-														pPlaylist->SetActiveNormalFilteredIndex(0);
-												}
 											}
 										}
 										else if(tuniacApp.m_dwWinVer >= 6) //possible library eg Music
@@ -1603,19 +1570,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 													hr = psiFolder->GetDisplayName(SIGDN_FILESYSPATH, &strFolderName); //get full path string for Shell Item
 													if(SUCCEEDED(hr))
 													{
-														unsigned long ulOldMLCount = m_MediaLibrary.GetCount();
 														if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 														{
 															//straight url to directory
-															m_MediaLibrary.AddItem(strFolderName);
+															m_MediaLibrary.AddItem(strFolderName, false);
 															m_MediaLibrary.EndAdd();
-
-															if(ulOldMLCount == 0 && m_MediaLibrary.GetCount())
-															{
-																IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-																if(pPlaylist)
-																	pPlaylist->SetActiveNormalFilteredIndex(0);
-															}
 														}
 													}
 													psiFolder->Release();
@@ -1702,18 +1661,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								TCHAR szAddBuffer[2048] = TEXT("");
 								if(DialogBoxParam(m_hInstance, MAKEINTRESOURCE(IDD_ADDOTHER), hWnd, (DLGPROC)AddOtherProc, (LPARAM)szAddBuffer))
 								{
-
-									unsigned long ulOldMLCount = m_MediaLibrary.GetCount();
-									if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
+									if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(1))
 									{
-										m_MediaLibrary.AddItem(szAddBuffer);
+										m_MediaLibrary.AddItem(szAddBuffer, false);
 										m_MediaLibrary.EndAdd();
-										if(ulOldMLCount == 0 && m_MediaLibrary.GetCount())
-										{
-											IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
-											if(pPlaylist)
-												pPlaylist->SetActiveNormalFilteredIndex(0);
-										}										
 									}
 								}
 							}
