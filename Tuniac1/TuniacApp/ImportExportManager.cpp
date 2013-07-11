@@ -268,7 +268,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 	bool bAddSingleStream = tuniacApp.m_Preferences.GetAddSingleStream();
 
 	CMediaLibraryPlaylistEntry * pStreamEntry;
-	TCHAR szFilename[MAX_PATH] = L"";;
+	TCHAR szFilename[MAX_PATH] = L"";
 
 	if(pImporter->BeginImport(szSource) && pImporter->ImportUrl(szFilename, MAX_PATH))
 	{
@@ -278,7 +278,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 
 		do
 		{
-			tuniacApp.m_MediaLibrary.AddItem(szFilename);
+			tuniacApp.m_MediaLibrary.AddItem(szFilename, true);
 			pPE = tuniacApp.m_MediaLibrary.GetEntryByURL(szFilename);
 
 			if(pPE)

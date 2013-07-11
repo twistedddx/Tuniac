@@ -64,7 +64,8 @@ typedef struct
 	unsigned long							m_ulAddingCountFiles;
 	unsigned long							m_ulAddingCountDirs;
 
-	unsigned long							ulEntryID;
+	unsigned long							m_ulEntryID;
+	unsigned long							m_bNotInitialML;
 
 	bool AddFileToLibrary(LPTSTR			szURL);
 	bool AddStreamToLibrary(LPTSTR			szURL);
@@ -87,7 +88,7 @@ public:
 
 	bool					BeginAdd(unsigned long ulNumItems);
 	bool					EndAdd(void);
-	bool					AddItem(LPTSTR szItemToAdd);
+	bool					AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck);
 	bool					RemoveEntry(IPlaylistEntry *			pIPE);
 	bool					RemoveEntryID(unsigned long ulEntryID);
 

@@ -73,7 +73,7 @@
 #define EQHIGH					TEXT("EQHigh")
 #define AMPGAIN					TEXT("AmpGain")
 
-#define DATEADDED 				TEXT("DateAdded")
+#define SKIPPLAYLISTIMPORT		TEXT("SKIPPLAYLISTIMPORT")
 #define PLAYLISTSORTING			TEXT("PlaylistSorting")
 #define AUTOADDPLAYLIST			TEXT("AutoAddPlaylist")
 #define ADDSINGLESTREAM			TEXT("AddSingleStream")
@@ -1027,7 +1027,7 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 				pPrefs = (CPreferences *)lParam;
 
-				SendDlgItemMessage(hDlg, IDC_FILETIMETODATEADDED, BM_SETCHECK, pPrefs->m_bSetDateAddedToFileCreationTime ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_LIBRARY_SKIPPLAYLISTIMPORT, BM_SETCHECK, pPrefs->m_bSkipPlaylistImport ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_PLAYLISTSORTING, BM_SETCHECK, pPrefs->m_bPlaylistSorting ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_AUTOADDPLAYLIST, BM_SETCHECK, pPrefs->m_bAutoAddPlaylist ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_LIBRARY_ADDSINGLESTREAM, BM_SETCHECK, pPrefs->m_bAddSingleStream ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -1040,10 +1040,10 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				switch(wCmdID)
 				{
-					case IDC_LIBRARY_FILETIMETODATEADDED:
+					case IDC_LIBRARY_SKIPPLAYLISTIMPORT:
 						{
-							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_FILETIMETODATEADDED, BM_GETCHECK, 0, 0);
-							pPrefs->m_bSetDateAddedToFileCreationTime = State == BST_UNCHECKED ? FALSE : TRUE;
+							int State = SendDlgItemMessage(hDlg, IDC_LIBRARY_SKIPPLAYLISTIMPORT, BM_GETCHECK, 0, 0);
+							pPrefs->m_bSkipPlaylistImport = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
 
@@ -1436,7 +1436,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bSmartSorting				= TRUE;
 	m_bSkipStreams				= TRUE;
 
-	m_bSetDateAddedToFileCreationTime = FALSE;
+	m_bSkipPlaylistImport		= FALSE;
 	m_bPlaylistSorting			= FALSE;
 	m_bAutoAddPlaylist			= TRUE;
 	m_bAddSingleStream			= TRUE;
@@ -1719,10 +1719,10 @@ bool CPreferences::LoadPreferences(void)
 
 	Size = sizeof(BOOL);
 	RegQueryValueEx(	hTuniacPrefKey,
-						DATEADDED,
+						SKIPPLAYLISTIMPORT,
 						NULL,
 						&Type,
-						(LPBYTE)&m_bSetDateAddedToFileCreationTime,
+						(LPBYTE)&m_bSkipPlaylistImport,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -2223,10 +2223,10 @@ bool CPreferences::SavePreferences(void)
 					sizeof(int));
 
 	RegSetValueEx(	hTuniacPrefKey,
-					DATEADDED,
+					SKIPPLAYLISTIMPORT,
 					NULL,
 					REG_DWORD,
-					(LPBYTE)&m_bSetDateAddedToFileCreationTime,
+					(LPBYTE)&m_bSkipPlaylistImport,
 					sizeof(BOOL));
 
 	RegSetValueEx(	hTuniacPrefKey,
@@ -2942,9 +2942,9 @@ int			CPreferences::GetFutureListSize(void)
 	return m_iFutureListSize;
 }
 
-BOOL		CPreferences::GetDateAddedToFileCreationTime(void)
+BOOL		CPreferences::GetSkipPlaylistImport(void)
 {
-	return m_bSetDateAddedToFileCreationTime;
+	return m_bSkipPlaylistImport;
 }
 
 BOOL		CPreferences::GetCanPlaylistsSort(void)

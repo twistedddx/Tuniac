@@ -191,15 +191,16 @@ bool			CSHNInfoManager::GetInfo(LibraryEntry * libEnt)
 			else
 				return false;
 				//ShnPlay_ErrorMessage(state)
+
+			ShnPlay_Close(state);
+
 		}
 		else
 		{
 			return false;
 		}
+		ShnInfoUtil_CloseFileStream(stream);
 	}
-
-	ShnPlay_Close(state);
-	ShnInfoUtil_CloseFileStream(stream);
 
 	return true;
 }
