@@ -1,3 +1,7 @@
+Jul, 2013 (130716)
+---------
+-Fix libraryplaylist rebuild
+
 Jul, 2013 (130709c)
 ---------
 -On intial import do not check for doubles unless imported a playlist or multiple library folders.
@@ -5,8 +9,8 @@ Jul, 2013 (130709c)
 -Sort by URL after initial import
 -Remove setting "Set Date Added To File Creation Time", there is now a separate file creation column
 -Add setting "Skip playlist files during import" so playlist files will be ignored if found during import
--work around issue in taglib not handling ape files correctly.
 -Fix buffer overflow in m3u importer and other buffer issues
+-fix std_infomanager referencing invalid objects
 
 Jul, 2013 (130706)
 ---------
