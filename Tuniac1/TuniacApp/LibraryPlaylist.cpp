@@ -160,24 +160,17 @@ bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray
 
 bool				CLibraryPlaylist::RebuildPlaylist(void)
 {
-
-	bool bSimpleAdd = m_PlaylistArray.GetCount();
-
 	for(unsigned long x=0; x<tuniacApp.m_MediaLibrary.GetCount(); x++)
 	{
 		bool bFound = false;
-
 		IPlaylistEntry * t = tuniacApp.m_MediaLibrary.GetEntryByIndex(x);
 
-		if(!bSimpleAdd)
+		for(unsigned long y = 0; y<m_PlaylistArray.GetCount(); y++)
 		{
-			for(unsigned long y = 0; y<m_PlaylistArray.GetCount(); y++)
+			if(t->GetEntryID() == m_PlaylistArray[y].pIPE->GetEntryID())
 			{
-				if(t->GetEntryID() == m_PlaylistArray[y].pIPE->GetEntryID())
-				{
-					bFound = true;
-					break;
-				}
+				bFound = true;
+				break;
 			}
 		}
 
