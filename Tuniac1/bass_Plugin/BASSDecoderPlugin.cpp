@@ -182,7 +182,7 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 	}
 	*/
 
-
+	/*
 	HSTREAM testhandle;
 
 	bool bMod = false;
@@ -222,9 +222,54 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 			BASS_StreamFree(testhandle);
 	}
 
-	return bOK;
+	*/
+
+	bModFile = false;
+	bIsStream = PathIsURL(szSource);
+
+	if(!bIsStream)
+	{
+		if(!(testHandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT)))
+		{
+			if(testHandle = BASS_MusicLoad(FALSE, szSource, 0, 0, BASS_MUSIC_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT|BASS_MUSIC_RAMP|BASS_MUSIC_PRESCAN, 0))
+				bModFile = true;
+		}
+	}
+	else
+	{
+		if(StrCmpN(szSource, TEXT("AUDIOCD"), 7) == 0)
+		{
+			bIsStream = false;
+			wchar_t cDrive;
+			int iTrack;
+			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
+			_snwprintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
+			testHandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT);
+		}
+		else
+		{
+			char mbURL[512]; 	 
+			WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
+			testHandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT|BASS_STREAM_BLOCK, NULL, 0);
+		}
+	}
+
+
+	return testHandle;
 }
 
+bool			CBASSDecoderPlugin::Close(void)
+{
+	if(testHandle)
+	{
+		if(bModFile)
+			BASS_MusicFree(testHandle);
+		else
+			BASS_StreamFree(testHandle);
+	}
+
+	return true;
+}
 
 unsigned long	CBASSDecoderPlugin::GetNumCommonExts(void)
 {
@@ -241,7 +286,7 @@ IAudioSource *		CBASSDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFil
 {
 	CBASSDecoder *	pDec = new CBASSDecoder();
 
-	if(!pDec->Open(szSource, m_pHelper))
+	if(!pDec->Open(szSource, m_pHelper, testHandle, bModFile, bIsStream))
 	{
 		delete pDec;
 		return(NULL);

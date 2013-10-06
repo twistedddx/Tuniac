@@ -113,7 +113,7 @@ void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
 	DoMeta(channel, user);
 }
 
-bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
+/*bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 {
 	bModFile = false;
 	bIsStream = PathIsURL(szSource);
@@ -155,19 +155,33 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 	if(!decodehandle)
 		return false;
+*/
+bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper, HSTREAM decodehandle, bool bModFile, bool bIsStream)
+{
+	m_bModFile = bModFile;
+	m_bIsStream = bIsStream;
+	m_decodehandle = decodehandle;
 
 	m_pHelper = pHelper;
 
-	BASS_ChannelGetInfo(decodehandle,&info);
+	if(m_bIsStream)
+	{
+		DoMeta(m_decodehandle, szSource);
+		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
+		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
+		//BASS_ChannelSetSync(decodehandle,BASS_SYNC_WMA_CHANGE,0,&MetaSync, szSource); // WMA
+	}
 
-	if(bIsStream)
+	BASS_ChannelGetInfo(m_decodehandle,&info);
+
+	if(m_bIsStream)
 		dTime = LENGTH_STREAM;
 	else
 		dTime = LENGTH_UNKNOWN;
 
-	long long len = BASS_ChannelGetLength(decodehandle,BASS_POS_BYTE);
+	long long len = BASS_ChannelGetLength(m_decodehandle,BASS_POS_BYTE);
 	if(len > 0)
-		dTime = BASS_ChannelBytes2Seconds(decodehandle, len) * 1000;
+		dTime = BASS_ChannelBytes2Seconds(m_decodehandle, len) * 1000;
 
 	if(bIsStream) //update unknowns for streams
 	{
@@ -183,10 +197,10 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper)
 
 bool CBASSDecoder::Close()
 {
-	if(bModFile)
-		BASS_MusicFree(decodehandle);
+	if(m_bModFile)
+		BASS_MusicFree(m_decodehandle);
 	else
-		BASS_StreamFree(decodehandle);
+		BASS_StreamFree(m_decodehandle);
 
 	if(m_Buffer)
 	{
@@ -219,8 +233,8 @@ bool		CBASSDecoder::GetLength(unsigned long * MS)
 
 bool		CBASSDecoder::SetPosition(unsigned long * MS)
 {
-	DWORD pos = BASS_ChannelSeconds2Bytes(decodehandle,(*MS/1000));
-	BASS_ChannelSetPosition(decodehandle, pos, BASS_POS_BYTE);
+	DWORD pos = BASS_ChannelSeconds2Bytes(m_decodehandle,(*MS/1000));
+	BASS_ChannelSetPosition(m_decodehandle, pos, BASS_POS_BYTE);
 	return(true);
 }
 
@@ -241,10 +255,10 @@ bool		CBASSDecoder::SetState(unsigned long State)
 
 bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 {
-	if(BASS_ChannelIsActive(decodehandle) == BASS_ACTIVE_STOPPED)
+	if(BASS_ChannelIsActive(m_decodehandle) == BASS_ACTIVE_STOPPED)
 		return false;
 
-	DWORD readBytes = BASS_ChannelGetData(decodehandle, m_Buffer, BUFFERSIZE);
+	DWORD readBytes = BASS_ChannelGetData(m_decodehandle, m_Buffer, BUFFERSIZE);
 	unsigned long numSamples = readBytes / sizeof(float);
 
 	if(readBytes != BUFFERSIZE)

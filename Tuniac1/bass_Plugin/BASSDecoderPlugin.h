@@ -2,6 +2,7 @@
 #include "iaudiosource.h"
 #include "Array.h"
 #include <vector>
+#include "bass.h"
 
 class CBASSDecoderPlugin :
 	public IAudioSourceSupplier
@@ -9,6 +10,10 @@ class CBASSDecoderPlugin :
 protected:
 	IAudioSourceHelper	*	m_pHelper;
 	Array<std::wstring, 12>		exts;
+
+	HSTREAM				testHandle;
+	bool				bIsStream;
+	bool				bModFile;
 
 public:
 	CBASSDecoderPlugin(void);
@@ -27,6 +32,7 @@ public:
 	virtual bool			Configure(HWND hParent);
 
 	virtual bool			CanHandle(LPTSTR szSource);
+	virtual bool			Close(void);
 	virtual	unsigned long	GetNumCommonExts(void);
 	virtual	LPTSTR			GetCommonExt(unsigned long ulIndex);
 

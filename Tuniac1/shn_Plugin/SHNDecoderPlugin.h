@@ -20,6 +20,7 @@ public:
 	virtual bool			Configure(HWND hParent);
 
 	virtual bool			CanHandle(LPTSTR szSource);
+	virtual bool			Close(void);
 	virtual	unsigned long	GetNumCommonExts(void);
 	virtual	LPTSTR			GetCommonExt(unsigned long ulIndex);
 
