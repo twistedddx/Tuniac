@@ -413,6 +413,8 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 
 			m_ulEntryID++;
 
+			pPlugin->Close();
+
 			return true;
 		}
 	}
@@ -645,6 +647,8 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			newpIPE->SetField(FIELD_PLAYCOUNT, ulPlayCount);
 			m_MediaLibrary.RemoveAt(ulMLIndex);
 			m_MediaLibrary.InsertBefore(ulMLIndex, newpIPE);
+
+			pPlugin->Close();
 
 			return true;
 		}

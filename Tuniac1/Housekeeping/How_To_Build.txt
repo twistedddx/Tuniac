@@ -73,7 +73,7 @@ Hit OK and wait
 3e)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
-https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo
+svn://svn.code.sf.net/p/libjpeg-turbo/code/trunk
 Hit OK and wait
 
 

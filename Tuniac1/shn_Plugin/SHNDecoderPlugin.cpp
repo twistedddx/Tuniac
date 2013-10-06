@@ -57,6 +57,10 @@ bool			CshnDecoderPlugin::CanHandle(LPTSTR szSource)
 	return(false);
 }
 
+bool			CshnDecoderPlugin::Close(void)
+{
+	return true;
+}
 
 unsigned long	CshnDecoderPlugin::GetNumCommonExts(void)
 {

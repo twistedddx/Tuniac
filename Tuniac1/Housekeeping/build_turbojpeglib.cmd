@@ -17,7 +17,7 @@ cd ..\..\..\
 
 
 rem ######## turbojpeglib
-cd libjpeg-turbo\trunk\
+cd libjpeg-turbo\
 
 rem #Release x86:
 del ".\CMakeCache.txt"

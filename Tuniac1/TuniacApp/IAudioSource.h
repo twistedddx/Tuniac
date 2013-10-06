@@ -26,7 +26,7 @@
 #pragma pack(16)
 #pragma once
 
-#define ITUNIACAUDIOSOURCE_VERSION		MAKELONG(0, 2)
+#define ITUNIACAUDIOSOURCE_VERSION		MAKELONG(0, 3)
 
 #define INVALID_ENTRY_ID	0xffffffff
 #define LENGTH_STREAM		0xfffffffe
@@ -137,6 +137,7 @@ public:
 	virtual bool			Configure(HWND hParent)										= 0;
 
 	virtual bool			CanHandle(LPTSTR szSource)									= 0;
+	virtual bool			Close(void)													= 0;
 	virtual	unsigned long	GetNumCommonExts(void)										= 0;
 	virtual	LPTSTR			GetCommonExt(unsigned long ulIndex)							= 0;
 
