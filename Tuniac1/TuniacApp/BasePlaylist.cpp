@@ -323,7 +323,7 @@ unsigned long		CBasePlaylist::Previous(void)
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulActiveFilteredIndex;
 
-	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
+	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
 	{
 		for(unsigned long x=ulActiveFilteredIndex; x>0; x--)
 		{
@@ -391,7 +391,7 @@ unsigned long		CBasePlaylist::Next(void)
 	if(ulActiveFilteredIndex == INVALID_PLAYLIST_INDEX)
 	{
 		//no active, start from the start
-		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
+		if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
 		{
 			for(unsigned long x=0; x<m_NormalIndexArray.GetCount(); x++)
 			{
@@ -412,7 +412,7 @@ unsigned long		CBasePlaylist::Next(void)
 	if(tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 		return ulActiveFilteredIndex;
 
-	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
+	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
 	{
 		for(unsigned long x=(ulActiveFilteredIndex + 1); x<m_NormalIndexArray.GetCount(); x++)
 		{
@@ -485,7 +485,7 @@ unsigned long		CBasePlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long
 		return ulFilteredIndex;
 
 
-	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && StrCmp(TEXT("Media Library"), GetPlaylistName()) == 0)
+	if(tuniacApp.m_Preferences.GetSkipStreams() && tuniacApp.m_Preferences.GetShuffleState() && GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
 	{
 		for(unsigned long x=(ulFilteredIndex + 1); x<m_NormalIndexArray.GetCount(); x++)
 		{
