@@ -217,6 +217,12 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 				return (void *)m_LibraryEntry.ulBPM;
 			}
 			break;
+
+		case FIELD_ALBUMARTIST:
+			{
+				return m_LibraryEntry.szAlbumArtist;
+			}
+			break;
 	}
 
 	return NULL;
@@ -397,6 +403,12 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 				if(StrCmpI((LPTSTR)pNewData, L"") == 0)
 					pNewData = L"0";
 				m_LibraryEntry.ulBPM = wcstoul((LPTSTR)pNewData, NULL, 10);
+			}
+			break;
+
+		case FIELD_ALBUMARTIST:
+			{
+				StrCpyN(m_LibraryEntry.szAlbumArtist, (LPTSTR)pNewData, 128);
 			}
 			break;
 
@@ -778,6 +790,12 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulBPM);
 			}
 			break;
+		case FIELD_ALBUMARTIST:
+			{
+				StrCpyN(szString, m_LibraryEntry.szAlbumArtist, ulNumChars);
+			}
+			break;
+
 
 		default:
 			return false;

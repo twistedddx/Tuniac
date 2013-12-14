@@ -715,7 +715,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 		MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if(MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
+	else if(MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION06 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
 	{
 		MessageBox(NULL, TEXT("MediaLibrary is saved in an incompatable version, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
@@ -737,8 +737,58 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				bOK = false;
 				break;
 			}
+			if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION06)
+			{
+				LibraryEntry06 MLE;
+				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry06), &BytesRead, NULL);
+				if(BytesRead != sizeof(LibraryEntry06))
+				{
+					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					m_MediaLibrary.RemoveAll();
+					bOK = false;
+					break;
+				}
 
-			if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION05)
+				LibraryEntry  libraryEntry;
+
+				ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
+
+				StrCpy(libraryEntry.szURL, MLE.szURL);
+				StrCpy(libraryEntry.szArtist, MLE.szArtist);
+				StrCpy(libraryEntry.szAlbum, MLE.szAlbum);
+				StrCpy(libraryEntry.szTitle, MLE.szTitle);
+				StrCpy(libraryEntry.szGenre, MLE.szGenre);
+				StrCpy(libraryEntry.szComment, MLE.szComment);
+				StrCpy(libraryEntry.szAlbumArtist, L"");
+				libraryEntry.stDateAdded = MLE.stDateAdded;
+				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
+				libraryEntry.stLastPlayed = MLE.stLastPlayed;
+				libraryEntry.dwDisc[0] = MLE.dwDisc[0];
+				libraryEntry.dwDisc[1] = MLE.dwDisc[1];
+				libraryEntry.dwTrack[0] = MLE.dwTrack[0];
+				libraryEntry.dwTrack[1] = MLE.dwTrack[1];
+				libraryEntry.ulYear = MLE.ulYear;
+				libraryEntry.ulPlaybackTime = MLE.ulPlaybackTime;
+				libraryEntry.ulPlayCount = MLE.ulPlayCount;
+				libraryEntry.ulBitRate = MLE.ulBitRate;
+				libraryEntry.ulSampleRate = MLE.ulSampleRate;
+				libraryEntry.ulChannels = MLE.ulChannels;
+				libraryEntry.ulAvailability = MLE.ulAvailability;
+				libraryEntry.ulFilesize = MLE.ulFilesize;
+				libraryEntry.ulRating = MLE.ulRating;
+				libraryEntry.ulKind = MLE.ulKind;
+				libraryEntry.fReplayGain_Album_Gain = MLE.fReplayGain_Album_Gain;
+				libraryEntry.fReplayGain_Album_Peak = MLE.fReplayGain_Album_Peak;
+				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
+				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
+				libraryEntry.ulBPM = MLE.ulBPM;
+
+				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
+
+				pIPE->SetEntryID(TempID);
+				m_MediaLibrary.AddTail(pIPE);	
+			}
+			else if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION05)
 			{
 				LibraryEntry05 MLE;
 				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry05), &BytesRead, NULL);
@@ -760,6 +810,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				StrCpy(libraryEntry.szTitle, MLE.szTitle);
 				StrCpy(libraryEntry.szGenre, MLE.szGenre);
 				StrCpy(libraryEntry.szComment, MLE.szComment);
+				StrCpy(libraryEntry.szAlbumArtist, L"");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;

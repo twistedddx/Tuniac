@@ -2457,6 +2457,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			case 'V':
 				lField = FIELD_BPM;
 				break;
+			case 'Q':
+				lField = FIELD_ALBUMARTIST;
+				break;
 		}
 
 		if (lField == 0xFFFF)
