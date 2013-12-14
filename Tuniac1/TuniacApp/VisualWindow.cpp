@@ -36,7 +36,7 @@ HANDLE							m_hRenderEvent;
 
 VOID CALLBACK TimerRoutine(PVOID lpParam, BOOL TimerOrWaitFired)
 {
-    SetEvent(m_hRenderEvent);
+	SetEvent(m_hRenderEvent);
 }
 
 CVisualWindow::CVisualWindow(void) :
@@ -139,6 +139,13 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 			if(hDLL)
 			{
 				GetTuniacVisPluginVersionFunc pGTVPVF = (GetTuniacVisPluginVersionFunc)GetProcAddress(hDLL, "GetTuniacVisPluginVersion");
+				/* One day we can disable old plugins but right now rabbithole doesn't have version info  :(
+				if(pGTVPVF == NULL)
+				{
+					FreeLibrary(hDLL);
+					continue;
+				}
+				*/
 				if(pGTVPVF != NULL)
 				{
 					if(pGTVPVF() != ITUNIACVISPLUGIN_VERSION)
@@ -271,10 +278,10 @@ bool			CVisualWindow::DestroyPluginWindow(void)
 		m_hThread = NULL;
 	}
 
-    CloseHandle(m_hRenderEvent);
+	CloseHandle(m_hRenderEvent);
 
-    // Delete all timers in the timer queue.
-    DeleteTimerQueue(hTimerQueue);
+	// Delete all timers in the timer queue.
+	DeleteTimerQueue(hTimerQueue);
 
 	if(m_hWnd)
 	{

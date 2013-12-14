@@ -203,10 +203,12 @@ void CMediaLibrary::AddingFilesIncrement(bool bDir)
 	if(bDir)
 		m_ulAddingCountDirs++;
 	else
+	{
 		m_ulAddingCountFiles++;
 
-	if(m_ulAddingCountFiles % 10 != 0)
-		return;
+		if(m_ulAddingCountFiles % 10 != 0)
+			return;
+	}
 
 	TCHAR szCount[256];
 	_snwprintf(szCount, 256, TEXT("%u files in %u folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
