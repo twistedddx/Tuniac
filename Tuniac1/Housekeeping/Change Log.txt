@@ -1,7 +1,8 @@
 Dec, 2013
 ---------
+-add album artist tag field support
 -Update "adding files" dialog
--lib updates
+-Bass dll + lib updates
 
 Oct, 2013
 ---------

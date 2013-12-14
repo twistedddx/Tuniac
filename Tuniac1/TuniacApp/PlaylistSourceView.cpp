@@ -244,6 +244,13 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		LVCFMT_CENTER,
 		true,
 		true
+	},
+	{
+		TEXT("Album Artist"),
+		300,
+		LVCFMT_CENTER,
+		true,
+		true
 	}
 };
 
@@ -473,12 +480,13 @@ bool	CPlaylistSourceView::CreateSourceView(HWND hWndParent)
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 5,		TEXT("&Genre"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 6,		TEXT("&Year"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 7,		TEXT("&Comment"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 8,		NULL);
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 9,		TEXT("&URL"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 10,	TEXT("&Filename"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 11,	TEXT("E&xtension"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 12,	NULL);
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 13,	TEXT("Reverse &Filter"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 8,		TEXT("Al&bum Artist"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 9,		NULL);
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 10,	TEXT("&URL"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 11,	TEXT("&Filename"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 12,	TEXT("E&xtension"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 13,	NULL);
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 14,	TEXT("Reverse &Filter"));
 
 	return true;
 }
@@ -660,12 +668,12 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 				wmId    = LOWORD(wParam);
 				wmEvent = HIWORD(wParam);
 
-				if(wmId >= FILTERBYFIELD_MENUBASE && wmId <= FILTERBYFIELD_MENUBASE + 13)
+				if(wmId >= FILTERBYFIELD_MENUBASE && wmId <= FILTERBYFIELD_MENUBASE + 14)
 				{
-					if(wmId == FILTERBYFIELD_MENUBASE + 13)
+					if(wmId == FILTERBYFIELD_MENUBASE + 14)
 					{
-						bool bReverse = GetMenuState(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 13, MF_BYCOMMAND) & MF_CHECKED ? false : true;
-						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 13, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
+						bool bReverse = GetMenuState(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 14, MF_BYCOMMAND) & MF_CHECKED ? false : true;
+						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 14, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
 						m_pPlaylist->SetTextFilterReversed(bReverse);
 						m_pPlaylist->ApplyFilter();
 						Update();
@@ -695,14 +703,16 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						ulFilterByField = FIELD_YEAR;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 7)
 						ulFilterByField = FIELD_COMMENT;
-					else if(wmId == FILTERBYFIELD_MENUBASE + 9)
-						ulFilterByField = FIELD_URL;
+					else if(wmId == FILTERBYFIELD_MENUBASE + 8)
+						ulFilterByField = FIELD_ALBUMARTIST;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 10)
-						ulFilterByField = FIELD_FILENAME;
+						ulFilterByField = FIELD_URL;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 11)
+						ulFilterByField = FIELD_FILENAME;
+					else if(wmId == FILTERBYFIELD_MENUBASE + 12)
 						ulFilterByField = FIELD_FILEEXTENSION;
 					
-					CheckMenuRadioItem(m_FilterByFieldMenu, 0, 11, wmId - FILTERBYFIELD_MENUBASE, MF_BYPOSITION);
+					CheckMenuRadioItem(m_FilterByFieldMenu, 0, 12, wmId - FILTERBYFIELD_MENUBASE, MF_BYPOSITION);
 
 					if(ulFilterByField != m_pPlaylist->GetTextFilterField())
 					{

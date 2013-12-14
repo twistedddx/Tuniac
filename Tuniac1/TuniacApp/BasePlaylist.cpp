@@ -94,6 +94,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 			//single field filter selected. Will include or exclude based solely on the single field
 			else if(m_ulTextFilterField == FIELD_ARTIST
 					|| m_ulTextFilterField == FIELD_ALBUM
+					|| m_ulTextFilterField == FIELD_ALBUMARTIST
 					|| m_ulTextFilterField == FIELD_TITLE
 					|| m_ulTextFilterField == FIELD_GENRE
 					|| m_ulTextFilterField == FIELD_COMMENT
@@ -1019,6 +1020,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 				return Sort_CompareItems(pItem1, pItem2, FIELD_ALBUM);
 			}
 			break;
+
 		case FIELD_COMMENT:
 		case FIELD_GENRE:
 		case FIELD_TITLE:
@@ -1029,24 +1031,25 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
+		case FIELD_ALBUMARTIST:
 		case FIELD_ARTIST:
 			{
 
 				int iItem1Offset = 0, iItem2Offset = 0;
 				if(tuniacApp.m_Preferences.GetSmartSortingEnabled())
 				{
-					if(StrNCmpI((LPTSTR)pItem1->GetField(FIELD_ARTIST), L"A ", 2) == 0)
+					if(StrNCmpI((LPTSTR)pItem1->GetField(ulSortBy), L"A ", 2) == 0)
 						iItem1Offset = 2;
-					else if(StrNCmpI((LPTSTR)pItem1->GetField(FIELD_ARTIST), L"THE ", 4) == 0)
+					else if(StrNCmpI((LPTSTR)pItem1->GetField(ulSortBy), L"THE ", 4) == 0)
 						iItem1Offset = 4;
 					
-					if(StrNCmpI((LPTSTR)pItem2->GetField(FIELD_ARTIST), L"A ", 2) == 0)
+					if(StrNCmpI((LPTSTR)pItem2->GetField(ulSortBy), L"A ", 2) == 0)
 						iItem2Offset = 2;
-					else if(StrNCmpI((LPTSTR)pItem2->GetField(FIELD_ARTIST), L"THE ", 4) == 0)
+					else if(StrNCmpI((LPTSTR)pItem2->GetField(ulSortBy), L"THE ", 4) == 0)
 						iItem2Offset = 4;
 				}
 
-				int x = StrCmpI((LPTSTR)pItem1->GetField(FIELD_ARTIST) + iItem1Offset, (LPTSTR)pItem2->GetField(FIELD_ARTIST) + iItem2Offset);
+				int x = StrCmpI((LPTSTR)pItem1->GetField(ulSortBy) + iItem1Offset, (LPTSTR)pItem2->GetField(ulSortBy) + iItem2Offset);
 
 				if(x > 0)
 					return 1;

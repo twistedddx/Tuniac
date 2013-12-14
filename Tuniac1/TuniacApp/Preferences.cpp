@@ -122,6 +122,7 @@
 @R\tRating\r\n\
 @!\tPlay State\n\
 @V\tBPM\
+@Q\tAlbum Artist\
 ")
 
 

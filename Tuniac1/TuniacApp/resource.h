@@ -257,7 +257,8 @@
 #define ID_FILTERBY_URL                 40112
 #define ID_FILTERBY_FILENAME            40113
 #define ID_FILTERBY_EXTENSION           40114
-#define ID_PLAYBACK_RANDOMNEXT          40115
+#define ID_FILTERBY_ALBUMARTIST         40115
+#define ID_PLAYBACK_RANDOMNEXT          40117
 #define ID_PLAYLISTS                    40118
 #define ID_PLAYLISTS_MEDIALIBRARY       40119
 #define ID_PLAYBACK_CLEARPAUSEAT        40121

@@ -791,25 +791,6 @@ BEGIN
     END
 END
 
-IDR_FILTERBYFIELD_MENU MENU
-BEGIN
-    POPUP ""
-    BEGIN
-        MENUITEM "Artist, Album, Title && URL", ID_FILTERBY_NORMAL
-        MENUITEM SEPARATOR
-        MENUITEM "Artist",                      ID_FILTERBY_ARTIST
-        MENUITEM "Title",                       ID_FILTERBY_TITLE
-        MENUITEM "Album",                       ID_FILTERBY_ALBUM
-        MENUITEM "Genre",                       ID_FILTERBY_GENRE
-        MENUITEM "Year",                        ID_FILTERBY_YEAR
-        MENUITEM "Comment",                     ID_FILTERBY_COMMENT
-        MENUITEM SEPARATOR
-        MENUITEM "URL",                         ID_FILTERBY_URL
-        MENUITEM "Filename",                    ID_FILTERBY_FILENAME
-        MENUITEM "Extension",                   ID_FILTERBY_EXTENSION
-    END
-END
-
 IDR_SOURCESELECT_DRAGMENU MENU
 BEGIN
     POPUP ""

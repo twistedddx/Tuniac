@@ -72,7 +72,8 @@
 #define FIELD_REPLAYGAIN_ALBUM_PEAK			25
 #define FIELD_AVAILABILITY					26
 #define FIELD_BPM							27
-//#define FIELD_STATIONNAME					28
+#define FIELD_ALBUMARTIST					28
+//#define FIELD_STATIONNAME					29
 
 class IAudioFileIO
 {
