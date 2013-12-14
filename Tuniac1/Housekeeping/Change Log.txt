@@ -1,3 +1,14 @@
+Dec, 2013
+---------
+-Update "adding files" dialog
+-lib updates
+
+Oct, 2013
+---------
+-fix ML Stream auto skip when ML has been renamed
+-Update decoder to API 0.3. Changes CanHandle(), Open() and adds Close() to only open files a single time to play.
+-Update libs
+
 Jul, 2013 (130716)
 ---------
 -Fix libraryplaylist rebuild
