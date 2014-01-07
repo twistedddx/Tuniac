@@ -181,11 +181,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	tag = fileRef.tag();
 	if(tag)
 	{
-		_snwprintf(libEnt->szTitle, 128, L"%s", tag->title().toCWString());
-		_snwprintf(libEnt->szArtist, 128, L"%s", tag->artist().toCWString());
-		_snwprintf(libEnt->szAlbum, 128, L"%s", tag->album().toCWString());
-		_snwprintf(libEnt->szGenre, 128, L"%s", tag->genre().toCWString());
-		_snwprintf(libEnt->szComment, 128, L"%s", tag->comment().toCWString());
+		StringCchPrintf(libEnt->szTitle, 128, L"%s", tag->title().toCWString());
+		StringCchPrintf(libEnt->szArtist, 128, L"%s", tag->artist().toCWString());
+		StringCchPrintf(libEnt->szAlbum, 128, L"%s", tag->album().toCWString());
+		StringCchPrintf(libEnt->szGenre, 128, L"%s", tag->genre().toCWString());
+		StringCchPrintf(libEnt->szComment, 128, L"%s", tag->comment().toCWString());
 		libEnt->ulYear  = tag->year();
 		libEnt->dwTrack[0] = tag->track();
 	}
@@ -260,7 +260,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(!id3v2TagListMap["TPE2"].isEmpty())
 		{
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", id3v2TagListMap["TPE2"].front()->toString().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", id3v2TagListMap["TPE2"].front()->toString().toCWString());
 		}
 
 		if(!id3v2TagListMap["TRCK"].isEmpty())
@@ -329,7 +329,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(!mp4TagListMap.isEmpty())
 	{
 		if(mp4TagListMap["aART"].isValid())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", mp4TagListMap["aART"].toStringList().front().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", mp4TagListMap["aART"].toStringList().front().toCWString());
 
 		if(mp4TagListMap["disc"].isValid())
 			libEnt->dwDisc[0] = mp4TagListMap["disc"].toInt();
@@ -344,11 +344,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(!vorbisTagListMap.isEmpty())
 	{
 		if(!vorbisTagListMap["ALBUMARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUMARTIST"].front().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUMARTIST"].front().toCWString());
 		else if(!vorbisTagListMap["ALBUM ARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM ARTIST"].front().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM ARTIST"].front().toCWString());
 		else if(!vorbisTagListMap["ALBUM_ARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM_ARTIST"].front().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM_ARTIST"].front().toCWString());
 
 		if(!vorbisTagListMap["DISCNUMBER"].isEmpty())
 			libEnt->dwDisc[0] = vorbisTagListMap["DISCNUMBER"].front().toInt();
@@ -373,11 +373,11 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(!apeTagListMap.isEmpty())
 	{
 		if(!apeTagListMap["ALBUMARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUMARTIST"].toString().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUMARTIST"].toString().toCWString());
 		else if(!apeTagListMap["ALBUM ARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM ARTIST"].toString().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM ARTIST"].toString().toCWString());
 		else if(!apeTagListMap["ALBUM_ARTIST"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM_ARTIST"].toString().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM_ARTIST"].toString().toCWString());
 
 		if(!apeTagListMap["Track"].isEmpty())
 		{
@@ -408,7 +408,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(!wmaTagListMap.isEmpty())
 	{
 		if(!wmaTagListMap["WM/AlbumArtist"].isEmpty())
-			_snwprintf(libEnt->szAlbumArtist, 128, L"%s", wmaTagListMap["WM/AlbumArtist"].front().toString().toCWString());
+			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", wmaTagListMap["WM/AlbumArtist"].front().toString().toCWString());
 
 		if(!wmaTagListMap["WM/BeatsPerMinute"].isEmpty())
 			libEnt->ulBPM = wmaTagListMap["WM/BeatsPerMinute"].front().toUInt();
@@ -562,7 +562,7 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 			*pImageData = malloc(*ulImageDataSize);
 
 			CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
-			StrCpy((LPWSTR)szMimeType, (LPTSTR)flacPic->mimeType().toCWString());
+			StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)flacPic->mimeType().toCWString());
 
 			*ulArtType = flacPic->type();
 				bRet = true;
@@ -585,7 +585,7 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 					*pImageData = malloc(*ulImageDataSize);
 
 					CopyMemory(*pImageData, asfPic.picture().data(), *ulImageDataSize);
-					StrCpy((LPWSTR)szMimeType, (LPTSTR)asfPic.mimeType().toCWString());
+					StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)asfPic.mimeType().toCWString());
 
 					*ulArtType = asfPic.type();
 
@@ -610,13 +610,13 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 					*pImageData = malloc(*ulImageDataSize);
 
 					if(coverArt.format() == 13)
-						StrCpy(szMimeType, TEXT("image/jpeg"));
+						StringCchCopy(szMimeType, 128, TEXT("image/jpeg"));
 					else if(coverArt.format() == 14)
-						StrCpy(szMimeType, TEXT("image/png"));
+						StringCchCopy(szMimeType, 128, TEXT("image/png"));
 					else if(coverArt.format() == 27)
-						StrCpy(szMimeType, TEXT("image/bmp"));
+						StringCchCopy(szMimeType, 128, TEXT("image/bmp"));
 					else if(coverArt.format() == 12)
-						StrCpy(szMimeType, TEXT("image/gif"));
+						StringCchCopy(szMimeType, 128, TEXT("image/gif"));
 
 					CopyMemory(*pImageData, coverArt.data().data(), *ulImageDataSize);
 
@@ -636,7 +636,7 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 		*pImageData = malloc(*ulImageDataSize);
 
 		CopyMemory(*pImageData, id3v2Pic->picture().data(), *ulImageDataSize);
-		StrCpy((LPWSTR)szMimeType, (LPTSTR)id3v2Pic->mimeType().toCWString());
+		StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)id3v2Pic->mimeType().toCWString());
 
 		*ulArtType = id3v2Pic->type();
 

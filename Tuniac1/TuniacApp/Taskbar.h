@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <strsafe.h>
+//#include <strsafe.h>
 
 #include "Preferences.h"
 #include "TuniacApp.h"

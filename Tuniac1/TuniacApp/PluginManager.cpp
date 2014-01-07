@@ -38,19 +38,19 @@ bool			CPluginManager::Initialize(void)
 {
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
-	TCHAR				szFilename[512];
+	TCHAR				szFilename[MAX_PATH];
 
 	DWORD				lpRegType = REG_DWORD;
 	DWORD				iRegSize = sizeof(int);
 	BOOL				bRegEnabled;
 
-	GetModuleFileName(NULL, m_PluginPath, 512);
+	GetModuleFileName(NULL, m_PluginPath, MAX_PATH);
 	PathRemoveFileSpec(m_PluginPath);
 	PathAddBackslash(m_PluginPath);
-	StrCat(m_PluginPath, TEXT("plugins"));
+	StringCchCat(m_PluginPath, MAX_PATH, TEXT("plugins"));
 	PathAddBackslash(m_PluginPath);
-	StrCpy(szFilename, m_PluginPath);
-	StrCat(szFilename, TEXT("*.dll"));
+	StringCchCopy(szFilename, MAX_PATH, m_PluginPath);
+	StringCchCat(szFilename, MAX_PATH, TEXT("*.dll"));
 
 	hFind = FindFirstFile(szFilename, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -60,10 +60,10 @@ bool			CPluginManager::Initialize(void)
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			TCHAR szDll[512];
+			TCHAR szDll[MAX_PATH];
 
-			StrCpy(szDll, m_PluginPath);
-			StrCat(szDll, w32fd.cFileName);
+			StringCchCopy(szDll, MAX_PATH, m_PluginPath);
+			StringCchCat(szDll, MAX_PATH, w32fd.cFileName);
 
 			HMODULE hDLL = LoadLibrary(szDll);
 			if(hDLL)
@@ -77,7 +77,7 @@ bool			CPluginManager::Initialize(void)
 				if(pGTPVF() != ITUNIACPLUGIN_VERSION)
 				{
 					TCHAR szError[512];
-					_snwprintf(szError, 512, TEXT("Incompatable plugin found: \\plugins\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+					StringCchPrintf(szError, 512, TEXT("Incompatable plugin found: \\plugins\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 					MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					FreeLibrary(hDLL);
 					continue;
@@ -95,8 +95,8 @@ bool			CPluginManager::Initialize(void)
 						continue;
 					}
 
-					_snwprintf(PE.szDllFile, 64, TEXT("%s"), w32fd.cFileName);
-					_snwprintf(PE.szName, 64, TEXT("%s"), PE.pPlugin->GetPluginName());
+					StringCchPrintf(PE.szDllFile, 64, TEXT("%s"), w32fd.cFileName);
+					StringCchPrintf(PE.szName, 64, TEXT("%s"), PE.pPlugin->GetPluginName());
 					PE.ulFlags = PE.pPlugin->GetFlags();
 
 					PE.bEnabled = false;
@@ -180,7 +180,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 	if(bEnabled)
 	{
 		TCHAR szDllFile[512];
-		_snwprintf(szDllFile, 512, TEXT("%s%s"), m_PluginPath, m_PluginArray[iPlugin].szDllFile);
+		StringCchPrintf(szDllFile, MAX_PATH, TEXT("%s%s"), m_PluginPath, m_PluginArray[iPlugin].szDllFile);
 		m_PluginArray[iPlugin].hDLL = LoadLibrary(szDllFile);
 
 		if(m_PluginArray[iPlugin].hDLL == NULL)
@@ -206,7 +206,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 				{
 					m_PluginArray[iPlugin].pPlugin->SetHelper(this);
 					SetThreadPriority(m_PluginArray[iPlugin].hThread, THREAD_PRIORITY_LOWEST);
-					_snwprintf(m_PluginArray[iPlugin].szName, 64, TEXT("%s"), m_PluginArray[iPlugin].pPlugin->GetPluginName());
+					StringCchPrintf(m_PluginArray[iPlugin].szName, 64, TEXT("%s"), m_PluginArray[iPlugin].pPlugin->GetPluginName());
 					m_PluginArray[iPlugin].ulFlags = m_PluginArray[iPlugin].pPlugin->GetFlags();
 					m_PluginArray[iPlugin].bEnabled = true;
 				}
@@ -229,7 +229,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 				m_PluginArray[iPlugin].hDLL = NULL;
 			}
 			TCHAR szError[512];
-			_snwprintf(szError, 512, TEXT("Error reloading plugin: %s"), m_PluginArray[iPlugin].szDllFile);
+			StringCchPrintf(szError, 512, TEXT("Error reloading plugin: %s"), m_PluginArray[iPlugin].szDllFile);
 			MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONERROR);
 			return false;
 		}
@@ -426,13 +426,13 @@ HWND			CPluginManager::GetMainWindow(void)
 bool			CPluginManager::PreferencesGet(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
 {
 	TCHAR szPluginsSubKey[128];
-	_snwprintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
+	StringCchPrintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginGetValue(szPluginsSubKey, lpValueName, lpType, lpData, lpcbData);
 }
 
 bool			CPluginManager::PreferencesSet(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
 {
 	TCHAR szPluginsSubKey[128];
-	_snwprintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
+	StringCchPrintf(szPluginsSubKey, 128, TEXT("plugins\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginSetValue(szPluginsSubKey, lpValueName, dwType, lpData, cbData);
 }

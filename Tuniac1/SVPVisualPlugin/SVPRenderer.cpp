@@ -16,8 +16,8 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 { 
 	SVPRenderer * pSVPRenderer = (SVPRenderer *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
-    switch (uMsg) 
-    { 
+	switch (uMsg) 
+	{ 
 		case WM_INITDIALOG:
 			{
 				SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
@@ -83,9 +83,9 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 			}
 			break;
 
-        case WM_COMMAND: 
-            switch (LOWORD(wParam)) 
-            { 
+		case WM_COMMAND: 
+			switch (LOWORD(wParam)) 
+			{ 
 				case IDC_SVPPREF_USEOPENGL:
 					{
 						pSVPRenderer->iUseOpenGL = true;
@@ -191,20 +191,20 @@ LRESULT CALLBACK SVPRenderer::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 					}
 					break;
 
-                case IDOK:
+				case IDOK:
 				case IDCANCEL: 
 					{
 						EndDialog(hDlg, wParam); 
 						return TRUE;
 					}
 					break;
-            }
+			}
 
 		default:
 			return FALSE;
 
-    } 
-    return TRUE; 
+	} 
+	return TRUE; 
 } 
 
 ULONG_PTR m_gdiplusToken = 0;
@@ -213,94 +213,94 @@ extern HANDLE	hInst;
 
 __m64 Get_m64(__int64 n)
 {
-    union __m64__m64
-    {
-        __m64 m;
-        __int64 i;
-    } mi;
+	union __m64__m64
+	{
+		__m64 m;
+		__int64 i;
+	} mi;
 
-    mi.i = n;
-    return mi.m;
+	mi.i = n;
+	return mi.m;
 }
 
 #if defined (_M_IX86)
 
 void ChangeBrightnessC_MMX(
-    unsigned long* pSource, 
-    unsigned long* pDest, 
-    int nNumberOfPixels, 
-    int nChange)
+	unsigned long* pSource, 
+	unsigned long* pDest, 
+	int nNumberOfPixels, 
+	int nChange)
 {
-    if ( nChange > 255 )
-        nChange = 255;
-    else if ( nChange < -255 )
-        nChange = -255;
+	if ( nChange > 255 )
+		nChange = 255;
+	else if ( nChange < -255 )
+		nChange = -255;
 
-    BYTE b = (BYTE) abs(nChange);
+	BYTE b = (BYTE) abs(nChange);
 
-    // make 64 bits value with b in each byte
-    __int64 c = b;
+	// make 64 bits value with b in each byte
+	__int64 c = b;
 
-    for ( int i = 1; i <= 7; i++ )
-    {
-        c = c << 8;
-        c |= b;
-    }
+	for ( int i = 1; i <= 7; i++ )
+	{
+		c = c << 8;
+		c |= b;
+	}
 
-    // 2 pixels are processed in one loop
-    int nNumberOfLoops = nNumberOfPixels / 2;
+	// 2 pixels are processed in one loop
+	int nNumberOfLoops = nNumberOfPixels / 2;
 
-    __m64* pIn = (__m64*) pSource;          // input pointer
-    __m64* pOut = (__m64*) pDest;           // output pointer
+	__m64* pIn = (__m64*) pSource;          // input pointer
+	__m64* pOut = (__m64*) pDest;           // output pointer
 
-    __m64 tmp;                              // work variable
+	__m64 tmp;                              // work variable
 
 
-    _mm_empty();                            // emms
+	_mm_empty();                            // emms
 
-    __m64 nChange64 = Get_m64(c);
+	__m64 nChange64 = Get_m64(c);
 
-    if ( nChange > 0 )
-    {
-        for ( int i = 0; i < nNumberOfLoops; i++ )
-        {
-            tmp = _mm_adds_pu8(*pIn, nChange64); // Unsigned addition 
-                                                 // with saturation.
-                                                 // tmp = *pIn + nChange64
-                                                 // for each byte
+	if ( nChange > 0 )
+	{
+		for ( int i = 0; i < nNumberOfLoops; i++ )
+		{
+			tmp = _mm_adds_pu8(*pIn, nChange64); // Unsigned addition 
+												 // with saturation.
+												 // tmp = *pIn + nChange64
+												 // for each byte
 
-            *pOut = tmp;
+			*pOut = tmp;
 
-            pIn++;                               // next 2 pixels
-            pOut++;
-        }
-    }
-    else
-    {
-        for ( int i = 0; i < nNumberOfLoops; i++ )
-        {
-            tmp = _mm_subs_pu8(*pIn, nChange64); // Unsigned subtraction 
-                                                 // with saturation.
-                                                 // tmp = *pIn - nChange64
-                                                 // for each byte
+			pIn++;                               // next 2 pixels
+			pOut++;
+		}
+	}
+	else
+	{
+		for ( int i = 0; i < nNumberOfLoops; i++ )
+		{
+			tmp = _mm_subs_pu8(*pIn, nChange64); // Unsigned subtraction 
+												 // with saturation.
+												 // tmp = *pIn - nChange64
+												 // for each byte
 
-            *pOut = tmp;
+			*pOut = tmp;
 
-            pIn++;                               // next 2 pixels
-            pOut++;
-        }
-    }
+			pIn++;                               // next 2 pixels
+			pOut++;
+		}
+	}
 
-    _mm_empty();                            // emms
+	_mm_empty();                            // emms
 }
 
 #else
 
 void ChangeBrightnessC_MMX(
-    unsigned long* pSource, 
-    unsigned long* pDest, 
-    int nNumberOfPixels, 
-    int nChange)
+	unsigned long* pSource, 
+	unsigned long* pDest, 
+	int nNumberOfPixels, 
+	int nChange)
 {
 	for(int rep = 0; rep < nNumberOfPixels; rep++)
 	{
@@ -321,8 +321,8 @@ void ChangeBrightnessC_MMX(
 
 SVPRenderer::SVPRenderer(void)
 {
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+	Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
 	m_textureData = NULL;
 	visdata = NULL;
@@ -364,8 +364,8 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 	TCHAR	szFilename[MAX_PATH];
 
 	PathAddBackslash(szFolder);
-	StrCpyN(szFilename, szFolder, MAX_PATH);
-	StrCat(szFilename, TEXT("*.*"));
+	StringCchCopy(szFilename, MAX_PATH, szFolder);
+	StringCchCat(szFilename, MAX_PATH, TEXT("*.*"));
 
 	hFind = FindFirstFile( szFilename, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -377,9 +377,9 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 
 			TCHAR temp[MAX_PATH];
 
-			StrCpy(temp, szFolder);
+			StringCchCopy(temp, MAX_PATH, szFolder);
 			PathAddBackslash(temp);
-			StrCat(temp, w32fd.cFileName);
+			StringCchCat(temp, MAX_PATH, w32fd.cFileName);
 
 			if(GetFileAttributes(temp) & FILE_ATTRIBUTE_DIRECTORY)
 			{
@@ -393,7 +393,7 @@ bool SVPRenderer::AddFolderOfSVP(LPTSTR	szFolder)
 				{
 					LPTSTR string = (LPTSTR)malloc(MAX_PATH * sizeof(TCHAR));
 
-					StrCpy(string, temp);
+					StringCchCopy(string, MAX_PATH, temp);
 
 					m_VisFilenameArray.AddTail(string);
 				}
@@ -862,11 +862,11 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 
 		if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szOldVisSettingDir ) ) )
 		{
-			StrCat(szOldVisSettingDir, TEXT("\\Tuniac\\"));
-			StrCat(szOldVisSettingDir, PathFindFileName(m_VisFilenameArray[m_SelectedVisual]));
-			StrCat(szOldVisSettingDir, TEXT(".ini"));
+			StringCchCat(szOldVisSettingDir, MAX_PATH, TEXT("\\Tuniac\\"));
+			StringCchCat(szOldVisSettingDir, MAX_PATH, PathFindFileName(m_VisFilenameArray[m_SelectedVisual]));
+			StringCchCat(szOldVisSettingDir, MAX_PATH, TEXT(".ini"));
 			WideCharToMultiByte(CP_ACP, 0, szOldVisSettingDir, MAX_PATH,cOldSettingsDir, MAX_PATH, NULL, NULL);
- 			t->SaveSettings(cOldSettingsDir);
+			t->SaveSettings(cOldSettingsDir);
 		}
 
 		t->Shutdown();
@@ -896,10 +896,10 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	GetCurrentDirectory(MAX_PATH, oldFolder);
 
 	TCHAR	szVisFilename[MAX_PATH];
-	StrCpy(szVisFilename, m_VisFilenameArray[visindex]);
+	StringCchCopy(szVisFilename, MAX_PATH, m_VisFilenameArray[visindex]);
 
 	TCHAR	szPath[MAX_PATH];
-	StrCpy(szPath, szVisFilename);
+	StringCchCopy(szPath, MAX_PATH, szVisFilename);
 	PathRemoveFileSpec(szPath);
 	SetCurrentDirectory(szPath);
 

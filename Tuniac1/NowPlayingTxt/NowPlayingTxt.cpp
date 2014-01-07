@@ -5,11 +5,11 @@
 #define WM_MCOMMAND   WM_USER + 200
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ulReason, 
-                       LPVOID lpReserved
+					   DWORD  ulReason, 
+					   LPVOID lpReserved
 					 )
 {
-    return TRUE;
+	return TRUE;
 }
 
 extern "C" __declspec(dllexport) ITuniacPlugin * CreateTuniacPlugin(void)
@@ -127,7 +127,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 						if(hOutFile == INVALID_HANDLE_VALUE)
 							break;
 						unsigned long ulBytesWritten;
-						WriteFile(hOutFile, &szSong, (wcslen(szSong)) * sizeof(TCHAR), &ulBytesWritten, NULL);
+						WriteFile(hOutFile, &szSong, (wcsnlen_s(szSong, 512)) * sizeof(TCHAR), &ulBytesWritten, NULL);
 						CloseHandle(hOutFile);
 					}
 					break;
@@ -142,10 +142,10 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 							
 							TCHAR szData[512];
 							m_pHelper->GetTrackInfo(szData, 512, TEXT("@T - @A"), 0);
-							if(wcslen(szData) == 0)
+							if(wcsnlen_s(szData, 512) == 0)
 								break;
 
-							HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (wcslen(szData) + 1) * sizeof(TCHAR)); 
+							HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, wcsnlen_s(szData, 512) * sizeof(TCHAR)); 
 							if (hglbCopy == NULL) 
 							{ 
 								CloseClipboard(); 
@@ -154,7 +154,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 							
 							LPTSTR lptstrCopy = (LPTSTR)GlobalLock(hglbCopy); 
 							if(lptstrCopy)
-								memcpy(lptstrCopy, szData, (wcslen(szData) + 1) * sizeof(TCHAR)); 
+								memcpy_s(lptstrCopy, 512, szData, wcsnlen_s(szData, 512) * sizeof(TCHAR)); 
 							GlobalUnlock(hglbCopy); 
   
 							SetClipboardData(CF_UNICODETEXT, hglbCopy); 

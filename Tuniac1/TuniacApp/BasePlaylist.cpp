@@ -34,9 +34,9 @@ CBasePlaylist::CBasePlaylist(void)
 	m_SortType		= SORTED_UNSORTED;
 	m_LastSortBy	= -1;
 
-	StrCpy(m_szPlaylistName, TEXT(""));
+	StringCchCopy(m_szPlaylistName, 128, TEXT(""));
 
-	StrCpy(m_szTextFilter, TEXT(""));
+	StringCchCopy(m_szTextFilter, 128, TEXT(""));
 	m_ulTextFilterField = FIELD_MAXFIELD;
 	m_bTextFilterReversed = false;
 }
@@ -50,7 +50,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 	TCHAR szTemp[260];
 
 	//if filter text exists
-	if(lstrlen(m_szTextFilter))
+	if(wcsnlen_s(m_szTextFilter, 128))
 	{
 		//check items that match text
 		for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
@@ -84,11 +84,17 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
-				/*if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_ALBUMARTIST), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
-				}*/
+				}
+
+				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
+				{
+					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
+					continue;
+				}
 			}
 
 			//single field filter selected. Will include or exclude based solely on the single field
@@ -277,7 +283,7 @@ bool				CBasePlaylist::SetPlaylistName(LPTSTR szPlaylistName)
 {
 	if(szPlaylistName)
 	{
-		StrCpyN(m_szPlaylistName, szPlaylistName, 128);
+		StringCchCopy(m_szPlaylistName, 128, szPlaylistName);
 		return true;
 	}
 
@@ -773,7 +779,7 @@ unsigned long		CBasePlaylist::GetRealIndexforEntryID(unsigned long ulEntryID)
 
 bool				CBasePlaylist::SetTextFilter(LPTSTR	szFilterString)
 {
-	StrCpyN(m_szTextFilter, szFilterString, 128);
+	StringCchCopy(m_szTextFilter, 128, szFilterString);
 	return true;
 }
 

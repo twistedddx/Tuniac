@@ -3,6 +3,8 @@
 #include "ITuniacImportPlugin.h"
 #include "ITuniacExportPlugin.h"
 #include "stdio.h"
+#include "shlwapi.h"
+#include <strsafe.h>
 
 class CPLS_Import :
 	public ITuniacImportPlugin
@@ -10,8 +12,8 @@ class CPLS_Import :
 
 protected:
 	int				m_Current;
-	TCHAR			m_Source[512];
-	TCHAR			m_BaseDir[512];
+	TCHAR			m_Source[MAX_PATH];
+	TCHAR			m_BaseDir[MAX_PATH];
 	bool			m_StartedImport;
 
 public:

@@ -41,6 +41,7 @@
 #include <shlwapi.h>
 #include <shobjidl.h>
 
+#include <strsafe.h>
 
 
 // other windows stuff

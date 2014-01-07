@@ -67,7 +67,7 @@ void		CHistory::AddEntryID(unsigned long ulEntryID)
 	tuniacApp.EscapeMenuItemString(szDetail, szItem, 112);
 
 	tuniacApp.FormatSongInfo(szTime, 16, pIPE, TEXT("\t[@I]"), false);
-	StrCatN(szItem, szTime, 128);
+	StringCchCat(szItem, 128, szTime);
 
 	InsertMenu(m_hMenu, 0, MF_BYPOSITION, HISTORYMENU_BASE, szItem);
 

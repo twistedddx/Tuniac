@@ -153,8 +153,8 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOCK, BM_SETCHECK, pPrefs->m_bResumeOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_SETCHECK, pPrefs->m_bResumeOnSwitch ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_REMEMBERPOS, BM_SETCHECK, pPrefs->m_bRememberPos ? BST_CHECKED : BST_UNCHECKED, 0);
-				_itow(pPrefs->m_iDelayInSecs, szSize, 10);
-				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iDelayInSecs);
+				_itow_s(pPrefs->m_iDelayInSecs, szSize, 10);
+				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iDelayInSecs);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_DELAYINSECS, WM_SETTEXT, 0, (LPARAM)szSize);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_TASKBAR_NORMAL, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconNever ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -166,14 +166,14 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENT, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePrevent ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENTFULL, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePreventFull ? BST_CHECKED : BST_UNCHECKED, 0);
 
-				_itow(pPrefs->m_iHistoryListSize, szSize, 10);
-				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
+				_itow_s(pPrefs->m_iHistoryListSize, szSize, 10);
+				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(HISTORY_MAX, 2));
 				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_HISTORYCOUNT), 0);
  
-				_itow(pPrefs->m_iFutureListSize, szSize, 10);
-				//_snwprintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
+				_itow_s(pPrefs->m_iFutureListSize, szSize, 10);
+				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(FUTURE_MAX, 2));
 				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_FUTURECOUNT), 0);
@@ -545,7 +545,7 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					if(pPE == NULL) break;
 
 					TCHAR szItem[128];
-					_snwprintf(szItem, 128, TEXT("%s (%s)"), pPE->szName, pPE->szDllFile);
+					StringCchPrintf(szItem, 128, TEXT("%s (%s)"), pPE->szName, pPE->szDllFile);
 
 					item.pszText = szItem;
 					item.iItem = i;
@@ -720,7 +720,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				//SetWindowPos(GetDlgItem(GetParent(hDlg), IDOK), NULL, pt.x, pt.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
 				TCHAR		tstr[42];
-				_snwprintf(tstr, 42, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
+				StringCchPrintf(tstr, 42, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
 				SetDlgItemText(hDlg, IDC_CROSSFADE_TIME_TEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(2, 15));
 				SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_SETPOS,		TRUE, pPrefs->m_iCrossfadeTime);
@@ -729,7 +729,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 				EnableWindow(GetDlgItem(hDlg, IDC_CROSSFADE_TIME_SLIDER), pPrefs->m_bCrossfadeEnabled ? TRUE : FALSE);
 				SendDlgItemMessage(hDlg, IDC_CROSSFADE_ENABLE, BM_SETCHECK, pPrefs->m_bCrossfadeEnabled ? BST_CHECKED : BST_UNCHECKED, 0);
 
-				_snwprintf(tstr, 42, TEXT("Buffer length %d milliseconds"), pPrefs->m_iAudioBuffering);
+				StringCchPrintf(tstr, 42, TEXT("Buffer length %d milliseconds"), pPrefs->m_iAudioBuffering);
 				SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETRANGE,	TRUE, MAKELONG(250, 5000));
 				SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_SETPOS,	TRUE, pPrefs->m_iAudioBuffering);
@@ -742,7 +742,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 
 				SendDlgItemMessage(hDlg, IDC_AUDIO_REPLAYGAINALBUM, BM_SETCHECK, pPrefs->ReplayGainUseAlbumGain() ? BST_CHECKED : BST_UNCHECKED, 0);
 
-				_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
+				StringCchPrintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
 				SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
 				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETRANGE,	TRUE, MAKELONG(-150, 150));
 				SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_SETPOS,	TRUE, (pPrefs->m_fAmpGain*10.0f));
@@ -800,16 +800,16 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							TCHAR		tstr[42];
 
 							pPrefs->m_iCrossfadeTime = SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_GETPOS, 0, 0); 
-							_snwprintf(tstr, 42, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
+							StringCchPrintf(tstr, 42, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
 							SetDlgItemText(hDlg, IDC_CROSSFADE_TIME_TEXT, tstr);
 
 							pPrefs->m_iAudioBuffering = SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_GETPOS, 0, 0); 
-							_snwprintf(tstr, 42, TEXT("Buffer length %d milliseconds"), pPrefs->m_iAudioBuffering);
+							StringCchPrintf(tstr, 42, TEXT("Buffer length %d milliseconds"), pPrefs->m_iAudioBuffering);
 							SetDlgItemText(hDlg, IDC_BUFFER_TIME_TEXT, tstr);
 							CCoreAudio::Instance()->SetAudioBufferSize(pPrefs->m_iAudioBuffering);
 
 							pPrefs->m_fAmpGain = SendDlgItemMessage(hDlg, IDC_AUDIO_AMPGAINSLIDER, TBM_GETPOS, 0, 0) / 10.0f; 
-							_snwprintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
+							StringCchPrintf(tstr, 42, TEXT("Reduce nonreplaygain files by %1.2f db"), pPrefs->m_fAmpGain);
 							SetDlgItemText(hDlg, IDC_AUDIO_AMPGAINTEXT, tstr);
 							CCoreAudio::Instance()->SetAmpGain(pPrefs->m_fAmpGain);
 						}
@@ -853,11 +853,11 @@ LRESULT CALLBACK CPreferences::EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 
 
 				TCHAR		tstr[16];
-				_snwprintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
+				StringCchPrintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
 				SetDlgItemText(hDlg, IDC_EQLOW_TEXT, tstr);
-				_snwprintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
+				StringCchPrintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
 				SetDlgItemText(hDlg, IDC_EQMID_TEXT, tstr);
-				_snwprintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
+				StringCchPrintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
 				SetDlgItemText(hDlg, IDC_EQHIGH_TEXT, tstr);
 
 			}
@@ -879,11 +879,11 @@ LRESULT CALLBACK CPreferences::EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 							pPrefs->m_fEQHigh = 1.0f; 
 
 							TCHAR		tstr[16];
-							_snwprintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
+							StringCchPrintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
 							SetDlgItemText(hDlg, IDC_EQLOW_TEXT, tstr);
-							_snwprintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
+							StringCchPrintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
 							SetDlgItemText(hDlg, IDC_EQMID_TEXT, tstr);
-							_snwprintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
+							StringCchPrintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
 							SetDlgItemText(hDlg, IDC_EQHIGH_TEXT, tstr);
 
 							CCoreAudio::Instance()->SetEQGain(pPrefs->m_fEQLow, pPrefs->m_fEQMid, pPrefs->m_fEQHigh);
@@ -913,11 +913,11 @@ LRESULT CALLBACK CPreferences::EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
 							pPrefs->m_fEQMid = ((float)SendDlgItemMessage(hDlg, IDC_EQMID_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f); 
 							pPrefs->m_fEQHigh = ((float)SendDlgItemMessage(hDlg, IDC_EQHIGH_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f);
 							TCHAR		tstr[16];
-							_snwprintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
+							StringCchPrintf(tstr, 16, TEXT("Bass: %1.2f"), pPrefs->m_fEQLow);
 							SetDlgItemText(hDlg, IDC_EQLOW_TEXT, tstr);
-							_snwprintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
+							StringCchPrintf(tstr, 16, TEXT("Mid: %1.2f"), pPrefs->m_fEQMid);
 							SetDlgItemText(hDlg, IDC_EQMID_TEXT, tstr);
-							_snwprintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
+							StringCchPrintf(tstr, 16, TEXT("Treble: %1.2f"), pPrefs->m_fEQHigh);
 							SetDlgItemText(hDlg, IDC_EQHIGH_TEXT, tstr);
 
 							CCoreAudio::Instance()->SetEQGain(pPrefs->m_fEQLow, pPrefs->m_fEQMid, pPrefs->m_fEQHigh);
@@ -1141,7 +1141,7 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_SETPOS,	TRUE, pPrefs->m_iVisualFPS);
 
 				TCHAR	tstr[32];
-				_snwprintf(tstr, 32, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
+				StringCchPrintf(tstr, 32, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
 				SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
 			}
 			break;
@@ -1156,7 +1156,7 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							pPrefs->m_iVisualFPS = SendDlgItemMessage(hDlg, IDC_VISUAL_FPS, TBM_GETPOS, 0, 0);
 
 							TCHAR	tstr[32];
-							_snwprintf(tstr, 32, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
+							StringCchPrintf(tstr, 32, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
 							SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
 							tuniacApp.m_VisualWindow->SetVisualFPS(pPrefs->m_iVisualFPS);
 						}
@@ -1443,9 +1443,9 @@ bool CPreferences::DefaultPreferences(void)
 	m_bAddSingleStream			= TRUE;
 	m_bAutoSoftPause			= FALSE;
 
-	_snwprintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
-	_snwprintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
-	_snwprintf(m_szListFormatString, 256, TEXT("@T - @A"));
+	StringCchPrintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
+	StringCchPrintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
+	StringCchPrintf(m_szListFormatString, 256, TEXT("@T - @A"));
 
 	m_bCrossfadeEnabled			= TRUE;
 	m_iCrossfadeTime			= 6;
@@ -2284,21 +2284,21 @@ bool CPreferences::SavePreferences(void)
 					NULL,
 					REG_SZ,
 					(LPBYTE)&m_szWindowFormatString,
-					(wcslen(m_szWindowFormatString) + 1) * sizeof(TCHAR));
+					(wcsnlen_s(m_szWindowFormatString, 256) + 1) * sizeof(TCHAR));
 
 	RegSetValueEx(	hTuniacPrefKey,
 					PLUGINFORMATSTRING,
 					NULL,
 					REG_SZ,
 					(LPBYTE)&m_szPluginFormatString,
-					(wcslen(m_szPluginFormatString) + 1) * sizeof(TCHAR));
+					(wcsnlen_s(m_szPluginFormatString, 256) + 1) * sizeof(TCHAR));
 
 	RegSetValueEx(	hTuniacPrefKey,
 					LISTFORMATSTRING,
 					NULL,
 					REG_SZ,
 					(LPBYTE)&m_szListFormatString,
-					(wcslen(m_szListFormatString) + 1) * sizeof(TCHAR));
+					(wcsnlen_s(m_szListFormatString, 256) + 1) * sizeof(TCHAR));
 
 	RegSetValueEx(	hTuniacPrefKey, 
 					MAINWINDOWPOS, 
@@ -2525,7 +2525,7 @@ bool	CPreferences::GetPreferencesPageName(unsigned int iPage, LPTSTR szDest, uns
 
 	if(m_Pages[i].iParent == -1)
 	{
-		_snwprintf(szDest, iSize, TEXT("%s"), m_Pages[i].pszName);
+		StringCchPrintf(szDest, iSize, TEXT("%s"), m_Pages[i].pszName);
 	}
 	else
 	{
@@ -2533,11 +2533,11 @@ bool	CPreferences::GetPreferencesPageName(unsigned int iPage, LPTSTR szDest, uns
 
 		if(m_Pages[iParent].iParent == -1)
 		{
-			_snwprintf(szDest, iSize, TEXT("%s: %s"), m_Pages[iParent].pszName, m_Pages[i].pszName);
+			StringCchPrintf(szDest, iSize, TEXT("%s: %s"), m_Pages[iParent].pszName, m_Pages[i].pszName);
 		}
 		else
 		{
-			_snwprintf(szDest, iSize, TEXT("%s: %s: %s"), m_Pages[m_Pages[iParent].iParent].pszName, m_Pages[iParent].pszName, m_Pages[i].pszName);
+			StringCchPrintf(szDest, iSize, TEXT("%s: %s: %s"), m_Pages[m_Pages[iParent].iParent].pszName, m_Pages[iParent].pszName, m_Pages[i].pszName);
 		}
 	}
 	return true;
@@ -2547,7 +2547,7 @@ bool	CPreferences::PluginGetValue(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD
 {
 	HKEY hTuniacPrefKey;
 	TCHAR szKey[512];
-	_snwprintf(szKey, 512, TEXT("%s\\%s"), PREFERENCES_KEY, szSubKey);
+	StringCchPrintf(szKey, 512, TEXT("%s\\%s"), PREFERENCES_KEY, szSubKey);
 
 	if(RegOpenKeyEx(	HKEY_CURRENT_USER,
 						szKey,
@@ -2576,7 +2576,7 @@ bool	CPreferences::PluginSetValue(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD d
 		
 	HKEY hTuniacPrefKey;
 	TCHAR szKey[512];
-	_snwprintf(szKey, 512, TEXT("%s\\%s"), PREFERENCES_KEY, szSubKey);
+	StringCchPrintf(szKey, 512, TEXT("%s\\%s"), PREFERENCES_KEY, szSubKey);
 
 	if(RegCreateKey(	HKEY_CURRENT_USER,
 						szKey,

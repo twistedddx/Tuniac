@@ -30,11 +30,11 @@
 #include "stdafx.h"
 
 #include <winsock2.h>
-#include <windows.h>
-#include <shellapi.h>
-#include <shobjidl.h>
+//#include <windows.h>
+//#include <shellapi.h>
+//#include <shobjidl.h>
 
-#include <strsafe.h>
+//#include <strsafe.h>
 
 #include "tuniacapp.h"
 #include "resource.h"
@@ -85,14 +85,14 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 		//if we have no command lines so just restore tuniac
 		//the commandline gets quotation marks and a space, so remove 3 chars
-		if((lstrlen(szCommandLine) - 3) == lstrlen(szFilename))
+		if((wcslen(szCommandLine) - 3) == wcsnlen_s(szFilename, 260))
 			wcscat(szCommandLine, L"-restore");
 
 		//relay command line to existing tuniacapp.exe window
 		COPYDATASTRUCT cds;
 
 		cds.dwData = 0;
-		cds.cbData = (lstrlen(szCommandLine) + 1) * sizeof(TCHAR);
+		cds.cbData = (wcslen(szCommandLine) + 1) * sizeof(TCHAR);
 		cds.lpData = szCommandLine;
 
 		SendMessage(hOtherWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
@@ -258,7 +258,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	//use any command lines given(initial open only all others in one instance code)
 	COPYDATASTRUCT cds;
 	cds.dwData = 0;
-	cds.cbData = (lstrlen(szCommandLine) + 1) * sizeof(TCHAR);
+	cds.cbData = (wcslen(szCommandLine) + 1) * sizeof(TCHAR);
 	cds.lpData = szCommandLine;
 	SendMessage(m_hWnd, WM_COPYDATA, NULL, (LPARAM)&cds);
 
@@ -1460,7 +1460,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								TCHAR				szURLBuffer[64*MAX_PATH];
 
 								ZeroMemory(&ofn, sizeof(OPENFILENAME));
-								StringCbCopy(szURLBuffer, 64*MAX_PATH, TEXT(""));
+								StringCchCopy(szURLBuffer, 64*MAX_PATH, TEXT(""));
 
 								ofn.lStructSize			= sizeof(OPENFILENAME);
 								ofn.hwndOwner			= hWnd;
@@ -1483,7 +1483,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									if(m_MediaLibrary.BeginAdd(BEGIN_ADD_UNKNOWNNUMBER))
 									{
 										//single file was selected(straight url to file)
-										if(ofn.nFileOffset < lstrlen(szURLBuffer))
+										if(ofn.nFileOffset < wcsnlen_s(szURLBuffer, 16640))
 										{
 											m_MediaLibrary.AddItem(szURLBuffer, false);
 										}
@@ -1495,16 +1495,16 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 											LPTSTR	szOFNName = &szURLBuffer[ofn.nFileOffset];
 
-											StringCbCopy( szFilePath, MAX_PATH, szURLBuffer );
-											while( lstrlen(szOFNName) != 0 )
+											StringCchCopy( szFilePath, MAX_PATH, szURLBuffer );
+											while( wcsnlen_s(szOFNName, MAX_PATH) != 0 )
 											{
-												StringCbCopy( szURL, MAX_PATH, szFilePath );
-												StringCbCat( szURL, MAX_PATH, TEXT("\\") );
-												StringCbCat( szURL, MAX_PATH, szOFNName );
+												StringCchCopy(szURL, MAX_PATH, szFilePath );
+												StringCchCat(szURL, MAX_PATH, TEXT("\\") );
+												StringCchCat(szURL, MAX_PATH, szOFNName );
 
 												m_MediaLibrary.AddItem(szURL, false);
 
-												szOFNName = &szOFNName[lstrlen(szOFNName) + 1];
+												szOFNName = &szOFNName[wcsnlen_s(szOFNName, MAX_PATH) + 1];
 											}
 										}
 
@@ -1661,7 +1661,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								TCHAR szAddBuffer[2048] = TEXT("");
 								if(DialogBoxParam(m_hInstance, MAKEINTRESOURCE(IDD_ADDOTHER), hWnd, (DLGPROC)AddOtherProc, (LPARAM)szAddBuffer))
 								{
-									if(wcslen(szAddBuffer) > 0 && m_MediaLibrary.BeginAdd(1))
+									if(wcsnlen_s(szAddBuffer, 2048) > 0 && m_MediaLibrary.BeginAdd(1))
 									{
 										m_MediaLibrary.AddItem(szAddBuffer, false);
 										m_MediaLibrary.EndAdd();
@@ -1680,7 +1680,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if(bOK)
 								{
 									TCHAR szMessage[128];
-									_snwprintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%u entries total.\n%u standard playlists."), 
+									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%u entries total.\n%u standard playlists."), 
 													m_MediaLibrary.GetCount(), 
 													m_PlaylistManager.m_StandardPlaylists.GetCount());
 
@@ -1797,9 +1797,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								TCHAR szHelp[512];
 								GetModuleFileName(NULL, szHelp, 512);
 								PathRemoveFileSpec(szHelp);
-								StringCbCat(szHelp, 512, TEXT("\\Guide\\index.html"));
+								StringCchCat(szHelp, 512, TEXT("\\Guide\\index.html"));
 								if(PathFileExists(szHelp) == FALSE)
-									StringCbCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
+									StringCchCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
 
 								ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
 							}
@@ -2359,7 +2359,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 
 	LPTSTR a = szFormat, b = StrStr(a, TEXT("@"));
 	while (b != NULL) {
-		if(wcslen(szDest) >= iDestSize - 1)
+		if(wcsnlen_s(szDest, iDestSize) >= iDestSize - 1)
 			break;
 
 		StringCchCopyN(szDest + wcslen(szDest), iDestSize - wcslen(szDest), a, wcslen(a) - wcslen(b));
@@ -2464,17 +2464,17 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 
 		if (lField == 0xFFFF)
 		{
-			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			break;
 		}
 		else if (lField == 0xFFFE)
 		{
-			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			b += 1;
 		}
 		else if (lField == 0xFFFD) 
 		{
-			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("@"));
+			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			b += 2;
 		}
 		else if (lField == -1)
@@ -2484,23 +2484,23 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			{
 				case STATE_STOPPED:
 					{
-						_snwprintf(szPlayState, 16, TEXT("Paused"));
+						StringCchPrintf(szPlayState, 16, TEXT("Paused"));
 					}
 					break;
 
 				case STATE_PLAYING:
 					{
-						_snwprintf(szPlayState, 16, TEXT("Playing"));
+						StringCchPrintf(szPlayState, 16, TEXT("Playing"));
 					}
 					break;
 
 				default:
 					{
-						_snwprintf(szPlayState, 16, TEXT("Stopped"));
+						StringCchPrintf(szPlayState, 16, TEXT("Stopped"));
 					}
 					break;
 			}
-			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), szPlayState);
+			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), szPlayState);
 			b += 2;
 		}
 		else
@@ -2518,9 +2518,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 							while(szFieldData[i] == L'0' && szFieldData[i+1] == L'0')
 							{
 								i += 3;
-								if(i >= wcslen(szFieldData) - 1)
+								if(i >= wcsnlen_s(szFieldData, 256) - 1)
 								{
-									i = wcslen(szFieldData) - 2;
+									i = wcsnlen_s(szFieldData, 256) - 2;
 									break;
 								}
 							}
@@ -2528,21 +2528,21 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 							{
 								if(szFieldData[i] == L'0')
 									i++;
-								StringCbCopy(szFieldData, 256, szFieldData + i);
+								StringCchCopy(szFieldData, 256, szFieldData + i);
 							}
 						}
 						break;
 
 					case FIELD_FILEEXTENSION:
 						{
-							if(wcslen(szFieldData) > 0 && szFieldData[0] == L'.')
-								StringCbCopy(szFieldData, 256, szFieldData + 1);
+							if(wcsnlen_s(szFieldData, 256) > 0 && szFieldData[0] == L'.')
+								StringCchCopy(szFieldData, 256, szFieldData + 1);
 						}
 						break;
 				}
 			}
 
-			_snwprintf(szDest + wcslen(szDest), iDestSize - wcslen(szDest), TEXT("%s"), szFieldData);
+			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("%s"), szFieldData);
 			b += 2;
 		}
 
@@ -2560,16 +2560,14 @@ bool	CTuniacApp::EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned 
 	LPTSTR pszRight, pszLeft = szSource;
 	while((pszRight = StrChr(pszLeft, L'&')) != NULL)
 	{
-		StringCbCatN(szDest, 256, pszLeft, min(iDestSize, (wcslen(pszLeft) + 1 - wcslen(pszRight))*2));
+		StringCchCat(szDest, iDestSize, pszLeft);
 		//StrCatN(szDest, pszLeft, min(iDestSize, wcslen(pszLeft) + 1 - wcslen(pszRight)));
 		if(wcslen(szDest) >= iDestSize - 3)
 			break;
-		StringCbCatN(szDest, 256, TEXT("&&"), 4);
-		//StrCatN(szDest, TEXT("&&"), iDestSize);
+		StringCchCat(szDest, iDestSize, TEXT("&&"));
 		pszLeft = pszRight + 1;
 	}
-	StringCbCatN(szDest, 256, pszLeft, iDestSize*2);
-	//StrCatN(szDest, pszLeft, iDestSize);
+	StringCchCat(szDest, iDestSize, pszLeft);
 	szDest[iDestSize - 1] = L'\0';
 	return true;
 }
@@ -2696,7 +2694,7 @@ void	CTuniacApp::RebuildFutureMenu(void)
 					FormatSongInfo(szDetail, 52, pIPE, m_Preferences.GetListFormatString(), true);
 					EscapeMenuItemString(szDetail, szItem, 52);
 					FormatSongInfo(szTime, 12, pIPE, TEXT("\t[@I]"), true);
-					StringCbCatN(szItem, 128, szTime, 24);
+					StringCchCat(szItem, 128, szTime);
 
 					//add menu item
 					AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);
@@ -2721,7 +2719,7 @@ void	CTuniacApp::UpdateTitles(void)
 	if(pIPE)
 		FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
 	else
-		_snwprintf(szWinTitle, 512, TEXT("Tuniac"));
+		StringCchPrintf(szWinTitle, 512, TEXT("Tuniac"));
 
 	SetWindowText(m_hWnd, szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);
@@ -2850,11 +2848,11 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 	{
 		TCHAR		szJPGPath[MAX_PATH];
 		TCHAR		szPNGPath[MAX_PATH];
-		StrCpy(szJPGPath, szSource);
+		StringCchCopy(szJPGPath, MAX_PATH, szSource);
 
 		PathRemoveFileSpec(szJPGPath);
 
-		StrCpy(szPNGPath, szJPGPath);
+		StringCchCopy(szPNGPath, MAX_PATH, szJPGPath);
 
 		PathAppend(szJPGPath, TEXT("folder.jpg"));
 		PathAppend(szPNGPath, TEXT("folder.png"));

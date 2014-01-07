@@ -43,7 +43,7 @@ class CPluginManager :
 {
 protected:
 	Array<PluginEntry, 3>		m_PluginArray;
-	TCHAR						m_PluginPath[512];
+	TCHAR						m_PluginPath[MAX_PATH];
 
 public:
 	CPluginManager(void);

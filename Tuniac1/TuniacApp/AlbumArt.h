@@ -41,7 +41,7 @@ protected:
 	struct jpeg_error_mgr			jerr;
 
 	char					szErrorMessage[JMSG_LENGTH_MAX];
-	TCHAR					szCurrentArtSource[512];
+	TCHAR					szCurrentArtSource[MAX_PATH];
 
 	png_image				image;
 

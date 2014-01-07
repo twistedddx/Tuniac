@@ -2,6 +2,8 @@
 
 #include "ITuniacExportPlugin.h"
 #include <stdio.h>
+#include "shlwapi.h"
+#include <strsafe.h>
 
 class CNumberedFileExporter :
 	public ITuniacExportPlugin

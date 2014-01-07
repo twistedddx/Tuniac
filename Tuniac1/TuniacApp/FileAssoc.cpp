@@ -173,11 +173,11 @@ bool			CFileAssoc::SetDefaultType(int iType)
 	TCHAR	szDefault[128];
 	bool bFound = false;
 
-    for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
+	for(int i = 0; i < FILEASSOC_NUMTYPES; i++)
 	{
 		if(iType == iTypeList[i])
 		{
-			_snwprintf(szDefault, 128, TEXT("%s"), szTypeList[i]);
+			StringCchPrintf(szDefault, 128, TEXT("%s"), szTypeList[i]);
 			bFound = true;
 			break;
 		}
@@ -189,7 +189,7 @@ bool			CFileAssoc::SetDefaultType(int iType)
 						TEXT("Tuniac.audio\\Shell"),
 						&hClassesKey) == ERROR_SUCCESS)
 	{
-		int Size = (wcslen(szDefault) + 1) * sizeof(TCHAR);
+		int Size = (wcsnlen_s(szDefault, 128) + 1) * sizeof(TCHAR);
 		RegSetValueEx(	hClassesKey,
 						NULL,
 						NULL,
@@ -218,8 +218,8 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 						TEXT("Tuniac.audio"),
 						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
-		_snwprintf(szTmp, 512, TEXT("Tuniac Audio File"));
-		Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
+		StringCchPrintf(szTmp, 512, TEXT("Tuniac Audio File"));
+		Size = (wcsnlen_s(szTmp, 512) + 1) * sizeof(TCHAR);
 		RegSetValueEx(	hTuniacAssocKey,
 						NULL,
 						NULL,
@@ -238,8 +238,8 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
 		GetModuleFileName(NULL, szTmp, 512);
-		_snwprintf(szTmp, 512, TEXT("%s,0"), szTmp);
-		Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
+		StringCchPrintf(szTmp, 512, TEXT("%s,0"), szTmp);
+		Size = (wcsnlen_s(szTmp, 512) + 1) * sizeof(TCHAR);
 		RegSetValueEx(	hTuniacAssocKey,
 						NULL,
 						NULL,
@@ -254,13 +254,13 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 		if(iTypes & iTypeList[i])
 		{
 
-			_snwprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s"), szTypeList[i]);
+			StringCchPrintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s"), szTypeList[i]);
 			if(RegCreateKey(	HKEY_CLASSES_ROOT,
 								szTmp,
 								&hTuniacAssocKey) == ERROR_SUCCESS)
 			{
-				_snwprintf(szTmp, 512, TEXT("&%s"), szTypeList[i]);
-				Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
+				StringCchPrintf(szTmp, 512, TEXT("&%s"), szTypeList[i]);
+				Size = (wcsnlen_s(szTmp, 512) + 1) * sizeof(TCHAR);
 				RegSetValueEx(	hTuniacAssocKey,
 								NULL,
 								NULL,
@@ -269,14 +269,14 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 								Size);
 				RegCloseKey(hTuniacAssocKey);
 
-				_snwprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s\\command"), szTypeList[i]);
+				StringCchPrintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s\\command"), szTypeList[i]);
 				if(RegCreateKey(	HKEY_CLASSES_ROOT,
 									szTmp,
 									&hTuniacAssocKey) == ERROR_SUCCESS)
 				{
 					GetModuleFileName(NULL, szTmp, 512);
-					_snwprintf(szTmp, 512, TEXT("%s %s \"%%1\""), szTmp, szActionList[i]);
-					Size = (wcslen(szTmp) + 1) * sizeof(TCHAR);
+					StringCchPrintf(szTmp, 512, TEXT("%s %s \"%%1\""), szTmp, szActionList[i]);
+					Size = (wcsnlen_s(szTmp, 512) + 1) * sizeof(TCHAR);
 					RegSetValueEx(	hTuniacAssocKey,
 									NULL,
 									NULL,
@@ -289,12 +289,12 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 		}
 		else
 		{
-			_snwprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s\\command"), szTypeList[i]);
+			StringCchPrintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s\\command"), szTypeList[i]);
 			if(RegDeleteKey(	HKEY_CLASSES_ROOT,
 								szTmp) == ERROR_SUCCESS)
 			{
 
-				_snwprintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s"), szTypeList[i]);
+				StringCchPrintf(szTmp, 512, TEXT("Tuniac.audio\\Shell\\%s"), szTypeList[i]);
 				RegDeleteKey(	HKEY_CLASSES_ROOT,
 								szTmp);
 

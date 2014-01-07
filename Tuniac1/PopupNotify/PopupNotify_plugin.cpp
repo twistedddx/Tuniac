@@ -598,7 +598,7 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	else
 		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 1);
 
-	if(wcslen(szTrack) > 0)
+	if(wcsnlen_s(szTrack, 128) > 0)
 	{
 		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
 		SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
@@ -628,7 +628,7 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	else
 		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 2);
 
-	if(wcslen(szTrack) > 0)
+	if(wcsnlen_s(szTrack, 128) > 0)
 	{
 		SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
 		SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));

@@ -468,8 +468,8 @@ bool	CPlaylistSourceView::CreateSourceView(HWND hWndParent)
 
 	UpdateColumns();
 	
-    m_ItemMenu			= GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_PLAYLISTITEM_MENU)), 0);
-    m_HeaderMenu		= GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_PLAYLISTHEADER_MENU)), 0);
+	m_ItemMenu			= GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_PLAYLISTITEM_MENU)), 0);
+	m_HeaderMenu		= GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_PLAYLISTHEADER_MENU)), 0);
 
 	m_FilterByFieldMenu	= CreatePopupMenu();
 	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_CHECKED,		FILTERBYFIELD_MENUBASE + 0,		TEXT("&Artist, Album && Title"));
@@ -633,7 +633,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					rcTopBarRect.left += 15;
 					if(m_pPlaylist)
 					{
-						DrawText(PS.hdc, m_pPlaylist->GetPlaylistName(), lstrlen(m_pPlaylist->GetPlaylistName()), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
+						DrawText(PS.hdc, m_pPlaylist->GetPlaylistName(), wcsnlen_s(m_pPlaylist->GetPlaylistName(), 256), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 					}
 
 					EndPaint(hDlg, &PS);
@@ -756,7 +756,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								}
 							}
 
-							StrCatN(tBuffer, TEXT(" Filterlist"), 255);
+							StringCchCat(tBuffer, 256, TEXT(" Filterlist"));
 							tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(tBuffer, entryArray);
 							tuniacApp.m_SourceSelectorWindow->UpdateList();
 
@@ -779,35 +779,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							{
 								case EN_CHANGE:
 									{
-										TCHAR tBuffer[256];
-										GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 256);
-
-										if(StrCmpI(tBuffer, m_pPlaylist->GetTextFilter()))
-										{
-											m_pPlaylist->SetTextFilter(tBuffer);
-											m_pPlaylist->ApplyFilter();
-
-											if(lstrlen(tBuffer))
-											{
-												ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_SHOW);
-												ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_SHOW);
-											}
-											else
-											{
-												ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
-												ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
-											}
-										}
-										Update();
-
-										if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
-										{
-											if(tuniacApp.m_SourceSelectorWindow)
-											{
-												tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
-											}
-										}
-
+										SetTimer(hDlg, DELAYEDAPPLYFILTER_TIMERID, 50, NULL);
 									}
 									break;
 							}
@@ -1035,11 +1007,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							pIPE->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, 512);
 							
 							if(bReverse)
-								_snwprintf(szFilterName, 256, TEXT("Not %s"), szFilterString);
+								StringCchPrintf(szFilterName, 256, TEXT("Not %s"), szFilterString);
 							else
-								StrCpyN(szFilterName, szFilterString, 256);
+								StringCchCopy(szFilterName, 256, szFilterString);
 
-							if(lstrlen(szFilterString))
+							if(wcsnlen_s(szFilterString, 512))
 							{
 								m_pPlaylist->GetFieldFilteredItemArray(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, bReverse); 
 
@@ -1062,7 +1034,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							pIPE->GetTextRepresentation(m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, 512);
 
-							if(lstrlen(szFilterString))
+							if(wcsnlen_s(szFilterString, 512))
 							{
 								m_pPlaylist->GetFieldFilteredItemArray(entryArray, m_ColumnIDArray[m_iLastClickedSubitem - 1], szFilterString, false); 
 
@@ -1149,7 +1121,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									FieldDataSet fdsCurrent;
 									fdsCurrent.nCount = 1;
-									StrCpy(fdsCurrent.szText, szCurrent);
+									StringCchCopy(fdsCurrent.szText, 64, szCurrent);
 									setArray.InsertAfter(iRight, fdsCurrent);
 								}
 								else
@@ -1169,7 +1141,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							}
 							SendMessage(hFilter, CB_SHOWDROPDOWN, TRUE, NULL);
 
-							SetTimer(hDlg, 0, 10, NULL);
+							SetTimer(hDlg, DELAYEDREDRAW_TIMERID, 10, NULL);
 
 						}
 						break;
@@ -1259,7 +1231,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						{
 							FieldDataSet fdsCurrent;
 							fdsCurrent.nCount = 1;
-							StrCpy(fdsCurrent.szText, szCurrent);
+							StringCchCopy(fdsCurrent.szText, szCurrent);
 							setArray.InsertAfter(iRight, fdsCurrent);
 						}
 						else
@@ -1275,8 +1247,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					for(unsigned long i = 0; i < setArray.GetCount(); i++)
 					{
 						szItem[0] = L'\0';
-						StrCatN(szItem, setArray[i].szText, 50);
-						_snwprintf(szItem, 64, TEXT("%s\t%d items"), szItem, setArray[i].nCount);
+						StringCchCat(szItem, setArray[i].szText);
+						StringCchPrintf(szItem, 64, TEXT("%s\t%d items"), szItem, setArray[i].nCount);
 						AppendMenu(hMenu, MF_STRING, ID_FILTERBY, szItem);
 
 					}
@@ -1543,13 +1515,13 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											unsigned ulPlayOrder = ((IPlaylistEX *)m_pPlaylist)->GetPlayOrder(pDispInfo->item.iItem);
 
 											if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
-												_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%u"), ulPlayOrder);
+												StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%u"), ulPlayOrder);
 											else
-												_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
+												StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
 										else
 										{
-											_snwprintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
+											StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
 									}
 									else
@@ -1816,70 +1788,70 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 					unsigned long years = TotalTime;
 
-					StrCpy(Time, TEXT(""));
+					StringCchCopy(Time, 256, TEXT(""));
 
 					if(years)
 					{
 						if(years > 1)
-							_snwprintf(tstr, 256, TEXT("%u Years, "), years);
+							StringCchPrintf(tstr, 256, TEXT("%u Years, "), years);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Year, "), years);
+							StringCchPrintf(tstr, 256, TEXT("%u Year, "), years);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 					if(weeks)
 					{
 						if(weeks > 1)
-							_snwprintf(tstr, 256, TEXT("%u Weeks, "), weeks);
+							StringCchPrintf(tstr, 256, TEXT("%u Weeks, "), weeks);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Week, "), weeks);
+							StringCchPrintf(tstr, 256, TEXT("%u Week, "), weeks);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 					if(days)
 					{
 						if(days>1)
-							_snwprintf(tstr, 256, TEXT("%u Days, "), days);
+							StringCchPrintf(tstr, 256, TEXT("%u Days, "), days);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Day, "), days);
+							StringCchPrintf(tstr, 256, TEXT("%u Day, "), days);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 					if(hours)
 					{
 						if(hours>1)
-							_snwprintf(tstr, 256, TEXT("%u Hours, "), hours);
+							StringCchPrintf(tstr, 256, TEXT("%u Hours, "), hours);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Hour, "), hours);
+							StringCchPrintf(tstr, 256, TEXT("%u Hour, "), hours);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 					if(mins)
 					{
 						if(mins>1)
-							_snwprintf(tstr, 256, TEXT("%u Minutes, "), mins);
+							StringCchPrintf(tstr, 256, TEXT("%u Minutes, "), mins);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Minute, "), mins);
+							StringCchPrintf(tstr, 256, TEXT("%u Minute, "), mins);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 					if(secs)
 					{
 						if(secs>1)
-							_snwprintf(tstr, 256, TEXT("%u Seconds."), secs);
+							StringCchPrintf(tstr, 256, TEXT("%u Seconds."), secs);
 						else
-							_snwprintf(tstr, 256, TEXT("%u Second."), secs);
+							StringCchPrintf(tstr, 256, TEXT("%u Second."), secs);
 
-						StrCat(Time, tstr);
+						StringCchCat(Time, 256, tstr);
 					}
 
 
-					_snwprintf(szStatusText, 1024, TEXT("%s - %u Items - %s"), m_pPlaylist->GetPlaylistName(), Count, Time);
+					StringCchPrintf(szStatusText, 1024, TEXT("%s - %u Items - %s"), m_pPlaylist->GetPlaylistName(), Count, Time);
 					tuniacApp.SetStatusText(szStatusText);
 
 					ListView_SetItemCountEx(GetDlgItem(hDlg, IDC_PLAYLIST_LIST), m_pPlaylist->GetNumItems(), LVSICF_NOSCROLL);
@@ -1893,14 +1865,53 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 		case WM_TIMER:
 			{
-				if(m_ShowingHeaderFilter)
+				if(wParam == DELAYEDAPPLYFILTER_TIMERID)
 				{
-					HWND hFilter = GetDlgItem(hDlg, IDC_PLAYLISTSOURCE_FILTERCOMBO);
-					RECT r;
-					GetClientRect(hFilter, &r);
-					RedrawWindow(hFilter, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
+					KillTimer(hDlg, DELAYEDPLAY_TIMERID);
+
+					TCHAR tBuffer[256];
+					GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 256);
+
+					if(StrCmpI(tBuffer, m_pPlaylist->GetTextFilter()))
+					{
+						m_pPlaylist->SetTextFilter(tBuffer);
+						m_pPlaylist->ApplyFilter();
+
+						if(wcsnlen_s(tBuffer, 256))
+						{
+							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_SHOW);
+							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_SHOW);
+						}
+						else
+						{
+							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
+							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
+						}
+						Update();
+
+						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
+						{
+							if(tuniacApp.m_SourceSelectorWindow)
+							{
+								tuniacApp.m_SourceSelectorWindow->ShowCurrentlyPlaying();
+							}
+						}
+					}
+					break;
 				}
-				KillTimer(hDlg, wParam);
+
+				if(wParam == DELAYEDREDRAW_TIMERID)
+				{
+					KillTimer(hDlg, DELAYEDREDRAW_TIMERID);
+					if(m_ShowingHeaderFilter)
+					{
+						HWND hFilter = GetDlgItem(hDlg, IDC_PLAYLISTSOURCE_FILTERCOMBO);
+						RECT r;
+						GetClientRect(hFilter, &r);
+						RedrawWindow(hFilter, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
+					}
+					break;
+				}
 			}
 			break;
 
@@ -2169,7 +2180,7 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_SHOWNOACTIVATE);
 
 				SetDlgItemText(m_PlaylistSourceWnd, IDC_PLAYLIST_FILTER, m_pPlaylist->GetTextFilter());
-				if(wcslen(m_pPlaylist->GetTextFilter()) < 1)
+				if(wcsnlen_s(m_pPlaylist->GetTextFilter(), 128) < 1)
 				{
 					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
 					ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
@@ -2260,7 +2271,7 @@ bool CPlaylistSourceView::UpdateColumns(void)
 			ListView_DeleteColumn(hListView, 0);
 		}
 	}
-    
+	
 	ZeroMemory(&lvC, sizeof(LVCOLUMN));
 
 	lvC.mask	= LVCF_WIDTH | LVCF_TEXT | LVCF_FMT | LVCF_SUBITEM;

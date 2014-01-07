@@ -32,8 +32,8 @@ CAudioCDPlaylist::CAudioCDPlaylist(char cDriveLetter)
 	TCHAR cdtitle[32];
 	m_DriveLetter = cDriveLetter;
 
-	_snwprintf(cdtitle, 32, TEXT("%c:\\ Unknown CD"), m_DriveLetter);
-	StrCpyN(m_AlbumTitle, cdtitle, 32 );
+	StringCchPrintf(cdtitle, 32, TEXT("%c:\\ Unknown CD"), m_DriveLetter);
+	StringCchCopy(m_AlbumTitle, 256, cdtitle);
 
 	GetCDInfo();
 
@@ -75,9 +75,9 @@ bool CAudioCDPlaylist::GetCDInfo(void)
 				libEnt.ulPlaybackTime = ((h*60*60) + (m*60) + s) * 1000;
 
 
-				_snwprintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%u"),	m_DriveLetter,		x);
-				_snwprintf(libEnt.szTitle, 128,		TEXT("Track %02u"),		x);
-				_snwprintf(libEnt.szArtist, 128,	TEXT("Unknown Artist"));
+				StringCchPrintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%u"),	m_DriveLetter,		x);
+				StringCchPrintf(libEnt.szTitle, 128,		TEXT("Track %02u"),		x);
+				StringCchPrintf(libEnt.szArtist, 128,	TEXT("Unknown Artist"));
 
 				IPlaylistEntry * tt = new CMediaLibraryPlaylistEntry(&libEnt);
 				m_TrackList.AddTail(tt);
@@ -98,7 +98,7 @@ bool CAudioCDPlaylist::ReadTOC(void)
 	bool retVal = true;
 	DWORD dwReturned;
   
-	_snwprintf(buf, 32, TEXT("\\\\.\\%c:"), m_DriveLetter );
+	StringCchPrintf(buf, 32, TEXT("\\\\.\\%c:"), m_DriveLetter );
 	hDrive = CreateFile(	buf, 
 							GENERIC_READ, 
 							FILE_SHARE_READ, 
@@ -146,7 +146,7 @@ bool				CAudioCDPlaylist::SetPlaylistName(LPTSTR szPlaylistName)
 {
 	if(szPlaylistName)
 	{
-		StrCpyN(m_AlbumTitle, szPlaylistName, 255);
+		StringCchCopy(m_AlbumTitle, 256, szPlaylistName);
 		return true;
 	}
 

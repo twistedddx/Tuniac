@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 
 #include <string>
+#include <strsafe.h>
+
 #include "glfont2.h"
 using namespace glfont;
 

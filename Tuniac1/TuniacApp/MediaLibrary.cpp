@@ -211,7 +211,7 @@ void CMediaLibrary::AddingFilesIncrement(bool bDir)
 	}
 
 	TCHAR szCount[256];
-	_snwprintf(szCount, 256, TEXT("%u files in %u folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
+	StringCchPrintf(szCount, 256, TEXT("%u files in %u folders"), m_ulAddingCountFiles, m_ulAddingCountDirs);
 	SendDlgItemMessage(m_hAddingWindow, IDC_ADDINGFILES_COUNT, WM_SETTEXT, 0, (WPARAM)szCount);
 }
 
@@ -272,8 +272,8 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
 	// we need to set the streampath here plus a nice name
-	StrCpy(libraryEntry.szArtist, szURL);
-    StrCpy(libraryEntry.szURL, szURL);
+	StringCchCopy(libraryEntry.szArtist, 128, szURL);
+	StringCchCopy(libraryEntry.szURL, 128, szURL);
 	GetLocalTime(&libraryEntry.stDateAdded);
 
 	libraryEntry.ulPlaybackTime = LENGTH_STREAM;
@@ -356,7 +356,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			}
 
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
-			StrCpy(libraryEntry.szURL, szURL);
+			StringCchCopy(libraryEntry.szURL, MAX_PATH, szURL);
 
 			// extract generic info from the file (creation time/size)
 			HANDLE hFile = CreateFile(szURL, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
@@ -402,7 +402,7 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 			{
 				TCHAR	szFileTitle[128];
 				GetFileTitle(szURL, szFileTitle, 128);
-				StrCpy(libraryEntry.szTitle, szFileTitle);
+				StringCchCopy(libraryEntry.szTitle, 128, szFileTitle);
 			}
 
 
@@ -430,9 +430,9 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 
 	TCHAR path[MAX_PATH];
 
-	StrCpy(path, szDirectory);
+	StringCchCopy(path, MAX_PATH, szDirectory);
 	PathAddBackslash(path);
-	StrCat(path, TEXT("*.*"));
+	StringCchCat(path, MAX_PATH, TEXT("*.*"));
 
 	hFind = FindFirstFile( path, &w32fd); 
 
@@ -448,9 +448,9 @@ bool CMediaLibrary::AddDirectoryToLibrary(LPTSTR szDirectory)
 
 		TCHAR temp[MAX_PATH];
 
-		StrCpy(temp, szDirectory);
+		StringCchCopy(temp, MAX_PATH, szDirectory);
 		PathAddBackslash(temp);
-		StrCat(temp, w32fd.cFileName);
+		StringCchCat(temp, MAX_PATH, w32fd.cFileName);
 
 		AddItem(temp, false);
 
@@ -507,7 +507,7 @@ bool CMediaLibrary::Initialize()
 	GetModuleFileName(NULL, szURL, MAX_PATH);
 	PathRemoveFileSpec(szURL);
 	PathAddBackslash(szURL);
-	StrCat(szURL, TEXT("*.dll"));
+	StringCchCat(szURL, MAX_PATH, TEXT("*.dll"));
 
 	hFind = FindFirstFile( szURL, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -517,14 +517,14 @@ bool CMediaLibrary::Initialize()
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			TCHAR temp[512];
+			TCHAR temp[MAX_PATH];
 
 			InfoManagerEntry	IME;
 
-			GetModuleFileName(NULL, temp, 512);
+			GetModuleFileName(NULL, temp, MAX_PATH);
 			PathRemoveFileSpec(temp);
 			PathAddBackslash(temp);
-			StrCat(temp, w32fd.cFileName);
+			StringCchCat(temp, MAX_PATH, w32fd.cFileName);
 
 			IME.hDLL = LoadLibrary(temp);
 			if(IME.hDLL)
@@ -608,7 +608,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
 			// we need to set the filename here, because its the one bit of information the InfoManager needs to work with
-			StrCpy(libraryEntry.szURL, szURL);
+			StringCchCopy(libraryEntry.szURL, MAX_PATH, szURL);
 
 			// extract generic info from the file (creation time/size)
 			HANDLE hFile = CreateFile(szURL, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
@@ -636,7 +636,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			{
 				TCHAR	szFileTitle[128];
 				GetFileTitle(szURL, szFileTitle, 128);
-				StrCpy(libraryEntry.szTitle, szFileTitle);
+				StringCchCopy(libraryEntry.szTitle, 128, szFileTitle);
 			}
 
 			unsigned long ulEntryID = pIPE->GetEntryID();
@@ -753,13 +753,13 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 
 				ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
-				StrCpy(libraryEntry.szURL, MLE.szURL);
-				StrCpy(libraryEntry.szArtist, MLE.szArtist);
-				StrCpy(libraryEntry.szAlbum, MLE.szAlbum);
-				StrCpy(libraryEntry.szTitle, MLE.szTitle);
-				StrCpy(libraryEntry.szGenre, MLE.szGenre);
-				StrCpy(libraryEntry.szComment, MLE.szComment);
-				StrCpy(libraryEntry.szAlbumArtist, L"");
+				StringCchCopy(libraryEntry.szURL, MAX_PATH, MLE.szURL);
+				StringCchCopy(libraryEntry.szArtist, 128, MLE.szArtist);
+				StringCchCopy(libraryEntry.szAlbum, 128, MLE.szAlbum);
+				StringCchCopy(libraryEntry.szTitle, 128, MLE.szTitle);
+				StringCchCopy(libraryEntry.szGenre, 128, MLE.szGenre);
+				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
+				StringCchCopy(libraryEntry.szAlbumArtist, 128, L"");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;
@@ -804,13 +804,13 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 
 				ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
 
-				StrCpy(libraryEntry.szURL, MLE.szURL);
-				StrCpy(libraryEntry.szArtist, MLE.szArtist);
-				StrCpy(libraryEntry.szAlbum, MLE.szAlbum);
-				StrCpy(libraryEntry.szTitle, MLE.szTitle);
-				StrCpy(libraryEntry.szGenre, MLE.szGenre);
-				StrCpy(libraryEntry.szComment, MLE.szComment);
-				StrCpy(libraryEntry.szAlbumArtist, L"");
+				StringCchCopy(libraryEntry.szURL, MAX_PATH, MLE.szURL);
+				StringCchCopy(libraryEntry.szArtist, 128, MLE.szArtist);
+				StringCchCopy(libraryEntry.szAlbum, 128, MLE.szAlbum);
+				StringCchCopy(libraryEntry.szTitle, 128, MLE.szTitle);
+				StringCchCopy(libraryEntry.szGenre, 128, MLE.szGenre);
+				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
+				StringCchCopy(libraryEntry.szAlbumArtist, 128, L"");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;
@@ -1005,7 +1005,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(unsigned long))
 			{
 				TCHAR tstr[256];
-				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
+				StringCchPrintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;
@@ -1017,7 +1017,7 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			if(BytesWritten != sizeof(LibraryEntry))
 			{
 				TCHAR tstr[256];
-				_snwprintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
+				StringCchPrintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;

@@ -5,11 +5,11 @@
 #define WM_MCOMMAND   WM_USER + 200
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ulReason, 
-                       LPVOID lpReserved
+					   DWORD  ulReason, 
+					   LPVOID lpReserved
 					 )
 {
-    return TRUE;
+	return TRUE;
 }
 
 extern "C" __declspec(dllexport) ITuniacPlugin * CreateTuniacPlugin(void)
@@ -112,7 +112,7 @@ unsigned long	CmIRCSpammer::ThreadProc(void)
 
 						if (hwnd != NULL) {
 							
-							int iLen = wcslen(szSong);
+							int iLen = wcsnlen_s(szSong, 512);
 
 							HANDLE hMap = CreateFileMapping(this,
 											NULL,

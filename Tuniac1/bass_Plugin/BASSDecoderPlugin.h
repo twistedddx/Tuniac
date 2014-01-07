@@ -1,6 +1,7 @@
 #pragma once
 #include "iaudiosource.h"
 #include "Array.h"
+#include <strsafe.h>
 #include <vector>
 #include "bass.h"
 
