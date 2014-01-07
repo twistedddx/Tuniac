@@ -20,7 +20,7 @@ void DoMeta(DWORD handle, void *user)
 	int iBitrate;
 	if(icy)
 	{ // got ICY metadata
-		for(;*icy;icy+=strlen(icy)+1)
+		for(;*icy;icy+=strnlen_s(icy,2048)+1)
 		{
 			if (!strnicmp(icy,"icy-name:",9))
 			{
@@ -76,7 +76,7 @@ void DoMeta(DWORD handle, void *user)
 		if(meta)
 		{ // got Icecast/OGG tags
 			const char *artist=NULL,*title=NULL,*p=meta;
-			for(;*p;p+=strlen(p)+1)
+			for(;*p;p+=strnlen_s(p,2048)+1)
 			{
 				if (!strnicmp(p,"artist=",7)) // found the artist
 					artist=p+7;
@@ -134,7 +134,7 @@ void CALLBACK MetaSync(HSYNC handle, DWORD channel, DWORD data, void *user)
 			wchar_t cDrive;
 			int iTrack;
 			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
-			_snwprintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
+			StringCchPrintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
 			decodehandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT);
 		}
 		else

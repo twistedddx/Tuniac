@@ -150,15 +150,15 @@ bool			CTuniacSkin::LoadTheme(LPTSTR szThemeName)
 	GetModuleFileName(NULL, m_BasePath, 512);
 	PathRemoveFileSpec(m_BasePath);
 	PathAddBackslash(m_BasePath);
-	StrCatN(m_BasePath, TEXT("themes"), 512);
+	StringCchCat(m_BasePath, TEXT("themes"));
 	PathAddBackslash(m_BasePath);
-	StrCatN(m_BasePath, szThemeName, 512);
+	StringCchCat(m_BasePath, szThemeName);
 	PathAddBackslash(m_BasePath);
 
 	TCHAR szFilename[512];
 	for(int i = 0; i < THEMEICON_MAXICON; i++)
 	{
-		_snwprintf(szFilename, 512, TEXT("%s%s"), m_BasePath, ThemeIconSet[i].szFilename);
+		StringCchPrintf(szFilename, 512, TEXT("%s%s"), m_BasePath, ThemeIconSet[i].szFilename);
 		ThemeIconSet[i].hHandle = (HICON)LoadImage(	tuniacApp.getMainInstance(), 
 													szFilename, 
 													IMAGE_ICON, 

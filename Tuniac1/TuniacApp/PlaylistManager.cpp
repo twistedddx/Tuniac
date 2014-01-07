@@ -69,7 +69,7 @@ bool CPlaylistManager::Initialize(void)
 		if(DriveInMask(DrivesMask, c))
 		{
 			TCHAR tstr[10];
-			_snwprintf(tstr, 10, TEXT("%c:\\"), c);
+			StringCchPrintf(tstr, 10, TEXT("%c:\\"), c);
 
 			if(GetDriveType(tstr) == DRIVE_CDROM)
 			{
@@ -333,8 +333,8 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 	PLDH.NumEntries		= m_StandardPlaylists.GetCount();
 	PLDH.LibraryFilterField = m_LibraryPlaylist.GetTextFilterField();
 	PLDH.LibraryFilterReverse = m_LibraryPlaylist.GetTextFilterReversed();
-	StrCpyN(PLDH.LibraryFilter, m_LibraryPlaylist.GetTextFilter(), 128);
-	StrCpyN(PLDH.Name, m_LibraryPlaylist.GetPlaylistName(), 128);
+	StringCchCopy(PLDH.LibraryFilter, 128, m_LibraryPlaylist.GetTextFilter());
+	StringCchCopy(PLDH.Name, 128, m_LibraryPlaylist.GetPlaylistName());
 	if(m_ActivePlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 	{
 		if(GetActivePlaylistIndex() == 0)
@@ -367,8 +367,8 @@ bool			CPlaylistManager::SavePlaylistLibrary(void)
 			PLDiskSubHeader SubHeader;
 			ZeroMemory(&SubHeader, sizeof(PLDiskSubHeader));
 
-			StrCpyN(SubHeader.Name, m_StandardPlaylists[playlist]->GetPlaylistName(), 128);
-			StrCpyN(SubHeader.Filter, m_StandardPlaylists[playlist]->GetTextFilter(), 128);
+			StringCchCopy(SubHeader.Name, 128, m_StandardPlaylists[playlist]->GetPlaylistName());
+			StringCchCopy(SubHeader.Filter, 128, m_StandardPlaylists[playlist]->GetTextFilter());
 			SubHeader.FilterField = m_StandardPlaylists[playlist]->GetTextFilterField();
 			SubHeader.FilterReverse = m_StandardPlaylists[playlist]->GetTextFilterReversed();
 			SubHeader.NumItems = m_StandardPlaylists[playlist]->GetRealCount();
@@ -752,7 +752,7 @@ LRESULT CALLBACK CPlaylistManager::WndProc(HWND hWnd, UINT message, WPARAM wPara
 									if(DriveInMask(lpdbv->dbcv_unitmask, c))
 									{
 										TCHAR tstr[10];
-										_snwprintf(tstr, 10, TEXT("%c:\\"), c);
+										StringCchPrintf(tstr, 10, TEXT("%c:\\"), c);
 
 										// is this drive a CD?
 										if(GetDriveType(tstr) == DRIVE_CDROM)
@@ -791,7 +791,7 @@ LRESULT CALLBACK CPlaylistManager::WndProc(HWND hWnd, UINT message, WPARAM wPara
 									if(DriveInMask(lpdbv->dbcv_unitmask, c))
 									{
 										TCHAR tstr[10];
-										_snwprintf(tstr, 10, TEXT("%c:\\"), c);
+										StringCchPrintf(tstr, 10, TEXT("%c:\\"), c);
 
 										// is this drive a CD?
 										if(GetDriveType(tstr) == DRIVE_CDROM)

@@ -30,9 +30,9 @@ bool SoniqueVisExternal::LoadFromExternalDLL(LPTSTR PluginName)
 				char	cSettingsDir[MAX_PATH];
 				if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szVisSettingDir ) ) )
 				{
-					StrCat(szVisSettingDir, TEXT("\\Tuniac\\"));
-					StrCat(szVisSettingDir, PathFindFileName(PluginName));
-					StrCat(szVisSettingDir, TEXT(".ini"));
+					StringCchCat(szVisSettingDir, MAX_PATH, TEXT("\\Tuniac\\"));
+					StringCchCat(szVisSettingDir, MAX_PATH, PathFindFileName(PluginName));
+					StringCchCat(szVisSettingDir, MAX_PATH, TEXT(".ini"));
 					WideCharToMultiByte(CP_ACP, 0, szVisSettingDir, MAX_PATH,cSettingsDir, MAX_PATH, NULL, NULL);
 					p_PluginInfo->OpenSettings(cSettingsDir);
 				}

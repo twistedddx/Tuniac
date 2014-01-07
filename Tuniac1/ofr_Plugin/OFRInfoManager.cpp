@@ -59,27 +59,27 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(strcmp(iTags.keys[i], "Album") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szAlbum, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szAlbum, 128);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Title") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szTitle, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szTitle, 128);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Artist") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szArtist, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szArtist, 128);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Genre") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szGenre, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szGenre, 128);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Comment") == 0)
 		{
-			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strlen(iTags.values[i]), libEnt->szComment, 128);
+			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szComment, 128);
 			continue;
 		}
 		if(strcmp(iTags.keys[i], "Year") == 0)

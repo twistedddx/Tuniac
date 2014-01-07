@@ -33,10 +33,10 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 		GetModuleFileName(NULL, szFilePath, MAX_PATH);
 		PathRemoveFileSpec(szFilePath);
 		PathAddBackslash(szFilePath);
-		StrCat(szFilePath, TEXT("bass"));
+		StringCchCat(szFilePath, MAX_PATH, TEXT("bass"));
 		PathAddBackslash(szFilePath);
-		StrCpy(szFilename, szFilePath);
-		StrCat(szFilename, TEXT("bass*.dll"));
+		StringCchCopy(szFilename, MAX_PATH, szFilePath);
+		StringCchCat(szFilename, MAX_PATH, TEXT("bass*.dll"));
 
 		hFind = FindFirstFile(szFilename, &w32fd); 
 		if(hFind != INVALID_HANDLE_VALUE) 
@@ -48,8 +48,8 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 
 				TCHAR szURL[MAX_PATH];
 
-				StrCpy(szURL, szFilePath);
-				StrCat(szURL, w32fd.cFileName);
+				StringCchCopy(szURL, MAX_PATH, szFilePath);
+				StringCchCat(szURL, MAX_PATH, w32fd.cFileName);
 
 				char mbURL[MAX_PATH]; 	 
 				WideCharToMultiByte(CP_UTF8, 0, szURL, -1, mbURL, MAX_PATH, 0, 0);
@@ -58,11 +58,11 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 				if(plug = BASS_PluginLoad(mbURL, 0))
 				{
 					bool bAddPlugin = true;
-					int stringLen = lstrlen(szURL);
+					int stringLen = wcsnlen_s(szURL, MAX_PATH);
 					if(stringLen >= 12)
 					{
 						LPTSTR	t = &szURL[stringLen-12];
-						if(!lstrcmpi(TEXT("bassmidi.dll"), t))
+						if(StrCmpI(TEXT("bassmidi.dll"), t) == 0)
 						{
 
 							char * soundFont = (char *)BASS_GetConfigPtr(BASS_CONFIG_MIDI_DEFFONT);
@@ -70,8 +70,8 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 							{
 								//creative soundfont not found. attempt to load local soundfont
 								TCHAR szSoundFontFilename[MAX_PATH];
-								StrCpy(szSoundFontFilename, szFilePath);
-								StrCat(szSoundFontFilename, TEXT("*.SF2"));
+								StringCchCopy(szSoundFontFilename, MAX_PATH, szFilePath);
+								StringCchCat(szSoundFontFilename, MAX_PATH, TEXT("*.SF2"));
 
 								WIN32_FIND_DATA		w32fdSoundFont;
 								HANDLE				hFindSoundFont;
@@ -80,8 +80,8 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 								if(hFindSoundFont != INVALID_HANDLE_VALUE) 
 								{
 
-									StrCpy(szSoundFontFilename, szFilePath);
-									StrCat(szSoundFontFilename, w32fdSoundFont.cFileName);
+									StringCchCopy(szSoundFontFilename, MAX_PATH, szFilePath);
+									StringCchCat(szSoundFontFilename, MAX_PATH, w32fdSoundFont.cFileName);
 
 									char mbSoundFontFilename[MAX_PATH]; 	 
 									WideCharToMultiByte(CP_UTF8, 0, szSoundFontFilename, -1, mbSoundFontFilename, MAX_PATH, 0, 0);
@@ -104,13 +104,13 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 						const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
 						for (int a=0;a<pinfo->formatc;a++)
 						{
-							int iStrLen = strlen(pinfo->formats[a].exts) + 1;
+							int iStrLen = strnlen_s(pinfo->formats[a].exts,256)+1;
 							char * extstring = (char *)malloc(iStrLen);
-							strncpy(extstring, pinfo->formats[a].exts, (iStrLen));
-							char * pch = strtok(extstring,"*;");
+							strcpy_s(extstring, iStrLen, pinfo->formats[a].exts);
+							char * pch = strtok(extstring, "*;");
 							while (pch != NULL)
 							{
-								int iExtLen = strlen(pch)+1;
+								int iExtLen = strnlen_s(pch,16)+1;
 								TCHAR * newext = (TCHAR *)malloc((iExtLen) * sizeof(TCHAR));
 								MultiByteToWideChar(CP_ACP, 0, pch, iExtLen, newext, iExtLen);
 								exts.AddTail(std::wstring(newext));
@@ -243,7 +243,7 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 			wchar_t cDrive;
 			int iTrack;
 			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
-			_snwprintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
+			StringCchPrintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
 			testHandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT);
 		}
 		else

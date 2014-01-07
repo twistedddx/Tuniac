@@ -3,6 +3,8 @@
 #include "ITuniacImportPlugin.h"
 #include "ITuniacExportPlugin.h"
 #include "stdio.h"
+#include "shlwapi.h"
+#include <strsafe.h>
 
 class CM3U_Import :
 	public ITuniacImportPlugin

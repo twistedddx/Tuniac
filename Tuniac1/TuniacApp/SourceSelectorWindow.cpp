@@ -636,7 +636,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 						{
 							TCHAR str[20];
 
-							_snwprintf(str, 20, TEXT("Untitled Playlist"));
+							StringCchPrintf(str, 20, TEXT("Untitled Playlist"));
 
 							if(tuniacApp.m_PlaylistManager.CreateNewStandardPlaylist(str))
 							{

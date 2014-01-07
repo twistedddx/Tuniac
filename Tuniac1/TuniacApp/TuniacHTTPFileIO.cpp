@@ -47,7 +47,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	char *	szDest = Address;
 	
 	char * blah = (char *)szFilename;
-	while(strlen(blah))
+	while(strnlen_s(blah, MAX_PATH))
 	{
 		char * oldDest = szDest;
 		if((*blah == ':') && !bChangedPort)
@@ -75,7 +75,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	}
 	*szDest = '\0';
 	
-	if(strlen(Request) == 0)
+	if(strnlen_s(Request, 2048) == 0)
 		strcpy_s(Request, 2048, "/");
 
 	
@@ -88,7 +88,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	}
 
 	
-	if(0 == strlen(Address))
+	if(0 == strnlen_s(Address, 2048))
 		return false;
 	
 	memset(contenttype, 0, 1024);
@@ -155,7 +155,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 	strcat_s(szMessage, 4096, "Connection: close\r\n");
 	strcat_s(szMessage, 4096, "\r\n\r\n");
 	
-	ret = send(m_Socket, szMessage, strlen(szMessage), 0);
+	ret = send(m_Socket, szMessage, strnlen_s(szMessage, 4096), 0);
 	if(ret == -1)
 	{
 		DLog("socket send fail");
@@ -170,7 +170,7 @@ bool CTuniacHTTPFileIO::Open(LPTSTR szFilename)
 		return false;
 	}
 	
-	while(strlen(szMessage))
+	while(strnlen_s(szMessage, 4096))
 	{		
 		if(strncasecmp(szMessage, "icy-notice", 10) == 0)
 		{
@@ -368,7 +368,7 @@ int CTuniacHTTPFileIO::thread(void)
 						LPTSTR szStartTitle = StrStr(szMeta, TEXT("StreamTitle='"));
 						if(szStartTitle != NULL)
 						{
-							szStartTitle += wcslen(TEXT("StreamTitle='"));
+							szStartTitle += wcsnlen_s(TEXT("StreamTitle='"));
 							
 							LPTSTR szEndTitle = StrStr(szStartTitle, L"';");
 							while(szEndTitle != NULL && (szEndTitle - 1)[0] == L'\\')

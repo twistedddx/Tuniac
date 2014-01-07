@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "NumberedFileExporter.h"
-#include "shlwapi.h"
+
 
 CNumberedFileExporter::CNumberedFileExporter(void)
 {
@@ -34,7 +34,7 @@ LPTSTR			CNumberedFileExporter::SupportedExtension(unsigned long ulExtentionNum)
 
 bool			CNumberedFileExporter::CanHandle(LPTSTR szSource)
 {
-	TCHAR * pLastDigits = szSource + (lstrlen(szSource)-3);
+	TCHAR * pLastDigits = szSource + (wcsnlen_s(szSource, MAX_PATH)-3);
 	if(StrStrI(pLastDigits, TEXT("NFN")))
 		return true;
 
@@ -44,7 +44,7 @@ bool			CNumberedFileExporter::CanHandle(LPTSTR szSource)
 
 bool			CNumberedFileExporter::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 {
-	StrCpyN(m_szExportFolder, szSource, (lstrlen(szSource)-2));
+	StringCchCopy(m_szExportFolder, MAX_PATH, szSource);
 
 	if(GetFileAttributes(m_szExportFolder) == INVALID_FILE_ATTRIBUTES)
 	{
@@ -61,15 +61,15 @@ bool			CNumberedFileExporter::ExportEntry(LibraryEntry & libraryEntry)
 {
 	TCHAR			m_szTempFile[MAX_PATH];
 
-	StrCpy(m_szTempFile, m_szExportFolder);
+	StringCchCopy(m_szTempFile, MAX_PATH, m_szExportFolder);
 	PathAddBackslash(m_szTempFile);
 
 	TCHAR tempBit[32];
 
-	_snwprintf_s(tempBit, 32, _TRUNCATE, TEXT("%04u - "), m_ulCurrentFileIndex);
-	StrCat(m_szTempFile, tempBit);
+	StringCchPrintf(tempBit, 32, TEXT("%04u - "), m_ulCurrentFileIndex);
+	StringCchCat(m_szTempFile, MAX_PATH, tempBit);
 
-	StrCat(m_szTempFile, PathFindFileName(libraryEntry.szURL));
+	StringCchCat(m_szTempFile, MAX_PATH, PathFindFileName(libraryEntry.szURL));
 
 
 	CopyFile(libraryEntry.szURL, m_szTempFile, TRUE);

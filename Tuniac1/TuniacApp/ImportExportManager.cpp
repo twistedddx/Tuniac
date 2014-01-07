@@ -46,11 +46,11 @@ bool			CImportExportManager::Initialize(void)
 	GetModuleFileName(NULL, szBase, MAX_PATH);
 	PathRemoveFileSpec(szBase);
 	PathAddBackslash(szBase);
-	StrCat(szBase, TEXT("importexport"));
+	StringCchCat(szBase, MAX_PATH, TEXT("importexport"));
 	PathAddBackslash(szBase);
 	
-	StrCpy(szSearchFilename, szBase);
-	StrCat(szSearchFilename, TEXT("*.dll"));
+	StringCchCopy(szSearchFilename, MAX_PATH, szBase);
+	StringCchCat(szSearchFilename, MAX_PATH, TEXT("*.dll"));
 
 	hFind = FindFirstFile(szSearchFilename, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -61,8 +61,8 @@ bool			CImportExportManager::Initialize(void)
 				continue;
 
 			TCHAR szFilename[MAX_PATH];
-			StrCpy(szFilename, szBase);
-			StrCat(szFilename, w32fd.cFileName);
+			StringCchCopy(szFilename, MAX_PATH, szBase);
+			StringCchCat(szFilename, MAX_PATH, w32fd.cFileName);
 
 			HINSTANCE hDLL = LoadLibrary(szFilename);
 			if(hDLL)
@@ -79,7 +79,7 @@ bool			CImportExportManager::Initialize(void)
 					if(pGTIPVF != NULL)
 					{
 						TCHAR szError[512];
-						_snwprintf(szError, 512, TEXT("Incompatable import plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						StringCchPrintf(szError, 512, TEXT("Incompatable import plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -105,7 +105,7 @@ bool			CImportExportManager::Initialize(void)
 					if(pGTEPVF != NULL)
 					{
 						TCHAR szError[512];
-						_snwprintf(szError, 512, TEXT("Incompatable export plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						StringCchPrintf(szError, 512, TEXT("Incompatable export plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -218,7 +218,7 @@ void			CImportExportManager::PopuplateExportMenu(HMENU hMenu, unsigned long ulBa
 	TCHAR szItem[128];
 	for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 	{
-		_snwprintf(szItem, 128, TEXT("%s - %s"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
+		StringCchPrintf(szItem, 128, TEXT("%s - %s"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
 		AppendMenu(hMenu, MF_STRING, ulBase + i, szItem);
 	}
 }
@@ -338,18 +338,18 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 		for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 		{
 			
-			_snwprintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
-			_snwprintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
-			if((pTemp = realloc((void *)szFilters, (nSize + wcslen(szFilterText) + wcslen(szFilterExt) + 2) * sizeof(TCHAR))) == NULL) break;
+			StringCchPrintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
+			StringCchPrintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
+			if((pTemp = realloc((void *)szFilters, (nSize + wcsnlen_s(szFilterText, 128) + wcsnlen_s(szFilterExt, 16) + 2) * sizeof(TCHAR))) == NULL) break;
 			szFilters = (LPTSTR)pTemp;
 
 			pDest = szFilters + (nSize - 1);
-			nSize += wcslen(szFilterText) + 1;
-			memcpy((void *)pDest, (void *)szFilterText, (wcslen(szFilterText) + 1) * sizeof(TCHAR));
+			nSize += wcsnlen_s(szFilterText, 128) + 1;
+			memcpy_s((void *)pDest, 128, (void *)szFilterText, wcsnlen_s(szFilterText, 128) * sizeof(TCHAR));
 
 			pDest = szFilters + (nSize - 1);
-			nSize += wcslen(szFilterExt) + 1;
-			memcpy((void *)pDest, (void *)szFilterExt, (wcslen(szFilterExt) + 1) * sizeof(TCHAR));
+			nSize += wcsnlen_s(szFilterExt, 16) + 1;
+			memcpy_s((void *)pDest, 16, (void *)szFilterExt, wcsnlen_s(szFilterExt, 16) * sizeof(TCHAR));
 
 		}
 		pDest = szFilters + nSize - 1;
@@ -368,12 +368,12 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 			return false;
 
 
-		StrCpyN(szFilename, ofn.lpstrFile, MAX_PATH);
+		StringCchCopy(szFilename, MAX_PATH, ofn.lpstrFile);
 
 		if(ofn.nFilterIndex >= 1 && ofn.nFilterIndex <= m_ExportExtensions.GetCount())
 		{
 			if(!CanExport(szFilename))
-				StrCatN(szFilename, m_ExportExtensions[ofn.nFilterIndex - 1].szExt, MAX_PATH);
+				StringCchCat(szFilename, MAX_PATH, m_ExportExtensions[ofn.nFilterIndex - 1].szExt);
 		}
 		szSource = szFilename;
 

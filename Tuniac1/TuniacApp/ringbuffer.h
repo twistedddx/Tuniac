@@ -11,7 +11,7 @@ class ringBuffer
 protected:
 	T *			m_buffer;
 	uint32_t	m_buffersize;
-	//uint32_t	m_buffersizebytes;		// undeeded! possibly could be used for memcpy of data
+	//uint32_t	m_buffersizebytes;		// undeeded! possibly could be used for wcsnlen_s of data
 	
 	uint32_t	m_writeindex;
 	uint32_t	m_readindex;

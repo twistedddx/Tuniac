@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "pls_Plugin.h"
-#include "shlwapi.h"
+
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -85,8 +85,8 @@ bool			CPLS_Import::BeginImport(LPTSTR szSource)
 		return false;
 
 	m_Current = 0;
-	StrNCpy(m_Source, szSource, MAX_PATH);
-	StrNCpy(m_BaseDir, m_Source, MAX_PATH);
+	StringCchCopy(m_Source, MAX_PATH, szSource);
+	StringCchCopy(m_BaseDir, MAX_PATH, m_Source);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -105,22 +105,22 @@ bool			CPLS_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 	TCHAR szBuffer[MAX_PATH];
 	TCHAR szVarName[32];
-	_snwprintf_s(szVarName, 32, _TRUNCATE, L"File%d", m_Current);
+	StringCchPrintf(szVarName, 32, L"File%d", m_Current);
 	GetPrivateProfileString(L"playlist", szVarName, NULL, szBuffer, MAX_PATH, m_Source);
 
-	if(szBuffer && wcslen(szBuffer) > 2)
+	if(szBuffer && wcsnlen_s(szBuffer, 260) > 2)
 	{
 
-		if(szDest[wcslen(szDest)-1] == L'\n')
-			szDest[wcslen(szDest)-1] = L'\0';
+		if(szDest[wcsnlen_s(szDest, iDestSize)-1] == L'\n')
+			szDest[wcsnlen_s(szDest, iDestSize)-1] = L'\0';
 
 		if(!PathIsURL(szBuffer) && PathIsRelative(szBuffer))
 		{
-			_snwprintf(szDest, iDestSize, L"%s%s", m_BaseDir, szBuffer);
+			StringCchPrintf(szDest, iDestSize, L"%s%s", m_BaseDir, szBuffer);
 		}
 		else
 		{
-			StrNCpy(szDest, szBuffer, iDestSize);
+			StringCchCopy(szDest, iDestSize, szBuffer);
 		}
 		return true;
 	}
@@ -132,10 +132,10 @@ bool			CPLS_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 	ZeroMemory(szDest, iDestSize * sizeof(TCHAR));
 
 	TCHAR szVarName[32] = L"";
-	_snwprintf_s(szVarName, 32, _TRUNCATE, L"Title%d", m_Current);
+	StringCchPrintf(szVarName, 32, L"Title%d", m_Current);
 	GetPrivateProfileString(L"playlist", szVarName, NULL, szDest, iDestSize, m_Source);
 
-	if(wcslen(szDest) > 0)
+	if(wcsnlen_s(szDest, iDestSize) > 0)
 		return true;
 
 	return false;
@@ -204,8 +204,8 @@ bool			CPLS_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 	m_Current = 0;
 	m_Version2 = true;
 
-	StrNCpy(m_Source, szSource, MAX_PATH);
-	StrNCpy(m_BaseDir, m_Source, MAX_PATH);
+	StringCchCopy(m_Source, MAX_PATH, szSource);
+	StringCchCopy(m_BaseDir, MAX_PATH, m_Source);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -219,37 +219,37 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 		return false;
 	
 	TCHAR szVarName[32];
-	_snwprintf_s(szVarName, 32, _TRUNCATE, L"File%d", ++m_Current);
+	StringCchPrintf(szVarName, 32, L"File%d", ++m_Current);
 
 	TCHAR szData[MAX_PATH];
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		StrCpyN(szData, libraryEntry.szURL + wcslen(m_BaseDir), MAX_PATH);
+		StringCchCopy(szData, 260, libraryEntry.szURL + wcsnlen_s(m_BaseDir, 512));
 	else
-		StrCpyN(szData, libraryEntry.szURL, MAX_PATH);
+		StringCchCopy(szData, 260, libraryEntry.szURL);
 
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 
 	if(!m_Version2) return true;
 
-	_snwprintf_s(szVarName, 32, _TRUNCATE, L"Title%d", m_Current);
-	if(wcslen(libraryEntry.szTitle) > 0)
+	StringCchPrintf(szVarName, 32, L"Title%d", m_Current);
+	if(wcsnlen_s(libraryEntry.szTitle, 128) > 0)
 	{
-		if(wcslen(libraryEntry.szArtist) > 0)
-			_snwprintf_s(szData, MAX_PATH, _TRUNCATE, L"%s - %s", libraryEntry.szArtist, libraryEntry.szTitle);
-		else if(wcslen(libraryEntry.szTitle) > 0)
-			_snwprintf_s(szData, MAX_PATH, _TRUNCATE, L"%s", libraryEntry.szTitle);
+		if(wcsnlen_s(libraryEntry.szArtist, 128) > 0)
+			StringCchPrintf(szData, MAX_PATH, L"%s - %s", libraryEntry.szArtist, libraryEntry.szTitle);
+		else if(wcsnlen_s(libraryEntry.szTitle, 128) > 0)
+			StringCchPrintf(szData, MAX_PATH, L"%s", libraryEntry.szTitle);
 	}
 	else
 	{
-		_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT(""));
+		StringCchPrintf(szData, MAX_PATH, TEXT(""));
 	}
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 
-	_snwprintf_s(szVarName, 32, _TRUNCATE, L"Length%d", m_Current);
-	_snwprintf_s(szData, MAX_PATH, _TRUNCATE, L"%u", (libraryEntry.ulPlaybackTime == LENGTH_UNKNOWN || libraryEntry.ulPlaybackTime == LENGTH_STREAM) ? (-1) : (libraryEntry.ulPlaybackTime / 1000));
+	StringCchPrintf(szVarName, 32, L"Length%d", m_Current);
+	StringCchPrintf(szData, MAX_PATH, L"%u", (libraryEntry.ulPlaybackTime == LENGTH_UNKNOWN || libraryEntry.ulPlaybackTime == LENGTH_STREAM) ? (-1) : (libraryEntry.ulPlaybackTime / 1000));
 	if(WritePrivateProfileString(L"playlist", szVarName, szData, m_Source) == 0)
 		return false;
 	
@@ -265,7 +265,7 @@ bool			CPLS_Export::EndExport(void)
 	{
 
 		TCHAR szNumEntries[32];
-		_snwprintf_s(szNumEntries, 32, _TRUNCATE, L"%d", m_Current);
+		StringCchPrintf(szNumEntries, 32, L"%d", m_Current);
 
 		WritePrivateProfileString(L"playlist", L"NumberOfEntries", szNumEntries, m_Source);
 		WritePrivateProfileString(L"playlist", L"Version", L"2", m_Source);

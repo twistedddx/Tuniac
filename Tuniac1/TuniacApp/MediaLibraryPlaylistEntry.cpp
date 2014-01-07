@@ -234,37 +234,37 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 	{
 		case FIELD_URL:
 			{
-				StrCpyN(m_LibraryEntry.szURL, (LPTSTR)pNewData, MAX_PATH);
+				StringCchCopy(m_LibraryEntry.szURL, MAX_PATH, (LPTSTR)pNewData);
 			}
 			break;
 
 		case FIELD_TITLE:
 			{
-				StrCpyN(m_LibraryEntry.szTitle, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szTitle, 128, (LPTSTR)pNewData);
 			}
 			break;
 			
 		case FIELD_ARTIST:
 			{
-				StrCpyN(m_LibraryEntry.szArtist, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szArtist, 128, (LPTSTR)pNewData);
 			}
 			break;
 
 		case FIELD_ALBUM:
 			{
-				StrCpyN(m_LibraryEntry.szAlbum, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szAlbum, 128, (LPTSTR)pNewData);
 			}
 			break;
 
 		case FIELD_COMMENT:
 			{
-				StrCpyN(m_LibraryEntry.szComment, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szComment, 128, (LPTSTR)pNewData);
 			}
 			break;
 
 		case FIELD_GENRE:
 			{
-				StrCpyN(m_LibraryEntry.szGenre, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szGenre, 128, (LPTSTR)pNewData);
 			}
 			break;
 
@@ -408,7 +408,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 
 		case FIELD_ALBUMARTIST:
 			{
-				StrCpyN(m_LibraryEntry.szAlbumArtist, (LPTSTR)pNewData, 128);
+				StringCchCopy(m_LibraryEntry.szAlbumArtist, 128, (LPTSTR)pNewData);
 			}
 			break;
 
@@ -536,66 +536,66 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 		case FIELD_KIND:
 			{
 				if(m_LibraryEntry.ulKind == ENTRY_KIND_URL)
-					StrCpyN(szString, TEXT("URL"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("URL"));
 				else
-					StrCpyN(szString, TEXT("File"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("File"));
 			}
 			break;
 
 		case FIELD_URL:
 			{
-				StrCpyN(szString, m_LibraryEntry.szURL, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szURL);
 			}
 			break;
 
 		case FIELD_FILENAME:
 			{
-				StrCpyN(szString, PathFindFileName(m_LibraryEntry.szURL), ulNumChars);
+				StringCchCopy(szString, ulNumChars, PathFindFileName(m_LibraryEntry.szURL));
 			}
 			break;
 
 		case FIELD_TITLE:
 			{
-				StrCpyN(szString, m_LibraryEntry.szTitle, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szTitle);
 			}
 			break;
 			
 		case FIELD_ARTIST:
 			{
-				StrCpyN(szString, m_LibraryEntry.szArtist, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szArtist);
 			}
 			break;
 
 		case FIELD_ALBUM:
 			{
-				StrCpyN(szString, m_LibraryEntry.szAlbum, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szAlbum);
 			}
 			break;
 
 		case FIELD_COMMENT:
 			{
-				StrCpyN(szString, m_LibraryEntry.szComment, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szComment);
 			}
 			break;
 
 		case FIELD_GENRE:
 			{
-				StrCpyN(szString, m_LibraryEntry.szGenre, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szGenre);
 			}
 			break;
 
 		case FIELD_YEAR:
 			{
 				if(m_LibraryEntry.ulYear < 1)
-					StrCpyN(szString, TEXT("Unknown"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
 				else
-					_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulYear);
+					StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulYear);
 			}
 			break;
 
 		case FIELD_PLAYCOUNT:
 			{
-				_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulPlayCount);
+				StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulPlayCount);
 			}
 			break;
 
@@ -603,11 +603,11 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.dwTrack[1])
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%hu/%hu"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
+					StringCchPrintf(szString, ulNumChars, TEXT("%hu/%hu"), m_LibraryEntry.dwTrack[0], m_LibraryEntry.dwTrack[1]);
 				}
 				else
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%hu"), m_LibraryEntry.dwTrack[0]);
+					StringCchPrintf(szString, ulNumChars, TEXT("%hu"), m_LibraryEntry.dwTrack[0]);
 				}
 			}
 			break;
@@ -616,72 +616,72 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.ulPlaybackTime == LENGTH_STREAM)
 				{
-					StrCpyN(szString, TEXT("Stream"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Stream"));
 				}
 				else if(m_LibraryEntry.ulPlaybackTime == LENGTH_UNKNOWN)
 				{
-					StrCpyN(szString, TEXT("Unknown"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
 				}
 				else
 				{
 					unsigned long time = m_LibraryEntry.ulPlaybackTime / 1000;
 					if(time > 3600)
-						_snwprintf(szString, ulNumChars, TEXT("%02u:%02u:%02u"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
+						StringCchPrintf(szString, ulNumChars, TEXT("%02u:%02u:%02u"),  ((time / 60) / 60), (time / 60) % 60, time % 60 );
 					else
-						_snwprintf(szString, ulNumChars, TEXT("%02u:%02u"), (time / 60) % 60, time % 60 );
+						StringCchPrintf(szString, ulNumChars, TEXT("%02u:%02u"), (time / 60) % 60, time % 60 );
 				}
 			}
 			break;
 
 		case FIELD_BITRATE:
 			{
-				_snwprintf(szString, ulNumChars, TEXT("%ukbps"), m_LibraryEntry.ulBitRate/1000);
+				StringCchPrintf(szString, ulNumChars, TEXT("%ukbps"), m_LibraryEntry.ulBitRate/1000);
 			}
 			break;
 
 		case FIELD_SAMPLERATE:
 			{
-				_snwprintf(szString, ulNumChars, TEXT("%uHz"), m_LibraryEntry.ulSampleRate);
+				StringCchPrintf(szString, ulNumChars, TEXT("%uHz"), m_LibraryEntry.ulSampleRate);
 			}
 			break;
 
 		case FIELD_NUMCHANNELS:
 			{
 				if(m_LibraryEntry.ulChannels == 0)
-					StrCpyN(szString, TEXT("Mute"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Mute"));
 				if(m_LibraryEntry.ulChannels == 1)
-					StrCpyN(szString, TEXT("Mono"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Mono"));
 				if(m_LibraryEntry.ulChannels == 2)
-					StrCpyN(szString, TEXT("Stereo"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Stereo"));
 				if(m_LibraryEntry.ulChannels == 3)
-					StrCpyN(szString, TEXT("2.1"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("2.1"));
 				if(m_LibraryEntry.ulChannels == 4)
-					StrCpyN(szString, TEXT("Quad"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Quad"));
 				if(m_LibraryEntry.ulChannels == 5)
-					StrCpyN(szString, TEXT("5"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("5"));
 				if(m_LibraryEntry.ulChannels == 6)
-					StrCpyN(szString, TEXT("5.1"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("5.1"));
 				if(m_LibraryEntry.ulChannels == 7)
-					StrCpyN(szString, TEXT("6.1"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("6.1"));
 				if(m_LibraryEntry.ulChannels == 8)
-					StrCpyN(szString, TEXT("7.1"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("7.1"));
 				if(m_LibraryEntry.ulChannels > 8)
-					StrCpyN(szString, TEXT("Plenty"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Plenty"));
 			}
 			break;
 
 		case FIELD_FILEEXTENSION:
 			{
 				if(PathIsURL(m_LibraryEntry.szURL))
-					StrCpyN(szString, TEXT(""), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT(""));
 				else
-					StrCpyN(szString, PathFindExtension(m_LibraryEntry.szURL), ulNumChars);
+					StringCchCopy(szString, ulNumChars, PathFindExtension(m_LibraryEntry.szURL));
 			}
 			break;
 
 		case FIELD_RATING:
 			{
-				_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulRating);
+				StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulRating);
 			}
 			break;
 
@@ -689,30 +689,30 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{	// NOTE: optimize divides with bitshifts?? i / 1024 == i >> 10 
 				if (m_LibraryEntry.ulFilesize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%u bytes"), m_LibraryEntry.ulFilesize);
+					StringCchPrintf(szString, ulNumChars, TEXT("%u bytes"), m_LibraryEntry.ulFilesize);
 					break;
 				}
 				unsigned long ulSize = m_LibraryEntry.ulFilesize / 1024;
 				if (ulSize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%u Kb"), ulSize);
+					StringCchPrintf(szString, ulNumChars, TEXT("%u Kb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
 				if (ulSize < 1024)
 				{
-					_snwprintf(szString, ulNumChars, TEXT("%u Mb"), ulSize);
+					StringCchPrintf(szString, ulNumChars, TEXT("%u Mb"), ulSize);
 					break;
 				}
 				ulSize /= 1024;
-				_snwprintf(szString, ulNumChars, TEXT("%u Gb"), ulSize);
+				StringCchPrintf(szString, ulNumChars, TEXT("%u Gb"), ulSize);
 			}
 			break;
 
 		case FIELD_DATEADDED:
 			{
 				int x = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stDateAdded, NULL, szString, 100);
-				StrCpy(&szString[x-1], TEXT(" "));
+				StringCchCopy(&szString[x-1], ulNumChars, TEXT(" "));
 				GetDateFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stDateAdded, NULL, &szString[x], 100);
 			}
 			break;
@@ -720,7 +720,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 		case FIELD_DATEFILECREATION:
 			{
 				int x = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stFileCreationDate, NULL, szString, 100);
-				StrCpy(&szString[x-1], TEXT(" "));
+				StringCchCopy(&szString[x-1], ulNumChars, TEXT(" "));
 				GetDateFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stFileCreationDate, NULL, &szString[x], 100);
 			}
 			break;
@@ -730,12 +730,12 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 				if(m_LibraryEntry.ulPlayCount > 0)
 				{
 					int x = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stLastPlayed, NULL, szString, 100);
-					StrCpy(&szString[x-1], TEXT(" "));
+					StringCchCopy(&szString[x-1], ulNumChars, TEXT(" "));
 					GetDateFormat(LOCALE_USER_DEFAULT, 0, &m_LibraryEntry.stLastPlayed, NULL, &szString[x], 100);
 				}
 				else
 				{
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 				}
 			}
 			break;
@@ -743,56 +743,56 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 		case FIELD_REPLAYGAIN_TRACK_GAIN:
 			{
 				if(m_LibraryEntry.fReplayGain_Track_Gain)
-					_snwprintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Track_Gain);
+					StringCchPrintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Track_Gain);
 				else
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
 		case FIELD_REPLAYGAIN_TRACK_PEAK:
 			{
 				if(m_LibraryEntry.fReplayGain_Track_Peak)
-					_snwprintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Track_Peak);
+					StringCchPrintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Track_Peak);
 				else
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
 		case FIELD_REPLAYGAIN_ALBUM_GAIN:
 			{
 				if(m_LibraryEntry.fReplayGain_Album_Gain)
-					_snwprintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Album_Gain);
+					StringCchPrintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Album_Gain);
 				else
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
 		case FIELD_REPLAYGAIN_ALBUM_PEAK:
 			{
 				if(m_LibraryEntry.fReplayGain_Album_Peak)
-					_snwprintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Album_Peak);
+					StringCchPrintf(szString, ulNumChars, TEXT("%1.2f"), m_LibraryEntry.fReplayGain_Album_Peak);
 				else
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
 		case FIELD_AVAILABILITY:
 			{
 				if(m_LibraryEntry.ulAvailability == AVAILABLILITY_AVAILABLE)
-					StrCpyN(szString, TEXT("Available"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Available"));
 				else if(m_LibraryEntry.ulAvailability == AVAILABLILITY_UNAVAILABLE)
-					StrCpyN(szString, TEXT("Unavailable"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Unavailable"));
 				else
-					StrCpyN(szString, TEXT("Unknown"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
 			}
 			break;
 		case FIELD_BPM:
 			{
 				if(m_LibraryEntry.ulBPM < 1)
-					StrCpyN(szString, TEXT("---"), ulNumChars);
+					StringCchCopy(szString, ulNumChars, TEXT("---"));
 				else
-					_snwprintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulBPM);
+					StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulBPM);
 			}
 			break;
 		case FIELD_ALBUMARTIST:
 			{
-				StrCpyN(szString, m_LibraryEntry.szAlbumArtist, ulNumChars);
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szAlbumArtist);
 			}
 			break;
 

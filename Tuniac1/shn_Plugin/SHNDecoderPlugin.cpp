@@ -48,8 +48,8 @@ bool			CshnDecoderPlugin::Configure(HWND hParent)
 
 bool			CshnDecoderPlugin::CanHandle(LPTSTR szSource)
 {
-	LPTSTR	t = &szSource[lstrlen(szSource)-4];
-	if(!lstrcmpi(TEXT(".shn"), t))
+	LPTSTR	t = &szSource[wcsnlen_s(szSource, MAX_PATH)-4];
+	if(StrCmpI(TEXT(".shn"), t) == 0)
 	{
 		return(true);
 	}

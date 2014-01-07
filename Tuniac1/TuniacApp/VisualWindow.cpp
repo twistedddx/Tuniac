@@ -101,8 +101,8 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
-	TCHAR				szVisualsPath[512];
-	TCHAR				szFilename[512];
+	TCHAR				szVisualsPath[MAX_PATH];
+	TCHAR				szFilename[MAX_PATH];
 
 	m_hParentWnd = hParent;
 
@@ -114,13 +114,13 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 		m_VisualArray.AddTail(builtin);
 	}
 
-	GetModuleFileName(NULL, szVisualsPath, 512);
+	GetModuleFileName(NULL, szVisualsPath, MAX_PATH);
 	PathRemoveFileSpec(szVisualsPath);
 	PathAddBackslash(szVisualsPath);
-	StrCat(szVisualsPath, TEXT("visuals"));
+	StringCchCat(szVisualsPath, MAX_PATH, TEXT("visuals"));
 	PathAddBackslash(szVisualsPath);
-	StrCpy(szFilename, szVisualsPath);
-	StrCat(szFilename, TEXT("*.dll"));
+	StringCchCopy(szFilename, MAX_PATH, szVisualsPath);
+	StringCchCat(szFilename, MAX_PATH, TEXT("*.dll"));
 
 	hFind = FindFirstFile( szFilename, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -130,10 +130,10 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 			if(StrCmp(w32fd.cFileName, TEXT(".")) == 0 || StrCmp(w32fd.cFileName, TEXT("..")) == 0 )
 				continue;
 
-			TCHAR temp[512];
+			TCHAR temp[MAX_PATH];
 
-			StrCpy(temp, szVisualsPath);
-			StrCat(temp, w32fd.cFileName);
+			StringCchCopy(temp, MAX_PATH, szVisualsPath);
+			StringCchCat(temp, MAX_PATH, w32fd.cFileName);
 
 			HINSTANCE hDLL = LoadLibrary(temp);
 			if(hDLL)
@@ -151,7 +151,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 					if(pGTVPVF() != ITUNIACVISPLUGIN_VERSION)
 					{
 						TCHAR szError[512];
-						_snwprintf(szError, 512, TEXT("Incompatable visual found: \\visuals\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						StringCchPrintf(szError, 512, TEXT("Incompatable visual found: \\visuals\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 						FreeLibrary(hDLL);
 						continue;
@@ -685,14 +685,14 @@ void *	CVisualWindow::GetVariable(Variable eVar)
 bool	CVisualWindow::GetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
 {
 	TCHAR szVisualSubKey[128];
-	_snwprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	StringCchPrintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginGetValue(szVisualSubKey, lpValueName, lpType, lpData, lpcbData);
 }
 
 bool	CVisualWindow::SetVisualPref(LPCTSTR szSubKey, LPCTSTR lpValueName, DWORD dwType, const BYTE* lpData, DWORD cbData)
 {
 	TCHAR szVisualSubKey[128];
-	_snwprintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
+	StringCchPrintf(szVisualSubKey, 128, TEXT("visuals\\%s"), szSubKey);
 	return tuniacApp.m_Preferences.PluginSetValue(szVisualSubKey, lpValueName, dwType, lpData, cbData);
 }
 

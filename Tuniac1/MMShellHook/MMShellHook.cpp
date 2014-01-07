@@ -203,11 +203,11 @@ bool			CMMShellHook::SetHelper(ITuniacPluginHelper *pHelper)
 
 	if(bIsWow64 || bIsReal64)
 	{
-		TCHAR szHelperPath[512];
-		GetModuleFileName(NULL, szHelperPath, 512);
+		TCHAR szHelperPath[MAX_PATH];
+		GetModuleFileName(NULL, szHelperPath, MAX_PATH);
 		PathRemoveFileSpec(szHelperPath);
 		PathAddBackslash(szHelperPath);
-		StrCat(szHelperPath, TEXT("plugins\\MMShellHookHelper.exe"));
+		StringCchCat(szHelperPath, MAX_PATH, TEXT("plugins\\MMShellHookHelper.exe"));
 
 		ShellExecute(NULL, L"open", szHelperPath, NULL, NULL, SW_HIDE);
 	}

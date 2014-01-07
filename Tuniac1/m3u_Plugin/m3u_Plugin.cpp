@@ -1,13 +1,12 @@
 #include "stdafx.h"
 #include "m3u_Plugin.h"
-#include "shlwapi.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
+					   DWORD  ul_reason_for_call, 
+					   LPVOID lpReserved
 					 )
 {
-    return TRUE;
+	return TRUE;
 }
 
 
@@ -87,7 +86,7 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 	if(m_File == NULL)
 		return false;
 
-	StrNCpy(m_BaseDir, szSource, MAX_PATH);
+	StringCchCopy(m_BaseDir, 260, szSource);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 	return true;
@@ -108,7 +107,7 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 	{
 		if(fgetws(szDest, iDestSize, m_File) != NULL)
 		{
-			if(wcslen(szDest) < 2)
+			if(wcsnlen_s(szDest, iDestSize) < 2)
 				continue;
 
 			if (!_wcsnicmp(szDest, L"#EXTM3U",7))
@@ -121,22 +120,22 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 				if(szTemp)
 				{
 			
-					if(szTemp[wcslen(szTemp)-1] == L'\n')
-						szTemp[wcslen(szTemp)-1] = L'\0';
+					if(szTemp[wcsnlen_s(szTemp, iDestSize)-1] == L'\n')
+						szTemp[wcsnlen_s(szTemp, iDestSize)-1] = L'\0';
 
-					wcsncpy_s(szTitle, 128, &szTemp[1], _TRUNCATE);
+					StringCchCopyN(szTitle, 128, &szTemp[1], 128);
 				}
 				continue;
 			}
 
-			if(szDest[wcslen(szDest)-1] == L'\n')
-				szDest[wcslen(szDest)-1] = L'\0';
+			if(szDest[wcsnlen_s(szDest, iDestSize)-1] == L'\n')
+				szDest[wcsnlen_s(szDest, iDestSize)-1] = L'\0';
 
 			if(!PathIsURL(szDest) && PathIsRelative(szDest))
 			{
 				TCHAR szTemp[MAX_PATH];
-				wcsncpy_s(szTemp, 128, szDest, _TRUNCATE);
-				_snwprintf_s(szDest, iDestSize, _TRUNCATE, TEXT("%s%s"), m_BaseDir, szTemp);
+				StringCchCopyN(szTemp, 128, szDest, 128);
+				StringCchPrintf(szDest, iDestSize, TEXT("%s%s"), m_BaseDir, szTemp);
 			}
 			return true;
 		}
@@ -153,7 +152,7 @@ bool			CM3U_Import::ImportTitle(LPTSTR szDest, unsigned long iDestSize)
 {
 	if(szTitle != L"")
 	{
-		wcsncpy_s(szDest, iDestSize, &szTitle[0], _TRUNCATE);
+		StringCchCopyN(szDest, iDestSize, &szTitle[0], iDestSize);
 		return true;
 	}
 
@@ -224,7 +223,7 @@ bool			CM3U_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 	if(m_File == NULL)
 		return false;
 	
-	StrNCpy(m_BaseDir, szSource, MAX_PATH);
+	StringCchCopy(m_BaseDir, MAX_PATH, szSource);
 	PathRemoveFileSpec(m_BaseDir);
 	PathAddBackslash(m_BaseDir);
 
@@ -240,25 +239,25 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 
 	TCHAR szData[MAX_PATH];
 	unsigned long ulTime = (libraryEntry.ulPlaybackTime == LENGTH_UNKNOWN || libraryEntry.ulPlaybackTime == LENGTH_STREAM) ? (-1) : (libraryEntry.ulPlaybackTime / 1000);
-	if(wcslen(libraryEntry.szTitle) > 0)
+	if(wcsnlen_s(libraryEntry.szTitle, 128) > 0)
 	{
-		if(wcslen(libraryEntry.szArtist) > 0)
-			_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT("#EXTINF:%u,%s - %s"), ulTime, libraryEntry.szArtist, libraryEntry.szTitle);
-		else if(wcslen(libraryEntry.szTitle) > 0)
-			_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT("#EXTINF:%u,%s"), ulTime, libraryEntry.szTitle);
+		if(wcsnlen_s(libraryEntry.szArtist, 128) > 0)
+			StringCchPrintf(szData, MAX_PATH, TEXT("#EXTINF:%u,%s - %s"), ulTime, libraryEntry.szArtist, libraryEntry.szTitle);
+		else if(wcsnlen_s(libraryEntry.szTitle,128) > 0)
+			StringCchPrintf(szData, MAX_PATH, TEXT("#EXTINF:%u,%s"), ulTime, libraryEntry.szTitle);
 	}
 	else
 	{
-		_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT("#EXTINF:%u,"), ulTime);
+		StringCchPrintf(szData, MAX_PATH, TEXT("#EXTINF:%u,"), ulTime);
 	}
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);
 
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT("%s"), libraryEntry.szURL + wcslen(m_BaseDir));
+		StringCchPrintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcsnlen_s(m_BaseDir, MAX_PATH));
 	else
-		_snwprintf_s(szData, MAX_PATH, _TRUNCATE, TEXT("%s"), libraryEntry.szURL);
+		StringCchPrintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL);
 
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);

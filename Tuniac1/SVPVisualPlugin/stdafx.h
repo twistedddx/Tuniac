@@ -17,4 +17,6 @@
 
 #include <stdlib.h>
 
+#include <strsafe.h>
+
 #include "resource.h"

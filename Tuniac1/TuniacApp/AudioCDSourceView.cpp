@@ -159,7 +159,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 					rcTopBarRect.left += 15;
 					if(m_pCDPlaylist)
 					{
-						DrawText(PS.hdc, m_pCDPlaylist->GetPlaylistName(), lstrlen(m_pCDPlaylist->GetPlaylistName()), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
+						DrawText(PS.hdc, m_pCDPlaylist->GetPlaylistName(), wcsnlen_s(m_pCDPlaylist->GetPlaylistName(), 256), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 					}
 
 					EndPaint(hDlg, &PS);

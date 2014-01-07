@@ -65,7 +65,7 @@ void CAlbumArt::SetCurrentArtSource(LPTSTR szNewArtSource)
 {
 	if(szNewArtSource)
 	{
-		StrCpyN(szCurrentArtSource, szNewArtSource, 511);
+		StringCchCopy(szCurrentArtSource, MAX_PATH, szNewArtSource);
 	}
 }
 
@@ -76,7 +76,7 @@ LPTSTR CAlbumArt::GetCurrentArtSource(void)
 
 void CAlbumArt::SetJPEGErrorMessage(char * szError)
 {
-	strcpy(szErrorMessage, szError);
+	strcpy_s(szErrorMessage, szError);
 }
 
 bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LPTSTR szMimeType)

@@ -121,7 +121,7 @@ bool			CCoreAudio::Startup()
 	GetModuleFileName(NULL, szFilename, 512);
 	PathRemoveFileSpec(szFilename);
 	PathAddBackslash(szFilename);
-	StrCat(szFilename, TEXT("*.dll"));
+	StringCchCat(szFilename, MAX_PATH, TEXT("*.dll"));
 
 	hFind = FindFirstFile( szFilename, &w32fd); 
 	if(hFind != INVALID_HANDLE_VALUE) 
@@ -136,7 +136,7 @@ bool			CCoreAudio::Startup()
 			GetModuleFileName(NULL, temp, 512);
 			PathRemoveFileSpec(temp);
 			PathAddBackslash(temp);
-			StrCat(temp, w32fd.cFileName);
+			StringCchCat(temp, MAX_PATH, w32fd.cFileName);
 
 			HINSTANCE hDLL = LoadLibrary(temp);
 			if(hDLL)
