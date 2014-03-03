@@ -1,7 +1,11 @@
+Jan, 2014
+---------
+-convert to safe string
+
 Dec, 2013
 ---------
 -add album artist tag field support
--Update "adding files" dialog
+-Update "adding files" dialog to better count folders without usable files
 -Bass dll + lib updates
 
 Oct, 2013

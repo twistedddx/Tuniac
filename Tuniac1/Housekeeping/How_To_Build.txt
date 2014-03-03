@@ -46,34 +46,35 @@ Install them
 
 3)Gather repositories
 
-3a)You need Tuniac SVN (http://sourceforge.net/projects/tuniac/)
+3a)You need Tuniac 1.0 SVN (http://sourceforge.net/projects/tuniac/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 https://tuniac.svn.sourceforge.net/svnroot/tuniac
 Hit OK and wait
 
-3b)You should get zlib GIT (http://zlib.net/)
+3b)You should get zlib 1.2.8 GIT (http://zlib.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/madler/zlib
 Hit OK and wait
 
-3c)You need TagLib GIT (http://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 1.9.1 GIT (http://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
 
-3d)You need libpng GIT (http://libpng.sourceforge.net/)
+3d)You need libpng 1.7 GIT (http://libpng.sourceforge.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 git://libpng.git.sourceforge.net/gitroot/libpng/libpng
 Hit OK and wait
 
-3e)You need libjpeg-turbo SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 1.3.0 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 svn://svn.code.sf.net/p/libjpeg-turbo/code/trunk
+Ensure checkout directory reads C:\Code\libjpeg-turbo
 Hit OK and wait
 
 
@@ -99,13 +100,13 @@ You can also get all the build recipes for individual building of libs in there.
 5a)You need Direct X SDK June 2010.
 http://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-5b)You need the Glew 1.9.0 Binaries Windows 32-bit zip.
+5b)You need the Glew 1.10.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
-http://sourceforge.net/projects/glew/files/glew/1.9.0/glew-1.9.0-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/1.10.0/glew-1.10.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\GL
-And put glew32.lib and glew32s.lib in
+And put Release\Win32\ glew32.lib and glew32s.lib in
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\lib
 
 Look here for errors that look like:
