@@ -84,11 +84,13 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
+				/*
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_ALBUMARTIST), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
 				}
+				*/
 
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
 				{
