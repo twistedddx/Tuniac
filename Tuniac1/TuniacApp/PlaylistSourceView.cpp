@@ -915,8 +915,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											}
 										}
 										tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
-										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
-										tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 										ListView_SetItemState(hListViewWnd, iPos, 0, LVIS_SELECTED);
 										deletedIndexes++;
 									}
@@ -930,6 +928,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								}
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
+							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
+							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
 							tuniacApp.RebuildFutureMenu();
 							Update();
 						}

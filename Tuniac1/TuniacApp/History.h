@@ -45,6 +45,8 @@ public:
 
 	void		AddEntryID(unsigned long ulEntryID);
 	
+	void		RebuildMenuBase(void);
+
 	bool		RemoveEntryID(unsigned long ulEntryID);
 	void		Clear(void);
 	
