@@ -139,6 +139,8 @@ public:
 	virtual unsigned long		GetFilteredIndexforEntryID(unsigned long ulEntryID)					= 0;
 	virtual unsigned long		GetNormalFilteredIndexforEntryID(unsigned long ulEntryID)			= 0;
 
+	virtual bool				SetActiveRealIndex(unsigned long ulRealIndex)						= 0;
+
 	virtual IPlaylistEntry *	GetEntryByEntryID(unsigned long ulFilteredIndex)					= 0;
 
 	virtual unsigned long		RealIndexToNormalFilteredIndex(unsigned long ulRealIndex)			= 0; // returns a index based on a real (as in the whole playlist) index, or INVALID_PLAYLIST_INDEX

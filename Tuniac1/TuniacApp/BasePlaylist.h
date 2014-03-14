@@ -100,6 +100,8 @@ public:
 	unsigned long		GetActiveEntryID(void);
 	unsigned long		GetNumItems(void);
 
+	bool				SetActiveRealIndex(unsigned long ulRealIndex);
+
 	unsigned long		GetActiveFilteredIndex(void);
 	bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex);
 	unsigned long		GetActiveNormalFilteredIndex(void);

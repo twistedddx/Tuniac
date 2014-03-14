@@ -2909,7 +2909,13 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 
 		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
 		if(pPlaylist)
-			pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE));
+		if (!pPlaylist->SetActiveNormalFilteredIndex(pPlaylist->GetNormalFilteredIndexforEntry(pIPE)))
+		{
+			//history can pick songs that are filtered out
+			IPlaylistEX * pPlaylistEX =  (IPlaylistEX *)pPlaylist;
+			if (pPlaylistEX)
+				pPlaylistEX->SetActiveRealIndex(pPlaylistEX->GetRealIndexforEntry(pIPE));
+		}
 
 		if(CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
 		{

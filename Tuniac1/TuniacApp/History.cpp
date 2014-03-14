@@ -51,12 +51,6 @@ void		CHistory::AddEntryID(unsigned long ulEntryID)
 	if(m_History.GetCount() > 0 && m_History[0] == ulEntryID)
 		return;
 
-	if(m_History.GetCount() > 1 && m_History[1] == ulEntryID)
-	{
-		m_History.RemoveAt(1);
-		DeleteMenu(m_hMenu, 1, MF_BYPOSITION);
-	}
-
 	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 
 	TCHAR szDetail[112];
@@ -78,17 +72,23 @@ void		CHistory::AddEntryID(unsigned long ulEntryID)
 	while(m_History.GetCount() > tuniacApp.m_Preferences.GetHistoryListSize())
 		m_History.RemoveTail();
 
+	RebuildMenuBase();
+}
+void		CHistory::RebuildMenuBase(void)
+{
 	MENUITEMINFO mii;
 	memset(&mii, 0, sizeof(MENUITEMINFO));
 	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_ID;
 
-	for(int i = 1; i < GetMenuItemCount(m_hMenu); i++)
+	for (int i = 1; i <= GetMenuItemCount(m_hMenu); i++)
 	{
 		GetMenuItemInfo(m_hMenu, i, TRUE, &mii);
 		mii.wID = HISTORYMENU_BASE + i;
 		SetMenuItemInfo(m_hMenu, i, TRUE, &mii);
 	}
+
+	return;
 }
 
 bool		CHistory::RemoveEntryID(unsigned long ulEntryID)
@@ -99,6 +99,7 @@ bool		CHistory::RemoveEntryID(unsigned long ulEntryID)
 		{
 			m_History.RemoveAt(i);
 			DeleteMenu(m_hMenu, i, MF_BYPOSITION);
+			RebuildMenuBase();
 			return true;
 		}
 	}
@@ -128,13 +129,8 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 	//store before delete
 	unsigned long ulEntryID = m_History[ulIndex];
 
-	if(ulIndex > 0)
-	{
-		for(unsigned long i = 0; i < ulIndex; i++)
-		{
-			RemoveEntryID(m_History[i]);
-		}
-	}
+	m_History.RemoveAt(ulIndex);
+	DeleteMenu(m_hMenu, ulIndex, MF_BYPOSITION);
 
 	IPlaylistEntry * pIPE = NULL;
 	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
@@ -149,6 +145,8 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 		tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 		pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 	}
+
+	RebuildMenuBase();
 
 	return tuniacApp.PlayEntry(pIPE, true, false);
 }

@@ -572,6 +572,14 @@ unsigned long		CBasePlaylist::GetNumItems(void)
 }
 
 //set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
+bool				CBasePlaylist::SetActiveRealIndex(unsigned long ulRealIndex)
+{
+	m_ActiveRealIndex = ulRealIndex;
+
+	return true;
+}
+
+//set active song, this is the index location for m_NormalIndexArray/m_RandomIndexArray 
 bool				CBasePlaylist::SetActiveFilteredIndex(unsigned long ulFilteredIndex)
 {
 	if(tuniacApp.m_Preferences.GetShuffleState())
