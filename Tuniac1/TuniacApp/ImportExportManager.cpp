@@ -80,6 +80,10 @@ bool			CImportExportManager::Initialize(void)
 					{
 						TCHAR szError[512];
 						StringCchPrintf(szError, 512, TEXT("Incompatable import plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), szError);
+						}
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -106,6 +110,10 @@ bool			CImportExportManager::Initialize(void)
 					{
 						TCHAR szError[512];
 						StringCchPrintf(szError, 512, TEXT("Incompatable export plugin found: %s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), szError);
+						}
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
 				}
@@ -386,6 +394,10 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 			continue;
 		if(m_PluginArray[i].pExporter->CanHandle(szSource))
 			return ExportTo(m_PluginArray[i].pExporter, szSource, entryArray);
+	}
+	if (tuniacApp.m_LogWindow)
+	{
+		tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), TEXT("Error exporting playlist."));
 	}
 	MessageBox(tuniacApp.getMainWindow(), TEXT("Error exporting playlist."), TEXT("Tuniac"), MB_OK | MB_ICONWARNING);
 	return false;

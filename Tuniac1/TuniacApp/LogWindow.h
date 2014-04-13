@@ -25,7 +25,6 @@
 
 #pragma once
 #include "iwindow.h"
-//#include "EditLog.h"
 
 class CLogWindow :
 	public IWindow
@@ -33,7 +32,9 @@ class CLogWindow :
 protected:
 			HWND						m_hLogWnd;
 
-			//CEditLog				*	m_EditLog;
+			HWND						m_hLogEditWnd;
+
+			bool	bLogEnabled;
 
 			LRESULT CALLBACK WndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	static	LRESULT CALLBACK WndProcStub(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);

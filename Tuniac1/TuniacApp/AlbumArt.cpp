@@ -65,6 +65,13 @@ void CAlbumArt::SetCurrentArtSource(LPTSTR szNewArtSource)
 {
 	if(szNewArtSource)
 	{
+		if (tuniacApp.m_LogWindow)
+		{
+			TCHAR szMessage[512];
+			StringCchPrintf(szMessage, 512, TEXT("Set source %s"), szNewArtSource);
+			tuniacApp.m_LogWindow->LogMessage(TEXT("AlbumArt"), szMessage);
+		}
+
 		StringCchCopy(szCurrentArtSource, MAX_PATH, szNewArtSource);
 	}
 }

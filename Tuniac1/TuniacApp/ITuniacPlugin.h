@@ -35,6 +35,7 @@ public:
 	virtual void		GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iFromCurrent) = 0;
 
 	virtual bool		Navigate(int iFromCurrent)						= 0;
+	virtual void		LogMessage(LPTSTR szModuleName, LPTSTR szMessage)=0;
 	virtual HINSTANCE	GetMainInstance(void)							= 0;
 	virtual HWND		GetMainWindow(void)								= 0;
 
@@ -56,7 +57,6 @@ public:
 #define PLUGINNOTIFY_SONGINFOCHANGE			WM_USER + 0x00000008
 #define PLUGINNOTIFY_SEEK_MANUAL			WM_USER + 0x00000009
 #define PLUGINNOTIFY_SONGPLAYED				WM_USER + 0x00000010
-
 
 class ITuniacPlugin
 {
