@@ -122,6 +122,10 @@ bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray
 		//remove from disk
 		if(bRemoveFromDisk)
 		{
+			if (tuniacApp.m_LogWindow)
+			{
+				tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
+			}
 			if(!PathIsURL(szURL))
 			{
 				SHFILEOPSTRUCT				op;

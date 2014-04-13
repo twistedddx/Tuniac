@@ -64,6 +64,8 @@ public:
 	void			GetTrackInfo(LPTSTR szDest, unsigned int iDestSize, LPTSTR szFormat, unsigned int iIndex);
 	bool			Navigate(int iFromCurrent);
 
+	void			LogMessage(LPTSTR szModuleName, LPTSTR szMessage);
+
 	HINSTANCE		GetMainInstance(void);
 	HWND			GetMainWindow(void);
 

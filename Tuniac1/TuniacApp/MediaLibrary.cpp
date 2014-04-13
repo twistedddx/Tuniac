@@ -558,6 +558,10 @@ bool CMediaLibrary::Initialize()
 
 	if(!m_InfoManagerArray.GetCount())
 	{
+		if (tuniacApp.m_LogWindow)
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Warning: There are no InfoManager plugins available. You will not be able to see or edit extra information on new items in the Media Library."));
+		}
 		MessageBox(NULL, TEXT("Warning: There are no InfoManager plugins available.\nYou will not be able to see or edit extra information on new items in the Media Library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 	}
 
@@ -712,11 +716,13 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 	ReadFile(hLibraryFile, &MLDH, sizeof(MLDH), &BytesRead, NULL);
 	if(BytesRead != sizeof(MLDH))
 	{
+		//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 		MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
 	else if(MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION06 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
 	{
+		//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is saved in an incompatable version, resetting library."));
 		MessageBox(NULL, TEXT("MediaLibrary is saved in an incompatable version, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
@@ -732,6 +738,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
 			if(BytesRead != sizeof(unsigned long))
 			{
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 				MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				m_MediaLibrary.RemoveAll();
 				bOK = false;
@@ -743,6 +750,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry06), &BytesRead, NULL);
 				if(BytesRead != sizeof(LibraryEntry06))
 				{
+					//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
@@ -794,6 +802,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry05), &BytesRead, NULL);
 				if(BytesRead != sizeof(LibraryEntry05))
 				{
+					//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
@@ -845,6 +854,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry), &BytesRead, NULL);
 				if(BytesRead != sizeof(LibraryEntry))
 				{
+					//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
@@ -864,6 +874,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			ReadFile(hLibraryFile, &ulQueueSize, sizeof(unsigned long), &BytesRead, NULL);
 			if(BytesRead != sizeof(unsigned long))
 			{
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Queue is corrupt, resetting queue."));
 				MessageBox(NULL, TEXT("Queue is corrupt, resetting queue."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 			}
@@ -874,6 +885,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 					ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))
 					{
+						//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Queue is corrupt, resetting queue."));
 						MessageBox(NULL, TEXT("Queue is corrupt, resetting queue."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 						tuniacApp.m_Queue.Clear();
 						bOK = false;
@@ -887,6 +899,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			ReadFile(hLibraryFile, &ulHistorySize, sizeof(unsigned long), &BytesRead, NULL);
 			if(BytesRead != sizeof(unsigned long))
 			{
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("History list is corrupt, resetting list."));
 				MessageBox(NULL, TEXT("History list is corrupt, resetting list."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 			}
@@ -897,6 +910,7 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 					ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))
 					{
+						//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("History list is corrupt, resetting list."));
 						MessageBox(NULL, TEXT("History list is corrupt, resetting list."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 						tuniacApp.m_History.Clear();
 						bOK = false;
@@ -912,6 +926,8 @@ bool CMediaLibrary::LoadMediaLibrary(void)
 			tuniacApp.m_Preferences.SetRepeatMode(RepeatAll);
 
 	}
+
+	//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Media Library load complete"));
 
 	CloseHandle(hLibraryFile);
 	return bOK;
@@ -990,6 +1006,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 	WriteFile(hLibraryFile, &MLDH, sizeof(MLDH), &BytesWritten, NULL);
 	if(BytesWritten != sizeof(MLDH))
 	{
+		if (tuniacApp.m_LogWindow)
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Error saving MediaLibrary header information."));
+		}
 		MessageBox(NULL, TEXT("Error saving MediaLibrary header information."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
@@ -1006,6 +1026,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			{
 				TCHAR tstr[256];
 				StringCchPrintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
+				if (tuniacApp.m_LogWindow)
+				{
+					tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), tstr);
+				}
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;
@@ -1018,6 +1042,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			{
 				TCHAR tstr[256];
 				StringCchPrintf(tstr, 256, TEXT("Error saving playlist entry %u."), x);
+				if (tuniacApp.m_LogWindow)
+				{
+					tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), tstr);
+				}
 				MessageBox(NULL, tstr, TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 				break;
@@ -1030,6 +1058,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			WriteFile(hLibraryFile, &ulQueueSize, sizeof(unsigned long), &BytesWritten, NULL);
 			if(BytesWritten != sizeof(unsigned long))
 			{
+				if (tuniacApp.m_LogWindow)
+				{
+					tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Error saving play queue."));
+				}
 				MessageBox(NULL, TEXT("Error saving play queue."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 			}
@@ -1044,6 +1076,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 					if(BytesWritten != sizeof(unsigned long))
 					{
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Error saving play queue."));
+						}
 						MessageBox(NULL, TEXT("Error saving play queue."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 						bOK = false;
 						break;
@@ -1057,6 +1093,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 			WriteFile(hLibraryFile, &ulHistorySize, sizeof(unsigned long), &BytesWritten, NULL);
 			if(BytesWritten != sizeof(unsigned long))
 			{
+				if (tuniacApp.m_LogWindow)
+				{
+					tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Error saving history list."));
+				}
 				MessageBox(NULL, TEXT("Error saving history list."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
 			}
@@ -1072,6 +1112,10 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 					if(BytesWritten != sizeof(unsigned long))
 					{
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Error saving history list."));
+						}
 						MessageBox(NULL, TEXT("Error saving history list."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 						bOK = false;
 						break;
@@ -1085,6 +1129,8 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 	CloseHandle(hLibraryFile);
 
 	DestroyWindow(hSaveWnd);
+
+	//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Media Library save complete"));
 
 	return bOK;
 }

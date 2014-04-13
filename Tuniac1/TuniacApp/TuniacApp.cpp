@@ -186,12 +186,10 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	t = m_VisualWindow;
 	m_WindowArray.AddTail(t);
 
-	/*
 	//create log window
 	m_LogWindow = new CLogWindow();
 	t = m_LogWindow;
 	m_WindowArray.AddTail(t);
-	*/
 
 	//theme the tray icon?
 	m_wc.cbSize			= sizeof(WNDCLASSEX); 
@@ -583,6 +581,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					}
 					else
 					{
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Error Creating Plugin Window."));
+						}
 						MessageBox(hWnd, TEXT("Error Creating Plugin Window."), TEXT("Non Fatal Error..."), MB_OK | MB_ICONSTOP);
 
 						m_WindowArray[x]->Destroy();
@@ -602,8 +604,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				//create the future menu(right click "next" button)
 				m_hFutureMenu = CreatePopupMenu();
-
-				//m_LogWindow->LogMessage(TEXT("Tuniac"), TEXT("Initialization Complete"));
+				if (tuniacApp.m_LogWindow)
+				{
+					m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Initialization Complete"));
+				}
 			}
 			break;
 
@@ -816,29 +820,45 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					case VK_MEDIA_PLAY_PAUSE:
 						{
+							if (tuniacApp.m_LogWindow)
+							{
+								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+							}
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_STOP:
 						{
+							if (tuniacApp.m_LogWindow)
+							{
+								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_STOP event"));
+							}
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_NEXT_TRACK:
 						{
+							if (tuniacApp.m_LogWindow)
+							{
+								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+							}
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_PREV_TRACK:
 						{
+							if (tuniacApp.m_LogWindow)
+							{
+								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PREV_TRACK event"));
+							}
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 						}
 						break;
 
-					/* these are handled in the OS almost always, so lets not double up
+						/* these are handled in the OS almost always, so lets not double up
 					case VK_VOLUME_UP:
 						{
 							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
@@ -873,36 +893,60 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					{
 						case APPCOMMAND_MEDIA_PLAY_PAUSE:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY_PAUSE event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_STOP:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_STOP event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_PAUSE:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PAUSE event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_PLAY:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_NEXTTRACK:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_NEXTTRACK event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							}
 							break;
 
 						case APPCOMMAND_MEDIA_PREVIOUSTRACK:
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PREVIOUSTRACK event"));
+								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
 							break;
@@ -1013,6 +1057,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 								if(pIPE)
 								{
+									if (tuniacApp.m_LogWindow)
+									{
+										TCHAR szMessage[_MAX_PATH + 100];
+										StringCchPrintf(szMessage, 128, TEXT("File %s failed to playback."),
+											pIPE->GetField(FIELD_URL));
+										m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+									}
+
 									pIPE->SetField(FIELD_AVAILABILITY, (unsigned long)AVAILABLILITY_UNAVAILABLE);
 									//redraw window
 									m_SourceSelectorWindow->UpdateView();
@@ -1042,6 +1094,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							}
 							else
 							{
+								if (tuniacApp.m_LogWindow)
+								{
+									m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("10 files in a row failed playback. Drive offline?"));
+								}
 								UpdateState();
 								m_SourceSelectorWindow->UpdateView();
 							}
@@ -1146,45 +1202,88 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		//our defined hotkeys
 		case WM_HOTKEY:
-			{
-				if(wParam == HOTKEY_PLAY)
+		{
+				if (wParam == HOTKEY_PLAY)
+				{
+					if (tuniacApp.m_LogWindow)
+					{
+						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PLAY event"));
+					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
+				}
 
-				if(wParam == HOTKEY_STOP)
+				if (wParam == HOTKEY_STOP)
+				{
+					if (tuniacApp.m_LogWindow)
+					{
+						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_STOP event"));
+					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_NEXT)
+				else if (wParam == HOTKEY_NEXT)
+				{
+					if (tuniacApp.m_LogWindow)
+					{
+						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_NEXT event"));
+					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_RANDNEXT)
+				else if (wParam == HOTKEY_RANDNEXT)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_PREV)
+				else if (wParam == HOTKEY_PREV)
+				{
+					if (tuniacApp.m_LogWindow)
+					{
+						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PREV event"));
+					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_PREVBYHISTORY)
+				else if (wParam == HOTKEY_PREVBYHISTORY)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS_BYHISTORY, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_SHUFFLE)
+				else if (wParam == HOTKEY_SHUFFLE)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_REPEAT)
+				else if (wParam == HOTKEY_REPEAT)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_FIND)
+				else if (wParam == HOTKEY_FIND)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_FIND, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_VOLUP)
+				else if (wParam == HOTKEY_VOLUP)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEUP, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_VOLDOWN)
+				else if (wParam == HOTKEY_VOLDOWN)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_VOLUMEDOWN, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_SEEKFORWARD)
+				else if (wParam == HOTKEY_SEEKFORWARD)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKFORWARD, 0), 0);
+				}
 
-				else if(wParam == HOTKEY_SEEKBACK)
+				else if (wParam == HOTKEY_SEEKBACK)
+				{
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SEEKBACK, 0), 0);
+				}
+
 			}
 			break;
 
@@ -1228,41 +1327,65 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 											m_MediaLibrary.AddItem(szArglist[i], false);
 										}
-										else if(StrCmpI(szArglist[i], TEXT("-queue")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-queue")) == 0)
+										{
 											bQueueAddedFiles = true;
-
-										else if(StrCmpI(szArglist[i], TEXT("-play")) == 0)
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-play")) == 0)
+										{
 											bPlayAddedFiles = true;
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-pause")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-togglepause")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-stop")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-softpause")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0);
+										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-pause")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0); 
-
-										else if(StrCmpI(szArglist[i], TEXT("-togglepause")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0); 
-
-										else if(StrCmpI(szArglist[i], TEXT("-stop")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0); 
-
-										else if(StrCmpI(szArglist[i], TEXT("-softpause")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0); 
-
-										else if(StrCmpI(szArglist[i], TEXT("-next")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-next")) == 0)
+										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
-
-										else if(StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
+										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
+										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-prev")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-prev")) == 0)
+										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
+										}
+										
+										else if (StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0);
+										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0); 
+										else if (StrCmpI(szArglist[i], TEXT("-togglerepeat")) == 0)
+										{
+											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0);
+										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-togglerepeat")) == 0)
-											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_REPEAT, 0), 0); 
-
-										else if(StrCmpI(szArglist[i], TEXT("-dontsaveprefs")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-dontsaveprefs")) == 0)
+										{
 											m_bSavePrefs = false;
+										}
 
 										else if(StrCmpI(szArglist[i], TEXT("-wipeprefs")) == 0)
 										{
@@ -1677,14 +1800,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								bOK = m_MediaLibrary.SaveMediaLibrary();
 								bOK = m_PlaylistManager.SavePlaylistLibrary() && bOK;
 							
-								if(bOK)
+								if (bOK && m_LogWindow)
 								{
 									TCHAR szMessage[128];
-									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\n%u entries total.\n%u standard playlists."), 
+									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\r\n%u entries total.\r\n%u standard playlists."), 
 													m_MediaLibrary.GetCount(), 
 													m_PlaylistManager.m_StandardPlaylists.GetCount());
 
-									//m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+									m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
 								}
 							}
 							break;
@@ -2291,8 +2414,14 @@ bool CTuniacApp::CoreAudioMessage(unsigned long Message, void * Params)
 bool CTuniacApp::RegisterHotkeys(void)
 {
 	//our hotkeys
-	RegisterHotKey(m_hWnd, HOTKEY_PLAY,		MOD_WIN, VK_NUMPAD5);
-		//m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
+	if (RegisterHotKey(m_hWnd, HOTKEY_PLAY, MOD_WIN, VK_NUMPAD5) == 0)
+	{
+		if (m_LogWindow)
+		{
+			m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
+		}
+	}
+
 	RegisterHotKey(m_hWnd, HOTKEY_STOP,			MOD_WIN, VK_NUMPAD0);
 	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);
 	RegisterHotKey(m_hWnd, HOTKEY_RANDNEXT,		MOD_WIN, VK_NUMPAD9);
@@ -2878,14 +3007,12 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 		TCHAR szURL[MAX_PATH];
 		GetModuleFileName(NULL, szURL, MAX_PATH);
 		PathRemoveFileSpec(szURL);
+		PathAppend(szURL, TEXT("NoAlbumArt.jpg"));
 
-		if(StrCmpI(szURL, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
+		if (StrCmpI(szURL, m_AlbumArtPanel.GetCurrentArtSource()) == 0)
 			return false;
 
 		m_AlbumArtPanel.SetCurrentArtSource(szURL);
-
-		PathAppend(szURL, TEXT("NoAlbumArt.jpg"));
-
 		m_AlbumArtPanel.SetSource(szURL);
 	}
 

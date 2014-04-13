@@ -11,7 +11,6 @@
 
 extern "C"
 {
-
 	DllExport BOOL SetMMShellHook(HWND hWnd	);
 	DllExport BOOL UnSetMMShellHook(HWND hWnd);
 }

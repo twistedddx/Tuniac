@@ -1416,24 +1416,40 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								//catch media keys
 								case VK_MEDIA_PLAY_PAUSE:
 									{
+										if (tuniacApp.m_LogWindow)
+										{
+											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 									}
 									break;
 
 								case VK_MEDIA_STOP:
 									{
+										if (tuniacApp.m_LogWindow)
+										{
+											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_STOP event"));
+										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 									}
 									break;
 
 								case VK_MEDIA_NEXT_TRACK:
 									{
+										if (tuniacApp.m_LogWindow)
+										{
+											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 									}
 									break;
 
 								case VK_MEDIA_PREV_TRACK:
 									{
+										if (tuniacApp.m_LogWindow)
+										{
+											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PREV_TRACK event"));
+										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 									}
 									break;

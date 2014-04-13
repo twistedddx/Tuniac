@@ -153,6 +153,10 @@ unsigned long CAudioOutput::ThreadProc(void)
 					HRESULT hr = m_pSourceVoice->SubmitSourceBuffer( &buf );
 					if(FAILED(hr))
 					{
+						if (tuniacApp.m_LogWindow)
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("AudioOutput"), TEXT("Error writing buffer"));
+						}
 						MessageBox(NULL, TEXT("Error Writing Buffer"), TEXT("UH OH"), MB_OK);
 					}
 
@@ -349,6 +353,10 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 
 		if(!Initialize())
 		{
+			if (tuniacApp.m_LogWindow)
+			{
+				tuniacApp.m_LogWindow->LogMessage(TEXT("AudioOutput"), TEXT("Initialize() Failed - No Sound!"));
+			}
 			MessageBox(NULL, TEXT("Initialize() Failed - No Sound!"), TEXT("XAudio Error..."), MB_OK);
 			return false;
 		}

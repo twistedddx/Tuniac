@@ -30,6 +30,7 @@
 
 CLogWindow::CLogWindow(void)
 {
+	bLogEnabled = false;
 	m_hLogWnd = NULL;
 }
 
@@ -137,7 +138,7 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 	{
 		case WM_INITDIALOG:
 			{
-//				m_EditLog = new CEditLog(GetDlgItem(hDlg, IDC_LOGVIEW_EDIT));
+				m_hLogEditWnd = GetDlgItem(hDlg, IDC_LOGVIEW_EDIT);
 			}
 			break;
 
@@ -146,7 +147,7 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 				WORD Width	= LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
-				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_EDIT), 0, 0, Width, Height - 24, TRUE);
+				MoveWindow(m_hLogEditWnd, 0, 0, Width, Height - 24, TRUE);
 
 				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_CLEAR),		Width - 48,	Height - 20, 48, 20, TRUE);
 				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_ENABLE),	0,			Height - 20, 128, 20, TRUE);
@@ -155,6 +156,29 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 
 		case WM_COMMAND:
 			{
+				WORD wCmdID = LOWORD(wParam);
+
+				switch (wCmdID)
+				{
+					case IDC_LOGVIEW_ENABLE:
+						{
+								int State = SendDlgItemMessage(hDlg, IDC_LOGVIEW_ENABLE, BM_GETCHECK, 0, 0);
+								bLogEnabled = State == BST_UNCHECKED ? FALSE : TRUE;
+						}
+						break;
+
+					case IDC_LOGVIEW_CLEAR:
+						{
+								BOOL bReadOnly = ::GetWindowLong(m_hLogEditWnd, GWL_STYLE) & ES_READONLY;
+								if (bReadOnly)
+									::SendMessage(m_hLogEditWnd, EM_SETREADONLY, FALSE, 0);
+								::SendMessage(m_hLogEditWnd, EM_SETSEL, 0, -1);
+								::SendMessage(m_hLogEditWnd, WM_CLEAR, 0, 0);
+								if (bReadOnly)
+									::SendMessage(m_hLogEditWnd, EM_SETREADONLY, TRUE, 0);
+						}
+						break;
+				}
 			}
 			break;
 
@@ -168,8 +192,13 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 
 void			CLogWindow::LogMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
-//	m_EditLog->AddText(szModuleName);
-//	m_EditLog->AddText(TEXT(": "));
-//	m_EditLog->AddText(szMessage, true);
-//	m_EditLog->AddText(TEXT("\r\n"));
+	if (bLogEnabled)
+	{
+		TCHAR szFormattedMessage[512];
+		StringCchPrintf(szFormattedMessage, 512, TEXT("%s:	%s\r\n"), szModuleName, szMessage);
+		int iCurLength = GetWindowTextLength(m_hLogEditWnd);
+		::SendMessage(m_hLogEditWnd, EM_SETSEL, (WPARAM)iCurLength, (LPARAM)iCurLength);
+		::SendMessage(m_hLogEditWnd, EM_REPLACESEL, FALSE, (LPARAM)szFormattedMessage);
+		::SendMessage(m_hLogEditWnd, EM_SCROLLCARET, 0, 0);
+	}
 }

@@ -8,6 +8,7 @@ HHOOK hShellHook = NULL;
 HHOOK hKeyboardHook = NULL;
 #pragma data_seg( )
 
+
 HINSTANCE hInstance = NULL;
 
 LRESULT CALLBACK ShellProc (int nCode, WPARAM wParam, LPARAM lParam);
@@ -214,6 +215,7 @@ bool			CMMShellHook::SetHelper(ITuniacPluginHelper *pHelper)
 
 
 	m_pHelper = pHelper;
+
 	return true;
 }
 

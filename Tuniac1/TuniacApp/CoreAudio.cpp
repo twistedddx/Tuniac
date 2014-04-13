@@ -82,6 +82,10 @@ bool			CCoreAudio::Startup()
 	if(FAILED(XAudio2Create(&m_pXAudio)))
 	{
 		//booo we dont have an XAudio2 object!
+		if (tuniacApp.m_LogWindow)
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Failed initializing XAudio 2.7"));
+		}
 		if (IDYES == MessageBox(NULL, TEXT("Failed initializing XAudio 2.7.\nThis is most likely because you have not installed DirectX June 2010 redist which is required.\n Simply reinstall Tuniac to fix or do you want to be directed to the Microsoft download?"), TEXT("Fatal Error"), MB_YESNO | MB_ICONERROR))
 		{
 			ShellExecute(NULL, NULL, TEXT("http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe"), NULL, NULL, SW_SHOW);
@@ -108,6 +112,10 @@ bool			CCoreAudio::Startup()
 
     if ( FAILED(hr = m_pXAudio->CreateMasteringVoice( &m_pMasteringVoice ) ) )
     {
+		if (tuniacApp.m_LogWindow)
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Failed creating mastering voice."));
+		}
 		MessageBox(NULL, TEXT("Failed creating mastering voice"), TEXT("Fatal Error"), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -282,6 +290,13 @@ bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fR
 
 				if(pStream->Initialize(pSource, pOutput, szSource))
 				{
+					if (tuniacApp.m_LogWindow)
+					{
+						TCHAR szMessage[512];
+						StringCchPrintf(szMessage, 512, TEXT("Set source %s"), szSource);
+						tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), szMessage);
+					}
+
 					CAutoLock	t(&m_Lock);
 
 					bool bShoudStart = false;
