@@ -137,6 +137,8 @@ protected:
 	int			m_iHistoryListSize;
 	int			m_iFutureListSize;
 
+	BOOL		m_bNoVKHotkeys;
+
 	void		BuildTree(HWND hTree, int iPage);
 	int			FindNthTreeLeaf(int i, int iParent);
 
@@ -281,4 +283,5 @@ public:
 	BOOL		GetSmartSortingEnabled(void);
 	BOOL		GetSkipStreams(void);
 
+	BOOL		GetNoVKHotkeys(void);
 };

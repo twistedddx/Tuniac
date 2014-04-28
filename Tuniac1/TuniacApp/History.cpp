@@ -53,15 +53,15 @@ void		CHistory::AddEntryID(unsigned long ulEntryID)
 
 	IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 
-	TCHAR szDetail[112];
-	TCHAR szTime[16];
-	TCHAR szItem[128];
+	TCHAR szDetail[52];
+	TCHAR szTime[12];
+	TCHAR szItem[64];
 
-	tuniacApp.FormatSongInfo(szDetail, 112, pIPE, tuniacApp.m_Preferences.GetListFormatString(), false);
-	tuniacApp.EscapeMenuItemString(szDetail, szItem, 112);
+	tuniacApp.FormatSongInfo(szDetail, 52, pIPE, tuniacApp.m_Preferences.GetListFormatString(), false);
+	tuniacApp.EscapeMenuItemString(szDetail, szItem, 52);
 
-	tuniacApp.FormatSongInfo(szTime, 16, pIPE, TEXT("\t[@I]"), false);
-	StringCchCat(szItem, 128, szTime);
+	tuniacApp.FormatSongInfo(szTime, 12, pIPE, TEXT("\t[@I]"), false);
+	StringCchCat(szItem, 64, szTime);
 
 	InsertMenu(m_hMenu, 0, MF_BYPOSITION, HISTORYMENU_BASE, szItem);
 
