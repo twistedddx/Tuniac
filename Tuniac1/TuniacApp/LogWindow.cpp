@@ -194,8 +194,10 @@ void			CLogWindow::LogMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
 	if (bLogEnabled)
 	{
+		SYSTEMTIME st;
+		GetLocalTime(&st);
 		TCHAR szFormattedMessage[512];
-		StringCchPrintf(szFormattedMessage, 512, TEXT("%s:	%s\r\n"), szModuleName, szMessage);
+		StringCchPrintf(szFormattedMessage, 512, TEXT("%02d:%02d:%02d	%s:	%s\r\n"), st.wHour, st.wMinute, st.wSecond, szModuleName, szMessage);
 		int iCurLength = GetWindowTextLength(m_hLogEditWnd);
 		::SendMessage(m_hLogEditWnd, EM_SETSEL, (WPARAM)iCurLength, (LPARAM)iCurLength);
 		::SendMessage(m_hLogEditWnd, EM_REPLACESEL, FALSE, (LPARAM)szFormattedMessage);

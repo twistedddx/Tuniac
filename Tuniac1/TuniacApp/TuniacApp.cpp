@@ -819,45 +819,56 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				switch(wParam)
 				{
 					case VK_MEDIA_PLAY_PAUSE:
-						{
-							if (tuniacApp.m_LogWindow)
+					{
+							if (!tuniacApp.m_Preferences.GetNoVKHotkeys())
 							{
-								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+								}
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 							}
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_STOP:
 						{
-							if (tuniacApp.m_LogWindow)
+							if (!tuniacApp.m_Preferences.GetNoVKHotkeys())
 							{
-								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_STOP event"));
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_STOP event"));
+								}
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 							}
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_NEXT_TRACK:
 						{
-							if (tuniacApp.m_LogWindow)
+							if (!tuniacApp.m_Preferences.GetNoVKHotkeys())
 							{
-								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+								}
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							}
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 						}
 						break;
 
 					case VK_MEDIA_PREV_TRACK:
 						{
-							if (tuniacApp.m_LogWindow)
+							if (!tuniacApp.m_Preferences.GetNoVKHotkeys())
 							{
-								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PREV_TRACK event"));
+								if (tuniacApp.m_LogWindow)
+								{
+									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PREV_TRACK event"));
+								}
+								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
-							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 						}
 						break;
-
 						/* these are handled in the OS almost always, so lets not double up
 					case VK_VOLUME_UP:
 						{
@@ -1803,7 +1814,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								if (bOK && m_LogWindow)
 								{
 									TCHAR szMessage[128];
-									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\r\n%u entries total.\r\n%u standard playlists."), 
+									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\r\n		%u entries total.\r\n		%u standard playlists."), 
 													m_MediaLibrary.GetCount(), 
 													m_PlaylistManager.m_StandardPlaylists.GetCount());
 
@@ -2686,18 +2697,29 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 bool	CTuniacApp::EscapeMenuItemString(LPTSTR szSource, LPTSTR szDest,  unsigned int iDestSize)
 {
 	memset(szDest, L'\0', iDestSize);
-	LPTSTR pszRight, pszLeft = szSource;
-	while((pszRight = StrChr(pszLeft, L'&')) != NULL)
+
+	LPTSTR szFound;
+	szFound = StrChr(szSource, L'&');
+
+	if (szFound == NULL)
 	{
-		StringCchCat(szDest, iDestSize, pszLeft);
-		//StrCatN(szDest, pszLeft, min(iDestSize, wcslen(pszLeft) + 1 - wcslen(pszRight)));
-		if(wcslen(szDest) >= iDestSize - 3)
-			break;
-		StringCchCat(szDest, iDestSize, TEXT("&&"));
-		pszLeft = pszRight + 1;
+		StringCchCat(szDest, iDestSize, szSource);
 	}
-	StringCchCat(szDest, iDestSize, pszLeft);
-	szDest[iDestSize - 1] = L'\0';
+	else
+	{
+		int iRead = 0;
+		int iFound = 0;
+		while (szFound)
+		{
+			iFound = wcslen(szSource) - wcslen(szFound) + 1;
+			StringCchCat(szDest, iFound + 1, szSource + iRead);
+			iRead = iRead + iFound;
+			StringCchCat(szDest, iDestSize, TEXT("&"));
+			szFound = StrChr(szFound + 1, L'&');
+		}
+		StringCchCat(szDest, iDestSize, szSource + iRead);
+	}
+
 	return true;
 }
 
@@ -2803,12 +2825,12 @@ void	CTuniacApp::RebuildFutureMenu(void)
 
 	for(int i = 0; i < m_FutureMenu.GetCount(); i++)
 	{
-		TCHAR szDetail[112];
-		TCHAR szItem[128];
-		TCHAR szTime[16];
+		TCHAR szDetail[52];
+		TCHAR szItem[64];
+		TCHAR szTime[12];
 
-		memset(szDetail, L'\0', 112);
-		memset(szTime, L'\0', 16);
+		//memset(szDetail, L'\0',52);
+		//memset(szTime, L'\0', 12);
 
 
 		IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
@@ -2823,7 +2845,7 @@ void	CTuniacApp::RebuildFutureMenu(void)
 					FormatSongInfo(szDetail, 52, pIPE, m_Preferences.GetListFormatString(), true);
 					EscapeMenuItemString(szDetail, szItem, 52);
 					FormatSongInfo(szTime, 12, pIPE, TEXT("\t[@I]"), true);
-					StringCchCat(szItem, 128, szTime);
+					StringCchCat(szItem, 64, szTime);
 
 					//add menu item
 					AppendMenu(m_hFutureMenu, MF_STRING, FUTUREMENU_BASE + i, szItem);

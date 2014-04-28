@@ -95,6 +95,7 @@
 #define HISTORYLISTSIZE			TEXT("HistoryListSize")
 #define FUTURELISTSIZE			TEXT("FutureListSize")
 
+#define NOVKHOTKEYS				TEXT("NoVKHotKeys")
 
 #define FORMATSTRING_HELP	TEXT("\
 @U\tURL\r\n\
@@ -1486,6 +1487,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_iHistoryListSize = 10;
 	m_iFutureListSize = 10;
 
+	m_bNoVKHotkeys = FALSE;
 
 	return true;
 }
@@ -1918,6 +1920,14 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_MainWindowRect,
 						&Size);
 
+	Size = sizeof(BOOL);
+	RegQueryValueEx(hTuniacPrefKey,
+		NOVKHOTKEYS,
+		NULL,
+		&Type,
+		(LPBYTE)&m_bNoVKHotkeys,
+		&Size);
+
 	if(m_MainWindowRect.left < 0)
 		m_MainWindowRect.left = CW_USEDEFAULT;
 
@@ -2306,6 +2316,14 @@ bool CPreferences::SavePreferences(void)
 					REG_BINARY,
 					(LPBYTE)&m_MainWindowRect, 
 					sizeof(RECT));
+
+	RegSetValueEx(hTuniacPrefKey,
+		NOVKHOTKEYS,
+		0,
+		REG_DWORD,
+		(LPBYTE)&m_bNoVKHotkeys,
+		sizeof(BOOL));
+
 
 	RegCloseKey(hTuniacPrefKey);
 
@@ -2966,4 +2984,10 @@ BOOL		CPreferences::GetAddSingleStream(void)
 BOOL		CPreferences::GetAutoSoftPause(void)
 {
 	return m_bAutoSoftPause;
+}
+
+
+BOOL		CPreferences::GetNoVKHotkeys(void)
+{
+	return m_bNoVKHotkeys;
 }
