@@ -154,6 +154,12 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 			}
 			break;
 
+		case WM_ERASEBKGND:
+			{
+				return true;
+			}
+			break;
+
 		case WM_COMMAND:
 			{
 				WORD wCmdID = LOWORD(wParam);

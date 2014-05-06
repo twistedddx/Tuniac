@@ -147,18 +147,16 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 					PAINTSTRUCT PS;
 
 					GetClientRect(hDlg, &rcTopBarRect);
-					rcTopBarRect.bottom = 28;
-
 					BeginPaint(hDlg, &PS);
 
 					FillRect(PS.hdc, &rcTopBarRect, GetSysColorBrush(COLOR_BTNFACE));
 
-					SetBkMode(PS.hdc, TRANSPARENT);
-					SelectObject(PS.hdc, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
-
-					rcTopBarRect.left += 15;
 					if(m_pCDPlaylist)
 					{
+						SetBkMode(PS.hdc, TRANSPARENT);
+						SelectObject(PS.hdc, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
+						rcTopBarRect.bottom = 28;
+						rcTopBarRect.left += 15;
 						DrawText(PS.hdc, m_pCDPlaylist->GetPlaylistName(), wcsnlen_s(m_pCDPlaylist->GetPlaylistName(), 256), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 					}
 
@@ -175,6 +173,12 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 				MoveWindow(GetDlgItem(hDlg, IDC_CDSOURCE_TRACKLIST),							0,			28,		Width-4,	Height-32,	TRUE);
 				MoveWindow(GetDlgItem(hDlg, IDC_CDSOURCE_IMPORT),						Width-150,	4,		150,		20,			TRUE);
 
+			}
+			break;
+
+		case WM_ERASEBKGND:
+			{
+				return true;
 			}
 			break;
 

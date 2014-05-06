@@ -765,6 +765,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+		case WM_ERASEBKGND:
+			{
+				return true;
+			}
+			break;
+
 			//file dropped on tuniacapp.exe
 		case WM_DROPFILES:
 			{

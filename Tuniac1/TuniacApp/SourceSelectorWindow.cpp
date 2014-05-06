@@ -542,43 +542,41 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				GetClientRect(hDlg, &r);
 
-				r.right		= m_ulSeparatorX+10;
-				r.bottom	= 30;
-
 				HDC		hDC = BeginPaint(hDlg, &ps);
 				doubleBuffer.Begin(hDC, &r);
 
 				FillRect(hDC, &r, GetSysColorBrush(COLOR_BTNFACE));
 
-				r.left += 15;
 				SetBkMode(hDC, TRANSPARENT);
 				SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
-				DrawText(hDC, TEXT("Source"), -1, &r, DT_SINGLELINE | DT_VCENTER);
+				r.left += 15;
+				r.right = m_ulSeparatorX + 10;
+				r.bottom = 30;
+				DrawText(hDC, TEXT("Source"), 6, &r, DT_SINGLELINE | DT_VCENTER);
 
-				doubleBuffer.End(hDC);
-
-				if(m_ulAlbumArtX)
+				if (m_ulAlbumArtX)
 				{
 					GetClientRect(hDlg, &r);
 
-					if(tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() &&  wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 					{
-						tuniacApp.m_VisualWindow->SetPos(0, 
-										r.bottom - m_ulSeparatorX+58,
-										m_ulSeparatorX,
-										m_ulSeparatorX);
+						tuniacApp.m_VisualWindow->SetPos(0,
+							r.bottom - m_ulSeparatorX + 58,
+							m_ulSeparatorX,
+							m_ulSeparatorX);
 					}
 					else
 					{
-						tuniacApp.m_AlbumArtPanel.Draw(	hDC, 
-										2, 
-										r.bottom - m_ulSeparatorX,
-										m_ulSeparatorX-4,
-										m_ulSeparatorX-4);
+						tuniacApp.m_AlbumArtPanel.Draw(hDC,
+							2,
+							r.bottom - m_ulSeparatorX,
+							m_ulSeparatorX - 4,
+							m_ulSeparatorX - 4);
 					}
 				}
-				EndPaint(hDlg, &ps);
 
+				doubleBuffer.End(hDC);
+				EndPaint(hDlg, &ps);
 			}
 			break;
 
@@ -619,9 +617,54 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				{
 					m_SourceViewArray[x]->MoveSourceView(m_ulSeparatorX+SEPERATOR_WIDTH,	0, Width-(m_ulSeparatorX+SEPERATOR_WIDTH),		Height);
 				}
-				RECT r = {0, 0, m_ulSeparatorX+10, Height};
-				RedrawWindow(hDlg, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
 
+
+				if (m_ulAlbumArtX)
+				{
+					RECT r;
+					GetClientRect(hDlg, &r);
+
+					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+					{
+						tuniacApp.m_VisualWindow->SetPos(0,
+							r.bottom - m_ulSeparatorX + 58,
+							m_ulSeparatorX,
+							m_ulSeparatorX);
+					}
+					else
+					{
+						PAINTSTRUCT		ps;
+						CDoubleBuffer	doubleBuffer;
+
+						HDC		hDC = BeginPaint(hDlg, &ps);
+						doubleBuffer.Begin(hDC, &r);
+
+						FillRect(hDC, &r, GetSysColorBrush(COLOR_BTNFACE));
+
+						tuniacApp.m_AlbumArtPanel.Draw(hDC,
+							2,
+							r.bottom - m_ulSeparatorX,
+							m_ulSeparatorX - 4,
+							m_ulSeparatorX - 4);
+
+						doubleBuffer.End(hDC);
+						EndPaint(hDlg, &ps);
+					}
+				}
+
+				Refresh();
+
+				//RedrawWindow(GetDlgItem(hDlg, IDC_SOURCESELECTOR), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				//RedrawWindow(GetDlgItem(hDlg, IDC_SOURCE_ADDPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				//RedrawWindow(GetDlgItem(hDlg, IDC_SOURCE_DELPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+
+				//RedrawWindow(hDlg, &rcUpdateRect, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			}
+			break;
+
+		case WM_ERASEBKGND:
+			{
+				return true;
 			}
 			break;
 
@@ -1339,10 +1382,6 @@ void CSourceSelectorWindow::ShowCurrentlyPlaying(void)
 
 bool			CSourceSelectorWindow::Refresh()
 {
-	RECT r;
-
-	GetClientRect(m_hSourceWnd, &r);
-	InvalidateRect(m_hSourceWnd, &r, TRUE);
-	UpdateWindow(m_hSourceWnd);
+	RedrawWindow(m_hSourceWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 	return true;
 }

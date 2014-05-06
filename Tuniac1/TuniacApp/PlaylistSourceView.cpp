@@ -613,31 +613,28 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 		case WM_PAINT:
 			{
-				RECT	rcUpdateRect;
 				RECT	rcTopBarRect;
+				PAINTSTRUCT PS;
+				CDoubleBuffer	doubleBuffer;
 
-				if(GetUpdateRect(hDlg, &rcUpdateRect, FALSE))
+				GetClientRect(hDlg, &rcTopBarRect);
+				HDC		hDC = BeginPaint(hDlg, &PS);
+
+				doubleBuffer.Begin(hDC, &rcTopBarRect);
+
+				FillRect(hDC, &rcTopBarRect, GetSysColorBrush(COLOR_BTNFACE));
+
+				if(m_pPlaylist)
 				{
-					PAINTSTRUCT PS;
-
-					GetClientRect(hDlg, &rcTopBarRect);
+					SetBkMode(hDC, TRANSPARENT);
+					SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
 					rcTopBarRect.bottom = 28;
-
-					BeginPaint(hDlg, &PS);
-
-					FillRect(PS.hdc, &rcTopBarRect, GetSysColorBrush(COLOR_BTNFACE));
-
-					SetBkMode(PS.hdc, TRANSPARENT);
-					SelectObject(PS.hdc, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
-
 					rcTopBarRect.left += 15;
-					if(m_pPlaylist)
-					{
-						DrawText(PS.hdc, m_pPlaylist->GetPlaylistName(), wcsnlen_s(m_pPlaylist->GetPlaylistName(), 256), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
-					}
-
-					EndPaint(hDlg, &PS);
+					DrawText(hDC, m_pPlaylist->GetPlaylistName(), wcsnlen_s(m_pPlaylist->GetPlaylistName(), 256), &rcTopBarRect, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 				}
+
+				doubleBuffer.End(hDC);
+				EndPaint(hDlg, &PS);
 			}
 			break;
 
@@ -659,6 +656,12 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 					RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 				}
+			}
+			break;
+
+		case WM_ERASEBKGND:
+			{
+				return true;
 			}
 			break;
 
