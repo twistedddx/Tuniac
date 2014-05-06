@@ -1,3 +1,15 @@
+May, 2014
+---------
+-reduce window flicker
+-update progress bar more accurately and more often
+
+Apr, 2014
+---------
+-Add LogWindow plus log messages
+-Add time stamps to log window
+-add hidden pref to disable VK media keys
+-fix escaping "&" in EscapeMenuItemString()
+
 Mar, 2014
 ---------
 -Fix history menu not rebuilding correctly after use

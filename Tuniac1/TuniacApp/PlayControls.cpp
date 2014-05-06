@@ -264,7 +264,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SendMessage(m_hVolumeWnd, TBM_SETRANGE, (WPARAM)FALSE, (LPARAM)MAKELONG(0, 100));
 				UpdateVolume();
 
-				SetTimer(hWnd, 0, 250, NULL);
+				SetTimer(hWnd, 0, 100, NULL);
 
 			}
 			break;
@@ -484,6 +484,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 		case WM_PAINT:
 			{
+
 				PAINTSTRUCT ps;
 				RECT		r;
 
@@ -496,8 +497,8 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 				FillRect(hDC, &r, GetSysColorBrush(COLOR_3DFACE));
 
-				r.left-=2;
-				r.right+=2;
+				r.left -= 2;
+				r.right += 2;
 
 				r.top = r.bottom - 2;
 				DrawEdge(hDC, &r, EDGE_ETCHED, BF_RECT);
@@ -514,26 +515,24 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SetDCPenColor(hDC, GetSysColor(COLOR_3DSHADOW));
 				SelectObject(hDC, GetStockObject(DC_PEN));
 
-				Rectangle(	hDC, 
-							SeekRect.left, 
-							SeekRect.top,
-							SeekRect.right,
-							SeekRect.bottom);
+				Rectangle(hDC,
+					SeekRect.left,
+					SeekRect.top,
+					SeekRect.right,
+					SeekRect.bottom);
 
 				InflateRect(&SeekRect, -3, -3);
 
-				float Width = SeekRect.right - SeekRect.left;
+				double dWidth = SeekRect.right - SeekRect.left;
 
-				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition() / 1000;
+				unsigned long ulPosition = CCoreAudio::Instance()->GetPosition();
 				unsigned long ulSongLength = CCoreAudio::Instance()->GetLength();
-				if(ulSongLength != LENGTH_UNKNOWN && CCoreAudio::Instance()->GetLength() != LENGTH_STREAM)
-					ulSongLength = ulSongLength / 1000;
 
-				float fProgress = 0.0f;
-				if(ulSongLength != 0)
-					fProgress = (float)ulPosition / (float)ulSongLength;
+				double dProgress = 0.0f;
+				if (ulSongLength != 0)
+					dProgress = ((double)ulPosition / (double)ulSongLength);
 
-				SeekRect.right = ((Width) * fProgress) + SeekRect.left;
+				SeekRect.right = (double)(dWidth * dProgress) + (double)SeekRect.left;
 				FillRect(hDC, &SeekRect, (HBRUSH)GetSysColorBrush(COLOR_3DSHADOW));
 
 				RECT TimeRect;
@@ -541,86 +540,89 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_TINY));
 				SetBkMode(hDC, TRANSPARENT);
 
-				TCHAR tstr[256];
+				ulPosition = ulPosition / 1000;
+				if (ulSongLength != LENGTH_UNKNOWN && ulSongLength != LENGTH_STREAM)
+					ulSongLength = ulSongLength / 1000;
 
-				StringCchPrintf(tstr, 256, TEXT("%01u:%02u:%02u"), (ulPosition / 60) / 60, (ulPosition / 60) % 60, ulPosition % 60);
+				TCHAR tstr[8];
+				StringCchPrintf(tstr, 8, TEXT("%01u:%02u:%02u"), (ulPosition / 60) / 60, (ulPosition / 60) % 60, ulPosition % 60);
 
-				SetRect(&TimeRect, 
-						SeekRect.left - 48, 
-						SeekRect.top, 
-						m_SeekRect.left, 
+				SetRect(&TimeRect,
+					SeekRect.left - 48,
+					SeekRect.top,
+					m_SeekRect.left,
+					SeekRect.bottom);
+
+				DrawText(hDC,
+					tstr,
+					-1,
+					&TimeRect,
+					DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+				if (ulSongLength != LENGTH_UNKNOWN && ulSongLength != LENGTH_STREAM)
+				{
+					StringCchPrintf(tstr, 8, TEXT("%01u:%02u:%02u"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
+
+					SetRect(&TimeRect,
+						m_SeekRect.right + 2,
+						SeekRect.top,
+						m_SeekRect.right + 48,
 						SeekRect.bottom);
 
-				DrawText(	hDC, 
-							tstr, 
-							-1, 
-							&TimeRect, 
-							DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-
-				if(ulSongLength != LENGTH_UNKNOWN && ulSongLength != LENGTH_STREAM)
-				{
-					StringCchPrintf(tstr, 256, TEXT("%01u:%02u:%02u"), (ulSongLength / 60) / 60, (ulSongLength / 60) % 60, ulSongLength % 60);
-
-					SetRect(&TimeRect, 
-							m_SeekRect.right +2, 
-							SeekRect.top, 
-							m_SeekRect.right + 48, 
-							SeekRect.bottom);
-
-					DrawText(	hDC, 
-								tstr, 
-								-1, 
-								&TimeRect, 
-								DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+					DrawText(hDC,
+						tstr,
+						-1,
+						&TimeRect,
+						DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 				}
 
 
 				RECT	SongTitleRect;
-				SetRect(	&SongTitleRect, 
-							m_SeekRect.left, 
-							4, 
-							m_SeekRect.right, 
-							4+18);
+				SetRect(&SongTitleRect,
+					m_SeekRect.left,
+					4,
+					m_SeekRect.right,
+					4 + 18);
 
 				RECT	ArtistTitleRect;
-				SetRect(	&ArtistTitleRect, 
-							m_SeekRect.left, 
-							20, 
-							m_SeekRect.right, 
-							38);
+				SetRect(&ArtistTitleRect,
+					m_SeekRect.left,
+					20,
+					m_SeekRect.right,
+					38);
 
 				IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
 
-				if(pPlaylist)
+				if (pPlaylist)
 				{
 					IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
 
-					if(pIPE)
+					if (pIPE)
 					{
-						LPTSTR  szTitle		= (LPTSTR)pIPE->GetField(FIELD_TITLE);
-						LPTSTR	szArtist	= (LPTSTR)pIPE->GetField(FIELD_ARTIST);
+						LPTSTR  szTitle = (LPTSTR)pIPE->GetField(FIELD_TITLE);
+						LPTSTR	szArtist = (LPTSTR)pIPE->GetField(FIELD_ARTIST);
 
-						if(szTitle == NULL)
+						if (szTitle == NULL)
 							szTitle = TEXT("No Song Loaded");
 
-						if(szArtist == NULL)
+						if (szArtist == NULL)
 							szArtist = TEXT("");
 
 						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
 						SetBkMode(hDC, TRANSPARENT);
-						DrawText(	hDC, 
-									szTitle,
-									-1, 
-									&SongTitleRect, 
-									DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+						DrawText(hDC,
+							szTitle,
+							-1,
+							&SongTitleRect,
+							DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
 
 						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
 						SetBkMode(hDC, TRANSPARENT);
-						DrawText(	hDC, 
-									szArtist,
-									-1, 
-									&ArtistTitleRect, 
-									DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX);
+						DrawText(hDC,
+							szArtist,
+							-1,
+							&ArtistTitleRect,
+							DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX);
 					}
 				}
 
@@ -628,7 +630,6 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				doubleBuffer.End(hDC);
 
 				EndPaint(hWnd, &ps);
-
 			}
 			break;
 
@@ -650,6 +651,12 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				SendMessage(m_hPlayWnd,		message, wParam, lParam);
 				SendMessage(m_hNextWnd,		message, wParam, lParam);
 				SendMessage(m_hVolumeWnd,	message, wParam, lParam);
+			}
+			break;
+
+		case WM_ERASEBKGND:
+			{
+				return true;
 			}
 			break;
 
