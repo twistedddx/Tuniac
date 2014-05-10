@@ -640,22 +640,20 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 		case WM_SIZE:
 			{
-				if(lParam)
-				{
-					WORD Width = LOWORD(lParam);
-					WORD Height = HIWORD(lParam);
+				WORD Width = LOWORD(lParam);
+				WORD Height = HIWORD(lParam);
 
-					MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_LIST),							0,			28,		Width-2,	Height-30,	TRUE);
-					MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER),						Width-175,	4,		150,		20,			TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_LIST),							0,			28,		Width-2,	Height-30,	TRUE);
 
-					MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER),			Width-195,	4,		20,			20,			TRUE);
-					MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST),			Width-215,	4,		20,			20,			TRUE);
-					MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD),	Width-25,	4,		20,			20,			TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER),						Width-175,	4,		150,		20,			TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER),			Width-195,	4,		20,			20,			TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST),			Width-215,	4,		20,			20,			TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD),	Width-25,	4,		20,			20,			TRUE);
 				
-					RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-					RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-					RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-				}
+				//RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 			}
 			break;
 

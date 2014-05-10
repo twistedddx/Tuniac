@@ -70,7 +70,7 @@ In Clone existing repository add:
 git://libpng.git.sourceforge.net/gitroot/libpng/libpng
 Hit OK and wait
 
-3e)You need libjpeg-turbo 1.3.0 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 1.4.0 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
 svn://svn.code.sf.net/p/libjpeg-turbo/code/trunk
@@ -126,38 +126,28 @@ C:\Windows\
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.2.1_vs2012.zip
+http://www.wasteofcash.com/Tuniac/libjpeg-turbo_1.4.0_vs2013.zip
 extract to D:\Code\libjpeg-turbo\trunk
-
-If you want to stop the warnings about FAR macro redefinition replace:
-#ifdef NEED_FAR_POINTERS
-#define FAR  far
-#else
-#define FAR
-#endif
-
-with:
-#ifdef NEED_FAR_POINTERS
-#define FAR  far
-#else
-#ifdef FAR
-#undef FAR
-#endif
-#define FAR
-#endif
 
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
+6c)Build libpng static lib
 
+You can use my files if you cant get it to build right:
+http://www.wasteofcash.com/Tuniac/libpng1.7_vs2013.zip
+extract to D:\Code\libpng
+
+Look here for errors that look like:
+Cannot open include file: 'libpng.h'
 
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/zlib_1.2.7_vs2012.zip
+http://www.wasteofcash.com/Tuniac/zlib_1.2.8_vs2013.zip
 extract to D:\Code\taglib\zlib
 
-http://www.wasteofcash.com/Tuniac/taglib_1.8_vs2012.zip
+http://www.wasteofcash.com/Tuniac/taglib_1.9.1_vs2013.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:
