@@ -15,7 +15,6 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
 
 cd ..\..\..\
 
-
 rem ######## turbojpeglib
 cd libjpeg-turbo\
 

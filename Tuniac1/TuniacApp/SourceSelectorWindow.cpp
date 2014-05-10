@@ -592,6 +592,11 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				unsigned long slSrcHeight = Height - m_ulAlbumArtX;
 
+				for (unsigned long x = 0; x<m_SourceViewArray.GetCount(); x++)
+				{
+					m_SourceViewArray[x]->MoveSourceView(m_ulSeparatorX + SEPERATOR_WIDTH, 0, Width - (m_ulSeparatorX + SEPERATOR_WIDTH), Height);
+				}
+
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCESELECTOR),	
 							2,
 							28, 
@@ -612,12 +617,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							(m_ulSeparatorX/2)-2,
 							25,
 							TRUE);
-
-				for(unsigned long x=0; x<m_SourceViewArray.GetCount(); x++)
-				{
-					m_SourceViewArray[x]->MoveSourceView(m_ulSeparatorX+SEPERATOR_WIDTH,	0, Width-(m_ulSeparatorX+SEPERATOR_WIDTH),		Height);
-				}
-
 
 				if (m_ulAlbumArtX)
 				{
