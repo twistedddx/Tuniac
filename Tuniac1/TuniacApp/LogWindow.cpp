@@ -142,15 +142,36 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 			}
 			break;
 
+		case WM_PAINT:
+		{
+				PAINTSTRUCT ps;
+				RECT		r;
+
+				GetClientRect(hDlg, &r);
+
+				HDC		hDC = BeginPaint(hDlg, &ps);
+
+				CDoubleBuffer doubleBuffer;
+				doubleBuffer.Begin(hDC, &r);
+
+				FillRect(hDC, &r, GetSysColorBrush(COLOR_3DFACE));
+
+
+				doubleBuffer.End(hDC);
+
+				EndPaint(hDlg, &ps);
+		}
+		break;
+
 		case WM_SIZE:
 			{
 				WORD Width	= LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
-				MoveWindow(m_hLogEditWnd, 0, 0, Width, Height - 24, TRUE);
+				MoveWindow(m_hLogEditWnd, 2, 2, Width-4, Height - 26, TRUE);
 
-				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_CLEAR),		Width - 48,	Height - 20, 48, 20, TRUE);
-				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_ENABLE),	0,			Height - 20, 128, 20, TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_CLEAR),		Width - 48,	Height - 22, 46, 20, TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_LOGVIEW_ENABLE),	2,			Height - 22, 128, 20, TRUE);
 			}
 			break;
 

@@ -605,7 +605,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							TRUE);
 
 				MoveWindow(	GetDlgItem(hDlg, IDC_SOURCE_ADDPLAYLIST),
-							0,
+							2,
 							slSrcHeight - 29,
 							(m_ulSeparatorX/2)-2,
 							25,
