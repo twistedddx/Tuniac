@@ -20,7 +20,7 @@ cd libpng\
 
 rem #Release x86:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 12" .
+"%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 12" .
 devenv libpng.sln /project "png17_static" /Clean
 devenv libpng.sln /project "png17_static" /Rebuild "Release"
 mkdir .\Release\x86
@@ -39,7 +39,7 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64
 
 rem #Release x64:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 12 Win64" .
+"%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\zlib\ -DZLIB_LIBRARY=..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 12 Win64" .
 devenv libpng.sln /project "png17_static" /Clean
 devenv libpng.sln /project "png17_static" /Rebuild "Release"
 mkdir .\Release\x64

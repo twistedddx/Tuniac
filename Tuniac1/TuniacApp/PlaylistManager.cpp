@@ -31,9 +31,10 @@
 
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 5)
+#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 6)
 
 //past
+#define TUNIAC_PLAYLISTLIBRARY_VERSION05		MAKELONG(0, 5)
 #define TUNIAC_PLAYLISTLIBRARY_VERSION04		MAKELONG(0, 4)
 
 bool DriveInMask(ULONG uMask, char Letter)
@@ -183,7 +184,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 		MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if(PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
+	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
 	{
 		//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is saved in an incompatable version, resetting playlists."));
 		MessageBox(NULL, TEXT("Playlist Library is saved in an incompatable version, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
@@ -234,8 +235,10 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 
 			pPlaylist->AddEntryArray(myEntryArray);
 			
-			if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && SubHeader.FilterField == 28)
-				pPlaylist->SetTextFilterField(29);
+			if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION05 && SubHeader.FilterField == 29)
+				pPlaylist->SetTextFilterField(30);
+			else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && SubHeader.FilterField == 28)
+				pPlaylist->SetTextFilterField(30);
 			else
 				pPlaylist->SetTextFilterField(SubHeader.FilterField);
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
@@ -266,8 +269,10 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
 
-		if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && PLDH.LibraryFilterField == 28)
-			m_LibraryPlaylist.SetTextFilterField(29);
+		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.LibraryFilterField == 29)
+			m_LibraryPlaylist.SetTextFilterField(30);
+		else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && PLDH.LibraryFilterField == 28)
+			m_LibraryPlaylist.SetTextFilterField(30);
 		else
 			m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
 

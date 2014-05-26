@@ -76,7 +76,7 @@ bool Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	hWnd = CreateWindowEx(WS_EX_TOOLWINDOW,
 				szClassName, 
 				TEXT("TuniacHelper"), 
-				WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+				WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
 				CW_USEDEFAULT, 
 				CW_USEDEFAULT, 
 				CW_USEDEFAULT, 

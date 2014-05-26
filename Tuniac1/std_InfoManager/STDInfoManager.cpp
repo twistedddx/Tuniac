@@ -259,9 +259,10 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	if(!id3v2TagListMap.isEmpty())
 	{
 		if(!id3v2TagListMap["TPE2"].isEmpty())
-		{
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", id3v2TagListMap["TPE2"].front()->toString().toCWString());
-		}
+
+		if (!id3v2TagListMap["TCOM"].isEmpty())
+			StringCchPrintf(libEnt->szComposer, 128, L"%s", id3v2TagListMap["TCOM"].front()->toString().toCWString());
 
 		if(!id3v2TagListMap["TRCK"].isEmpty())
 		{
@@ -331,6 +332,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(mp4TagListMap["aART"].isValid())
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", mp4TagListMap["aART"].toStringList().front().toCWString());
 
+		if (mp4TagListMap["\251wrt"].isValid()) // ©wrt \xa9wrt
+			StringCchPrintf(libEnt->szComposer, 128, L"%s", mp4TagListMap["\251wrt"].toStringList().front().toCWString());
+
 		if(mp4TagListMap["disc"].isValid())
 			libEnt->dwDisc[0] = mp4TagListMap["disc"].toInt();
 
@@ -349,6 +353,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM ARTIST"].front().toCWString());
 		else if(!vorbisTagListMap["ALBUM_ARTIST"].isEmpty())
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", vorbisTagListMap["ALBUM_ARTIST"].front().toCWString());
+
+		if (!vorbisTagListMap["COMPOSER"].isEmpty())
+			StringCchPrintf(libEnt->szComposer, 128, L"%s", vorbisTagListMap["COMPOSER"].front().toCWString());
 
 		if(!vorbisTagListMap["DISCNUMBER"].isEmpty())
 			libEnt->dwDisc[0] = vorbisTagListMap["DISCNUMBER"].front().toInt();
@@ -378,6 +385,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM ARTIST"].toString().toCWString());
 		else if(!apeTagListMap["ALBUM_ARTIST"].isEmpty())
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", apeTagListMap["ALBUM_ARTIST"].toString().toCWString());
+
+		if (!apeTagListMap["Composer"].isEmpty())
+			StringCchPrintf(libEnt->szComposer, 128, L"%s", apeTagListMap["Composer"].toString().toCWString());
 
 		if(!apeTagListMap["Track"].isEmpty())
 		{
@@ -409,6 +419,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	{
 		if(!wmaTagListMap["WM/AlbumArtist"].isEmpty())
 			StringCchPrintf(libEnt->szAlbumArtist, 128, L"%s", wmaTagListMap["WM/AlbumArtist"].front().toString().toCWString());
+
+		if (!wmaTagListMap["WM/Composer"].isEmpty())
+			StringCchPrintf(libEnt->szComposer, 128, L"%s", wmaTagListMap["WM/Composer"].front().toString().toCWString());
 
 		if(!wmaTagListMap["WM/BeatsPerMinute"].isEmpty())
 			libEnt->ulBPM = wmaTagListMap["WM/BeatsPerMinute"].front().toUInt();

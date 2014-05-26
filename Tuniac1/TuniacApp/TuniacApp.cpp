@@ -224,7 +224,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_hWnd = CreateWindowEx(WS_EX_ACCEPTFILES | WS_EX_APPWINDOW,
 							szClassName, 
 							TEXT("Tuniac"), 
-							WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+							WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
 							r.left, 
 							r.top, 
 							r.right, 
@@ -2605,6 +2605,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				break;
 			case 'Q':
 				lField = FIELD_ALBUMARTIST;
+				break;
+			case 'O':
+				lField = FIELD_COMPOSER;
 				break;
 		}
 

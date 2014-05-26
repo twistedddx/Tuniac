@@ -73,7 +73,8 @@
 #define FIELD_AVAILABILITY					26
 #define FIELD_BPM							27
 #define FIELD_ALBUMARTIST					28
-//#define FIELD_STATIONNAME					29
+#define FIELD_COMPOSER						29
+//#define FIELD_STATIONNAME					30
 
 class IAudioFileIO
 {

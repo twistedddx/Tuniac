@@ -106,6 +106,7 @@
       <AssemblyDebug>true</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy ".\libshnplay\libshnplay.dll" "..\Win32\Debug" /Y</Command>
