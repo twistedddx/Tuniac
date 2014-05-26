@@ -223,6 +223,12 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 				return m_LibraryEntry.szAlbumArtist;
 			}
 			break;
+
+		case FIELD_COMPOSER:
+			{
+				return m_LibraryEntry.szComposer;
+			}
+			break;
 	}
 
 	return NULL;
@@ -409,6 +415,12 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 		case FIELD_ALBUMARTIST:
 			{
 				StringCchCopy(m_LibraryEntry.szAlbumArtist, 128, (LPTSTR)pNewData);
+			}
+			break;
+
+		case FIELD_COMPOSER:
+			{
+				StringCchCopy(m_LibraryEntry.szComposer, 128, (LPTSTR)pNewData);
 			}
 			break;
 
@@ -795,7 +807,11 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szAlbumArtist);
 			}
 			break;
-
+		case FIELD_COMPOSER:
+			{
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szComposer);
+			}
+			break;
 
 		default:
 			return false;

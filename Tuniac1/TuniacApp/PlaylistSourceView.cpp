@@ -61,7 +61,7 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		300,
 		LVCFMT_LEFT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Artist"),
@@ -82,14 +82,14 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		320,
 		LVCFMT_LEFT,
 		true,
-		false
+		true
 	},
 	{
 		TEXT("Track"),
 		50,
 		LVCFMT_RIGHT,
 		true,
-		false
+		true
 	},
 	{
 		TEXT("Genre"),
@@ -110,21 +110,21 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		70,
 		LVCFMT_RIGHT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Kind"),
 		30,
 		LVCFMT_LEFT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Size"),
 		70,
 		LVCFMT_RIGHT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Date Added"),
@@ -158,8 +158,8 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		TEXT("Rating"),
 		50,
 		LVCFMT_LEFT,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Comment"),
@@ -173,21 +173,21 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		70,
 		LVCFMT_RIGHT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Sample Rate"),
 		90,
 		LVCFMT_RIGHT,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Channels"),
 		80,
 		LVCFMT_CENTER,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("Ext"),
@@ -207,36 +207,36 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		TEXT("Track Gain"),
 		80,
 		LVCFMT_CENTER,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Track Peak"),
 		80,
 		LVCFMT_CENTER,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Album Gain"),
 		80,
 		LVCFMT_CENTER,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Album Peak"),
 		80,
 		LVCFMT_CENTER,
-		false,
-		false
+		true,
+		true
 	},
 	{
 		TEXT("Availability"),
 		80,
 		LVCFMT_CENTER,
 		false,
-		false
+		true
 	},
 	{
 		TEXT("BPM"),
@@ -248,7 +248,14 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 	{
 		TEXT("Album Artist"),
 		300,
-		LVCFMT_CENTER,
+		LVCFMT_LEFT,
+		true,
+		true
+	},
+	{
+		TEXT("Composer"),
+		300,
+		LVCFMT_LEFT,
 		true,
 		true
 	}
@@ -481,12 +488,13 @@ bool	CPlaylistSourceView::CreateSourceView(HWND hWndParent)
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 6,		TEXT("&Year"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 7,		TEXT("&Comment"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 8,		TEXT("Al&bum Artist"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 9,		NULL);
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 10,	TEXT("&URL"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 11,	TEXT("&Filename"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 12,	TEXT("E&xtension"));
-	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 13,	NULL);
-	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 14,	TEXT("Reverse &Filter"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 9,		TEXT("C&omposer"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 10,	NULL);
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 11,	TEXT("&URL"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 12,	TEXT("&Filename"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 13,	TEXT("E&xtension"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 14,	NULL);
+	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 15,	TEXT("Reverse &Filter"));
 
 	return true;
 }
@@ -494,9 +502,12 @@ bool	CPlaylistSourceView::CreateSourceView(HWND hWndParent)
 bool	CPlaylistSourceView::DestroySourceView(void)
 {
 	HWND		hPlayListView  = GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST);
-	int			colarray[16];
+
 	HWND		Header = ListView_GetHeader(hPlayListView);
 	int			NumCols = Header_GetItemCount(Header);
+	int *		colarray;
+	colarray = new int[NumCols];
+
 
 	if(NumCols)
 	{
@@ -516,6 +527,7 @@ bool	CPlaylistSourceView::DestroySourceView(void)
 			}
 		}
 	}
+	delete[]colarray;
 
 	DestroyWindow(m_PlaylistSourceWnd);
 	DestroyMenu(m_ItemMenu);
@@ -530,17 +542,24 @@ bool	CPlaylistSourceView::ShowSourceView(bool bShow)
 	if(bShow)
 	{
 		ShowWindow(m_PlaylistSourceWnd, SW_SHOW);
-		InvalidateRect(m_PlaylistSourceWnd, NULL, TRUE);
+		return true;
+		//InvalidateRect(m_PlaylistSourceWnd, NULL, TRUE);
 	}
 	else
+	{
 		ShowWindow(m_PlaylistSourceWnd, SW_HIDE);
-
-	return true;
+		return false;
+	}
 }
 
 bool	CPlaylistSourceView::MoveSourceView(int x, int y, int w, int h)
 {
 	MoveWindow(m_PlaylistSourceWnd, x, y, w, h, TRUE);
+
+	RECT	rcTopBarRect;
+	GetClientRect(m_PlaylistSourceWnd, &rcTopBarRect);
+	rcTopBarRect.bottom = 28;
+	RedrawWindow(m_PlaylistSourceWnd, &rcTopBarRect, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 	return true;
 }
 
@@ -619,7 +638,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 				GetClientRect(hDlg, &rcTopBarRect);
 				HDC		hDC = BeginPaint(hDlg, &PS);
-
 				doubleBuffer.Begin(hDC, &rcTopBarRect);
 
 				FillRect(hDC, &rcTopBarRect, GetSysColorBrush(COLOR_BTNFACE));
@@ -643,17 +661,13 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
 
-				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_LIST),							0,			28,		Width-2,	Height-30,	TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER),			Width-195,	4,		20,		20,		TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST),			Width-215,	4,		20,		20,		TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD),	Width-25,	4,		20,		20,		TRUE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER),						Width-175,	4,		150,	20,		TRUE);
 
-				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER),						Width-175,	4,		150,		20,			TRUE);
-				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER),			Width-195,	4,		20,			20,			TRUE);
-				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST),			Width-215,	4,		20,			20,			TRUE);
-				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD),	Width-25,	4,		20,			20,			TRUE);
-				
-				//RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_FILTER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
-				RedrawWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+				MoveWindow(GetDlgItem(hDlg, IDC_PLAYLIST_LIST),							0,			28,		Width - 2,	Height - 30,	TRUE);
+
 			}
 			break;
 
@@ -669,12 +683,12 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 				wmId    = LOWORD(wParam);
 				wmEvent = HIWORD(wParam);
 
-				if(wmId >= FILTERBYFIELD_MENUBASE && wmId <= FILTERBYFIELD_MENUBASE + 14)
+				if(wmId >= FILTERBYFIELD_MENUBASE && wmId <= FILTERBYFIELD_MENUBASE + 15)
 				{
-					if(wmId == FILTERBYFIELD_MENUBASE + 14)
+					if(wmId == FILTERBYFIELD_MENUBASE + 15)
 					{
-						bool bReverse = GetMenuState(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 14, MF_BYCOMMAND) & MF_CHECKED ? false : true;
-						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 14, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
+						bool bReverse = GetMenuState(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 15, MF_BYCOMMAND) & MF_CHECKED ? false : true;
+						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 15, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
 						m_pPlaylist->SetTextFilterReversed(bReverse);
 						m_pPlaylist->ApplyFilter();
 						Update();
@@ -706,14 +720,16 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						ulFilterByField = FIELD_COMMENT;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 8)
 						ulFilterByField = FIELD_ALBUMARTIST;
-					else if(wmId == FILTERBYFIELD_MENUBASE + 10)
-						ulFilterByField = FIELD_URL;
+					else if (wmId == FILTERBYFIELD_MENUBASE + 9)
+						ulFilterByField = FIELD_COMPOSER;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 11)
-						ulFilterByField = FIELD_FILENAME;
+						ulFilterByField = FIELD_URL;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 12)
+						ulFilterByField = FIELD_FILENAME;
+					else if(wmId == FILTERBYFIELD_MENUBASE + 13)
 						ulFilterByField = FIELD_FILEEXTENSION;
 					
-					CheckMenuRadioItem(m_FilterByFieldMenu, 0, 12, wmId - FILTERBYFIELD_MENUBASE, MF_BYPOSITION);
+					CheckMenuRadioItem(m_FilterByFieldMenu, 0, 13, wmId - FILTERBYFIELD_MENUBASE, MF_BYPOSITION);
 
 					if(ulFilterByField != m_pPlaylist->GetTextFilterField())
 					{
@@ -770,6 +786,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						{
 							POINT pt;
 							GetCursorPos(&pt);
+
 							TrackPopupMenu(m_FilterByFieldMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_PlaylistSourceWnd, NULL);
 						}
 						break;
@@ -1068,20 +1085,27 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							HWND hListView = GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
 							HWND hListHeader = ListView_GetHeader(hListView);
 
-							int iWidth = ListView_GetColumnWidth(hListView, m_iLastClickedSubitem);
+							//int iWidth = ListView_GetColumnWidth(hListView, m_iLastClickedSubitem);
 
 
-							POINT pt, cpt;
-							GetCursorPos(&pt);
-							GetCursorPos(&cpt);
-							ScreenToClient(hListHeader, &cpt);
+							//POINT pt, cpt;
+							//GetCursorPos(&pt);
+							//GetCursorPos(&cpt);
+							//ScreenToClient(hListHeader, &cpt);
 							RECT rc;
 							Header_GetItemRect(hListHeader, m_iLastClickedSubitem, &rc);
 
+							SCROLLINFO si;
+							ZeroMemory(&si, sizeof(si));
+							si.cbSize = sizeof(si);
+							si.fMask = SIF_POS;
+							GetScrollInfo(hListView, SB_HORZ, &si);
+
 							SendMessage(hFilter, CB_RESETCONTENT, 0, 0);
-							SetWindowPos(hFilter, HWND_TOP, rc.left, 30, rc.right - rc.left + 3, 13, SWP_SHOWWINDOW);
+							SetWindowPos(hFilter, HWND_TOP, rc.left - si.nPos, 30, rc.right - rc.left + 3, 13, SWP_SHOWWINDOW);
 							RECT r;
 							GetClientRect(hFilter, &r);
+							r.left =- si.nPos;
 							RedrawWindow(hFilter, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
 
 							SendMessage(hFilter, CB_ADDSTRING, 0, (LPARAM)TEXT("..."));
@@ -1677,6 +1701,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									IPlaylistEntry * pIPE = m_pPlaylist->GetEntryAtNormalFilteredIndex(m_iLastClickedItem);
 									if(pIPE)
 									{
+										EnableMenuItem(m_ItemMenu, ID_FILTERBYFIELD, MF_BYCOMMAND | (HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem - 1]].bFilterable ? MF_ENABLED : MF_GRAYED));
+										EnableMenuItem(m_ItemMenu, ID_QUEUEBYFIELD, MF_BYCOMMAND | (HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem - 1]].bFilterable ? MF_ENABLED : MF_GRAYED));
 										CheckMenuItem(m_ItemMenu, ID_PAUSEHERE, tuniacApp.m_SoftPause.ulAt == pIPE->GetEntryID() ? MF_CHECKED : MF_UNCHECKED);
 										EnableMenuItem(m_ItemMenu, ID_SHOWFILE, MF_BYCOMMAND | (!PathIsURL((LPTSTR)pIPE->GetField(FIELD_URL)) ? MF_ENABLED : MF_GRAYED));
 									}
@@ -1692,6 +1718,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								hdHitTest.pt = cpt;
 								SendMessage(hListHeader, HDM_HITTEST, 0, (LPARAM)&hdHitTest);
 								m_iLastClickedSubitem = hdHitTest.iItem;
+
 								bool bCanFilter = false;
 								if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANFILTER)
 								{
@@ -1925,7 +1952,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						HWND hFilter = GetDlgItem(hDlg, IDC_PLAYLISTSOURCE_FILTERCOMBO);
 						RECT r;
 						GetClientRect(hFilter, &r);
-						RedrawWindow(hFilter, &r, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_VALIDATE | RDW_UPDATENOW);
+						RedrawWindow(hFilter, &r, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 					}
 					break;
 				}
@@ -2222,16 +2249,20 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 					iMenuPos = 6;
 				else if(ulFilterByField == FIELD_COMMENT)
 					iMenuPos = 7;
-				else if(ulFilterByField == FIELD_URL)
+				else if (ulFilterByField == FIELD_ALBUMARTIST)
+					iMenuPos = 8;
+				else if (ulFilterByField == FIELD_COMPOSER)
 					iMenuPos = 9;
-				else if(ulFilterByField == FIELD_FILENAME)
-					iMenuPos = 10;
-				else if(ulFilterByField == FIELD_FILEEXTENSION)
+				else if(ulFilterByField == FIELD_URL)
 					iMenuPos = 11;
+				else if(ulFilterByField == FIELD_FILENAME)
+					iMenuPos = 12;
+				else if(ulFilterByField == FIELD_FILEEXTENSION)
+					iMenuPos = 13;
 
-				CheckMenuRadioItem(m_FilterByFieldMenu, 0, 11, iMenuPos, MF_BYPOSITION);
+				CheckMenuRadioItem(m_FilterByFieldMenu, 0, 13, iMenuPos, MF_BYPOSITION);
 
-				CheckMenuItem(m_FilterByFieldMenu, 13, MF_BYPOSITION | (m_pPlaylist->GetTextFilterReversed() ? MF_CHECKED : MF_UNCHECKED));
+				CheckMenuItem(m_FilterByFieldMenu, 15, MF_BYPOSITION | (m_pPlaylist->GetTextFilterReversed() ? MF_CHECKED : MF_UNCHECKED));
 			}
 			else
 			{

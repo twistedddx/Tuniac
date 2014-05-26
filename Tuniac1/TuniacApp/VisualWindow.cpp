@@ -192,7 +192,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 
 	wcex.cbSize			= sizeof(WNDCLASSEX); 
-	wcex.style			= CS_OWNDC | CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS ;
+	wcex.style			= CS_OWNDC | CS_BYTEALIGNCLIENT | CS_DBLCLKS ;
 	wcex.lpfnWndProc	= (WNDPROC)WndProcStub;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
@@ -322,8 +322,10 @@ bool CVisualWindow::SetPos(int x, int y, int w, int h)
 {
 	if(m_hWnd)
 	{
-		SetRect(&m_OldSize, x, y, w, h);
-		SetWindowPos(m_hWnd, HWND_TOP, x+2, y+2, w-4, h-4, NULL);
+		SetWindowPos(m_hWnd, HWND_TOP, x+1, y+1, w-2, h-2, NULL);
+		//MoveWindow(m_hWnd, x + 1, y + 1, w - 2, h - 2, FALSE);
+		SetRect(&m_OldSize, x + 1, y + 1, w - 2, h - 2);
+
 		return(true);
 	}
 
@@ -442,6 +444,10 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 			break;
 
 		case WM_SIZE:
+			{
+
+			}
+			break;
 		case WM_ERASEBKGND:
 			{
 				return TRUE;
@@ -651,9 +657,9 @@ unsigned long CVisualWindow::ThreadProc(void)
 			if(::IsWindowVisible(m_hWnd) && !IsIconic(GetParent(m_hWnd)))
 			{
 				CAutoLock t(&m_RenderLock);
+				GetClientRect(m_hWnd, &r);
 				if(m_iActivePlugin != -1)
 				{
-					GetClientRect(m_hWnd, &r);
 					m_VisualArray[m_iActivePlugin].pPlugin->Render((int)r.right, (int)r.bottom);
 				}
 				else

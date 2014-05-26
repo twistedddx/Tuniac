@@ -94,9 +94,9 @@ unsigned long	CSourceSelectorWindow::GetFlags(void)
 
 bool			CSourceSelectorWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInst)
 {
-	m_hSourceWnd = CreateDialogParam(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_SOURCESELECTOR), hParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
+	m_hSourceWnd = CreateDialogParam(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_SOURCESELECTOR), hParent, (DLGPROC)WndProcStub, (LPARAM)this);
 
-	if(m_hSourceWnd == NULL)
+	if(!m_hSourceWnd)
 		return false;
 
 	UpdateList();
@@ -547,33 +547,32 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				FillRect(hDC, &r, GetSysColorBrush(COLOR_BTNFACE));
 
+				if (m_ulAlbumArtX)
+				{
+	
+					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+					{
+						tuniacApp.m_VisualWindow->SetPos(1,
+							r.bottom - m_ulSeparatorX + 60,
+							m_ulSeparatorX-3,
+							m_ulSeparatorX-2);
+					}
+					else
+					{
+						tuniacApp.m_AlbumArtPanel.Draw(hDC,
+							2,
+							r.bottom - m_ulSeparatorX + 1,
+							m_ulSeparatorX - 4,
+							m_ulSeparatorX - 3);
+					}
+				}
+
 				SetBkMode(hDC, TRANSPARENT);
 				SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_LARGE));
 				r.left += 15;
 				r.right = m_ulSeparatorX + 10;
 				r.bottom = 30;
 				DrawText(hDC, TEXT("Source"), 6, &r, DT_SINGLELINE | DT_VCENTER);
-
-				if (m_ulAlbumArtX)
-				{
-					GetClientRect(hDlg, &r);
-
-					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
-					{
-						tuniacApp.m_VisualWindow->SetPos(0,
-							r.bottom - m_ulSeparatorX + 58,
-							m_ulSeparatorX,
-							m_ulSeparatorX);
-					}
-					else
-					{
-						tuniacApp.m_AlbumArtPanel.Draw(hDC,
-							2,
-							r.bottom - m_ulSeparatorX,
-							m_ulSeparatorX - 4,
-							m_ulSeparatorX - 4);
-					}
-				}
 
 				doubleBuffer.End(hDC);
 				EndPaint(hDlg, &ps);
@@ -582,7 +581,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 		case WM_SIZE:
 			{
-				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX-25);
+				ListView_SetColumnWidth(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, m_ulSeparatorX - 25);
 
 				WORD Width = LOWORD(lParam);
 				WORD Height = HIWORD(lParam);
@@ -618,20 +617,21 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							25,
 							TRUE);
 
-				if (m_ulAlbumArtX)
+
+				if (m_ulAlbumArtX && !tuniacApp.m_Preferences.GetShowVisArt())
 				{
-					RECT r;
-					GetClientRect(hDlg, &r);
 
 					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 					{
-						tuniacApp.m_VisualWindow->SetPos(0,
-							r.bottom - m_ulSeparatorX + 58,
-							m_ulSeparatorX,
-							m_ulSeparatorX);
+						tuniacApp.m_VisualWindow->SetPos(1,
+							slSrcHeight - 2,
+							m_ulSeparatorX-3,
+							m_ulSeparatorX-2);
 					}
 					else
 					{
+						RECT r;
+						GetClientRect(hDlg, &r);
 						PAINTSTRUCT		ps;
 						CDoubleBuffer	doubleBuffer;
 
@@ -642,16 +642,18 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 						tuniacApp.m_AlbumArtPanel.Draw(hDC,
 							2,
-							r.bottom - m_ulSeparatorX,
+							slSrcHeight - 2,
 							m_ulSeparatorX - 4,
-							m_ulSeparatorX - 4);
+							m_ulSeparatorX - 3);
 
 						doubleBuffer.End(hDC);
 						EndPaint(hDlg, &ps);
 					}
 				}
 
+				//RedrawWindow(hDlg, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 				Refresh();
+
 
 				//RedrawWindow(GetDlgItem(hDlg, IDC_SOURCESELECTOR), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
 				//RedrawWindow(GetDlgItem(hDlg, IDC_SOURCE_ADDPLAYLIST), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);

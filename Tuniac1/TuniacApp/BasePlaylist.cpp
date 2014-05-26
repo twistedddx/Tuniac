@@ -103,6 +103,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 			else if(m_ulTextFilterField == FIELD_ARTIST
 					|| m_ulTextFilterField == FIELD_ALBUM
 					|| m_ulTextFilterField == FIELD_ALBUMARTIST
+					|| m_ulTextFilterField == FIELD_COMPOSER
 					|| m_ulTextFilterField == FIELD_TITLE
 					|| m_ulTextFilterField == FIELD_GENRE
 					|| m_ulTextFilterField == FIELD_COMMENT
@@ -1002,6 +1003,10 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
+		case FIELD_REPLAYGAIN_TRACK_GAIN:
+		case FIELD_REPLAYGAIN_TRACK_PEAK:
+		case FIELD_REPLAYGAIN_ALBUM_GAIN:
+		case FIELD_REPLAYGAIN_ALBUM_PEAK:
 		case FIELD_BPM:
 		case FIELD_PLAYBACKTIME:
 		case FIELD_BITRATE:
@@ -1037,6 +1042,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
+		case FIELD_FILEEXTENSION:
 		case FIELD_COMMENT:
 		case FIELD_GENRE:
 		case FIELD_TITLE:
@@ -1048,6 +1054,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			break;
 
 		case FIELD_ALBUMARTIST:
+		case FIELD_COMPOSER:
 		case FIELD_ARTIST:
 			{
 

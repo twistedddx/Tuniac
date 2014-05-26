@@ -20,7 +20,7 @@ cd zlib\
 
 rem #zlib Release x86
 del ".\CMakeCache.txt"
-"%ProgramFiles(x86)%\CMake 2.8\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12" zlibstatic .
+"%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12" zlibstatic .
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 mkdir .\Release\x86
@@ -35,7 +35,7 @@ rem ######## zlib x64
 
 rem #zlib Release x64
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12 Win64" zlibstatic .
+"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12 Win64" zlibstatic .
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 mkdir .\Release\x64

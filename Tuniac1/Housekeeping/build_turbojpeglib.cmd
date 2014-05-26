@@ -20,7 +20,7 @@ cd libjpeg-turbo\
 
 rem #Release x86:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 12" .
+"%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 12" .
 devenv libjpeg-turbo.sln /project "turbojpeg-static" /Clean
 devenv libjpeg-turbo.sln /project "turbojpeg-static" /Rebuild "Release"
 mkdir .\Release\x86
@@ -33,7 +33,7 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64
 
 rem #Release x64:
 del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake 2.8\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 12 Win64" .
+"%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 12 Win64" .
 devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Clean
 devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Rebuild "Release"
 mkdir .\Release\x64

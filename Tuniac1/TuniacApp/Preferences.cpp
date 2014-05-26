@@ -124,6 +124,7 @@
 @!\tPlay State\n\
 @V\tBPM\
 @Q\tAlbum Artist\
+@O\tComposer\
 ")
 
 
