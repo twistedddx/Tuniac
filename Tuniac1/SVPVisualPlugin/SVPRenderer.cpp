@@ -617,6 +617,9 @@ bool	SVPRenderer::Render(int w, int h)
 {
 	CAutoLock m(&m_RenderLock);
 
+	if (iUseOpenGL && !wglGetCurrentContext())
+		return false;
+
 	if(m_TheVisual)
 	{
 		if((m_LastWidth != w) || (m_LastHeight != h) || bResChange)

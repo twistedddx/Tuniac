@@ -550,12 +550,15 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if (m_ulAlbumArtX)
 				{
 	
-					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+					if (tuniacApp.m_Preferences.GetShowVisArt() && tuniacApp.m_VisualWindow && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 					{
-						tuniacApp.m_VisualWindow->SetPos(1,
-							r.bottom - m_ulSeparatorX + 60,
-							m_ulSeparatorX-3,
-							m_ulSeparatorX-2);
+						if (!tuniacApp.m_VisualWindow->GetFullscreen())
+						{
+							tuniacApp.m_VisualWindow->SetPos(1,
+								r.bottom - m_ulSeparatorX + 60,
+								m_ulSeparatorX - 3,
+								m_ulSeparatorX - 2);
+						}
 					}
 					else
 					{
@@ -621,12 +624,15 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				if (m_ulAlbumArtX && !tuniacApp.m_Preferences.GetShowVisArt())
 				{
 
-					if (tuniacApp.m_Preferences.GetShowVisArt() && !tuniacApp.m_VisualWindow->GetFullscreen() && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+					if (tuniacApp.m_Preferences.GetShowVisArt() && tuniacApp.m_VisualWindow && wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
 					{
-						tuniacApp.m_VisualWindow->SetPos(1,
-							slSrcHeight - 2,
-							m_ulSeparatorX-3,
-							m_ulSeparatorX-2);
+						if (!tuniacApp.m_VisualWindow->GetFullscreen())
+						{
+							tuniacApp.m_VisualWindow->SetPos(1,
+								slSrcHeight - 2,
+								m_ulSeparatorX - 3,
+								m_ulSeparatorX - 2);
+						}
 					}
 					else
 					{

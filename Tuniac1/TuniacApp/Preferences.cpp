@@ -364,7 +364,8 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							{
 								if(pPrefs->m_bShowVisArt)
 								{
-									tuniacApp.m_VisualWindow->Show();
+									if (tuniacApp.m_VisualWindow)
+										tuniacApp.m_VisualWindow->Show();
 								}
 								else
 								{
@@ -379,7 +380,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							}
 							else
 							{
-								if(wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+								if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
 									tuniacApp.m_VisualWindow->Hide();
 							}
 
@@ -402,9 +403,9 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWVISART, BM_GETCHECK, 0, 0);
 							pPrefs->m_bShowVisArt = State == BST_UNCHECKED ? FALSE : TRUE;
 							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
-							if(pPrefs->m_bShowVisArt)
+							if (pPrefs->m_bShowVisArt && tuniacApp.m_VisualWindow)
 								tuniacApp.m_VisualWindow->Show();
-							else if(wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0)
+							else if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
 								tuniacApp.m_VisualWindow->Hide();
 						}
 						break;
@@ -1160,7 +1161,8 @@ LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							TCHAR	tstr[32];
 							StringCchPrintf(tstr, 32, TEXT("%d FPS"), pPrefs->m_iVisualFPS);
 							SetDlgItemText(hDlg, IDC_VISUAL_FPSDISPLAY, tstr);
-							tuniacApp.m_VisualWindow->SetVisualFPS(pPrefs->m_iVisualFPS);
+							if (tuniacApp.m_VisualWindow)
+								tuniacApp.m_VisualWindow->SetVisualFPS(pPrefs->m_iVisualFPS);
 						}
 						break;
 				}

@@ -52,10 +52,11 @@ CTaskbar::~CTaskbar(void)
 
 bool			CTaskbar::Initialize(HWND hTargetWindow, unsigned long AppMessage)
 {
-	if(tuniacApp.m_dwWinVer < 6) //XP and under
-		m_TrayIconData.cbSize			= NOTIFYICONDATA_V3_SIZE;
-	else //vista and over
-		m_TrayIconData.cbSize			= sizeof(NOTIFYICONDATA);
+	if(tuniacApp.m_dwWinVer >= 6) //Vista and over
+		m_TrayIconData.cbSize = sizeof(NOTIFYICONDATA);
+	else //XP and under
+		m_TrayIconData.cbSize = NOTIFYICONDATA_V3_SIZE;
+
 	m_TrayIconData.hWnd				= hTargetWindow;
 	m_TrayIconData.uID				= 1;
 	m_TrayIconData.uCallbackMessage = AppMessage;

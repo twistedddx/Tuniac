@@ -105,6 +105,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 	TCHAR				szFilename[MAX_PATH];
 
 	m_hParentWnd = hParent;
+	
 
 	{
 		VisualPlugin	builtin;
@@ -146,6 +147,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 					continue;
 				}
 				*/
+
 				if(pGTVPVF != NULL)
 				{
 					if(pGTVPVF() != ITUNIACVISPLUGIN_VERSION)
@@ -190,7 +192,6 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 		FindClose(hFind); 
 	}
 
-
 	wcex.cbSize			= sizeof(WNDCLASSEX); 
 	wcex.style			= CS_OWNDC | CS_BYTEALIGNCLIENT | CS_DBLCLKS ;
 	wcex.lpfnWndProc	= (WNDPROC)WndProcStub;
@@ -234,12 +235,14 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 	hTimerQueue = CreateTimerQueue();
 	CreateTimerQueueTimer( &hTimer, hTimerQueue, (WAITORTIMERCALLBACK)TimerRoutine, NULL, 0, ((1000 / tuniacApp.m_Preferences.GetVisualFPS()) + 1), 0);
 
+
 	m_hThread = CreateThread(	NULL,
 								16384,
 								ThreadStub,
 								this,
 								0,
 								&m_dwThreadID);
+
 
 	if(!m_hThread)
 	{
@@ -263,6 +266,8 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 bool			CVisualWindow::DestroyPluginWindow(void)
 {
+
+
 	if(m_hThread)
 	{
 		int Count = 10;
@@ -282,6 +287,17 @@ bool			CVisualWindow::DestroyPluginWindow(void)
 
 	// Delete all timers in the timer queue.
 	DeleteTimerQueue(hTimerQueue);
+
+	if (m_iActivePlugin != -1)
+	{
+		m_VisualArray[m_iActivePlugin].pPlugin->Detach();
+	}
+
+	if (m_WindowDC)
+	{
+		ReleaseDC(m_hWnd, m_WindowDC);
+		m_WindowDC = NULL;
+	}
 
 	if(m_hWnd)
 	{

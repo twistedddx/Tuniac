@@ -611,6 +611,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
+			/*
 		case WM_DESTROY:
 			{
 				WINDOWPLACEMENT wp;
@@ -634,6 +635,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				PostQuitMessage(0);
 			}
 			break;
+			*/
 
 			//a shutdown is in progress
 		case WM_ENDSESSION:
@@ -669,6 +671,26 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//the cross at top right of window clicked
 		case WM_CLOSE:
 			{
+				WINDOWPLACEMENT wp;
+				wp.length = sizeof(WINDOWPLACEMENT);
+				GetWindowPlacement(hWnd, &wp);
+
+				RECT r = wp.rcNormalPosition;
+				//GetWindowRect(hWnd, &r);
+
+				SetRect(&r, r.left, r.top, r.right - r.left, r.bottom - r.top);
+				m_Preferences.SetMainWindowRect(&r);
+
+				for (unsigned long x = 0; x<m_WindowArray.GetCount(); x++)
+				{
+					m_WindowArray[x]->DestroyPluginWindow();
+				}
+
+				DestroyWindow(m_hWndStatus);
+				DestroyMenu(m_hFutureMenu);
+
+				PostQuitMessage(0);
+
 				//check if minimize to tray on close, still close if holding control key
 				if(m_Preferences.GetMinimizeOnClose() && !(GetKeyState(VK_CONTROL) & 0x8000))
 				{
@@ -734,7 +756,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				if(wParam == SIZE_MINIMIZED)
 				{
-					m_VisualWindow->SetFullscreen(false);
+					if (m_VisualWindow)
+						m_VisualWindow->SetFullscreen(false);
 					m_Preferences.SetMainWindowMinimized(true);
 					if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 						ShowWindow(hWnd, SW_HIDE);
@@ -1529,7 +1552,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_WindowArray[item]->Hide();
 
 							//reshow visual window in source view
-							if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
+							if (m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && m_VisualWindow)
 								m_VisualWindow->Show();
 						}
 
@@ -1959,7 +1982,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_ActiveScreen = 0;
 
 								//reshow visual window in source view
-								if(m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0)
+								if (m_Preferences.GetShowVisArt() && wcscmp(GetActiveScreenName(), L"Source Selector") == 0 && m_VisualWindow)
 									m_VisualWindow->Show();
 
 								if(m_SourceSelectorWindow)

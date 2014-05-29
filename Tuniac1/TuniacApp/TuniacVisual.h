@@ -46,7 +46,6 @@ protected:
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;
 
-
 public:
 	CTuniacVisual(void);
 	~CTuniacVisual(void);
