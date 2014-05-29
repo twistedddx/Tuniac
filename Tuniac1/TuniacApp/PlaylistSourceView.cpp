@@ -1724,7 +1724,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									if(m_iLastClickedSubitem > 0)
 									{
-										if(m_iLastClickedSubitem < m_ColumnIDArray.GetCount())
+										if(m_iLastClickedSubitem <= m_ColumnIDArray.GetCount())
 										{
 											if(HeaderEntries[m_ColumnIDArray[m_iLastClickedSubitem-1]].bFilterable)
 											{
@@ -2325,7 +2325,7 @@ bool CPlaylistSourceView::UpdateColumns(void)
 	lvC.mask	= LVCF_WIDTH | LVCF_TEXT | LVCF_FMT | LVCF_SUBITEM;
 
 	lvC.pszText = TEXT("");
-	lvC.cx		= 24;
+	lvC.cx		= 20;
 	lvC.fmt		= 0;
 	ListView_InsertColumn(hListView, 0, &lvC);
 

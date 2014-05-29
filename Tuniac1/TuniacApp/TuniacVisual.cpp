@@ -120,6 +120,7 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	if(!wglMakeCurrent(m_glDC, m_glRC))
 		return false;
 
+
 	setVSync(1);
 
 	glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
@@ -143,9 +144,12 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 bool	CTuniacVisual::Detach()
 {
+	//flush
+	SwapBuffers(m_glDC);
+
 	if (m_glRC)
 	{
-		wglMakeCurrent(NULL,NULL);
+		wglMakeCurrent(NULL, NULL);
 		wglDeleteContext(m_glRC);
 		m_glRC=NULL;
 	}
@@ -164,88 +168,92 @@ bool	CTuniacVisual::Detach()
 
 bool	CTuniacVisual::Render(int w, int h)
 {
-	if((m_LastWidth != w) || (m_LastHeight != h))
+	if (wglGetCurrentContext())
 	{
-		m_LastWidth		= w;
-		m_LastHeight	= h;
+		if ((m_LastWidth != w) || (m_LastHeight != h))
+		{
+			m_LastWidth = w;
+			m_LastHeight = h;
 
-		glViewport(0,0,w,h);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluOrtho2D(0.0, (float)w, (float)h, 0.0);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	}
+			glViewport(0, 0, w, h);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluOrtho2D(0.0, (float)w, (float)h, 0.0);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+		}
 
-	//glClear (GL_COLOR_BUFFER_BIT);
+		//glClear (GL_COLOR_BUFFER_BIT);
 
-	//matt gray
-	glBegin(GL_QUAD_STRIP);
+		//matt gray
+		glBegin(GL_QUAD_STRIP);
 		glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
-		glVertex2f(0,			0);
+		glVertex2f(0, 0);
 
 		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-		glVertex2f(0,			m_LastHeight);
-	
+		glVertex2f(0, m_LastHeight);
+
 		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-		glVertex2f(m_LastWidth,	0);
-	
+		glVertex2f(m_LastWidth, 0);
+
 		glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
-		glVertex2f(m_LastWidth,	m_LastHeight);
-	glEnd();
+		glVertex2f(m_LastWidth, m_LastHeight);
+		glEnd();
 
-	// draw background grid
-	glColor4f(0,0,0, 0.1f);
-	glBegin(GL_LINES);
-	for(unsigned long x=0; x<m_LastWidth; x+=m_LastWidth/10)
-	{
-		glVertex2i(x, 0);
-		glVertex2i(x, m_LastHeight);
-	}
-
-	for(unsigned long y=0; y<m_LastHeight; y+=m_LastHeight/10)
-	{
-		glVertex2i(0,			y);
-		glVertex2i(m_LastWidth, y);
-	}
-	glEnd();
-
-	if(m_pHelper->GetVisData(Samples, DISPLAYSAMPLES))
-	{
-		float halfheight = ((float)m_LastHeight / 2.0f);
-		float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES/2.0f);
-
-		glColor4f(0,0,0,1);
-		glBegin(GL_QUAD_STRIP);
+		// draw background grid
+		glColor4f(0, 0, 0, 0.1f);
+		glBegin(GL_LINES);
+		for (unsigned long x = 0; x < m_LastWidth; x += m_LastWidth / 10)
 		{
-			for(unsigned int samp=0; samp<DISPLAYSAMPLES-3; samp+=2)
-			{
-				glVertex2f((samp*(multiplier/4)), halfheight);
-				glVertex2f((samp*(multiplier/4)), halfheight + (Samples[samp] * halfheight));
+			glVertex2i(x, 0);
+			glVertex2i(x, m_LastHeight);
+		}
 
-				//glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
-				//glVertex2f((samp+1)*multiplier,	halfheight);
-			}
+		for (unsigned long y = 0; y < m_LastHeight; y += m_LastHeight / 10)
+		{
+			glVertex2i(0, y);
+			glVertex2i(m_LastWidth, y);
 		}
 		glEnd();
 
-		glColor4f(0,0,0,1);
-		glBegin(GL_QUAD_STRIP);
+		if (m_pHelper->GetVisData(Samples, DISPLAYSAMPLES))
 		{
-			for(unsigned int samp=1; samp<DISPLAYSAMPLES-3; samp+=2)
-			{
-				glVertex2f((m_LastWidth/2)+(samp*(multiplier/4)), halfheight);
-				glVertex2f((m_LastWidth/2)+(samp*(multiplier/4)), halfheight + (Samples[samp] * halfheight));
+			float halfheight = ((float)m_LastHeight / 2.0f);
+			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES / 2.0f);
 
-				//glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
-				//glVertex2f((samp+1)*multiplier,	halfheight);
+			glColor4f(0, 0, 0, 1);
+			glBegin(GL_QUAD_STRIP);
+			{
+				for (unsigned int samp = 0; samp < DISPLAYSAMPLES - 3; samp += 2)
+				{
+					glVertex2f((samp*(multiplier / 4)), halfheight);
+					glVertex2f((samp*(multiplier / 4)), halfheight + (Samples[samp] * halfheight));
+
+					//glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
+					//glVertex2f((samp+1)*multiplier,	halfheight);
+				}
 			}
+			glEnd();
+
+			glColor4f(0, 0, 0, 1);
+			glBegin(GL_QUAD_STRIP);
+			{
+				for (unsigned int samp = 1; samp < DISPLAYSAMPLES - 3; samp += 2)
+				{
+					glVertex2f((m_LastWidth / 2) + (samp*(multiplier / 4)), halfheight);
+					glVertex2f((m_LastWidth / 2) + (samp*(multiplier / 4)), halfheight + (Samples[samp] * halfheight));
+
+					//glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
+					//glVertex2f((samp+1)*multiplier,	halfheight);
+				}
+			}
+			glEnd();
 		}
-		glEnd();
+
+		//glFinish();
+		SwapBuffers(m_glDC);
 	}
 
-	//glFinish();
-	SwapBuffers(m_glDC);
 	return true;
 }
 
