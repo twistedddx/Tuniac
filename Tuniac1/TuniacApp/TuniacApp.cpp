@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 // TuniacApp.cpp: implementation of the CTuniacApp class.
@@ -611,7 +611,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			break;
 
-			/*
 		case WM_DESTROY:
 			{
 				WINDOWPLACEMENT wp;
@@ -635,7 +634,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				PostQuitMessage(0);
 			}
 			break;
-			*/
 
 			//a shutdown is in progress
 		case WM_ENDSESSION:
@@ -671,26 +669,6 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			//the cross at top right of window clicked
 		case WM_CLOSE:
 			{
-				WINDOWPLACEMENT wp;
-				wp.length = sizeof(WINDOWPLACEMENT);
-				GetWindowPlacement(hWnd, &wp);
-
-				RECT r = wp.rcNormalPosition;
-				//GetWindowRect(hWnd, &r);
-
-				SetRect(&r, r.left, r.top, r.right - r.left, r.bottom - r.top);
-				m_Preferences.SetMainWindowRect(&r);
-
-				for (unsigned long x = 0; x<m_WindowArray.GetCount(); x++)
-				{
-					m_WindowArray[x]->DestroyPluginWindow();
-				}
-
-				DestroyWindow(m_hWndStatus);
-				DestroyMenu(m_hFutureMenu);
-
-				PostQuitMessage(0);
-
 				//check if minimize to tray on close, still close if holding control key
 				if(m_Preferences.GetMinimizeOnClose() && !(GetKeyState(VK_CONTROL) & 0x8000))
 				{
@@ -2285,7 +2263,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							}
 							break;
 
-						//toggle repeat mode
+						//find hotkey
 						case ID_FIND:
 							{
 								if(m_Preferences.GetMainWindowMinimized())

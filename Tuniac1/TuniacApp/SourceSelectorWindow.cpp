@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 #include "stdafx.h"
@@ -184,7 +184,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 				ListView_InsertColumn(GetDlgItem(hDlg, IDC_SOURCESELECTOR), 0, &lvC);
 
-				HIMAGELIST hList  = ImageList_Create(24, 24, ILC_COLOR32 | ILC_MASK, 3, 1); 
+				HIMAGELIST hList  = ImageList_Create(32, 32, ILC_COLOR32 | ILC_MASK, 3, 1); 
 
 				// 0 : unknown playlist
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD)); 

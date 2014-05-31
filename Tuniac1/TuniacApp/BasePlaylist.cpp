@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 //every type of playlist is a base playlist. Playlist 0 is the LibraryPlaylist.cpp, low numbers playlists may be AudioCDPlaylist.cpp
@@ -63,6 +63,42 @@ bool				CBasePlaylist::ApplyFilter(void)
 			//default filter(FIELD_MAXFIELD) is any title, artist, album and filename matches
 			if(m_ulTextFilterField == FIELD_MAXFIELD)
 			{
+
+				for (unsigned int i = 0; i < tuniacApp.m_Preferences.GetUserSearchFieldNum(); i++)
+				{
+					unsigned long ulField = tuniacApp.m_Preferences.GetUserSearchFieldIDAtIndex(i);
+
+					if (ulField == FIELD_ARTIST
+						|| m_ulTextFilterField == FIELD_ALBUM
+						|| m_ulTextFilterField == FIELD_ALBUMARTIST
+						|| m_ulTextFilterField == FIELD_COMPOSER
+						|| m_ulTextFilterField == FIELD_TITLE
+						|| m_ulTextFilterField == FIELD_GENRE
+						|| m_ulTextFilterField == FIELD_COMMENT
+						|| m_ulTextFilterField == FIELD_URL
+						|| m_ulTextFilterField == FIELD_FILENAME
+						|| m_ulTextFilterField == FIELD_FILEEXTENSION)
+					{
+						if (StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(ulField), m_szTextFilter))
+						{
+							m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
+							continue;
+						}
+					}
+					else
+					{
+						m_PlaylistArray[x].pIPE->GetTextRepresentation(ulField, szTemp, 260);
+
+						if (StrStrI(szTemp, m_szTextFilter))
+						{
+							m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
+							continue;
+						}
+
+					}
+				}
+
+				/*
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_TITLE), m_szTextFilter))
 				{
 					//Toggles the filteredness if matched.
@@ -84,19 +120,18 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 
-				/*
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_ALBUMARTIST), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
 				}
-				*/
 
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(FIELD_URL), m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;
 				}
+				*/
 			}
 
 			//single field filter selected. Will include or exclude based solely on the single field
@@ -117,12 +152,11 @@ bool				CBasePlaylist::ApplyFilter(void)
 					continue;
 				}
 			}
-
 			else
 			{
 				m_PlaylistArray[x].pIPE->GetTextRepresentation(m_ulTextFilterField, szTemp, 260);
 
-				if (StrCmpI(m_szTextFilter, szTemp) == 0)
+				if (StrStrI(szTemp, m_szTextFilter))
 				{
 					m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? true : false;
 					continue;

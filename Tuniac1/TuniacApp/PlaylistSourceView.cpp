@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 
@@ -479,7 +479,7 @@ bool	CPlaylistSourceView::CreateSourceView(HWND hWndParent)
 	m_HeaderMenu		= GetSubMenu(LoadMenu(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDR_PLAYLISTHEADER_MENU)), 0);
 
 	m_FilterByFieldMenu	= CreatePopupMenu();
-	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_CHECKED,		FILTERBYFIELD_MENUBASE + 0,		TEXT("&Artist, Album && Title"));
+	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_CHECKED,		FILTERBYFIELD_MENUBASE + 0,		TEXT("&User defined"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING | MF_SEPARATOR,	FILTERBYFIELD_MENUBASE + 1,		NULL);
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 2,		TEXT("A&rtist"));
 	AppendMenu(m_FilterByFieldMenu, MF_STRING,					FILTERBYFIELD_MENUBASE + 3,		TEXT("A&lbum"));
@@ -1526,6 +1526,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
 							if(pDispInfo->item.mask & LVIF_IMAGE)
 							{
+								pDispInfo->item.iImage = 0;
 								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == m_pPlaylist)
 								{
 									if(m_pPlaylist->GetActiveNormalFilteredIndex() == pDispInfo->item.iItem)

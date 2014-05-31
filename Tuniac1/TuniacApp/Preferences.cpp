@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 #include "stdafx.h"
@@ -96,6 +96,9 @@
 #define FUTURELISTSIZE			TEXT("FutureListSize")
 
 #define NOVKHOTKEYS				TEXT("NoVKHotKeys")
+
+#define USERSEARCHFIELDNUM		TEXT("UserSearchFieldNum")
+#define USERSEARCHFIELD			TEXT("UserSearchField")
 
 #define FORMATSTRING_HELP	TEXT("\
 @U\tURL\r\n\
@@ -1342,6 +1345,274 @@ LRESULT CALLBACK CPreferences::FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam
 	return true;
 }
 
+LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	switch (uMsg)
+	{
+		case WM_INITDIALOG:
+		{
+						  SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+						  pPrefs = (CPreferences *)lParam;
+
+						  HWND hSelectedListView = GetDlgItem(hDlg, IDC_USERSEARCHFIELD_SELECTEDLIST);
+						  ListView_SetExtendedListViewStyle(hSelectedListView, LVS_EX_FULLROWSELECT);
+
+						  HWND hAvailableListView = GetDlgItem(hDlg, IDC_USERSEARCHFIELD_AVAILABLELIST);
+						  ListView_SetExtendedListViewStyle(hAvailableListView, LVS_EX_FULLROWSELECT);
+
+
+						  LVCOLUMN	lvC;
+						  lvC.mask = LVCF_WIDTH | LVCF_TEXT;
+						  lvC.cx = 100;
+						  lvC.pszText = TEXT("");
+						  ListView_InsertColumn(hSelectedListView, 0, &lvC);
+
+						  ListView_InsertColumn(hAvailableListView, 0, &lvC);
+
+						  LVITEM item;
+						  item.mask = LVIF_TEXT;
+						  item.iSubItem = 0;
+						  TCHAR szItem[64];
+
+						  for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+						  {
+							  bool bFound = 0;
+							  for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+							  {
+								  if (pPrefs->m_UserSearchField[x] == i)
+									  bFound = 1;
+							  }
+							  if (!bFound)
+							  {
+								  StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+								  item.pszText = szItem;
+								  item.iItem = ListView_GetItemCount(hAvailableListView);
+								  ListView_InsertItem(hAvailableListView, &item);
+							  }
+
+						  }
+						  for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+						  {
+							  StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+							  item.pszText = szItem;
+							  item.iItem = ListView_GetItemCount(hSelectedListView);
+							  ListView_InsertItem(hSelectedListView, &item);
+						  }
+						 //SendMessage(hDlg, WM_USER, 0, 0);
+		}
+		break;
+
+	case WM_COMMAND:
+	{
+					WORD wCmdID = LOWORD(wParam);
+
+					HWND hSelectedListView = GetDlgItem(hDlg, IDC_USERSEARCHFIELD_SELECTEDLIST);
+					HWND hAvailableListView = GetDlgItem(hDlg, IDC_USERSEARCHFIELD_AVAILABLELIST);
+
+					switch (wCmdID)
+					{
+					   case IDC_USERSEARCHFIELD_ADD:
+					   {
+								int iSel = ListView_GetNextItem(hAvailableListView, -1, LVNI_SELECTED);
+								if (iSel < 0) break;
+
+								TCHAR szText[64];
+								ListView_GetItemText(hAvailableListView, iSel, 0, szText, 64);
+								int iActualIDNum;
+								for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+								{
+									if (StrCmp(szText, AvailableUserSearchFields[i].szHeaderText) == 0)
+									{
+										iActualIDNum = i;
+									}
+								}
+
+								pPrefs->m_UserSearchField[pPrefs->m_iUserSearchFieldNum] = iActualIDNum;
+
+								pPrefs->m_iUserSearchFieldNum++;
+
+								ListView_DeleteAllItems(hAvailableListView);
+								ListView_DeleteAllItems(hSelectedListView);
+
+								LVITEM item;
+								item.mask = LVIF_TEXT;
+								item.iSubItem = 0;
+								TCHAR szItem[64];
+
+								for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+								{
+									bool bFound = 0;
+									for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+									{
+										if (pPrefs->m_UserSearchField[x] == i)
+											bFound = 1;
+									}
+									if (!bFound)
+									{
+
+										StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+										item.pszText = szItem;
+										item.iItem = ListView_GetItemCount(hAvailableListView);
+										ListView_InsertItem(hAvailableListView, &item);
+									}
+
+								}
+								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+								{
+									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+									item.pszText = szItem;
+									item.iItem = ListView_GetItemCount(hSelectedListView);
+									ListView_InsertItem(hSelectedListView, &item);
+								}
+						}
+						break;
+
+					   case IDC_USERSEARCHFIELD_REMOVE:
+					   {
+								int iSel = ListView_GetNextItem(hSelectedListView, -1, LVNI_SELECTED);
+								if (iSel < 0) break;
+
+								for (unsigned int x = iSel; x < pPrefs->m_iUserSearchFieldNum; x++)
+								{
+									pPrefs->m_UserSearchField[x] = pPrefs->m_UserSearchField[x+1];
+								}
+
+								pPrefs->m_iUserSearchFieldNum--;
+
+
+								ListView_DeleteAllItems(hAvailableListView);
+								ListView_DeleteAllItems(hSelectedListView);
+
+								LVITEM item;
+								item.mask = LVIF_TEXT;
+								item.iSubItem = 0;
+								TCHAR szItem[64];
+
+								for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+								{
+									bool bFound = 0;
+									for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+									{
+										if (pPrefs->m_UserSearchField[x] == i)
+											bFound = 1;
+									}
+									if (!bFound)
+									{
+
+										StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+										item.pszText = szItem;
+										item.iItem = ListView_GetItemCount(hAvailableListView);
+										ListView_InsertItem(hAvailableListView, &item);
+									}
+
+								}
+								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+								{
+									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+									item.pszText = szItem;
+									item.iItem = ListView_GetItemCount(hSelectedListView);
+									ListView_InsertItem(hSelectedListView, &item);
+								}
+						}
+						break;
+
+						case IDC_USERSEARCHFIELD_CLEAR:
+						{
+							pPrefs->m_iUserSearchFieldNum = 0;
+
+							ListView_DeleteAllItems(hAvailableListView);
+							ListView_DeleteAllItems(hSelectedListView);
+
+							LVITEM item;
+							item.mask = LVIF_TEXT;
+							item.iSubItem = 0;
+							TCHAR szItem[64];
+
+							for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+							{
+								bool bFound = 0;
+								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+								{
+									if (pPrefs->m_UserSearchField[x] == i)
+										bFound = 1;
+								}
+								if (!bFound)
+								{
+
+									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+									item.pszText = szItem;
+									item.iItem = ListView_GetItemCount(hAvailableListView);
+									ListView_InsertItem(hAvailableListView, &item);
+								}
+
+							}
+							for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+							{
+								StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+								item.pszText = szItem;
+								item.iItem = ListView_GetItemCount(hSelectedListView);
+								ListView_InsertItem(hSelectedListView, &item);
+							}
+
+						}
+						break;
+
+						case IDC_USERSEARCHFIELD_DEFAULT:
+						{
+							pPrefs->m_iUserSearchFieldNum = 4;
+							pPrefs->m_UserSearchField[0] = 2;
+							pPrefs->m_UserSearchField[1] = 0;
+							pPrefs->m_UserSearchField[2] = 1;
+							pPrefs->m_UserSearchField[3] = 7;
+
+							ListView_DeleteAllItems(hAvailableListView);
+							ListView_DeleteAllItems(hSelectedListView);
+
+							LVITEM item;
+							item.mask = LVIF_TEXT;
+							item.iSubItem = 0;
+							TCHAR szItem[64];
+
+							for (unsigned int i = 0; i < FIELD_MAXFIELD - 1; i++)
+							{
+								bool bFound = 0;
+								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+								{
+									if (pPrefs->m_UserSearchField[x] == i)
+										bFound = 1;
+								}
+								if (!bFound)
+								{
+
+									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+									item.pszText = szItem;
+									item.iItem = ListView_GetItemCount(hAvailableListView);
+									ListView_InsertItem(hAvailableListView, &item);
+								}
+
+							}
+							for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
+							{
+								StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+								item.pszText = szItem;
+								item.iItem = ListView_GetItemCount(hSelectedListView);
+								ListView_InsertItem(hSelectedListView, &item);
+							}
+
+						}
+						break;
+					}
+	}
+		break;
+	default:
+		return false;
+		break;
+	}
+
+	return true;
+}
+
 DLGTEMPLATE * LockDlgRes(unsigned long ulRes)
 {
 	HRSRC hrsrc = FindResource(NULL, MAKEINTRESOURCE(ulRes), RT_DIALOG); 
@@ -1383,28 +1654,31 @@ CPreferences::CPreferences(void)
 	m_Pages[5].iParent = 0;
 	m_Pages[5].pTemplate = LockDlgRes(IDD_PREFERENCES_FILEASSOC);
 
+	m_Pages[6].pszName = TEXT("User Search");
+	m_Pages[6].pDialogFunc = (DLGPROC)&UserSearchFieldProc;
+	m_Pages[6].iParent = 0;
+	m_Pages[6].pTemplate = LockDlgRes(IDD_PREFERENCES_USERSEARCHFIELD);
+
 	// plugins
-	m_Pages[6].pszName = TEXT("Audio");
-	m_Pages[6].pDialogFunc = (DLGPROC)&CoreAudioProc;
-	m_Pages[6].iParent = 1;
-	m_Pages[6].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
+	m_Pages[7].pszName = TEXT("Audio");
+	m_Pages[7].pDialogFunc = (DLGPROC)&CoreAudioProc;
+	m_Pages[7].iParent = 1;
+	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
 
 	//m_Pages[8].pszName = TEXT("Import/Export");
 	//m_Pages[8].pDialogFunc = (DLGPROC)&ImportExportProc;
 	//m_Pages[8].iParent = 1;
 	//m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_IMPORTEXPORT);
 
-	m_Pages[7].pszName = TEXT("Visuals");
-	m_Pages[7].pDialogFunc = (DLGPROC)&VisualsProc;
-	m_Pages[7].iParent = 1;
-	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
+	m_Pages[8].pszName = TEXT("Visuals");
+	m_Pages[8].pDialogFunc = (DLGPROC)&VisualsProc;
+	m_Pages[8].iParent = 1;
+	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
 
-	m_Pages[8].pszName = TEXT("EQ");
-	m_Pages[8].pDialogFunc = (DLGPROC)&EQProc;
-	m_Pages[8].iParent = 2;
-	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
-
-
+	m_Pages[9].pszName = TEXT("EQ");
+	m_Pages[9].pDialogFunc = (DLGPROC)&EQProc;
+	m_Pages[9].iParent = 2;
+	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
 }
 
 CPreferences::~CPreferences(void)
@@ -1491,6 +1765,12 @@ bool CPreferences::DefaultPreferences(void)
 	m_iFutureListSize = 10;
 
 	m_bNoVKHotkeys = FALSE;
+
+	m_iUserSearchFieldNum = 4;
+	m_UserSearchField[0] = 2;
+	m_UserSearchField[1] = 0;
+	m_UserSearchField[2] = 1;
+	m_UserSearchField[3] = 7;
 
 	return true;
 }
@@ -1931,6 +2211,22 @@ bool CPreferences::LoadPreferences(void)
 		(LPBYTE)&m_bNoVKHotkeys,
 		&Size);
 
+	Size = sizeof(int);
+	RegQueryValueEx(hTuniacPrefKey,
+		USERSEARCHFIELDNUM,
+		NULL,
+		&Type,
+		(LPBYTE)&m_iUserSearchFieldNum,
+		&Size);
+
+	Size = sizeof(int)* m_iUserSearchFieldNum;
+	RegQueryValueEx(hTuniacPrefKey,
+		USERSEARCHFIELD,
+		NULL,
+		&Type,
+		(LPBYTE)m_UserSearchField,
+		&Size);
+
 	if(m_MainWindowRect.left < 0)
 		m_MainWindowRect.left = CW_USEDEFAULT;
 
@@ -2327,6 +2623,19 @@ bool CPreferences::SavePreferences(void)
 		(LPBYTE)&m_bNoVKHotkeys,
 		sizeof(BOOL));
 
+	RegSetValueEx(hTuniacPrefKey,
+		USERSEARCHFIELDNUM,
+		0,
+		REG_DWORD,
+		(LPBYTE)&m_iUserSearchFieldNum,
+		sizeof(int));
+
+	RegSetValueEx(hTuniacPrefKey,
+		USERSEARCHFIELD,
+		0,
+		REG_BINARY,
+		(LPBYTE)m_UserSearchField,
+		sizeof(int)* m_iUserSearchFieldNum);
 
 	RegCloseKey(hTuniacPrefKey);
 
@@ -2993,4 +3302,24 @@ BOOL		CPreferences::GetAutoSoftPause(void)
 BOOL		CPreferences::GetNoVKHotkeys(void)
 {
 	return m_bNoVKHotkeys;
+}
+
+int		CPreferences::GetUserSearchFieldNum(void)
+{
+	return m_iUserSearchFieldNum;
+}
+
+void	CPreferences::SetUserSearchFieldNum(int iColumns)
+{
+	m_iUserSearchFieldNum = iColumns;
+}
+
+int		CPreferences::GetUserSearchFieldAtIndex(int index)
+{
+	return m_UserSearchField[index];
+}
+
+int		CPreferences::GetUserSearchFieldIDAtIndex(int index)
+{
+	return AvailableUserSearchFields[m_UserSearchField[index]].ulFieldID;
 }

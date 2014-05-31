@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 #pragma once
@@ -49,6 +49,133 @@ enum ScreenSaveMode
 	ScreenSaveAllow = 0,
 	ScreenSavePrevent,
 	ScreenSavePreventFull
+};
+
+
+typedef struct
+{
+	LPTSTR			szHeaderText;
+	unsigned long	ulFieldID;
+} AvailableUserSearchFieldsEntry;
+
+static AvailableUserSearchFieldsEntry AvailableUserSearchFields[FIELD_MAXFIELD - 1] =
+{
+	{
+		TEXT("Artist"),
+		FIELD_ARTIST
+	},
+	{
+		TEXT("Album"),
+		FIELD_ALBUM
+	},
+	{
+		TEXT("Title"),
+		FIELD_TITLE
+	},
+	{
+		TEXT("Album Artist"),
+		FIELD_ALBUMARTIST
+	},
+	{
+		TEXT("Composer"),
+		FIELD_COMPOSER
+	},
+	{
+		TEXT("Genre"),
+		FIELD_GENRE
+	},
+	{
+		TEXT("Year"),
+		FIELD_YEAR
+	},
+	{
+		TEXT("URL"),
+		FIELD_URL
+	},
+	{
+		TEXT("Filename"),
+		FIELD_FILENAME
+	},
+	{
+		TEXT("Track"),
+		FIELD_TRACKNUM
+	},
+	{
+		TEXT("Time"),
+		FIELD_PLAYBACKTIME
+	},
+	{
+		TEXT("Kind"),
+		FIELD_KIND
+	},
+	{
+		TEXT("Ext"),
+		FIELD_FILEEXTENSION
+	},
+	{
+		TEXT("Size"),
+		FIELD_FILESIZE
+	},
+	{
+		TEXT("Date Added"),
+		FIELD_DATEADDED
+	},
+	{
+		TEXT("File Creation Date"),
+		FIELD_DATEFILECREATION
+	},
+	{
+		TEXT("Last Played Date"),
+		FIELD_DATELASTPLAYED
+	},
+	{
+		TEXT("Played"),
+		FIELD_PLAYCOUNT
+	},
+	{
+		TEXT("Rating"),
+		FIELD_RATING
+	},
+	{
+		TEXT("Comment"),
+		FIELD_COMMENT
+	},
+	{
+		TEXT("Bitrate"),
+		FIELD_BITRATE
+	},
+	{
+		TEXT("Sample Rate"),
+		FIELD_SAMPLERATE
+	},
+	{
+		TEXT("Channels"),
+		FIELD_NUMCHANNELS
+	},
+	{
+		TEXT("Track Gain"),
+		FIELD_REPLAYGAIN_TRACK_GAIN
+	},
+	{
+		TEXT("Track Peak"),
+		FIELD_REPLAYGAIN_TRACK_PEAK
+	},
+	{
+		TEXT("Album Gain"),
+		FIELD_REPLAYGAIN_ALBUM_GAIN
+	},
+	{
+		TEXT("Album Peak"),
+		FIELD_REPLAYGAIN_ALBUM_PEAK
+	},
+	{
+		TEXT("BPM"),
+		FIELD_BPM
+	},
+	{
+		TEXT("Availability"),
+		FIELD_AVAILABILITY
+	}
 };
 
 class CPreferences
@@ -139,6 +266,9 @@ protected:
 
 	BOOL		m_bNoVKHotkeys;
 
+	int			m_iUserSearchFieldNum;
+	int			m_UserSearchField[FIELD_MAXFIELD-1];
+
 	void		BuildTree(HWND hTree, int iPage);
 	int			FindNthTreeLeaf(int i, int iParent);
 
@@ -160,6 +290,8 @@ protected:
 	// audio
 	static LRESULT CALLBACK AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK EQProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	static LRESULT CALLBACK UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	CPreferences(void);
@@ -284,4 +416,10 @@ public:
 	BOOL		GetSkipStreams(void);
 
 	BOOL		GetNoVKHotkeys(void);
+
+	int			GetUserSearchFieldNum(void);
+	void		SetUserSearchFieldNum(int iColumns);
+
+	int			GetUserSearchFieldAtIndex(int index);
+	int			GetUserSearchFieldIDAtIndex(int index);
 };
