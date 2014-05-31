@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 #include "StdAfx.h"
@@ -129,7 +129,7 @@ bool			CTuniacSkin::Initialize(void)
 {
 	for(int i = 0; i < THEMEICON_MAXICON; i++)
 	{
-		ThemeIconSet[i].hHandle = (HICON)LoadImage(tuniacApp.getMainInstance(), MAKEINTRESOURCE(ThemeIconSet[i].ulRes), IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR);
+		ThemeIconSet[i].hHandle = (HICON)LoadImage(tuniacApp.getMainInstance(), MAKEINTRESOURCE(ThemeIconSet[i].ulRes), IMAGE_ICON, ThemeIconSet[i].ulSize, ThemeIconSet[i].ulSize, LR_DEFAULTCOLOR);
 	}
 
 	//LoadTheme(tuniacApp.m_Preferences.GetTheme());

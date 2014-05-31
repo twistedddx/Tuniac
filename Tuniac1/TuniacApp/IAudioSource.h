@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 #pragma pack(16)

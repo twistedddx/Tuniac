@@ -20,7 +20,7 @@
 */
 /*
 	Modification and addition to Tuniac originally written by Tony Million
-	Copyright (C) 2003-2012 Brett Hoyle
+	Copyright (C) 2003-2014 Brett Hoyle
 */
 
 // MediaLibrary.cpp: implementation of the CMediaLibrary class.
@@ -1006,6 +1006,7 @@ static int SavingProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return TRUE;
 }
+
 
 bool CMediaLibrary::SaveMediaLibrary(void)
 {
