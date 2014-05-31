@@ -1,4 +1,21 @@
-May, 2014
+May, 2014 (140531)
+---------
+-Add preference to change what MAXFIELD filtering does aka User defined search
+-fix icon sizes
+-update icons
+-reduce size of first playlistview column
+-fix filterby of last column
+-check if visual window is exists before trying to access it
+-prevent included visuals rendering frames after Tuniac closes
+-call visual Detach() on close so they can delete their context (fixes "Tuniac process never exits")
+-release visual window DC
+-add composer field to std_Infomanager and TuniacApp (bump DB version to 0.8, PL to 0.6)
+-allow sorting of replaygain, composer and extension fields.
+-correct editable/filterable fields
+-fix screen offset for filterby menu when listview is horizontally scrolled
+-fix saving of selected columns and their sizes (long standing bug at close)
+
+May, 2014 (140511)
 ---------
 -reduce window flicker
 -update progress bar more accurately and more often
