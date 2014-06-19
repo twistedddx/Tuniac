@@ -335,32 +335,31 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 	if(szSource == NULL)
 	{
 
-		TCHAR szFilterText[128];
-		TCHAR szFilterExt[16];
 		LPTSTR szFilters;
-		if((szFilters = (LPTSTR)malloc(sizeof(TCHAR))) == NULL) return false;
-		int nSize = 1;
+		if ((szFilters = (LPTSTR)malloc(sizeof(TCHAR))) == NULL) return false;
+		int nSize = 0;
 		LPTSTR pDest = szFilters;
 		void * pTemp;
 
 		for(unsigned long i = 0; i < m_ExportExtensions.GetCount(); i++)
 		{
-			
+			TCHAR szFilterText[128] = L"";
+			TCHAR szFilterExt[16] = L"";
 			StringCchPrintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
 			StringCchPrintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
-			if((pTemp = realloc((void *)szFilters, (nSize + wcsnlen_s(szFilterText, 128) + wcsnlen_s(szFilterExt, 16) + 2) * sizeof(TCHAR))) == NULL) break;
+
+			if ((pTemp = realloc((void *)szFilters, (nSize + wcslen(szFilterText) + wcslen(szFilterExt) + 2) * sizeof(TCHAR))) == NULL) break;
 			szFilters = (LPTSTR)pTemp;
 
-			pDest = szFilters + (nSize - 1);
-			nSize += wcsnlen_s(szFilterText, 128) + 1;
-			memcpy_s((void *)pDest, 128, (void *)szFilterText, wcsnlen_s(szFilterText, 128) * sizeof(TCHAR));
+			pDest = szFilters + nSize;
+			memcpy_s((void *)pDest, 128, (void *)szFilterText, (wcslen(szFilterText) + 1) * sizeof(TCHAR));
+			nSize += wcslen(szFilterText) + 1;
 
-			pDest = szFilters + (nSize - 1);
-			nSize += wcsnlen_s(szFilterExt, 16) + 1;
-			memcpy_s((void *)pDest, 16, (void *)szFilterExt, wcsnlen_s(szFilterExt, 16) * sizeof(TCHAR));
-
+			pDest = szFilters + nSize;
+			memcpy_s((void *)pDest, 16, (void *)szFilterExt, (wcslen(szFilterExt) + 1) * sizeof(TCHAR));
+			nSize += wcslen(szFilterExt) + 1;
 		}
-		pDest = szFilters + nSize - 1;
+		pDest = szFilters + nSize;
 		*pDest = L'\0';
 
 		OPENFILENAME ofn;
