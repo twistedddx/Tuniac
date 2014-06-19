@@ -1716,7 +1716,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bSkipStreams				= TRUE;
 
 	m_bSkipPlaylistImport		= FALSE;
-	m_bPlaylistSorting			= FALSE;
+	m_bPlaylistSorting			= TRUE;
 	m_bAutoAddPlaylist			= TRUE;
 	m_bAddSingleStream			= TRUE;
 	m_bAutoSoftPause			= FALSE;
