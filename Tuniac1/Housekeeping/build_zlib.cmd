@@ -10,41 +10,37 @@ set 64bitcl=false
 :64bitcl
 
 
-call "%VS120COMNTOOLS%VsDevCmd.bat"
 call "%Programfiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
 
 cd ..\..\..\
 
 rem ######## zlib
 cd zlib\
+mkdir .\build
+cd build\
 
 rem #zlib Release x86
-del ".\CMakeCache.txt"
-"%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12" zlibstatic .
+rmdir /S /Q ..\build
+"%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
-mkdir .\Release\x86
-move /Y .\Release\zlibstatic.lib .\Release\x86\zlibstatic.lib
+mkdir ..\Release\x86
+move /Y .\Release\zlibstatic.lib ..\Release\x86\zlibstatic.lib
 
 
 rem if "64bitcl"=="false" goto done
-call "%Programfiles(x86)%\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x64
+call "%Programfiles(x86)%\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" amd64
 
-
-rem ######## zlib x64
 
 rem #zlib Release x64
-del ".\CMakeCache.txt"
-"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12 Win64" zlibstatic .
+rmdir /S /Q ..\build
+"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 12 Win64" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
-mkdir .\Release\x64
-move /Y .\Release\zlibstatic.lib .\Release\x64\zlibstatic.lib
+mkdir ..\Release\x64
+move /Y .\Release\zlibstatic.lib ..\Release\x64\zlibstatic.lib
 
-cd ..\
-
-
-
+move /Y .\zconf.h ..\zconf.h
 
 :done 
 
