@@ -53,6 +53,8 @@ mkdir ..\Debug\x64
 move /Y .\Debug\libpng17_staticd.lib ..\Debug\x64\libpng17_staticd.lib
 move /Y .\Debug\libpng17_staticd.pdb ..\Debug\x64\libpng17_staticd.pdb
 
+move /Y .\pnglibconf.h ..\pnglibconf.h
+
 :done
 
 pause

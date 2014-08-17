@@ -57,6 +57,7 @@ mkdir ..\taglib\Debug\x64
 move /Y .\taglib\Debug\tag.lib ..\taglib\Debug\x64\tag.lib
 move /Y .\taglib\Debug\tag.pdb ..\taglib\Debug\x64\tag.pdb
 
+move /Y .\taglib_config.h ..\taglib_config.h
 
 :done 
 
