@@ -40,6 +40,8 @@ devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Rebuild "Release"
 mkdir ..\Release\x64
 move /Y .\Release\turbojpeg-static.lib ..\Release\x64\turbojpeg-static.lib
 
+move /Y .\jconfig.h ..\jconfig.h
+
 :done
 
 pause
