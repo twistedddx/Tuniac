@@ -1,3 +1,12 @@
+Jun, 2014 (140619)
+---------
+-update installer icon
+
+Jun, 2014 (140616)
+---------
+-fix playlist export
+-default pref to allow playlist sorting
+
 May, 2014 (140531)
 ---------
 -Add preference to change what MAXFIELD filtering does aka User defined search
