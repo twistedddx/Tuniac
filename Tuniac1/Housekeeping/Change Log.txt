@@ -1,3 +1,8 @@
+Aug, 2014
+---------
+-Update basslib dll's
+-update external lib build scripts to use out of source building. Fixes x64 build.
+
 Jun, 2014 (140619)
 ---------
 -update installer icon

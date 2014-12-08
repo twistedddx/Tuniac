@@ -100,9 +100,9 @@ You can also get all the build recipes for individual building of libs in there.
 5a)You need Direct X SDK June 2010.
 http://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-5b)You need the Glew 1.10.0 Binaries Windows 32-bit zip.
+5b)You need the Glew 1.11.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.10.0/glew-1.10.0-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/1.11.0/glew-1.11.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\GL
@@ -118,7 +118,7 @@ Cannot open include file: 'GL/glew.h'
 
 6a)You need nasm 2.11.02 win32 zip.
 http://www.nasm.us/
-http://www.nasm.us/pub/nasm/releasebuilds/2.11.02/win32/nasm-2.11.02-win32.zip
+http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/win32/nasm-2.11.06-win32.zip
 
 Put nasm.exe in
 C:\Windows\
