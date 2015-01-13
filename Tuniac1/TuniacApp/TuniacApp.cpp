@@ -83,7 +83,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		TCHAR szFilename[MAX_PATH];
 		GetModuleFileName(NULL, szFilename, MAX_PATH);
 
-		//if we have no command lines so just restore tuniac
+		//if we have no command lines, just restore tuniac
 		//the commandline gets quotation marks and a space, so remove 3 chars
 		if((wcslen(szCommandLine) - 3) == wcsnlen_s(szFilename, 260))
 			wcscat(szCommandLine, L"-restore");
