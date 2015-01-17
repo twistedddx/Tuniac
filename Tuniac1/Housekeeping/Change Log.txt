@@ -1,3 +1,7 @@
+Jan, 2015
+---------
+-Update to Basslib 2.4.11
+
 Dec, 2014
 ---------
 -Update basslib dll's; includes DSD plugin, this will convert DSD to PCM 32bit float data.

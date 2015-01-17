@@ -61,7 +61,7 @@ CPlaylistManager::~CPlaylistManager(void)
 {
 }
 
-bool CPlaylistManager::Initialize(void)
+bool CPlaylistManager::Initialize(LPTSTR szLibraryFolder)
 {
 	unsigned long DrivesMask = GetLogicalDrives();
 
@@ -94,7 +94,7 @@ bool CPlaylistManager::Initialize(void)
 	m_ulActivePlaylistIndex = INVALID_PLAYLIST_INDEX;
 
 	m_LibraryPlaylist.RebuildPlaylist();
-	LoadPlaylistLibrary();
+	LoadPlaylistLibrary(szLibraryFolder);
 
 	if(m_ActivePlaylist == NULL)
 		SetActivePlaylist(0);
@@ -102,10 +102,10 @@ bool CPlaylistManager::Initialize(void)
 	return true;
 }
 
-bool CPlaylistManager::Shutdown(bool bSave)
+bool CPlaylistManager::Shutdown(LPTSTR szLibraryFolder, bool bSave)
 {
 	if(bSave)
-		SavePlaylistLibrary();
+		SavePlaylistLibrary(szLibraryFolder);
 
 	if(m_hThread)
 	{
@@ -146,25 +146,30 @@ typedef struct
 	bool			FilterReverse;
 } PLDiskSubHeader;
 
-bool			CPlaylistManager::LoadPlaylistLibrary(void)		
+bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 {
 	PLDiskHeader		PLDH;
-	TCHAR				szFilename[MAX_PATH];
 	HANDLE				hFile;
 	unsigned long		ulBytesRead;
 	bool				bOK = true;
-
-	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szFilename ) ) )
+	TCHAR				szPlaylistPath[MAX_PATH];
+	
+	if (szLibraryFolder[0] == TEXT('\0'))
 	{
-		PathAppend( szFilename, TEXT("\\Tuniac\\Playlists.dat") );
-	}
-	else{
-		//cant get appdata path
-		return false;
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLibraryFolder)))
+		{
+			PathAppend(szLibraryFolder, TEXT("\\Tuniac"));
+		}
+		else
+		{
+			return false;
+		}
 	}
 
+	StringCbCopy(szPlaylistPath, MAX_PATH, szLibraryFolder);
+	PathAppend(szPlaylistPath, TEXT("\\Playlists.dat"));
 
-	hFile = CreateFile(	szFilename,
+	hFile = CreateFile(szPlaylistPath,
 					GENERIC_READ, 
 					0,
 					NULL,
@@ -308,25 +313,31 @@ bool			CPlaylistManager::LoadPlaylistLibrary(void)
 	return bOK;
 }
 
-bool			CPlaylistManager::SavePlaylistLibrary(void)
+bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 {
 	PLDiskHeader		PLDH;
-	TCHAR				szFilename[MAX_PATH];
 	HANDLE				hFile;
 	unsigned long		ulBytesWritten;
 	bool				bOK = true;
+	TCHAR				szPlaylistPath[MAX_PATH];
 
-	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szFilename ) ) )
+	if (szLibraryFolder[0] == TEXT('\0'))
 	{
-		PathAppend( szFilename, TEXT("\\Tuniac\\Playlists.dat") );
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLibraryFolder)))
+		{
+			PathAppend(szLibraryFolder, TEXT("\\Tuniac"));
+		}
+		else
+		{
+			return false;
+		}
 	}
-	else
-	{
-		//cant get appdata path
-		return false;
-	}
+	CreateDirectory(szLibraryFolder, 0);
 
-	hFile = CreateFile(	szFilename,
+	StringCbCopy(szPlaylistPath, MAX_PATH, szLibraryFolder);
+	PathAppend(szPlaylistPath, TEXT("\\Playlists.dat"));
+
+	hFile = CreateFile(szPlaylistPath,
 					GENERIC_WRITE, 
 					0,
 					NULL,

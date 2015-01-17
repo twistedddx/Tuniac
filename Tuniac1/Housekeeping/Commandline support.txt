@@ -13,3 +13,27 @@
 -dontsaveprefs
 -wipeprefs
 -dontsaveml
+
+
+-libraryfolder
+If not defined Tuniac will load/save to:
+%appdata%\Tuniac\
+aka
+C:\Users\<User>\AppData\Roaming\Tuniac
+
+But you can set the path eg:
+TuniacApp.exe" -libraryfolder=%appdata%\Tuniac\Christmas
+or
+TuniacApp.exe" -libraryfolder=%appdata%\Tuniac\Rock
+or
+TuniacApp.exe" -libraryfolder=C:\MyTuniacLibrary\1
+or
+TuniacApp.exe" -libraryfolder="C:\My Folder With Spaces\Whatever"
+
+Rules:
+1)No trailing slashes
+2)You can not define the filenames themselves(TuniacMediaLibrary.dat, Playlists.dat), only the folder. 
+3)Note quotes if you want spaces in the folder name, without quotes it would save to: C:\My
+4)You can "unset" the folder(eg go back to default path) via: TuniacApp.exe" -libraryfolder=
+5)You will need to launch Tuniac with this command line to load the alternative ML/PL files; Once Tuniac is running the ML/PL does not reload, you can only change the save location.
+6)Tuniac will not automatically reuse the alternative ML/PL files, on each Tuniac launch you will need to resend the command line.

@@ -116,6 +116,7 @@ protected:
 
 	bool								m_bSavePrefs;
 	bool								m_bSaveML;
+	TCHAR								m_szLibraryFolder[MAX_PATH];
 
 	bool								m_WasPlaying;
 	unsigned long						m_WasPlayingTime;
