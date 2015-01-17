@@ -80,11 +80,11 @@ public:
 	CMediaLibrary();
 	virtual ~CMediaLibrary();
 
-	bool					Initialize(void);
-	bool					Shutdown(bool bSave = true);
+	bool					Initialize(LPTSTR szLibraryFolder);
+	bool					Shutdown(LPTSTR szLibraryFolder, bool bSave = true);
 
-	bool					SaveMediaLibrary(void);
-	bool					LoadMediaLibrary(void);
+	bool					SaveMediaLibrary(LPTSTR szLibraryFolder);
+	bool					LoadMediaLibrary(LPTSTR szLibraryFolder);
 
 	unsigned long			GetCount(void);
 

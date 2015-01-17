@@ -134,6 +134,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	m_bSavePrefs = true;
 	m_bSaveML = true;
 
+	StringCchCopy(m_szLibraryFolder, MAX_PATH, TEXT(""));
+
 	//used to pause/resume on Windows suspends like sleep or hibernate or user switch/lock/logoff
 	m_WasPlaying = false;
 	m_WasPlayingTime = 0;
@@ -168,10 +170,26 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if (!m_History.Initialize())
 		return false;
 
-	if(!m_MediaLibrary.Initialize())
+
+	//we need -libraryfolder before ML loads!
+	LPWSTR		*szArglist;
+	int			nArgs;
+	szArglist = CommandLineToArgvW((LPTSTR)szCommandLine, &nArgs);
+
+	if (szArglist != NULL)
+	{
+		for (int i = 1; i < nArgs; i++)
+		{
+
+			if (StrCmpNI(szArglist[i], TEXT("-libraryfolder="), 15) == 0)
+				StringCchCopy(m_szLibraryFolder, MAX_PATH, szArglist[i] + 15);
+		}
+	}
+
+	if(!m_MediaLibrary.Initialize(m_szLibraryFolder))
 		return false;
 
-	if(!m_PlaylistManager.Initialize())
+	if (!m_PlaylistManager.Initialize(m_szLibraryFolder))
 		return false;
 
 	IWindow * t;
@@ -332,20 +350,9 @@ bool CTuniacApp::Shutdown()
 {
 	//close tuniac
 
-	//if allowed to save pl+ml, check if %appdata%/Tuniac needs to be created
-	if(m_bSaveML)
-	{
-		TCHAR				szURL[MAX_PATH];
-		if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
-		{
-			PathAppend( szURL, TEXT("\\Tuniac") );
-			CreateDirectory( szURL, 0);
-		}
-	}
-
 	//save if allowed
-	m_PlaylistManager.Shutdown(m_bSaveML);
-	m_MediaLibrary.Shutdown(m_bSaveML);
+	m_PlaylistManager.Shutdown(m_szLibraryFolder, m_bSaveML);
+	m_MediaLibrary.Shutdown(m_szLibraryFolder, m_bSaveML);
 
 	m_PluginManager.Shutdown();
 
@@ -1330,15 +1337,15 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 									unsigned long ulMLOldCount = m_MediaLibrary.GetCount();
 
-									for(int i = 1; i < nArgs; i++)
+									for (int i = 1; i < nArgs; i++)
 									{
 										//tuniac first assumes command line is a filepath
 										//it checks if it would be a valid path it can use
-										if(PathFileExists(szArglist[i]) || PathIsURL(szArglist[i]))
+										if (PathFileExists(szArglist[i]) || PathIsURL(szArglist[i]))
 										{
-											if(!bAddingFiles)
+											if (!bAddingFiles)
 											{
-												if(!m_MediaLibrary.BeginAdd(nArgs - 1)) break;
+												if (!m_MediaLibrary.BeginAdd(nArgs - 1)) break;
 												bAddingFiles = true;
 												bWantFocus = true;
 											}
@@ -1349,27 +1356,27 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										{
 											bQueueAddedFiles = true;
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-play")) == 0)
 										{
 											bPlayAddedFiles = true;
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-pause")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-togglepause")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-stop")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-softpause")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0);
@@ -1379,7 +1386,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-randomnext")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_RANDOMNEXT, 0), 0);
@@ -1389,7 +1396,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 										}
-										
+
 										else if (StrCmpI(szArglist[i], TEXT("-toggleshuffle")) == 0)
 										{
 											SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_TOGGLE_SHUFFLE, 0), 0);
@@ -1405,19 +1412,19 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											m_bSavePrefs = false;
 										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-wipeprefs")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-wipeprefs")) == 0)
 										{
 											m_Preferences.CleanPreferences();
 											m_Preferences.DefaultPreferences();
 										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-wipefileassoc")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-wipefileassoc")) == 0)
 											m_Preferences.m_FileAssoc.CleanAssociations();
 
-										else if(StrCmpI(szArglist[i], TEXT("-dontsaveml")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-dontsaveml")) == 0)
 											m_bSaveML = false;
 
-										else if(StrCmpI(szArglist[i], TEXT("-restore")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-restore")) == 0)
 										{
 											//TODO: Implement This
 											//m_Taskbar.ShowTrayIcon(FALSE);
@@ -1426,18 +1433,29 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											ShowWindow(hWnd, SW_SHOW);
 										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-minimize")) == 0)
 										{
 											//TODO: Implement This
 											//m_Taskbar.ShowTrayIcon(TRUE);
 											bWantFocus = false;
 											ShowWindow(hWnd, SW_MINIMIZE);
-											if(m_Preferences.GetTrayIconMode() == TrayIconMinimize)
+											if (m_Preferences.GetTrayIconMode() == TrayIconMinimize)
 												ShowWindow(m_hWnd, SW_HIDE);
 										}
 
-										else if(StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
+										else if (StrCmpI(szArglist[i], TEXT("-nofocus")) == 0)
 											bWantFocus = false;
+
+										else if (StrCmpNI(szArglist[i], TEXT("-libraryfolder="), 15) == 0)
+										{
+											StringCchCopy(m_szLibraryFolder, MAX_PATH, szArglist[i] + 15);
+											if (tuniacApp.m_LogWindow)
+											{
+												TCHAR szMessage[_MAX_PATH + 100];
+												StringCchPrintf(szMessage, 128, TEXT("Library folder changed to %s"), m_szLibraryFolder);
+												m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+											}
+										}
 
 										else if(StrCmpI(szArglist[i], TEXT("-exit")) == 0)
 										{
@@ -1815,8 +1833,8 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						case ID_FILE_FORCESAVEMEDIALIBRARY:
 							{
 								bool bOK;
-								bOK = m_MediaLibrary.SaveMediaLibrary();
-								bOK = m_PlaylistManager.SavePlaylistLibrary() && bOK;
+								bOK = m_MediaLibrary.SaveMediaLibrary(m_szLibraryFolder);
+								bOK = m_PlaylistManager.SavePlaylistLibrary(m_szLibraryFolder) && bOK;
 							
 								if (bOK && m_LogWindow)
 								{

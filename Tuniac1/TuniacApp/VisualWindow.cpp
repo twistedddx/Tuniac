@@ -290,7 +290,8 @@ bool			CVisualWindow::DestroyPluginWindow(void)
 
 	if (m_iActivePlugin != -1)
 	{
-		m_VisualArray[m_iActivePlugin].pPlugin->Detach();
+		if (m_VisualArray[m_iActivePlugin].pPlugin)
+			m_VisualArray[m_iActivePlugin].pPlugin->Detach();
 	}
 
 	if (m_WindowDC)

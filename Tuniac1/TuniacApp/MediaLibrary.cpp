@@ -498,7 +498,7 @@ bool			CMediaLibrary::RemoveEntryID(unsigned long ulEntryID)
 	return false;
 }
 
-bool CMediaLibrary::Initialize()
+bool CMediaLibrary::Initialize(LPTSTR szLibraryFolder)
 {
 	WIN32_FIND_DATA		w32fd;
 	HANDLE				hFind;
@@ -558,24 +558,24 @@ bool CMediaLibrary::Initialize()
 
 	if(!m_InfoManagerArray.GetCount())
 	{
-		if (tuniacApp.m_LogWindow)
-		{
-			tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Warning: There are no InfoManager plugins available. You will not be able to see or edit extra information on new items in the Media Library."));
-		}
+		//if (tuniacApp.m_LogWindow)
+		//{
+		//	tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Warning: There are no InfoManager plugins available. You will not be able to see or edit extra information on new items in the Media Library."));
+		//}
 		MessageBox(NULL, TEXT("Warning: There are no InfoManager plugins available.\nYou will not be able to see or edit extra information on new items in the Media Library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 	}
 
 	m_ImportExport.Initialize();
 
-	LoadMediaLibrary();
+	LoadMediaLibrary(szLibraryFolder);
 
 	return true;
 }
 
-bool CMediaLibrary::Shutdown(bool bSave)
+bool CMediaLibrary::Shutdown(LPTSTR szLibraryFolder, bool bSave)
 {
 	if(bSave)
-		SaveMediaLibrary();
+		SaveMediaLibrary(szLibraryFolder);
 
 	m_ImportExport.Shutdown();
 
@@ -679,27 +679,33 @@ bool CMediaLibrary::WriteFileTags(IPlaylistEntry * pIPE)
 	return false;
 }
 
-bool CMediaLibrary::LoadMediaLibrary(void)
+bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 {
-	TCHAR				szURL[MAX_PATH];
+
+
 	HANDLE				hLibraryFile;
 	MLDiskHeader		MLDH;
 	unsigned long		BytesRead;
 	bool				bOK = true;
+	TCHAR				szLibraryPath[MAX_PATH];
 
-
-
-	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	if (szLibraryFolder[0] == TEXT('\0'))
 	{
-		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
-	}
-	else
-	{
-		//cant get appdata path
-		return false;
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLibraryFolder)))
+		{
+			PathAppend(szLibraryFolder, TEXT("\\Tuniac"));
+		}
+		else
+		{
+			//cant get appdata path
+			return false;
+		}
 	}
 
-	hLibraryFile = CreateFile(	szURL,
+	StringCbCopy(szLibraryPath, MAX_PATH, szLibraryFolder);
+	PathAppend(szLibraryPath, TEXT("\\TuniacMediaLibrary.dat"));
+
+	hLibraryFile = CreateFile(szLibraryPath,
 							GENERIC_READ,
 							0,
 							NULL,
@@ -1008,13 +1014,13 @@ static int SavingProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-bool CMediaLibrary::SaveMediaLibrary(void)
+bool CMediaLibrary::SaveMediaLibrary(LPTSTR szLibraryFolder)
 {
-	TCHAR				szURL[MAX_PATH];
 	HANDLE				hLibraryFile;
 	MLDiskHeader		MLDH;
 	unsigned long		BytesWritten;
 	bool				bOK = true;
+	TCHAR				szLibraryPath[MAX_PATH];
 
 	HWND hSaveWnd = CreateDialog(tuniacApp.getMainInstance(), MAKEINTRESOURCE(IDD_SAVINGLIBRARY), NULL, (DLGPROC)SavingProc);
 	if(hSaveWnd)
@@ -1033,16 +1039,24 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 	SendDlgItemMessage(hSaveWnd, IDC_SAVINGLIBRARY_PROGRESS, PBM_SETRANGE32, 0, (int)(m_MediaLibrary.GetCount() / 100) + 1);
 	SendDlgItemMessage(hSaveWnd, IDC_SAVINGLIBRARY_PROGRESS, PBM_SETSTEP, 1, 0);
 
-	if ( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA, NULL, 0, szURL ) ) )
+	if (szLibraryFolder[0] == TEXT('\0'))
 	{
-		PathAppend( szURL, TEXT("\\Tuniac\\TuniacMediaLibrary.dat") );
-	}
-	else{
-		//cant get appdata path
-		return false;
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLibraryFolder)))
+		{
+			PathAppend(szLibraryFolder, TEXT("\\Tuniac"));
+		}
+		else
+		{
+			return false;
+		}
 	}
 
-	hLibraryFile = CreateFile(	szURL,
+	CreateDirectory(szLibraryFolder, 0);
+
+	StringCbCopy(szLibraryPath, MAX_PATH, szLibraryFolder);
+	PathAppend(szLibraryPath, TEXT("\\TuniacMediaLibrary.dat"));
+
+	hLibraryFile = CreateFile(szLibraryPath,
 							GENERIC_WRITE, 
 							0,
 							NULL,
@@ -1186,7 +1200,12 @@ bool CMediaLibrary::SaveMediaLibrary(void)
 
 	DestroyWindow(hSaveWnd);
 
-	//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Media Library save complete"));
+	if (tuniacApp.m_LogWindow)
+	{
+		TCHAR szMessage[_MAX_PATH + 100];
+		StringCchPrintf(szMessage, 128, TEXT("Media Library saved to %s"), szLibraryPath);
+		tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+	}
 
 	return bOK;
 }

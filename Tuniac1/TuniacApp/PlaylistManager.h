@@ -61,11 +61,11 @@ public:
 	CPlaylistManager(void);
 	~CPlaylistManager(void);
 
-	bool			Initialize(void);
-	bool			Shutdown(bool bSave = true);
+	bool			Initialize(LPTSTR szLibraryFolder);
+	bool			Shutdown(LPTSTR szLibraryFolder, bool bSave = true);
 
-	bool			SavePlaylistLibrary(void);
-	bool			LoadPlaylistLibrary(void);
+	bool			SavePlaylistLibrary(LPTSTR szLibraryFolder);
+	bool			LoadPlaylistLibrary(LPTSTR szLibraryFolder);
 
 
 	unsigned long	GetNumPlaylists(void);
