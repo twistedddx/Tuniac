@@ -192,6 +192,7 @@ public:
 	HFONT				GetTuniacFont(int size);
 
 	LPTSTR				GetTuniacBuild(void);
+	int					GetTuniacBuildNumber(void);
 
 	bool				CoreAudioMessage(unsigned long Message, void * Params);
 
