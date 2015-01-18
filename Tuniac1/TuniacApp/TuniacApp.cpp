@@ -2516,6 +2516,25 @@ LPTSTR	CTuniacApp::GetTuniacBuild(void)
 	return TEXT(__DATE__);
 }
 
+int	CTuniacApp::GetTuniacBuildNumber(void)
+{
+	static const char monthNames[12][4] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	const char* dateString = __DATE__;
+	int month = 0, day = 0;
+
+	for (int i = 0; i < 12; i++)
+		if (strncmp(dateString, monthNames[i], 3) == 0)
+			month = i + 1;
+	day = atoi(dateString + 4);
+
+	TCHAR szYYMMDD[7];
+	StringCchPrintf(szYYMMDD, 7, TEXT("%.2S%02u%02u"), dateString + 9, month, day);
+
+	return _wtoi(szYYMMDD);
+}
+
 bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylistEntry * pIPE, LPTSTR szFormat, bool bPlayState)
 {
 	memset(szDest, '\0', iDestSize);

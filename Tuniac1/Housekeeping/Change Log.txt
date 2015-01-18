@@ -1,5 +1,7 @@
 Jan, 2015
 ---------
+-Alter About Window to show date in the same as the installer filename format.
+-Add -libraryfolder command line
 -Update to Basslib 2.4.11
 
 Dec, 2014
