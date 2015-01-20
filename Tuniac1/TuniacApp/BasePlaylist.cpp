@@ -1192,37 +1192,20 @@ bool				CBasePlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 bool				CBasePlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
 {
 	//remove them all
-	while(indexArray.GetCount())
+	while (indexArray.GetCount())
 	{
-		//move active song
-		if(m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
-		{
-			if(indexArray[0] < m_ActiveRealIndex)
-			{
-				m_ActiveRealIndex--;
-			}
-			else if(indexArray[0] == m_ActiveRealIndex)
-			{
-				if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == this)
-					CCoreAudio::Instance()->Reset();
-
-				m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
-			}
-		}
-
-		m_PlaylistArray.RemoveAt(indexArray[0]);
+		DeleteRealIndex(indexArray[0]);
 
 		//move indexes to compensate for now deleted files
-		for(unsigned long i=1; i<indexArray.GetCount(); i++)
+		for (unsigned long i = 1; i<indexArray.GetCount(); i++)
 		{
 			if (indexArray[0] < indexArray[i])
-			{
 				indexArray[i]--;
-			}
 		}
 
 		indexArray.RemoveAt(0);
 	}
+
 
 	RebuildPlaylistArrays();
 	tuniacApp.RebuildFutureMenu();
@@ -1316,14 +1299,14 @@ bool				CBasePlaylist::DeleteAllItemsWhereEntryIDEquals(unsigned long ulEntryID)
 	{
 		if(m_PlaylistArray[x].pIPE->GetEntryID() == ulEntryID)
 		{
-			indexesToDelete.AddTail((unsigned long &)x);
+			return DeleteRealIndex(x);
 		}
 	}
 
-	return DeleteRealIndexArray(indexesToDelete);
+	return false;
 }
 
-bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
+bool				CBasePlaylist::UpdateRealIndex(unsigned long ulRealIndex)
 {
 	if(ulRealIndex < 0)
 		return false;
@@ -1336,6 +1319,33 @@ bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)
 	PE.pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
+	return true;
+}
+
+bool				CBasePlaylist::DeleteRealIndex(unsigned long ulRealIndex)
+{
+	//move active song
+	if (m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
+	{
+		if (ulRealIndex < m_ActiveRealIndex)
+		{
+			m_ActiveRealIndex--;
+		}
+		else if (ulRealIndex == m_ActiveRealIndex)
+		{
+			if (tuniacApp.m_PlaylistManager.GetActivePlaylist() == this)
+				CCoreAudio::Instance()->Reset();
+
+			m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
+		}
+	}
+
+	m_PlaylistArray.RemoveAt(ulRealIndex);
+
+	RebuildPlaylistArrays();
+	tuniacApp.RebuildFutureMenu();
+	tuniacApp.m_SourceSelectorWindow->UpdateView();
+
 	return true;
 }
 
