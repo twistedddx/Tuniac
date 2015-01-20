@@ -68,18 +68,22 @@ bool				CLibraryPlaylist::AddEntryToPlaylist(IPlaylistEntry * lpPLE)
 
 bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 {
+	//swap to real index
+	for (unsigned long x = 0; x<indexArray.GetCount(); x++)
+	{
+		indexArray[x] = NormalFilteredIndexToRealIndex(indexArray[x]);
+	}
+	return DeleteRealIndexArray(indexArray);
+}
+
+bool				CLibraryPlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
+{
 	bool			bRemoveFromDisk		= false;
 	TCHAR			szURL[MAX_PATH];
 
 	//user wants to remove from disk
 	if(GetKeyState(VK_SHIFT) < 0 && MessageBox(tuniacApp.getMainWindow(), TEXT("Would you like to remove the selected items from the harddrive?"), TEXT("Delete Items From Library"), MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) == IDYES)
 		bRemoveFromDisk = true;
-
-	//swap to real index
-	for(unsigned long i=0; i<indexArray.GetCount(); i++)
-	{
-		indexArray[i] = NormalFilteredIndexToRealIndex(indexArray[i]);
-	}
 
 	//remove them all
 	while(indexArray.GetCount())
@@ -110,7 +114,7 @@ bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray
 		//remove from all playlists
 		for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 		{
-			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereIDEquals(ulEntryID);
+			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
 		}
 
 		//remove from active playlist

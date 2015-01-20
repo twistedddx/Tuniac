@@ -1182,11 +1182,15 @@ bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
 bool				CBasePlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 {
 	//swap to real index
-	for(unsigned long x=0; x<indexArray.GetCount(); x++)
+	for (unsigned long x = 0; x<indexArray.GetCount(); x++)
 	{
 		indexArray[x] = NormalFilteredIndexToRealIndex(indexArray[x]);
 	}
+	return DeleteRealIndexArray(indexArray);
+}
 
+bool				CBasePlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
+{
 	//remove them all
 	while(indexArray.GetCount())
 	{
@@ -1211,8 +1215,10 @@ bool				CBasePlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray)
 		//move indexes to compensate for now deleted files
 		for(unsigned long i=1; i<indexArray.GetCount(); i++)
 		{
-			if(indexArray[0] < indexArray[i])
+			if (indexArray[0] < indexArray[i])
+			{
 				indexArray[i]--;
+			}
 		}
 
 		indexArray.RemoveAt(0);
@@ -1302,20 +1308,19 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 	return true;
 }
 
-bool				CBasePlaylist::DeleteAllItemsWhereIDEquals(unsigned long ID)
+bool				CBasePlaylist::DeleteAllItemsWhereEntryIDEquals(unsigned long ulEntryID)
 {
 	IndexArray		indexesToDelete;
 
 	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
 	{
-		if(m_PlaylistArray[x].pIPE->GetEntryID() == ID)
+		if(m_PlaylistArray[x].pIPE->GetEntryID() == ulEntryID)
 		{
-			unsigned long t = RealIndexToNormalFilteredIndex(x);
-			indexesToDelete.AddTail((unsigned long &)t);
+			indexesToDelete.AddTail((unsigned long &)x);
 		}
 	}
 
-	return DeleteNormalFilteredIndexArray(indexesToDelete);
+	return DeleteRealIndexArray(indexesToDelete);
 }
 
 bool				CBasePlaylist::UpdateIndex(unsigned long ulRealIndex)

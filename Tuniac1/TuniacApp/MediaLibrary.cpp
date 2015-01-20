@@ -117,7 +117,7 @@ unsigned long CMediaLibrary::GetEntryIDByIndex(unsigned long ulIndex)
 	return m_MediaLibrary[ulIndex]->GetEntryID();
 }
 
-unsigned long CMediaLibrary::GetEntryIDByItem(CMediaLibraryPlaylistEntry * pIPE)
+unsigned long CMediaLibrary::GetEntryIDByEntry(CMediaLibraryPlaylistEntry * pIPE)
 {
 	for(unsigned long index = 0; index < GetCount(); index++)
 	{
@@ -139,6 +139,19 @@ unsigned long CMediaLibrary::GetEntryIDByURL(LPTSTR szURL)
 		}
 	}
 	return(NULL);
+}
+
+unsigned long CMediaLibrary::GetIndexByEntryID(unsigned long ulEntryID)
+{
+	for (unsigned long index = 0; index < GetCount(); index++)
+	{
+		if (m_MediaLibrary[index]->GetEntryID() == ulEntryID)
+		{
+			return index;
+		}
+	}
+
+	return NULL;
 }
 
 bool CMediaLibrary::BeginAdd(unsigned long ulNumItems)
@@ -589,13 +602,14 @@ bool CMediaLibrary::Shutdown(LPTSTR szLibraryFolder, bool bSave)
 	return true;
 }
 
-bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
+bool CMediaLibrary::UpdateMLEntryByIndex(unsigned long ulMLIndex)
 {
 	if(ulMLIndex > GetCount())
 		return false;
 
 	CMediaLibraryPlaylistEntry *	pIPE = GetEntryByIndex(ulMLIndex);
 	LPTSTR szURL = (LPTSTR)pIPE->GetField(FIELD_URL);
+
 
 	//stream
 	if(PathIsURL(szURL))
@@ -630,8 +644,10 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 			{
 				if(m_InfoManagerArray[plugin].pInfoManager->CanHandle(szURL))
 				{
-					if(m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+					if (m_InfoManagerArray[plugin].pInfoManager->GetInfo(&libraryEntry))
+					{
 						break;
+					}
 				}
 			}
 
@@ -645,6 +661,7 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 
 			unsigned long ulEntryID = pIPE->GetEntryID();
 			unsigned long ulPlayCount = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT);
+
 
 			CMediaLibraryPlaylistEntry * newpIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -660,6 +677,11 @@ bool CMediaLibrary::UpdateMLIndex(unsigned long ulMLIndex)
 		}
 	}
 	return false;
+}
+
+bool CMediaLibrary::UpdateMLEntryByEntryID(unsigned long ulEntryID)
+{
+	return UpdateMLEntryByIndex(GetIndexByEntryID(ulEntryID));
 }
 
 //todo bits: per column tag writing?

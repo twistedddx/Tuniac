@@ -134,10 +134,11 @@ public:
 
 	bool				AddEntryArray(EntryArray & entryArray);
 
+	bool				DeleteRealIndexArray(IndexArray &	indexArray);
 	bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray);
 	bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray);
 
-	bool				DeleteAllItemsWhereIDEquals(unsigned long ID);
+	bool				DeleteAllItemsWhereEntryIDEquals(unsigned long ulEntryID);
 	bool				UpdateIndex(unsigned long ulRealIndex);
 
 	void				SaveOrder(void);
