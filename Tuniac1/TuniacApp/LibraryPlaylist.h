@@ -38,6 +38,7 @@ public:
 	unsigned long		GetFlags(void);
 
 	bool				AddEntryToPlaylist(IPlaylistEntry * lpPLE);
+	bool				DeleteRealIndexArray(IndexArray &	indexArray);
 	bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray);
 
 	unsigned long		GetRealCount(void);

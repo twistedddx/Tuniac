@@ -911,32 +911,30 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							HWND		hListViewWnd	= GetDlgItem(hDlg, IDC_PLAYLIST_LIST);
 							int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
+
 							if(iPos == -1)
 								break;
 
 							while(iPos != -1)
 							{
-								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(iPos - deletedIndexes);
-								if(!tuniacApp.m_MediaLibrary.UpdateMLIndex(realIndex))
+								unsigned long ulEntryID = m_pPlaylist->GetEntryIDAtNormalFilteredIndex(iPos - deletedIndexes);
+								if (!tuniacApp.m_MediaLibrary.UpdateMLEntryByEntryID(ulEntryID))
 								{
-									IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByIndex(realIndex);
-									if(pIPE)
-									{
-										unsigned long ulEntryID = pIPE->GetEntryID();
-										for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+										for (unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
 										{
 											IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-											if(pPlaylist)
+											if (pPlaylist)
 											{
-												if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-													((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereIDEquals(ulEntryID);
+												if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+													((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
 											}
 										}
 										tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
 										ListView_SetItemState(hListViewWnd, iPos, 0, LVIS_SELECTED);
 										deletedIndexes++;
-									}
 								}
+
+								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(iPos - deletedIndexes);
 
 								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(realIndex);
 
@@ -948,7 +946,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							}
 							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
-							tuniacApp.RebuildFutureMenu();
 							Update();
 						}
 						break;

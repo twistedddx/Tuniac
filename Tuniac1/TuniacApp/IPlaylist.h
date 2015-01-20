@@ -170,10 +170,11 @@ public:
 
 	virtual bool				AddEntryArray(EntryArray & entryArray)			= 0;
 
+	virtual bool				DeleteRealIndexArray(IndexArray &	indexArray) = 0;
 	virtual bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray)							= 0;
 	virtual bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
 
-	virtual bool				DeleteAllItemsWhereIDEquals(unsigned long ID)	= 0;
+	virtual bool				DeleteAllItemsWhereEntryIDEquals(unsigned long ID)	= 0;
 	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;
 
 	virtual void				SaveOrder(void)									= 0;

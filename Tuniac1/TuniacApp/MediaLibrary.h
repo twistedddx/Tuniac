@@ -94,7 +94,9 @@ public:
 	bool					RemoveEntry(IPlaylistEntry *			pIPE);
 	bool					RemoveEntryID(unsigned long ulEntryID);
 
-	bool					UpdateMLIndex(unsigned long	ulMLIndex);
+	bool					UpdateMLEntryByIndex(unsigned long	ulMLIndex);
+	bool					UpdateMLEntryByEntryID(unsigned long	ulEntryID);
+
 //todo bits: per column tag writing?
 //	bool					WriteFileTags(LPTSTR szURL, unsigned long ulFieldID, void * pNewData);
 	bool					WriteFileTags(IPlaylistEntry * pIPE);
@@ -104,8 +106,10 @@ public:
 	CMediaLibraryPlaylistEntry *	GetEntryByURL(LPTSTR		szURL);
 
 	unsigned long			GetEntryIDByIndex(unsigned long	ulIndex);
-	unsigned long			GetEntryIDByItem(CMediaLibraryPlaylistEntry *		pIPE);
+	unsigned long			GetEntryIDByEntry(CMediaLibraryPlaylistEntry *		pIPE);
 	unsigned long			GetEntryIDByURL(LPTSTR		szURL);
+
+	unsigned long			GetIndexByEntryID(unsigned long ulEntryID);
 
 	IInfoManager	*		GetInfoManagerForFilename(LPTSTR szItemToAdd);
 };
