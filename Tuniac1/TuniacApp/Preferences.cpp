@@ -1098,19 +1098,20 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 									tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
 									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
+									tuniacApp.m_SourceSelectorWindow->UpdateView();
 								}
 							}
 
 							for(unsigned long ulRealIndex = 0; ulRealIndex < tuniacApp.m_PlaylistManager.m_LibraryPlaylist.GetRealCount(); ulRealIndex++)
 							{
-								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(ulRealIndex);
+								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateRealIndex(ulRealIndex);
 							}
 
 							for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 							{
 								for(unsigned long ulRealIndex = 0; ulRealIndex < tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->GetRealCount(); ulRealIndex++)
 								{
-									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateIndex(ulRealIndex);
+									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateRealIndex(ulRealIndex);
 								}
 							}
 

@@ -139,7 +139,8 @@ public:
 	bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray);
 
 	bool				DeleteAllItemsWhereEntryIDEquals(unsigned long ulEntryID);
-	bool				UpdateIndex(unsigned long ulRealIndex);
+	bool				UpdateRealIndex(unsigned long ulRealIndex);
+	bool				DeleteRealIndex(unsigned long ulRealIndex);
 
 	void				SaveOrder(void);
 	void				RestoreOrder(void);

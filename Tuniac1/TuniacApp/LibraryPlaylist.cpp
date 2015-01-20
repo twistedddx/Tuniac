@@ -76,76 +76,87 @@ bool				CLibraryPlaylist::DeleteNormalFilteredIndexArray(IndexArray &	indexArray
 	return DeleteRealIndexArray(indexArray);
 }
 
-bool				CLibraryPlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
+bool				CLibraryPlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 {
-	bool			bRemoveFromDisk		= false;
+	bool			bRemoveFromDisk = false;
 	TCHAR			szURL[MAX_PATH];
 
 	//user wants to remove from disk
-	if(GetKeyState(VK_SHIFT) < 0 && MessageBox(tuniacApp.getMainWindow(), TEXT("Would you like to remove the selected items from the harddrive?"), TEXT("Delete Items From Library"), MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) == IDYES)
+	if (GetKeyState(VK_SHIFT) < 0 && MessageBox(tuniacApp.getMainWindow(), TEXT("Would you like to remove the selected items from the harddrive?"), TEXT("Delete Items From Library"), MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) == IDYES)
 		bRemoveFromDisk = true;
 
+
+	//move active song
+	if (m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
+	{
+		if (ulRealIndex < m_ActiveRealIndex)
+		{
+			m_ActiveRealIndex--;
+		}
+		else if (ulRealIndex == m_ActiveRealIndex)
+		{
+			if (bRemoveFromDisk && (tuniacApp.m_PlaylistManager.GetActivePlaylist() == this))
+				CCoreAudio::Instance()->Reset();
+
+			m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
+		}
+	}
+
+	unsigned long ulEntryID = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
+	if (bRemoveFromDisk)
+	{
+		ZeroMemory(szURL, MAX_PATH);
+		StringCchCopy(szURL, MAX_PATH, (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
+	}
+
+	//remove from all playlists
+	for (unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
+	{
+		tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
+		RebuildPlaylistArrays();
+		tuniacApp.RebuildFutureMenu();
+		tuniacApp.m_SourceSelectorWindow->UpdateView();
+	}
+
+	//remove from active playlist
+	m_PlaylistArray.RemoveAt(ulRealIndex);
+
+	//remove from ML
+	tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
+
+	//remove from disk
+	if (bRemoveFromDisk)
+	{
+		if (tuniacApp.m_LogWindow)
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
+		}
+		if (!PathIsURL(szURL))
+		{
+			SHFILEOPSTRUCT				op;
+
+			op.hwnd = tuniacApp.getMainWindow();
+			op.wFunc = FO_DELETE;
+			op.pFrom = szURL;
+			op.pTo = NULL;
+			op.fFlags = FOF_ALLOWUNDO | FOF_WANTNUKEWARNING | FOF_NOCONFIRMATION;
+			op.fAnyOperationsAborted = true;
+			op.hNameMappings = NULL;
+			op.lpszProgressTitle = NULL;
+
+			::SHFileOperation(&op);
+		}
+	}
+
+	return true;
+}
+
+bool				CLibraryPlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
+{
 	//remove them all
 	while(indexArray.GetCount())
 	{
-		//move active song
-		if(m_ActiveRealIndex != INVALID_PLAYLIST_INDEX)
-		{
-			if(indexArray[0] < m_ActiveRealIndex)
-			{
-				m_ActiveRealIndex--;
-			}
-			else if(indexArray[0] == m_ActiveRealIndex)
-			{
-				if(bRemoveFromDisk && (tuniacApp.m_PlaylistManager.GetActivePlaylist() == this))
-					CCoreAudio::Instance()->Reset();
-
-				m_ActiveRealIndex = INVALID_PLAYLIST_INDEX;
-			}
-		}
-
-		unsigned long ulEntryID = m_PlaylistArray[indexArray[0]].pIPE->GetEntryID();
-		if(bRemoveFromDisk)
-		{
-			ZeroMemory(szURL, MAX_PATH);
-			StringCchCopy(szURL, MAX_PATH, (LPTSTR)m_PlaylistArray[indexArray[0]].pIPE->GetField(FIELD_URL));
-		}
-
-		//remove from all playlists
-		for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
-		{
-			tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
-		}
-
-		//remove from active playlist
-		m_PlaylistArray.RemoveAt(indexArray[0]);
-
-		//remove from ML
-		tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
-
-		//remove from disk
-		if(bRemoveFromDisk)
-		{
-			if (tuniacApp.m_LogWindow)
-			{
-				tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
-			}
-			if(!PathIsURL(szURL))
-			{
-				SHFILEOPSTRUCT				op;
-
-				op.hwnd						= tuniacApp.getMainWindow();
-				op.wFunc					= FO_DELETE;
-				op.pFrom					= szURL;
-				op.pTo						= NULL;
-				op.fFlags					= FOF_ALLOWUNDO | FOF_WANTNUKEWARNING | FOF_NOCONFIRMATION;
-				op.fAnyOperationsAborted	= true;
-				op.hNameMappings			= NULL;
-				op.lpszProgressTitle		= NULL;
-
-				::SHFileOperation(&op);
-			}
-		}
+		DeleteRealIndex(indexArray[0]);
 
 		//move indexes to compensate for now deleted files
 		for(unsigned long i=1; i<indexArray.GetCount(); i++)
@@ -156,11 +167,6 @@ bool				CLibraryPlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
 
 		indexArray.RemoveAt(0);
 	}
-
-	//refresh playlists and view
-	RebuildPlaylistArrays();
-	tuniacApp.RebuildFutureMenu();
-	tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
 }

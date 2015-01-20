@@ -936,16 +936,17 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(iPos - deletedIndexes);
 
-								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateIndex(realIndex);
+								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateRealIndex(realIndex);
 
 								for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 								{
-									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateIndex(realIndex);
+									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateRealIndex(realIndex);
 								}
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
 							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
+							tuniacApp.m_SourceSelectorWindow->UpdateView();
 							Update();
 						}
 						break;

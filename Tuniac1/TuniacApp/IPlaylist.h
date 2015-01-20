@@ -175,7 +175,8 @@ public:
 	virtual bool				MoveNormalFilteredIndexArray(unsigned long ToIndex, IndexArray &	indexArray) = 0;
 
 	virtual bool				DeleteAllItemsWhereEntryIDEquals(unsigned long ID)	= 0;
-	virtual bool				UpdateIndex(unsigned long ulRealIndex)			= 0;
+	virtual bool				UpdateRealIndex(unsigned long ulRealIndex)			= 0;
+	virtual bool				DeleteRealIndex(unsigned long ulRealIndex)			= 0;
 
 	virtual void				SaveOrder(void)									= 0;
 	virtual void				RestoreOrder(void)								= 0;

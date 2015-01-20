@@ -39,6 +39,7 @@ public:
 
 	bool				AddEntryToPlaylist(IPlaylistEntry * lpPLE);
 	bool				DeleteRealIndexArray(IndexArray &	indexArray);
+	bool				DeleteRealIndex(unsigned long ulRealIndex);
 	bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray);
 
 	unsigned long		GetRealCount(void);
