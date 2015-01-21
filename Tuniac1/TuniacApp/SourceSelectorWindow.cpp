@@ -845,6 +845,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 									}
 
 									((IPlaylistEX *)pPlaylist)->DeleteNormalFilteredIndexArray(deleteArray);
+									deleteArray.RemoveAll();
 
 									if(pActiveEntry != NULL)
 									{
@@ -1242,8 +1243,6 @@ bool			CSourceSelectorWindow::UpdateList()
 
 bool			CSourceSelectorWindow::UpdateView()
 {
-
-
 	if(m_pVisibleView)
 	{
 		m_pVisibleView->Update();

@@ -265,8 +265,6 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 					if(!tuniacApp.PlayEntry(pPlaylist->GetEntryAtNormalFilteredIndex(0), false, false))
 						pPlaylist->SetActiveNormalFilteredIndex(0);
 				}
-					
-				pPlaylist->RebuildPlaylistArrays();
 			}
 			else
 				pPlaylist->ApplyFilter();
@@ -299,7 +297,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				if(!tuniacApp.PlayEntry(m_LibraryPlaylist.GetEntryAtNormalFilteredIndex(0), false, false))
 				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 			}
-			m_LibraryPlaylist.RebuildPlaylistArrays();
+			//m_LibraryPlaylist.RebuildPlaylistArrays();
 		}
 		else
 			m_LibraryPlaylist.ApplyFilter();

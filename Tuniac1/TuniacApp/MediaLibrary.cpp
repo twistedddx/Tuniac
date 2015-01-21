@@ -203,8 +203,6 @@ bool CMediaLibrary::EndAdd(void)
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 	m_bNotInitialML = true;
 
-
-
 	return true;
 }
 
@@ -503,6 +501,9 @@ bool			CMediaLibrary::RemoveEntryID(unsigned long ulEntryID)
 	{
 		if(m_MediaLibrary[x]->GetEntryID()== ulEntryID)
 		{
+			TCHAR szMessage[512];
+			StringCchPrintf(szMessage, 512, TEXT("Deleting %s"), (LPTSTR)m_MediaLibrary[x]->GetField(FIELD_URL));
+			tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
 			delete m_MediaLibrary[x];
 			m_MediaLibrary.RemoveAt(x);
 			return true;

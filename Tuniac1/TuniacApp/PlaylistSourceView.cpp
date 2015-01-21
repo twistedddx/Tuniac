@@ -691,7 +691,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						CheckMenuItem(m_FilterByFieldMenu, FILTERBYFIELD_MENUBASE + 15, MF_BYCOMMAND | (bReverse ? MF_CHECKED : MF_UNCHECKED));
 						m_pPlaylist->SetTextFilterReversed(bReverse);
 						m_pPlaylist->ApplyFilter();
-						Update();
 
 						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 						{
@@ -735,7 +734,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					{
 						m_pPlaylist->SetTextFilterField(ulFilterByField);
 						m_pPlaylist->ApplyFilter();
-						Update();
 
 						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 						{
@@ -894,12 +892,29 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								m_pPlaylist->DeleteNormalFilteredIndexArray(m_DeleteArray);
 								m_DeleteArray.RemoveAll();
 
+								//if deleted from ML it may have removed the file from numerous playlists, refresh them all
+								if (m_pPlaylist->GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
+								{
+									for (unsigned long x = 0; x < tuniacApp.m_PlaylistManager.GetNumPlaylists(); x++)
+									{
+										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+										if (pPlaylist)
+										{
+											//song tags may have changed, reapply filter
+											if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+												((IPlaylistEX *)pPlaylist)->ApplyFilter();
+										}
+									}
+								}
+								else
+								{
+									m_pPlaylist->ApplyFilter();
+								}
+
 								if((m_pPlaylist->GetActiveEntry() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
 								{
 									CCoreAudio::Instance()->Reset();
 								}
-								tuniacApp.RebuildFutureMenu();
-								Update();
 							}
 						}
 						break;
@@ -918,36 +933,47 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							while(iPos != -1)
 							{
 								unsigned long ulEntryID = m_pPlaylist->GetEntryIDAtNormalFilteredIndex(iPos - deletedIndexes);
-								if (!tuniacApp.m_MediaLibrary.UpdateMLEntryByEntryID(ulEntryID))
+								if (tuniacApp.m_MediaLibrary.UpdateMLEntryByEntryID(ulEntryID))
 								{
-										for (unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+									//update success now update through playlists
+									for (unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
+									{
+										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
+										if (pPlaylist)
 										{
-											IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-											if (pPlaylist)
+											if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 											{
-												if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-													((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
+												((IPlaylistEX *)pPlaylist)->UpdateRealIndex(((IPlaylistEX *)pPlaylist)->GetRealIndexforEntryID(ulEntryID));
 											}
+
 										}
-										tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
-										ListView_SetItemState(hListViewWnd, iPos, 0, LVIS_SELECTED);
-										deletedIndexes++;
+									}
 								}
-
-								unsigned long realIndex = m_pPlaylist->NormalFilteredIndexToRealIndex(iPos - deletedIndexes);
-
-								tuniacApp.m_PlaylistManager.m_LibraryPlaylist.UpdateRealIndex(realIndex);
-
-								for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
+								else
 								{
-									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateRealIndex(realIndex);
+									//update fail, remove the file from playlists. DeleteRealIndex in LibraryPlaylist will clear out all playlists
+									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.DeleteAllItemsWhereEntryIDEquals(ulEntryID);
+									//ListView_SetItemState(hListViewWnd, iPos, 0, LVIS_SELECTED);
+									deletedIndexes++;
 								}
 								iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED) ;
 							}
-							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
-							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
-							tuniacApp.m_SourceSelectorWindow->UpdateView();
-							Update();
+
+							for (unsigned long x = 0; x < tuniacApp.m_PlaylistManager.GetNumPlaylists(); x++)
+							{
+								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+								if (pPlaylist)
+								{
+									//song tags may have changed, reapply filter
+									if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+										((IPlaylistEX *)pPlaylist)->ApplyFilter();
+								}
+							}
+
+							if ((m_pPlaylist->GetActiveEntry() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
+							{
+								CCoreAudio::Instance()->Reset();
+							}
 						}
 						break;
 
@@ -1376,15 +1402,15 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								//del key press(del item from playlist)
 								case VK_DELETE:
 									{
-										if(m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANDELETE)
+										if (m_pPlaylist->GetFlags() & PLAYLISTEX_FLAGS_CANDELETE)
 										{
 											IndexArray	m_DeleteArray;
 
 											HWND hListViewWnd = GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_LIST);
 											int iPos = ListView_GetNextItem(hListViewWnd, -1, LVNI_SELECTED);
-											if(iPos == -1)
+											if (iPos == -1)
 												break;
-											while(iPos != -1)
+											while (iPos != -1)
 											{
 												m_DeleteArray.AddTail((unsigned long &)iPos);
 												iPos = ListView_GetNextItem(hListViewWnd, iPos, LVNI_SELECTED);
@@ -1392,6 +1418,30 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											ListView_SetItemState(hListViewWnd, -1, 0, LVIS_SELECTED);
 											m_pPlaylist->DeleteNormalFilteredIndexArray(m_DeleteArray);
 											m_DeleteArray.RemoveAll();
+
+											//if deleted from ML it may have removed the file from numerous playlists, refresh them all
+											if (m_pPlaylist->GetPlaylistType() == PLAYLIST_TYPE_MEDIALIBRARY)
+											{
+												for (unsigned long x = 0; x < tuniacApp.m_PlaylistManager.GetNumPlaylists(); x++)
+												{
+													IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+													if (pPlaylist)
+													{
+														//song tags may have changed, reapply filter
+														if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+															((IPlaylistEX *)pPlaylist)->ApplyFilter();
+													}
+												}
+											}
+											else
+											{
+												m_pPlaylist->ApplyFilter();
+											}
+
+											if ((m_pPlaylist->GetActiveEntry() == NULL) && (m_pPlaylist == tuniacApp.m_PlaylistManager.GetActivePlaylist()))
+											{
+												CCoreAudio::Instance()->Reset();
+											}
 										}
 									}
 									break;
@@ -1930,7 +1980,6 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_CLEARFILTER), SW_HIDE);
 							ShowWindow(GetDlgItem(hDlg, IDC_PLAYLIST_SOURCE_MAKEPLAYLIST), SW_HIDE);
 						}
-						Update();
 
 						if(tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylistIndex() == tuniacApp.m_PlaylistManager.GetActivePlaylistIndex() && tuniacApp.m_Preferences.GetFollowCurrentSongMode())
 						{

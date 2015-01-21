@@ -86,7 +86,7 @@ void CAlbumArt::SetJPEGErrorMessage(char * szError)
 	strcpy_s(szErrorMessage, szError);
 }
 
-bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LPTSTR szMimeType)
+bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, LPTSTR szMimeType)
 {
 	CAutoLock lock(&m_ArtLock);
 
@@ -96,7 +96,7 @@ bool CAlbumArt::SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LP
 		{
 			//jpeglib-turbo error, check if its likely a png file!
 			if(strcmp(szErrorMessage, "Not a JPEG file: starts with 0x89 0x50") == 0)
-				return SetSource(pCompressedData, ulDataLength, L"image/png");
+				return LoadSource(pCompressedData, ulDataLength, L"image/png");
 			else
 				return false;
 		}
@@ -197,10 +197,10 @@ bool CAlbumArt::SetSource(LPTSTR szFilename)
 		file.read((char*)(&buffer[0]), size);
 
 	if(StrStrI(szFilename, TEXT(".jpeg")) || StrStrI(szFilename, TEXT(".jpg")) || StrStrI(szFilename, TEXT(".jpe")))
-		return SetSource(&buffer[0], size, TEXT("image/jpeg"));
+		return LoadSource(&buffer[0], size, TEXT("image/jpeg"));
 
 	if( StrStrI(szFilename, TEXT(".png")) )
-		return SetSource(&buffer[0], size, TEXT("image/png"));
+		return LoadSource(&buffer[0], size, TEXT("image/png"));
 
 	return false;
 }

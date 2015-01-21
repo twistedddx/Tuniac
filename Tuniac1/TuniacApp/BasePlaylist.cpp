@@ -175,8 +175,15 @@ bool				CBasePlaylist::ApplyFilter(void)
 		}
 	}
 
+	if (tuniacApp.m_LogWindow)
+	{
+		tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), TEXT("ApplyFilter"));
+	}
+
 	RebuildPlaylistArrays();
 	tuniacApp.RebuildFutureMenu();
+	if (tuniacApp.m_SourceSelectorWindow)
+		tuniacApp.m_SourceSelectorWindow->UpdateView();
 
 	return true;
 }
@@ -1206,11 +1213,6 @@ bool				CBasePlaylist::DeleteRealIndexArray(IndexArray &	indexArray)
 		indexArray.RemoveAt(0);
 	}
 
-
-	RebuildPlaylistArrays();
-	tuniacApp.RebuildFutureMenu();
-	tuniacApp.m_SourceSelectorWindow->UpdateView();
-
 	return true;
 }
 
@@ -1293,12 +1295,11 @@ bool				CBasePlaylist::MoveNormalFilteredIndexArray(unsigned long ToIndex, Index
 
 bool				CBasePlaylist::DeleteAllItemsWhereEntryIDEquals(unsigned long ulEntryID)
 {
-	IndexArray		indexesToDelete;
-
 	for(unsigned long x=0; x<m_PlaylistArray.GetCount(); x++)
 	{
 		if(m_PlaylistArray[x].pIPE->GetEntryID() == ulEntryID)
 		{
+
 			return DeleteRealIndex(x);
 		}
 	}
@@ -1317,6 +1318,11 @@ bool				CBasePlaylist::UpdateRealIndex(unsigned long ulRealIndex)
 	PlaylistEntry PE;
 	unsigned long ulEntryID = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 	PE.pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
+
+	TCHAR szMessage[512];
+	StringCchPrintf(szMessage, 512, TEXT("Updating %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
+	tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
+
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
 	return true;
@@ -1340,11 +1346,11 @@ bool				CBasePlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 		}
 	}
 
-	m_PlaylistArray.RemoveAt(ulRealIndex);
+	TCHAR szMessage[512];
+	StringCchPrintf(szMessage, 512, TEXT("Deleting %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
+	tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
 
-	RebuildPlaylistArrays();
-	tuniacApp.RebuildFutureMenu();
-	tuniacApp.m_SourceSelectorWindow->UpdateView();
+	m_PlaylistArray.RemoveAt(ulRealIndex);
 
 	return true;
 }
@@ -1382,6 +1388,5 @@ void				CBasePlaylist::RestoreOrder(void)
 			m_PlaylistArray.AddTail(PE);
 		}
 		ApplyFilter();
-		tuniacApp.m_SourceSelectorWindow->UpdateView();
 	}
 }
