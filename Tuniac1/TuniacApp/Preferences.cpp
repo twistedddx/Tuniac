@@ -1084,21 +1084,8 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							{
 								if(!tuniacApp.m_MediaLibrary.UpdateMLEntryByIndex(ulMLIndex))
 								{
-									IPlaylistEntry * pIPE = tuniacApp.m_MediaLibrary.GetEntryByIndex(ulMLIndex);
-									unsigned long ulEntryID = pIPE->GetEntryID();
-									for(unsigned long list = 0; list < tuniacApp.m_PlaylistManager.GetNumPlaylists(); list++)
-									{
-										IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(list);
-										if(pPlaylist)
-										{
-											if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
-												((IPlaylistEX *)pPlaylist)->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
-										}
-									}
-									tuniacApp.m_MediaLibrary.RemoveEntryID(ulEntryID);
-									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
-									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
-									tuniacApp.m_SourceSelectorWindow->UpdateView();
+									//update fail, remove the file from playlists. DeleteRealIndex in LibraryPlaylist will clear out all playlists
+									tuniacApp.m_PlaylistManager.m_LibraryPlaylist.DeleteAllItemsWhereEntryIDEquals(tuniacApp.m_MediaLibrary.GetEntryIDByIndex(ulMLIndex));
 								}
 							}
 
@@ -1113,11 +1100,9 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 								{
 									tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->UpdateRealIndex(ulRealIndex);
 								}
+								tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->ApplyFilter();
 							}
-
-							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 							tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
-							tuniacApp.m_SourceSelectorWindow->UpdateView();
 						}
 						break;
 

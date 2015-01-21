@@ -113,9 +113,6 @@ bool				CLibraryPlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 	for (unsigned long list = 0; list < tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount(); list++)
 	{
 		tuniacApp.m_PlaylistManager.m_StandardPlaylists[list]->DeleteAllItemsWhereEntryIDEquals(ulEntryID);
-		RebuildPlaylistArrays();
-		tuniacApp.RebuildFutureMenu();
-		tuniacApp.m_SourceSelectorWindow->UpdateView();
 	}
 
 	//remove from active playlist

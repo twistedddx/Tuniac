@@ -3032,7 +3032,7 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 		unsigned long artType;
 		if(pManager->GetAlbumArt(0, &art, &ulSize, szMimeType, &artType))
 		{
-			if(m_AlbumArtPanel.SetSource(art, ulSize, szMimeType))
+			if(m_AlbumArtPanel.LoadSource(art, ulSize, szMimeType))
 			{
 				bArtSuccess = true;
 				m_AlbumArtPanel.SetCurrentArtSource(szSource);

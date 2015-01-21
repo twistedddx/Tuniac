@@ -53,7 +53,7 @@ public:
 	LPTSTR	GetCurrentArtSource(void);
 	void	SetCurrentArtSource(LPTSTR szNewArtSource);
 
-	bool	SetSource(LPVOID pCompressedData, unsigned long ulDataLength, LPTSTR szMimeType);
+	bool	LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, LPTSTR szMimeType);
 	bool	SetSource(LPTSTR szFilename);
 
 
