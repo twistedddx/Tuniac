@@ -1,6 +1,7 @@
 Jan, 2015
 ---------
--fix Update file.
+-fix EQ screen in preferences
+-fix Update/Remove file.
 -minor optimizations to Update.
 -Alter About Window to show date in the same as the installer filename format.
 -Add -libraryfolder command line

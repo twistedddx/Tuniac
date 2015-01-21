@@ -273,9 +273,9 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
 
 		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.LibraryFilterField == 29)
-			m_LibraryPlaylist.SetTextFilterField(30);
+			m_LibraryPlaylist.SetTextFilterField(FIELD_MAXFIELD);
 		else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && PLDH.LibraryFilterField == 28)
-			m_LibraryPlaylist.SetTextFilterField(30);
+			m_LibraryPlaylist.SetTextFilterField(FIELD_MAXFIELD);
 		else
 			m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
 
