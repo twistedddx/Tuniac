@@ -590,7 +590,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					{
 						if (tuniacApp.m_LogWindow)
 						{
-							tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Error Creating Plugin Window."));
+							if (tuniacApp.m_LogWindow->GetLogOn())
+							{
+								tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Error Creating Plugin Window."));
+							}
 						}
 						MessageBox(hWnd, TEXT("Error Creating Plugin Window."), TEXT("Non Fatal Error..."), MB_OK | MB_ICONSTOP);
 
@@ -613,7 +616,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				m_hFutureMenu = CreatePopupMenu();
 				if (tuniacApp.m_LogWindow)
 				{
-					m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Initialization Complete"));
+					if (tuniacApp.m_LogWindow->GetLogOn())
+					{
+						m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("Initialization Complete"));
+					}
 				}
 			}
 			break;
@@ -838,7 +844,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 							}
@@ -851,7 +860,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_STOP event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_STOP event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 							}
@@ -864,7 +876,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							}
@@ -877,7 +892,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PREV_TRACK event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("VK_MEDIA_PREV_TRACK event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
@@ -920,7 +938,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY_PAUSE event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY_PAUSE event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 							}
@@ -930,7 +951,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_STOP event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_STOP event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 							}
@@ -940,7 +964,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PAUSE event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PAUSE event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
 							}
@@ -950,7 +977,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PLAY event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAY, 0), 0);
 							}
@@ -960,7 +990,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_NEXTTRACK event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_NEXTTRACK event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 							}
@@ -970,7 +1003,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PREVIOUSTRACK event"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										tuniacApp.m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("APPCOMMAND_MEDIA_PREVIOUSTRACK event"));
+									}
 								}
 								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 							}
@@ -1084,10 +1120,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								{
 									if (tuniacApp.m_LogWindow)
 									{
-										TCHAR szMessage[_MAX_PATH + 100];
-										StringCchPrintf(szMessage, 128, TEXT("File %s failed to playback."),
-											pIPE->GetField(FIELD_URL));
-										m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+										if (tuniacApp.m_LogWindow->GetLogOn())
+										{
+											TCHAR szMessage[_MAX_PATH + 100];
+											StringCchPrintf(szMessage, 128, TEXT("File %s failed to playback."), pIPE->GetField(FIELD_URL));
+											m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+										}
 									}
 
 									pIPE->SetField(FIELD_AVAILABILITY, (unsigned long)AVAILABLILITY_UNAVAILABLE);
@@ -1121,7 +1159,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								if (tuniacApp.m_LogWindow)
 								{
-									m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("10 files in a row failed playback. Drive offline?"));
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										m_LogWindow->LogMessage(TEXT("TuniacApp"), TEXT("10 files in a row failed playback. Drive offline?"));
+									}
 								}
 								UpdateState();
 								m_SourceSelectorWindow->UpdateView();
@@ -1232,7 +1273,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PLAY event"));
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PLAY event"));
+						}
 					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 				}
@@ -1241,7 +1285,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_STOP event"));
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_STOP event"));
+						}
 					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 				}
@@ -1250,7 +1297,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_NEXT event"));
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_NEXT event"));
+						}
 					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 				}
@@ -1264,7 +1314,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				{
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PREV event"));
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_PREV event"));
+						}
 					}
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 				}
@@ -1451,9 +1504,12 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 											StringCchCopy(m_szLibraryFolder, MAX_PATH, szArglist[i] + 15);
 											if (tuniacApp.m_LogWindow)
 											{
-												TCHAR szMessage[_MAX_PATH + 100];
-												StringCchPrintf(szMessage, 128, TEXT("Library folder changed to %s"), m_szLibraryFolder);
-												m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+												if (tuniacApp.m_LogWindow->GetLogOn())
+												{
+													TCHAR szMessage[MAX_PATH + 100];
+													StringCchPrintf(szMessage, 128, TEXT("Library folder changed to %s"), m_szLibraryFolder);
+													m_LogWindow->LogMessage(TEXT("TuniacApp"), szMessage);
+												}
 											}
 										}
 
@@ -1838,12 +1894,15 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							
 								if (bOK && m_LogWindow)
 								{
-									TCHAR szMessage[128];
-									StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\r\n		%u entries total.\r\n		%u standard playlists."), 
-													m_MediaLibrary.GetCount(), 
-													m_PlaylistManager.m_StandardPlaylists.GetCount());
+									if (tuniacApp.m_LogWindow->GetLogOn())
+									{
+										TCHAR szMessage[128];
+										StringCchPrintf(szMessage, 128, TEXT("MediaLibrary has been saved.\r\n		%u entries total.\r\n		%u standard playlists."),
+											m_MediaLibrary.GetCount(),
+											m_PlaylistManager.m_StandardPlaylists.GetCount());
 
-									m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+										m_LogWindow->LogMessage(TEXT("MediaLibrary"), szMessage);
+									}
 								}
 							}
 							break;
@@ -2452,9 +2511,12 @@ bool CTuniacApp::RegisterHotkeys(void)
 	//our hotkeys
 	if (RegisterHotKey(m_hWnd, HOTKEY_PLAY, MOD_WIN, VK_NUMPAD5) == 0)
 	{
-		if (m_LogWindow)
+		if (tuniacApp.m_LogWindow)
 		{
-			m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
+			if (tuniacApp.m_LogWindow->GetLogOn())
+			{
+				m_LogWindow->LogMessage(TEXT("HotKey Register"), TEXT("Error registering hotkey"));
+			}
 		}
 	}
 

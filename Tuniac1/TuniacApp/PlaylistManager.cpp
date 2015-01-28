@@ -185,13 +185,25 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 
 	if(ulBytesRead != sizeof(PLDH))
 	{
-		//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+		//if (tuniacApp.m_LogWindow)
+		//{
+		//	if (tuniacApp.m_LogWindow->GetLogOn())
+		//	{
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+		//	}
+		//}
 		MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
 	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
 	{
-		//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is saved in an incompatable version, resetting playlists."));
+		//if (tuniacApp.m_LogWindow)
+		//{
+		//	if (tuniacApp.m_LogWindow->GetLogOn())
+		//	{
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is saved in an incompatable version, resetting playlists."));
+		//	}
+		//}
 		MessageBox(NULL, TEXT("Playlist Library is saved in an incompatable version, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
@@ -209,7 +221,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 			ReadFile(hFile, &SubHeader, sizeof(PLDiskSubHeader), &ulBytesRead, NULL);
 			if(ulBytesRead != sizeof(PLDiskSubHeader))
 			{
-				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+				//if (tuniacApp.m_LogWindow)
+				//{
+				//	if (tuniacApp.m_LogWindow->GetLogOn())
+				//	{
+						//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+				//	}
+				//}
 				MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				delete pPlaylist;
 				m_StandardPlaylists.RemoveAll();
@@ -224,7 +242,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				ReadFile(hFile, &ulEntryID, sizeof(unsigned long), &ulBytesRead, NULL);
 				if(ulBytesRead != sizeof(unsigned long))
 				{
-					//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+					//if (tuniacApp.m_LogWindow)
+					//{
+					//	if (tuniacApp.m_LogWindow->GetLogOn())
+					//	{
+							//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
+					//	}
+					//}
 					MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					delete pPlaylist;
 					m_StandardPlaylists.RemoveAll();
@@ -305,7 +329,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 
 	CloseHandle(hFile);
 
-	//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist load complete"));
+	//if (tuniacApp.m_LogWindow)
+	//{
+	//	if (tuniacApp.m_LogWindow->GetLogOn())
+	//	{
+			//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist load complete"));
+	//	}
+	//}
 
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 	return bOK;
@@ -378,7 +408,10 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 	{
 		if (tuniacApp.m_LogWindow)
 		{
-			tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library header information."));
+			if (tuniacApp.m_LogWindow->GetLogOn())
+			{
+				tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library header information."));
+			}
 		}
 		MessageBox(NULL, TEXT("Error saving Playlist Library header information."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
@@ -402,7 +435,10 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 			{
 				if (tuniacApp.m_LogWindow)
 				{
-					tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
+					if (tuniacApp.m_LogWindow->GetLogOn())
+					{
+						tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
+					}
 				}
 				MessageBox(NULL, TEXT("Error saving Playlist Library."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
@@ -417,7 +453,10 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 				{
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
+						}
 					}
 					MessageBox(NULL, TEXT("Error saving Playlist Library."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 					bOK = false;
@@ -433,7 +472,13 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 
 	CloseHandle(hFile);
 
-	//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist save complete"));
+	//if (tuniacApp.m_LogWindow)
+	//{
+	//	if (tuniacApp.m_LogWindow->GetLogOn())
+	//	{
+			//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist save complete"));
+	//	}
+	//}
 
 	return bOK;
 

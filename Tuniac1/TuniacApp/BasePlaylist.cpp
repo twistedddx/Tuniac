@@ -177,7 +177,10 @@ bool				CBasePlaylist::ApplyFilter(void)
 
 	if (tuniacApp.m_LogWindow)
 	{
-		tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), TEXT("ApplyFilter"));
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), TEXT("ApplyFilter"));
+		}
 	}
 
 	RebuildPlaylistArrays();
@@ -1319,9 +1322,15 @@ bool				CBasePlaylist::UpdateRealIndex(unsigned long ulRealIndex)
 	unsigned long ulEntryID = m_PlaylistArray[ulRealIndex].pIPE->GetEntryID();
 	PE.pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 
-	TCHAR szMessage[512];
-	StringCchPrintf(szMessage, 512, TEXT("Updating %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
-	tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
+	TCHAR szMessage[MAX_PATH + 20];
+	StringCchPrintf(szMessage, MAX_PATH + 20, TEXT("Updating %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
+	if (tuniacApp.m_LogWindow)
+	{
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
+		}
+	}
 
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 	m_PlaylistArray.InsertBefore(ulRealIndex, PE);
@@ -1346,9 +1355,15 @@ bool				CBasePlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 		}
 	}
 
-	TCHAR szMessage[512];
-	StringCchPrintf(szMessage, 512, TEXT("Deleting %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
-	tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
+	TCHAR szMessage[MAX_PATH + 20];
+	StringCchPrintf(szMessage, MAX_PATH + 20, TEXT("Deleting %s"), (LPTSTR)m_PlaylistArray[ulRealIndex].pIPE->GetField(FIELD_URL));
+	if (tuniacApp.m_LogWindow)
+	{
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			tuniacApp.m_LogWindow->LogMessage(TEXT("BasePlaylist"), szMessage);
+		}
+	}
 
 	m_PlaylistArray.RemoveAt(ulRealIndex);
 

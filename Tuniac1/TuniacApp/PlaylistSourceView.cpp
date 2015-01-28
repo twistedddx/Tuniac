@@ -1491,7 +1491,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if (tuniacApp.m_LogWindow)
 										{
-											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+											if (tuniacApp.m_LogWindow->GetLogOn())
+											{
+												tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PLAY_PAUSE event"));
+											}
 										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 									}
@@ -1501,7 +1504,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if (tuniacApp.m_LogWindow)
 										{
-											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_STOP event"));
+											if (tuniacApp.m_LogWindow->GetLogOn())
+											{
+												tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_STOP event"));
+											}
 										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_STOP, 0), 0);
 									}
@@ -1511,7 +1517,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if (tuniacApp.m_LogWindow)
 										{
-											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+											if (tuniacApp.m_LogWindow->GetLogOn())
+											{
+												tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_NEXT_TRACK event"));
+											}
 										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 									}
@@ -1521,7 +1530,10 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									{
 										if (tuniacApp.m_LogWindow)
 										{
-											tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PREV_TRACK event"));
+											if (tuniacApp.m_LogWindow->GetLogOn())
+											{
+												tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistSourceView"), TEXT("VK_MEDIA_PREV_TRACK event"));
+											}
 										}
 										SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_PREVIOUS, 0), 0);
 									}

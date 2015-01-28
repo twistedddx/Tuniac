@@ -76,11 +76,14 @@ bool			CPluginManager::Initialize(void)
 				}
 				if(pGTPVF() != ITUNIACPLUGIN_VERSION)
 				{
-					TCHAR szError[512];
-					StringCchPrintf(szError, 512, TEXT("Incompatable plugin found: \\plugins\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
+					TCHAR szError[MAX_PATH + 100];
+					StringCchPrintf(szError, MAX_PATH + 100, TEXT("Incompatable plugin found: \\plugins\\%s\n\nThis Plugin must be updated before you can use it."), w32fd.cFileName);
 					if (tuniacApp.m_LogWindow)
 					{
-						tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
+						}
 					}
 					MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					FreeLibrary(hDLL);
@@ -232,11 +235,14 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 				FreeLibrary(m_PluginArray[iPlugin].hDLL);
 				m_PluginArray[iPlugin].hDLL = NULL;
 			}
-			TCHAR szError[512];
-			StringCchPrintf(szError, 512, TEXT("Error reloading plugin: %s"), m_PluginArray[iPlugin].szDllFile);
+			TCHAR szError[MAX_PATH + 20];
+			StringCchPrintf(szError, MAX_PATH + 20, TEXT("Error reloading plugin: %s"), m_PluginArray[iPlugin].szDllFile);
 			if (tuniacApp.m_LogWindow)
 			{
-				tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
+				if (tuniacApp.m_LogWindow->GetLogOn())
+				{
+					tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
+				}
 			}
 			MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONERROR);
 			return false;
@@ -426,7 +432,10 @@ void		CPluginManager::LogMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
 	if (tuniacApp.m_LogWindow)
 	{
-		tuniacApp.m_LogWindow->LogMessage(szModuleName, szMessage);
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			tuniacApp.m_LogWindow->LogMessage(szModuleName, szMessage);
+		}
 	}
 }
 
