@@ -30,7 +30,7 @@
 
 CLogWindow::CLogWindow(void)
 {
-	bLogEnabled = false;
+	m_bLogEnabled = false;
 	m_hLogWnd = NULL;
 }
 
@@ -163,7 +163,7 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 					case IDC_LOGVIEW_ENABLE:
 						{
 								int State = SendDlgItemMessage(hDlg, IDC_LOGVIEW_ENABLE, BM_GETCHECK, 0, 0);
-								bLogEnabled = State == BST_UNCHECKED ? FALSE : TRUE;
+								m_bLogEnabled = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
 
@@ -192,15 +192,22 @@ LRESULT CALLBACK			CLogWindow::WndProc(HWND hDlg, UINT message, WPARAM wParam, L
 
 void			CLogWindow::LogMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
-	if (bLogEnabled)
-	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-		TCHAR szFormattedMessage[512];
-		StringCchPrintf(szFormattedMessage, 512, TEXT("%02d:%02d:%02d	%s:	%s\r\n"), st.wHour, st.wMinute, st.wSecond, szModuleName, szMessage);
-		int iCurLength = GetWindowTextLength(m_hLogEditWnd);
-		::SendMessage(m_hLogEditWnd, EM_SETSEL, (WPARAM)iCurLength, (LPARAM)iCurLength);
-		::SendMessage(m_hLogEditWnd, EM_REPLACESEL, FALSE, (LPARAM)szFormattedMessage);
-		::SendMessage(m_hLogEditWnd, EM_SCROLLCARET, 0, 0);
-	}
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	TCHAR szFormattedMessage[512];
+	StringCchPrintf(szFormattedMessage, 512, TEXT("%02d:%02d:%02d	%s:	%s\r\n"), st.wHour, st.wMinute, st.wSecond, szModuleName, szMessage);
+	int iCurLength = GetWindowTextLength(m_hLogEditWnd);
+	::SendMessage(m_hLogEditWnd, EM_SETSEL, (WPARAM)iCurLength, (LPARAM)iCurLength);
+	::SendMessage(m_hLogEditWnd, EM_REPLACESEL, FALSE, (LPARAM)szFormattedMessage);
+	::SendMessage(m_hLogEditWnd, EM_SCROLLCARET, 0, 0);
+}
+
+void			CLogWindow::SetLogOn(bool bLogEnable)
+{
+	m_bLogEnabled = bLogEnable;
+}
+
+bool			CLogWindow::GetLogOn(void)
+{
+	return m_bLogEnabled;
 }

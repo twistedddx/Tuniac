@@ -34,7 +34,7 @@ protected:
 
 			HWND						m_hLogEditWnd;
 
-			bool	bLogEnabled;
+			bool	m_bLogEnabled;
 
 			LRESULT CALLBACK WndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	static	LRESULT CALLBACK WndProcStub(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -62,4 +62,6 @@ public:
 
 public:
 	void			LogMessage(LPTSTR szModuleName, LPTSTR szMessage);
+	void			SetLogOn(bool bLogEnabled);
+	bool			GetLogOn(void);
 };

@@ -126,7 +126,10 @@ bool				CLibraryPlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 	{
 		if (tuniacApp.m_LogWindow)
 		{
-			tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
+			if (tuniacApp.m_LogWindow->GetLogOn())
+			{
+				tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
+			}
 		}
 		if (!PathIsURL(szURL))
 		{
