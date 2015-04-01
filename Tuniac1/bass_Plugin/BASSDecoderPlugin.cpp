@@ -10,6 +10,11 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 	}
 	else
 	{
+		//disable media foundation. Only adds video format support and has at least once picked a png as MPEG
+		BASS_SetConfig(BASS_CONFIG_MF_DISABLE, 1);
+
+
+		// formats inside standard bass.dll
 		exts.AddTail(std::wstring(L".mp3"));
 		exts.AddTail(std::wstring(L".mp2"));
 		exts.AddTail(std::wstring(L".mp1"));
@@ -25,6 +30,7 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 		exts.AddTail(std::wstring(L".mtm"));
 		exts.AddTail(std::wstring(L".umx"));
 
+		// fine and load additional plugins in ./bass/bass*.dll folder
 		TCHAR				szFilename[MAX_PATH];
 		TCHAR				szFilePath[MAX_PATH];
 		WIN32_FIND_DATA		w32fd;
@@ -100,7 +106,7 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 					}
 					if(bAddPlugin)
 					{
-						
+						//find and add plugins extensions for CanHandle()
 						const BASS_PLUGININFO *pinfo=BASS_PluginGetInfo(plug);
 						for (int a=0;a<pinfo->formatc;a++)
 						{
@@ -176,96 +182,119 @@ bool			CBASSDecoderPlugin::Configure(HWND hParent)
 bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 {
 	/*
+	// do we want Tony's mp3 decoder?
 	if(!StrCmpI(TEXT(".mp3"), PathFindExtension(szSource)))
 	{
 		return false;
 	}
 	*/
 
-	/*
-	HSTREAM testhandle;
-
-	bool bMod = false;
-	bool bOK = false;
-	if(!PathIsURL(szSource))
-	{
-		if(testhandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT))
-		{
-			bOK = true;
-		}
-		else if(testhandle = BASS_MusicLoad(FALSE, szSource, 0, 0, BASS_MUSIC_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT|BASS_MUSIC_RAMP|BASS_MUSIC_PRESCAN, 0))
-		{
-			bMod = true;
-			bOK = true;
-		}
-	}
-	else
-	{
-		if(!StrCmpN(szSource, TEXT("AUDIOCD"), 7))
-			return true;
-
-		char mbURL[512]; 	 
-		WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
-		if(testhandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT, NULL, 0))
-		{
-			bOK = true;
-		}
-	}
-
-
-
-	if(bOK)
-	{
-		if(bMod)
-			BASS_MusicFree(testhandle);
-		else
-			BASS_StreamFree(testhandle);
-	}
-
-	*/
-
 	bModFile = false;
 	bIsStream = PathIsURL(szSource);
 
-	if(!bIsStream)
+	if (!bIsStream)
 	{
-		if(!(testHandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT)))
+		hStreamID = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE | BASS_ASYNCFILE | BASS_UNICODE | BASS_SAMPLE_FLOAT);
+		if (!hStreamID)
 		{
-			if(testHandle = BASS_MusicLoad(FALSE, szSource, 0, 0, BASS_MUSIC_DECODE|BASS_UNICODE|BASS_SAMPLE_FLOAT|BASS_MUSIC_RAMP|BASS_MUSIC_PRESCAN, 0))
+			//failed typical audio formats, test for mod etc.
+			hStreamID = BASS_MusicLoad(FALSE, szSource, 0, 0, BASS_MUSIC_DECODE | BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_MUSIC_RAMP | BASS_MUSIC_PRESCAN, 0);
+			if (hStreamID)
 				bModFile = true;
 		}
+
+
+		/* if we support media foundation, perhaps reject file if type is MPEG due to high false positives.
+			BASS internal codecs should have already detected MPEG if file was actually valid
+
+		else
+		{
+				BASS_CHANNELINFO ci;
+				BASS_ChannelGetInfo(testHandle, &ci);
+				if (ci.ctype == BASS_CTYPE_STREAM_MF)
+				{
+					const WAVEFORMATEX *wf = (const WAVEFORMATEX*)BASS_ChannelGetTags(testHandle, BASS_TAG_WAVEFORMAT);
+					if (wf->wFormatTag == WAVE_FORMAT_MPEG)
+					{
+						BASS_StreamFree(testHandle);
+						testHandle = 0;
+					}
+				}
+		}
+		*/
 	}
 	else
 	{
-		if(StrCmpN(szSource, TEXT("AUDIOCD"), 7) == 0)
+		if (StrCmpN(szSource, TEXT("AUDIOCD"), 7) == 0)
 		{
 			bIsStream = false;
 			wchar_t cDrive;
 			int iTrack;
 			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
 			StringCchPrintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
-			testHandle = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE|BASS_ASYNCFILE|BASS_UNICODE|BASS_SAMPLE_FLOAT);
+			hStreamID = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE | BASS_ASYNCFILE | BASS_UNICODE | BASS_SAMPLE_FLOAT);
 		}
 		else
 		{
-			char mbURL[512]; 	 
+			char mbURL[512];
 			WideCharToMultiByte(CP_UTF8, 0, szSource, -1, mbURL, 512, 0, 0);
-			testHandle = BASS_StreamCreateURL(mbURL,0, BASS_STREAM_DECODE|BASS_SAMPLE_FLOAT|BASS_STREAM_BLOCK, NULL, 0);
+			hStreamID = BASS_StreamCreateURL(mbURL, 0, BASS_STREAM_DECODE | BASS_SAMPLE_FLOAT | BASS_STREAM_BLOCK, NULL, 0);
 		}
 	}
 
+	/* find out what file format was actually found by BASS.
+	if (hStreamID)
+	{
+		BASS_CHANNELINFO bassChannelInfo;
+		BASS_ChannelGetInfo(hStreamID, &bassChannelInfo);
+		DWORD x = bassChannelInfo.ctype;
+		DWORD y = bassChannelInfo.plugin;
 
-	return testHandle;
+		const BASS_PLUGININFO * pluginInfo = BASS_PluginGetInfo(bassChannelInfo.plugin);
+		int a;
+		for (a = 0; a < pluginInfo->formatc; a++) {
+			const char * formatName = pluginInfo->formats[a].name; // return it's name   
+		}
+
+
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_OGG)
+			LPTSTR test= L"Ogg Vorbis";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP1)
+			LPTSTR test = L"MPEG layer 1";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP2)
+			LPTSTR test = L"MPEG layer 2";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP3)
+			LPTSTR test = L"MPEG layer 3";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AIFF)
+			LPTSTR test = L"Audio IFF";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_PCM)
+			LPTSTR test = L"PCM WAVE";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_FLOAT)
+			LPTSTR test = L"Floating-point WAVE";
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MF)
+		{
+			const WAVEFORMATEX *wf = (WAVEFORMATEX*)BASS_ChannelGetTags(hStreamID, BASS_TAG_WAVEFORMAT);
+			if (wf->wFormatTag == 0x1610)
+				LPTSTR test = L"Advanced Audio Coding";
+			if (wf->wFormatTag == 0x0161 || wf->wFormatTag == 0x0162 || wf->wFormatTag == 0x0163)
+				LPTSTR test = L"Windows Media Audio";
+		}
+		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV)
+			LPTSTR test = L"WAVE";
+	}
+	*/
+
+	return hStreamID;
 }
 
 bool			CBASSDecoderPlugin::Close(void)
 {
-	if(testHandle)
+	if (hStreamID)
 	{
 		if(bModFile)
-			BASS_MusicFree(testHandle);
+			BASS_MusicFree(hStreamID);
 		else
-			BASS_StreamFree(testHandle);
+			BASS_StreamFree(hStreamID);
 	}
 
 	return true;
@@ -286,7 +315,7 @@ IAudioSource *		CBASSDecoderPlugin::CreateAudioSource(LPTSTR szSource, IAudioFil
 {
 	CBASSDecoder *	pDec = new CBASSDecoder();
 
-	if(!pDec->Open(szSource, m_pHelper, testHandle, bModFile, bIsStream))
+	if (!pDec->Open(szSource, m_pHelper, hStreamID, bModFile, bIsStream))
 	{
 		delete pDec;
 		return(NULL);

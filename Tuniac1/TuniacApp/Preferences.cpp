@@ -1742,7 +1742,7 @@ bool CPreferences::DefaultPreferences(void)
 	m_bShuffleState				= FALSE;
 
 	m_iVisualFPS				= 60;
-	m_iCurrentVisual			= 0;
+	m_iCurrentVisual			= 1;
 	m_bShowVisArt				= 0;
 
 	m_iFileAssocType			= FILEASSOC_TYPE_OPEN;
