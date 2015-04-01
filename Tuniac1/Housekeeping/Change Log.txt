@@ -1,8 +1,9 @@
 Jan, 2015
 ---------
+-Check if logging before parsing messages.
 -fix EQ screen in preferences
--fix Update/Remove file.
--minor optimizations to Update.
+-fix right click Update/Remove file.
+-minor optimizations to right click Update.
 -Alter About Window to show date in the same as the installer filename format.
 -Add -libraryfolder command line
 -Update to Basslib 2.4.11

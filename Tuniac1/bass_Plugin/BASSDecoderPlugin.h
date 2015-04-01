@@ -4,6 +4,7 @@
 #include <strsafe.h>
 #include <vector>
 #include "bass.h"
+#include <mmreg.h>
 
 class CBASSDecoderPlugin :
 	public IAudioSourceSupplier
@@ -12,7 +13,7 @@ protected:
 	IAudioSourceHelper	*	m_pHelper;
 	Array<std::wstring, 12>		exts;
 
-	HSTREAM				testHandle;
+	HSTREAM				hStreamID;
 	bool				bIsStream;
 	bool				bModFile;
 
