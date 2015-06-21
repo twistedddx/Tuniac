@@ -6,38 +6,53 @@
 #include "tag.h"
 #include "tfile.h"
 #include "fileRef.h"
-#include "mpegfile.h"
-#include "mpcFile.h"
-#include "trueaudiofile.h"
-#include "wavpackfile.h"
-#include "flacFile.h"
-#include "vorbisfile.h"
-#include "speexfile.h"
-#include "opusfile.h"
-#include "oggflacfile.h"
-#include "mp4File.h"
-#include "asffile.h"
-#include "aifffile.h"
-#include "wavFile.h"
-#include "apeFile.h"
-#include "itFile.h"
-#include "modFile.h"
-#include "s3mFile.h"
-#include "xmFile.h"
 
+#include "apeFile.h"
+#include "apetag.h"
+
+#include "asffile.h"
+
+#include "dsffile.h"
+
+#include "ebmlfile.h"
+
+#include "flacFile.h"
+#include "flacpicture.h"
+
+#include "itFile.h"
+
+#include "modFile.h"
+
+#include "mp4File.h"
+#include "mp4tag.h"
+#include "mp4item.h"
+#include "mp4atom.h"
+
+#include "mpcFile.h"
+
+#include "mpegfile.h"
 #include "id3v1tag.h"
 #include "id3v2tag.h"
 #include "attachedpictureframe.h"
 #include "relativevolumeframe.h"
 
-#include "apetag.h"
-
 #include "xiphcomment.h"
-#include "flacpicture.h"
+#include "oggflacfile.h"
+#include "opusfile.h"
+#include "speexfile.h"
+#include "vorbisfile.h"
 
-#include "mp4tag.h"
-#include "mp4item.h"
-#include "mp4atom.h"
+#include "aifffile.h"
+#include "wavFile.h"
+
+#include "s3mFile.h"
+
+#include "trueaudiofile.h"
+
+#include "wavpackfile.h"
+
+#include "xmFile.h"
+
 
 class CSTDInfoManager :
 	public IInfoManager
@@ -62,6 +77,8 @@ protected:
 	TagLib::Mod::File *modFile;
 	TagLib::S3M::File *s3mFile;
 	TagLib::XM::File *xmFile;
+	TagLib::DSF::File *dsfFile;
+	TagLib::EBML::File *ebmlFile;
 
 public:
 	CSTDInfoManager(void);

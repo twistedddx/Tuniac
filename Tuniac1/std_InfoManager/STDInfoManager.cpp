@@ -51,7 +51,8 @@ CSTDInfoManager::CSTDInfoManager(void)
 	modFile = NULL;
 	s3mFile = NULL;
 	xmFile = NULL;
-
+	dsfFile = NULL;
+	ebmlFile = NULL;
 }
 
 CSTDInfoManager::~CSTDInfoManager(void)
@@ -65,7 +66,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 30;
+	return 35;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -81,27 +82,32 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".mp+"),
 		TEXT(".mpp"),
 		TEXT(".wv"),
+		TEXT(".spx"),
+		TEXT(".opus"),
+		TEXT(".tta"),
 		TEXT(".m4a"),
+		TEXT(".m4r"),
 		TEXT(".m4b"),
 		TEXT(".m4p"),
 		TEXT(".mp4"),
 		TEXT(".3g2"),
+		TEXT(".alac"),
 		TEXT(".wma"),
-		TEXT(".tta"),
-		TEXT(".spx"),
-		TEXT(".opus"),
+		TEXT(".asf"),
 		TEXT(".aif"),
 		TEXT(".aiff"),
+		TEXT(".afc"),
+		TEXT(".aifc"),
 		TEXT(".wav"),
 		TEXT(".ape"),
-		TEXT(".alac"),
-		TEXT(".it"),
 		TEXT(".mod"),
 		TEXT(".module"),
 		TEXT(".nst"),
-		TEXT(".s3m"),
 		TEXT(".wow"),
+		TEXT(".s3m"),
+		TEXT(".it"),
 		TEXT(".xm"),
+		TEXT(".dsf")
 
 	};
 
@@ -149,6 +155,11 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(xmFile = dynamic_cast<TagLib::XM::File *>( fileRef.file() ))
 			return true;
+		else if (dsfFile = dynamic_cast<TagLib::DSF::File *>(fileRef.file()))
+			return true;
+		else if (ebmlFile = dynamic_cast<TagLib::EBML::File *>(fileRef.file()))
+			return true;
+
 	}
 
 	return false;
@@ -462,8 +473,12 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		modFile = NULL;
 	if(s3mFile)
 		s3mFile = NULL;
-	if(xmFile)
+	if (xmFile)
 		xmFile = NULL;
+	if (dsfFile)
+		dsfFile = NULL;
+	if (ebmlFile)
+		ebmlFile = NULL;
 
 	return true;
 }
@@ -583,6 +598,11 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 		else if(flacFile->ID3v2Tag()) 
 			id3v2TagList = flacFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
+// OGG does not support album art, only proposed fields.
+// https://wiki.xiph.org/VorbisComment#Proposed_field_names
+//	else if (oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>(fileRef.file() ))
+//	{
+//	}
 	else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 	{
 		if(wmaFile->tag());
