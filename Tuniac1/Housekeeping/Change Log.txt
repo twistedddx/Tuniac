@@ -1,3 +1,13 @@
+Jun, 2015
+---------
+-Use TagLib2. Adds dsf and ebml readers.
+
+Apr, 2015
+---------
+-disable media foundation support for BASS due to false positives with MPEG data.
+-Do not use internal vis as default vis
+-update bass_aac.dll (fixes possible crash)
+
 Jan, 2015
 ---------
 -Check if logging before parsing messages.

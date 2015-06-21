@@ -38,7 +38,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-http://www.cmake.org/files/v3.2/cmake-3.2.1-win32-x86.exe
+http://www.cmake.org/files/v3.3/cmake-3.3.0-rc2-win32-x86.exe
 
 Install them
 
@@ -58,16 +58,18 @@ In Clone existing repository add:
 https://github.com/madler/zlib.git
 Hit OK and wait
 
-3c)You need TagLib 1.9.1 GIT (http://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 2 GIT (http://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
+Tick Branch and enter "taglib2" in to text box.
 Hit OK and wait
 
 3d)You need libpng 1.7 GIT (http://libpng.sourceforge.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
 3e)You need libjpeg-turbo 1.4.0 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
@@ -76,9 +78,6 @@ In URL of repository add:
 svn://svn.code.sf.net/p/libjpeg-turbo/code/trunk
 Ensure checkout directory reads C:\Code\libjpeg-turbo
 Hit OK and wait
-
-
-
 
 
 
@@ -100,9 +99,9 @@ You can also get all the build recipes for individual building of libs in there.
 5a)You need Direct X SDK June 2010.
 http://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-5b)You need the Glew 1.11.0 Binaries Windows 32-bit zip.
+5b)You need the Glew 1.12.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.11.0/glew-1.11.0-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/1.12.0/glew-1.12.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\GL
@@ -116,9 +115,9 @@ Cannot open include file: 'GL/glew.h'
 
 6)For TuniacApp
 
-6a)You need nasm 2.11.02 win32 zip.
+6a)You need nasm 2.11.08 win32 zip.
 http://www.nasm.us/
-http://www.nasm.us/pub/nasm/releasebuilds/2.11.06/win32/nasm-2.11.06-win32.zip
+http://www.nasm.us/pub/nasm/releasebuilds/2.11.08/win32/nasm-2.11.08-win32.zip
 
 Put nasm.exe in
 C:\Windows\
