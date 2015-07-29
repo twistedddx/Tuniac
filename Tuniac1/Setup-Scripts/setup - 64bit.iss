@@ -44,29 +44,16 @@ Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
-Source: "..\x64\Release\*.exe"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not InstallLegacyCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
-Source: "..\Win32\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not InstallLegacyCheck; Flags: ignoreversion
-Source: "..\Win32\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not InstallLegacyCheck;  Flags: ignoreversion
+Source: "..\x64\Release\*.exe"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion
+Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not Install32bitCheck;  Flags: ignoreversion
 
-Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion
-Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Check: InstallLegacyCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
-Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: InstallLegacyCheck and IsWin64; Flags: ignoreversion
-Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: InstallLegacyCheck and IsWin64;  Flags: ignoreversion
+Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: Install32bitCheck and IsWin64; Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: Install32bitCheck and IsWin64;  Flags: ignoreversion
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
-
-;external files
-Source: "{tmp}\msvcp120.dll"; DestDir: {app}\; Check: VC12RedistInstalling; Flags: external ignoreversion
-Source: "{tmp}\msvcr120.dll"; DestDir: {app}\; Check: VC12RedistInstalling; Flags: external ignoreversion
-
-Source: "{tmp}\msvcp100.dll"; DestDir: {app}\; Check: VC10RedistInstalling; Flags: external ignoreversion
-Source: "{tmp}\msvcr100.dll"; DestDir: {app}\; Check: VC10RedistInstalling; Flags: external ignoreversion
-
-Source: "{tmp}\msvcp120plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp120.dll"; Check: PluginsVC12RedistInstalling and IsWin64; Flags: external ignoreversion
-Source: "{tmp}\msvcr120plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr120.dll"; Check: PluginsVC12RedistInstalling and IsWin64; Flags: external ignoreversion
-
-Source: "{tmp}\msvcp100plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcp100.dll"; Check: PluginsVC10RedistInstalling and IsWin64; Flags: external ignoreversion
-Source: "{tmp}\msvcr100plugins.dll"; DestDir: {app}\plugins\; DestName: "msvcr100.dll"; Check: PluginsVC10RedistInstalling and IsWin64; Flags: external ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
@@ -81,13 +68,22 @@ Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: desktopicon
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
+Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
 var
-  InstallLegacyPage: TWizardPage;
-  InstallLegacyCheckBox: TCheckBox;
+  Install32bitPage: TWizardPage;
+  Install32bitCheckBox: TCheckBox;
+
+  DownloadWantedPage: TWizardPage;
+  DownloadWantedCheckBox: TCheckBox;
+  DownloadString: String;
+  DownloadSize: ShortInt;
 
   FilesDownloaded: Boolean;
 
@@ -102,6 +98,171 @@ function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth,
 external 'DrawIconEx@user32.dll stdcall';
 function DestroyIcon(hIcon: LongInt): LongInt;
 external 'DestroyIcon@user32.dll stdcall';
+
+//32bit install on 64bit machine
+function Install32bitCheck: Boolean;
+begin
+  Result := Install32bitCheckBox.Checked;
+end;
+
+function IsNot64BitMode: String;
+begin
+  if Is64BitInstallMode then begin
+    Result := '0';
+  end else begin
+    Result := '1';
+  end;
+end;
+
+function HasVC14x86Redist: Boolean;
+begin
+  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
+    Result := True;
+  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+function HasVC10x86Redist: Boolean;
+begin
+  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
+    Result := True;
+  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+function HasVC14x64Redist: Boolean;
+begin
+  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
+    Result := True;
+  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+function HasVC10x64Redist: Boolean;
+begin
+  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
+    Result := True;
+  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+//check for direct x 2.7
+function HasDXJun2010: Boolean;
+var
+  XAudio2: String;
+begin
+  Result := RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 );
+end;
+
+function DownloadWantedCheck: Boolean;
+begin
+  Result := DownloadWantedCheckBox.Checked;
+end;   
+
+function IsDownloadRequired: Boolean;
+begin
+  if not HasVC14x86Redist or not HasVC10x86Redist or not HasDXJun2010 then begin
+    Result:= True;
+  end else if not HasVC14x64Redist and IsWin64 then begin
+    Result:= True;
+  end else if not HasVC10x64Redist and IsWin64 then begin
+    Result:= True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+function DownloadsNeeded: String;
+begin
+  DownloadString := '';
+
+  if not HasDXJun2010  then begin
+    DownloadString := DownloadString + 'DirectX XAudio 2.7';
+  end;
+
+  if not HasVC10x86Redist or (not HasVC10x64Redist and IsWin64) then begin
+    if Length(DownloadString) > 0 then begin
+      DownloadString := DownloadString + ', ';
+    end;
+
+    DownloadString := DownloadString + 'Visual C++ 2010 Runtime(';
+
+    if not HasVC10x86Redist then begin
+      DownloadString := DownloadString + 'x86';
+      if not HasVC10x64Redist and IsWin64 then begin
+        DownloadString := DownloadString + '/';
+      end;
+    end;
+
+    if not HasVC10x64Redist and IsWin64 then begin
+      DownloadString := DownloadString + 'x64';
+    end;
+
+    DownloadString := DownloadString + ')';
+  end;
+
+  if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
+    if Length(DownloadString) > 0 then begin
+      DownloadString := DownloadString + ', ';
+    end;
+
+    DownloadString := DownloadString + 'Visual C++ 2015 Runtime(';
+
+    if not HasVC14x86Redist then begin
+      DownloadString := DownloadString + 'x86';
+      if not HasVC14x64Redist and IsWin64 then begin
+        DownloadString := DownloadString + '/';
+      end;
+    end;
+
+    if not HasVC14x64Redist and IsWin64 then begin
+      DownloadString := DownloadString + 'x64';
+    end;
+
+    DownloadString := DownloadString + ')';
+  end;
+
+  Result := DownloadString;
+end;
+
+function DownloadsSize: ShortInt;
+begin
+  DownloadSize := 0;
+
+  if not HasDXJun2010  then begin
+    DownloadSize := DownloadSize + 3;
+  end;
+
+  if not HasVC10x86Redist then begin
+    DownloadSize := DownloadSize + 13;
+  end;
+
+  if not HasVC14x86Redist then begin
+    DownloadSize := DownloadSize + 13;
+  end;
+
+  if not HasVC10x64Redist and IsWin64 then begin
+    DownloadSize := DownloadSize + 14;
+  end;
+
+  if not HasVC14x64Redist and IsWin64 then begin
+    DownloadSize := DownloadSize + 14;
+  end;
+
+  Result := DownloadSize;
+end;
 
 //about window
 procedure AboutButtonOnClick(Sender: TObject);
@@ -181,7 +342,7 @@ begin
 end;
 
 // 32bit install option for 64bit machines
-procedure CreateCustomPages;
+procedure Create32bitPage;
 var
   Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption: String;
 begin
@@ -195,342 +356,38 @@ begin
   Label2Caption := 'Select below which Tuniac you want, then click Next.';
   CheckCaption := '&Install Tuniac 32bit instead of Tuniac 64bit';
 
-  InstallLegacyPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, InstallLegacyCheckBox);
+  Install32bitPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, Install32bitCheckBox);
 end;
 
-//32bit install on 64bit machine
-function InstallLegacyCheck: Boolean;
-begin
-  Result := InstallLegacyCheckBox.Checked;
-end;
-
-function IsNot64BitMode: String;
-begin
-  if Is64BitInstallMode then begin
-    Result := '0';
-  end else begin
-    Result := '1';
-  end;
-end;
-
-function HasVC12x86Redist: Boolean;
+//should Tuniac go download pre-req's?
+procedure CreateDownloadWantedPage;
 var
-  Size: Integer;
+  Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption: String;
 begin
-  Result := True;
+  Caption := 'Tuniac needs to install additional Microsoft files';
+  SubCaption1 := 'Do you want Tuniac to download these additional Microsoft files now?';
+  IconFileName := 'directx.ico';
+  Label1Caption :=
+    'Tuniac requires the following:' + #13#10 +
+    DownloadsNeeded + #13#10#13#10 +
+    'Note: Downloads required are about ' + IntToStr(DownloadsSize) + 'mb in total';
+  Label2Caption := 'Select below if you want this installer to get and install these files, then click Next.';
+  CheckCaption := '&Download and install required files';
 
-  if FileExists(ExpandConstant('{syswow64}\msvcr120.dll')) then begin
-    FileSize(ExpandConstant('{syswow64}\msvcr120.dll'), Size);
-    if Size = 970912 then begin
-      exit;
-    end;
-  end;
-  if FileExists(ExpandConstant('{win}\sysnative\msvcr120.dll')) then begin
-    FileSize(ExpandConstant('{win}\sysnative\msvcr120.dll'), Size);
-    if Size = 970912 then begin
-      exit;
-    end;
-  end;
-
-  Result := False;
-end;
-
-function HasVC10x86Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-  if FileExists(ExpandConstant('{syswow64}\msvcr100.dll')) then begin
-    FileSize(ExpandConstant('{syswow64}\msvcr100.dll'), Size);
-    if Size = 773968 then begin
-      exit;
-    end;
-  end;
-  if FileExists(ExpandConstant('{win}\sysnative\msvcr100.dll')) then begin
-    FileSize(ExpandConstant('{win}\sysnative\msvcr100.dll'), Size);
-    if Size = 773968 then begin
-      exit;
-    end;
-  end
-
-  Result := False;
-end;
-
-function HasVC12x64Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-
-  if FileExists(ExpandConstant('{syswow64}\msvcr120.dll')) then begin
-    FileSize(ExpandConstant('{syswow64}\msvcr120.dll'), Size);
-    if Size = 963232 then begin
-      exit;
-    end;
-  end;
-  if FileExists(ExpandConstant('{win}\sysnative\msvcr120.dll')) then begin
-    FileSize(ExpandConstant('{win}\sysnative\msvcr120.dll'), Size);
-    if Size = 963232 then begin
-      exit;
-    end;
-  end;
-
-  Result := False;
-end;
-
-function HasVC10x64Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-  if FileExists(ExpandConstant('{syswow64}\msvcr100.dll')) then begin
-    FileSize(ExpandConstant('{syswow64}\msvcr100.dll'), Size);
-    if Size = 829264 then begin
-      exit;
-    end;
-  end;
-  if FileExists(ExpandConstant('{win}\sysnative\msvcr100.dll')) then begin
-    FileSize(ExpandConstant('{win}\sysnative\msvcr100.dll'), Size);
-    if Size = 829264 then begin
-      exit;
-    end;
-  end;
-
-  Result := False;
-end;
-
-//check if valid vc redist available
-function HasVC12Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-
-
-  //32bit machine
-  if not Is64BitInstallMode then begin
-    if FileExists(ExpandConstant('{app}\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr120.dll'), Size);
-      if Size = 970912 then
-        exit;
-    end;
-    if HasVC12x86Redist then
-      exit;
-  end;
-  //64bit machine, 32bit install
-  if Is64BitInstallMode and InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr120.dll'), Size);
-      if Size = 970912 then
-        exit;
-    end;
-    if HasVC12x86Redist then
-      exit;
-  end;
-  //64bit machine, 64bit install
-  if Is64BitInstallMode and not InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr120.dll'), Size);
-      if Size = 963232 then
-        exit;
-    end;
-    if HasVC12x64Redist then
-      exit;
-  end;
-
-  Result := False;
-end;
-
-//check if valid vc redist available
-function HasVC10Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-
-  //32bit machine
-  if not Is64BitInstallMode then begin
-    if FileExists(ExpandConstant('{app}\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr100.dll'), Size);
-      if Size = 773968 then
-        exit;
-    end;
-    if HasVC10x86Redist then
-      exit;
-  end;
-  //64bit machine, 32bit install
-  if Is64BitInstallMode and InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr100.dll'), Size);
-      if Size = 773968 then
-        exit;
-    end;
-    if HasVC10x86Redist then
-      exit;
-  end;
-  //64bit machine, 64bit install
-  if Is64BitInstallMode and not InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\msvcr100.dll'), Size);
-      if Size = 829264 then
-        exit;
-    end;
-    if HasVC10x64Redist then
-      exit;
-  end;
-
-  Result := False;
-end;
-
-
-//check if valid vc redist available
-function PluginsHasVC12Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-
-
-  //32bit machine
-  if not Is64BitInstallMode then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr120.dll'), Size);
-      if Size = 963232 then
-        exit;
-    end;
-    if HasVC12x64Redist then
-      exit;
-  end;
-  //64bit machine, 32bit install
-  if Is64BitInstallMode and InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr120.dll'), Size);
-      if Size = 963232 then
-        exit;
-    end;
-    if HasVC12x64Redist then
-      exit;
-  end;
-  //64bit machine, 64bit install
-  if Is64BitInstallMode and not InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr120.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr120.dll'), Size);
-      if Size = 970912 then
-        exit;
-    end;
-    if HasVC12x86Redist then
-      exit;
-  end;
-
-  Result := False;
-end;
-
-function PluginsHasVC10Redist: Boolean;
-var
-  Size: Integer;
-begin
-  Result := True;
-
-
-  //32bit machine
-  if not Is64BitInstallMode then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr100.dll'), Size);
-      if Size = 829264 then
-        exit;
-    end;
-    if HasVC10x64Redist then
-      exit;
-  end;
-  //64bit machine, 32bit install
-  if Is64BitInstallMode and InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr100.dll'), Size);
-      if Size = 829264 then
-        exit;
-    end;
-    if HasVC10x64Redist then
-      exit;
-  end;
-  //64bit machine, 64bit install
-  if Is64BitInstallMode and not InstallLegacyCheck then begin
-    if FileExists(ExpandConstant('{app}\plugins\msvcr100.dll')) then begin
-      FileSize(ExpandConstant('{app}\plugins\msvcr100.dll'), Size);
-      if Size = 773968 then
-        exit;
-    end;
-    if HasVC10x86Redist then
-      exit;
-  end;
-
-  Result := False;
-end;
-
-//check for direct x 2.7
-function HasDXJun2010: Boolean;
-var
-  XAudio2: String;
-begin
-  Result := RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 );
-end;
-
-//check if we successfully downloaded redist
-function VC12RedistInstalling: Boolean;
-begin
-  if not HasVC12Redist then begin 
-    Result:= FilesDownloaded;
-  end else begin
-    Result:= False;
-  end
-end;
-
-function VC10RedistInstalling: Boolean;
-begin
-  if not HasVC10Redist then begin 
-    Result:= FilesDownloaded;
-  end else begin
-    Result:= False;
-  end
-end;
-
-function PluginsVC12RedistInstalling: Boolean;
-begin
-  if not PluginsHasVC12Redist then begin 
-    Result:= FilesDownloaded;
-  end else begin
-    Result:= False;
-  end
-end;
-
-function PluginsVC10RedistInstalling: Boolean;
-begin
-  if not PluginsHasVC10Redist then begin 
-    Result:= FilesDownloaded;
-  end else begin
-    Result:= False;
-  end
+  DownloadWantedPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, DownloadWantedCheckBox);
 end;
 
 //reset previous user setting for 32bit install on 64bit machine
 procedure RegisterPreviousData(PreviousDataKey: Integer);
 begin
-  SetPreviousData(PreviousDataKey, 'InstallLegacy', IntToStr(Ord(InstallLegacyCheckBox.Checked)));
-end;
-
-//skip 32bit install question on 32bit only machines
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  if (PageID = InstallLegacyPage.ID) and not Is64BitInstallMode then begin
-      Result := true;
-  end else begin
-    Result := false;
-  end;
+  SetPreviousData(PreviousDataKey, 'Install32bit', IntToStr(Ord(Install32bitCheckBox.Checked)));
+  SetPreviousData(PreviousDataKey, 'DownloadWanted', IntToStr(Ord(DownloadWantedCheckBox.Checked)));
 end;
 
 //download prereq's if needed
 procedure DownloadFiles();
 var
-  ErrorCode: Integer;
+
   hWnd: Integer;
   URL, FileName: String;
 begin
@@ -573,127 +430,60 @@ begin
     isxdl_AddFile(URL, FileName);
   end;
 
-  if InstallLegacyCheck and not HasVC12Redist then begin
-    URL := 'http://www.tuniac.org/extra/32bit/msvcp120.dll';
-    FileName := ExpandConstant('{tmp}\msvcp120.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/32bit/msvcr120.dll';
-    FileName := ExpandConstant('{tmp}\msvcr120.dll');
+  if not HasVC14x86Redist then begin
+    URL := 'http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe';
+    FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     isxdl_AddFile(URL, FileName);
   end;
 
-   if InstallLegacyCheck and not HasVC10Redist then begin
-    URL := 'http://www.tuniac.org/extra/32bit/msvcp100.dll';
-    FileName := ExpandConstant('{tmp}\msvcp100.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/32bit/msvcr100.dll';
-    FileName := ExpandConstant('{tmp}\msvcr100.dll');
+  if not HasVC10x86Redist then begin
+    URL := 'http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe';
+    FileName := ExpandConstant('{tmp}\vcredist_x86(2010).exe');
     isxdl_AddFile(URL, FileName);
   end;
 
-  if InstallLegacyCheck and not PluginsHasVC12Redist then begin
-    URL := 'http://www.tuniac.org/extra/64bit/msvcp120.dll';
-    FileName := ExpandConstant('{tmp}\msvcp120plugins.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/64bit/msvcr120.dll';
-    FileName := ExpandConstant('{tmp}\msvcr120plugins.dll');
+  if not HasVC14x64Redist and IsWin64 then begin
+    URL := 'http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe';
+    FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     isxdl_AddFile(URL, FileName);
   end;
  
-  if InstallLegacyCheck and not PluginsHasVC10Redist then begin
-    URL := 'http://www.tuniac.org/extra/64bit/msvcp100.dll';
-    FileName := ExpandConstant('{tmp}\msvcp100plugins.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/64bit/msvcr100.dll';
-    FileName := ExpandConstant('{tmp}\msvcr100plugins.dll');
-    isxdl_AddFile(URL, FileName);
-  end;
-
-  if not InstallLegacyCheck and not HasVC12Redist then begin
-    URL := 'http://www.tuniac.org/extra/64bit/msvcp120.dll';
-    FileName := ExpandConstant('{tmp}\msvcp120.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/64bit/msvcr120.dll';
-    FileName := ExpandConstant('{tmp}\msvcr120.dll');
-    isxdl_AddFile(URL, FileName);
-  end;
-
-  if not InstallLegacyCheck and not HasVC10Redist then begin
-    URL := 'http://www.tuniac.org/extra/64bit/msvcp100.dll';
-    FileName := ExpandConstant('{tmp}\msvcp100.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/64bit/msvcr100.dll';
-    FileName := ExpandConstant('{tmp}\msvcr100.dll');
-    isxdl_AddFile(URL, FileName);
-  end;
-
- if not InstallLegacyCheck and not PluginsHasVC12Redist then begin
-    URL := 'http://www.tuniac.org/extra/32bit/msvcp120.dll';
-    FileName := ExpandConstant('{tmp}\msvcp120plugins.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/32bit/msvcr120.dll';
-    FileName := ExpandConstant('{tmp}\msvcr120plugins.dll');
-    isxdl_AddFile(URL, FileName);
-  end;
-
- if not InstallLegacyCheck and not PluginsHasVC10Redist then begin
-    URL := 'http://www.tuniac.org/extra/32bit/msvcp100.dll';
-    FileName := ExpandConstant('{tmp}\msvcp100plugins.dll');
-    isxdl_AddFile(URL, FileName);
-    URL := 'http://www.tuniac.org/extra/32bit/msvcr100.dll';
-    FileName := ExpandConstant('{tmp}\msvcr100plugins.dll');
+  if not HasVC10x64Redist and IsWin64 then begin
+    URL := 'http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe';
+    FileName := ExpandConstant('{tmp}\vcredist_x64(2010).exe');
     isxdl_AddFile(URL, FileName);
   end;
 
   if isxdl_DownloadFiles(hWnd) <> 0 then begin
     FilesDownloaded := True;
-  end else begin
-    if not HasDXJun2010 then begin
-      if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-        ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
-      end;
-    end;
-
-    if not HasVC12Redist then begin
-      if MsgBox('Visual C++ Redistributable for Visual Studio 2013 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-        ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=40784', '', '', SW_SHOW, ewNoWait, ErrorCode);
-      end;
-    end if not PluginsHasVC12Redist and IsWin64 then begin
-      if MsgBox('Visual C++ Redistributable for Visual Studio 2013 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-        ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=40784', '', '', SW_SHOW, ewNoWait, ErrorCode);
-      end;
-    end;
-
-
-    if not HasVC10Redist then begin
-      if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
-      end;
-    end if not PluginsHasVC10Redist and IsWin64 then begin
-      if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-        ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
-      end;
-    end;
   end;
 end;
 
-function PrepareToInstall(var NeedsRestart: Boolean): String;
+//skip 32bit install question on 32bit only machines
+function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if not HasVC12Redist or not HasVC10Redist or not HasDXJun2010 then begin
-    DownloadFiles();
-  end else if not PluginsHasVC12Redist and IsWin64 then begin
-    DownloadFiles();
-  end else if not PluginsHasVC10Redist and IsWin64 then begin
-    DownloadFiles();
-  end
-  Result := '';
+  if (PageID = Install32bitPage.ID) and not Is64BitInstallMode then begin
+    Result := true;
+  end else if (PageID = DownloadWantedPage.ID) and not IsDownloadRequired then begin
+    Result := true;
+  end else begin
+    Result := false;
+  end;
 end;
 
 function InitializeSetup(): Boolean;
 begin
   FilesDownloaded := False;
-
+    
   Result := True;
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  if IsDownloadRequired and DownloadWantedCheck then begin
+    DownloadFiles();
+  end
+  Result := '';
 end;
 
 procedure InitializeWizard();
@@ -701,9 +491,14 @@ var
   AboutButton, CancelButton: TButton;
   URLLabel: TNewStaticText;
 begin
-  CreateCustomPages;
+  Create32bitPage;
 
-  InstallLegacyCheckBox.Checked := GetPreviousData('InstallLegacy', IsNot64BitMode) = '1';
+  Install32bitCheckBox.Checked := GetPreviousData('Install32bit', IsNot64BitMode) = '1';
+
+  CreateDownloadWantedPage;
+
+  DownloadWantedCheckBox.Checked := IsDownloadRequired;
+
 
   { Other custom controls }
 
@@ -728,6 +523,29 @@ begin
   URLLabel.Font.Color := clBlue;
   URLLabel.Top := AboutButton.Top + AboutButton.Height - URLLabel.Height - 2;
   URLLabel.Left := AboutButton.Left + AboutButton.Width + ScaleX(20);
+end;
+
+procedure DeinitializeSetup();
+var
+  ErrorCode: Integer;
+begin
+  if not HasDXJun2010 then begin
+    if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+      ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    end;
+  end;
+
+  if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
+    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+      ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=48145', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    end;
+  end;
+
+  if not HasVC10x86Redist or (not HasVC10x64Redist and IsWin64) then begin
+    if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+      ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    end;
+  end;
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

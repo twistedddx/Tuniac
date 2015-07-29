@@ -61,12 +61,6 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
-var
-  InstallLegacyPage: TWizardPage;
-  InstallLegacyCheckBox: TCheckBox;
-
-  FilesDownloaded: Boolean;
-
 function GetModuleHandle(lpModuleName: LongInt): LongInt;
 external 'GetModuleHandleA@kernel32.dll stdcall';
 function ExtractIcon(hInst: LongInt; lpszExeFileName: PChar; nIconIndex: LongInt): LongInt;
