@@ -382,6 +382,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(!vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
 			libEnt->fReplayGain_Album_Peak = atof(vorbisTagListMap["REPLAYGAIN_ALBUM_PEAK"].front().toCString());
 
+		if (!vorbisTagListMap["R128_TRACK_GAIN"].isEmpty())
+			libEnt->fReplayGain_Track_Gain = atof(vorbisTagListMap["R128_TRACK_GAIN"].front().toCString()) * 0.00390625;
+
 		if(!vorbisTagListMap["BPM"].isEmpty())
 			libEnt->ulBPM = vorbisTagListMap["BPM"].front().toInt();
 		else if(!vorbisTagListMap["TEMPO"].isEmpty())
