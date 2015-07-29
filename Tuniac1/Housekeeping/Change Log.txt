@@ -1,3 +1,12 @@
+Jul, 2015
+---------
+-Update project to Visual Studio 2015
+-Large improvements to Tuniac Installer.
+	Installs Visual C++ Redists rather than app-local dll install.
+	Retooled Visual C++ detection.
+	Added new page to accept Tuniac downloading missing runtimes.
+-Add Opus Track Replaygain.
+
 Jun, 2015
 ---------
 -Use TagLib2. Adds dsf and ebml readers.
