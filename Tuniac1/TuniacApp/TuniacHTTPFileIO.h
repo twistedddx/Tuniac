@@ -1,7 +1,7 @@
 #pragma once
 #include "iaudiosource.h"
 
-#include "stdint.h"
+#include <cstdint>
 #include "ringbuffer.h"
 #include "tuniacthread.h"
 

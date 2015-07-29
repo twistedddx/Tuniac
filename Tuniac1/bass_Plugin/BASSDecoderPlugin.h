@@ -2,6 +2,7 @@
 #include "iaudiosource.h"
 #include "Array.h"
 #include <strsafe.h>
+#include <cstdint>
 #include <vector>
 #include "bass.h"
 #include <mmreg.h>

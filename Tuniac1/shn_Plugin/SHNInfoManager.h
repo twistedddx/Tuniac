@@ -1,6 +1,6 @@
 #pragma once
 #include "iinfomanager.h"
-#include <stdio.h>
+#include <cstdio>
 #include <shnplay.h>
 
 class CSHNInfoManager :

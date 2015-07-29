@@ -2,7 +2,7 @@
 
 #include "ITuniacImportPlugin.h"
 #include "ITuniacExportPlugin.h"
-#include "stdio.h"
+#include <cstdio>
 #include "shlwapi.h"
 #include <strsafe.h>
 

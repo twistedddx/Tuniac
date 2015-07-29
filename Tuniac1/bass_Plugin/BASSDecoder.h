@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include <stdio.h>
+#include <cstdio>
 #include "bass.h"
 
 #define BUFFERSIZE (1024 * sizeof(float))

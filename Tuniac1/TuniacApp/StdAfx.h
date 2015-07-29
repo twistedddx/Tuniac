@@ -55,7 +55,7 @@
 #include <ksmedia.h>
 #include <XAudio2.h>
 
-#include <stdio.h>
+#include <cstdio>
 #include <memory.h>
 
 #include <Wtsapi32.h>
