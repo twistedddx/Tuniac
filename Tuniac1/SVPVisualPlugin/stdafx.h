@@ -15,6 +15,7 @@
 #include <shellapi.h>
 #include <shlwapi.h>
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <strsafe.h>

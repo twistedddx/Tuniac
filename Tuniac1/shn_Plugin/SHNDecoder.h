@@ -1,6 +1,6 @@
 #pragma once
 #include "iaudiosource.h"
-#include <stdio.h>
+#include <cstdio>
 #include <shnplay.h>
 
 class CshnDecoder :

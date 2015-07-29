@@ -230,7 +230,7 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 			bIsStream = false;
 			wchar_t cDrive;
 			int iTrack;
-			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, sizeof(char), &iTrack);
+			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, (int)sizeof(char), &iTrack);
 			StringCchPrintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
 			hStreamID = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE | BASS_ASYNCFILE | BASS_UNICODE | BASS_SAMPLE_FLOAT);
 		}

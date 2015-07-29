@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 #include <shellapi.h>
 #include <shlwapi.h>
 #include "ITuniacPlugin.h"

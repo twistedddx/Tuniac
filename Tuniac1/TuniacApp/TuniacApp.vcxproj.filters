@@ -281,9 +281,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TagEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
