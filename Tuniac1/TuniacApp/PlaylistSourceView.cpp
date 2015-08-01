@@ -2332,6 +2332,7 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 				ShowWindow(GetDlgItem(m_PlaylistSourceWnd, IDC_PLAYLIST_SOURCE_SELECTFILTERBYFIELD), SW_HIDE);
 			}
 			tuniacApp.RebuildFutureMenu();
+			Redraw();
 			Update();
 		}
 	}
