@@ -313,7 +313,28 @@ LRESULT CALLBACK CPlaylistSourceView::ViewOptionsWndProc(HWND hDlg, UINT message
 		case WM_INITDIALOG:
 			{
 				LVCOLUMN	lvC;
+				HWND		hParent = GetParent(hDlg);
 				HWND		hListView = GetDlgItem(hDlg, IDC_PLAYLISTVIEWOPTIONS_LIST);
+				RECT		rcDlg, rcParent;
+
+				GetWindowRect(hDlg, &rcDlg);
+				GetWindowRect(hParent, &rcParent);
+
+				int iWidth = rcDlg.right - rcDlg.left;
+				int iHeight = rcDlg.bottom - rcDlg.top;
+
+				int x = ((rcParent.right - rcParent.left) - iWidth) / 2 + rcParent.left;
+				int y = ((rcParent.bottom - rcParent.top) - iHeight) / 2 + rcParent.top;
+
+				int iScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+				int iScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
+				if (x + iWidth  > iScreenWidth)  x = iScreenWidth - iWidth;
+				if (y + iHeight > iScreenHeight) y = iScreenHeight - iHeight;
+
+				MoveWindow(hDlg, x, y, iWidth, iHeight, FALSE);
 
 				m_ViewOptionsListViewOldProc = (WNDPROC)SetWindowLongPtr(hListView,  GWLP_WNDPROC, (LONG_PTR)ViewOptionsListViewProc);
 				ListView_SetExtendedListViewStyle(hListView, LVS_EX_CHECKBOXES | LVS_EX_FULLROWSELECT);

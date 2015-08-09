@@ -36,6 +36,32 @@ BOOL CALLBACK AboutProc(HWND hwndDlg,
 { 
     switch (message) 
     { 
+		case WM_INITDIALOG:
+		{
+			HWND		hParent = GetParent(hwndDlg);
+			RECT		rcDlg, rcParent;
+
+			GetWindowRect(hwndDlg, &rcDlg);
+			GetWindowRect(hParent, &rcParent);
+
+			int iWidth = rcDlg.right - rcDlg.left;
+			int iHeight = rcDlg.bottom - rcDlg.top;
+
+			int x = ((rcParent.right - rcParent.left) - iWidth) / 2 + rcParent.left;
+			int y = ((rcParent.bottom - rcParent.top) - iHeight) / 2 + rcParent.top;
+
+			int iScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+			int iScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+			if (x < 0) x = 0;
+			if (y < 0) y = 0;
+			if (x + iWidth  > iScreenWidth)  x = iScreenWidth - iWidth;
+			if (y + iHeight > iScreenHeight) y = iScreenHeight - iHeight;
+
+			MoveWindow(hwndDlg, x, y, iWidth, iHeight, FALSE);
+		}
+		break;
+
         case WM_COMMAND: 
             switch (LOWORD(wParam)) 
             { 
