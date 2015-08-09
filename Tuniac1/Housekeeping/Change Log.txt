@@ -6,6 +6,7 @@ Jul, 2015
 	Retooled Visual C++ detection.
 	Added new page to accept Tuniac downloading missing runtimes.
 -Add Opus Track Replaygain.
+-Fix redraw of visible playlist name in PlaylistSourceView
 
 Jun, 2015
 ---------

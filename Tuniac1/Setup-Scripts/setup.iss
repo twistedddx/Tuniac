@@ -387,10 +387,10 @@ begin
     URL := 'http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     isxdl_AddFile(URL, FileName);
-  end;
+  end;      
 
   if not HasVC10x86Redist then begin
-    URL := 'http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe';
+    URL := 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2010).exe');
     isxdl_AddFile(URL, FileName);
   end;
@@ -402,7 +402,7 @@ begin
   end;
  
   if not HasVC10x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe';
+    URL := 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2010).exe');
     isxdl_AddFile(URL, FileName);
   end;
