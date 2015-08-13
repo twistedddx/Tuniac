@@ -1,3 +1,8 @@
+Aug, 2015
+---------
+-Center Column Selection, About and SVPRender Config dialogs.
+-Get latest VC 2010 SP1 MFC security update in installer
+
 Jul, 2015
 ---------
 -Update project to Visual Studio 2015
