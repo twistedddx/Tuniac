@@ -124,10 +124,10 @@
 @C\tComment\r\n\
 @Z\tPlay Count\r\n\
 @R\tRating\r\n\
-@!\tPlay State\n\
-@V\tBPM\
-@Q\tAlbum Artist\
-@O\tComposer\
+@!\tPlay State\r\n\
+@V\tBPM\r\n\
+@Q\tAlbum Artist\r\n\
+@O\tComposer\n\
 ")
 
 
@@ -146,8 +146,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 
 				TCHAR szSize[8];
 
-				SendDlgItemMessage(hDlg, IDC_GENERAL_FOLLOWCURRENTSONG, BM_SETCHECK, pPrefs->m_bFollowCurrentSong ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_SETCHECK, pPrefs->m_bSmartSorting ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_NOVKHOTKEYS, BM_SETCHECK, pPrefs->m_bNoVKHotkeys ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SKIPSTREAMS, BM_SETCHECK, pPrefs->m_bSkipStreams ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_SETCHECK, pPrefs->m_bAutoSoftPause ? BST_CHECKED : BST_UNCHECKED, 0);
 
@@ -162,33 +161,9 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iDelayInSecs);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_DELAYINSECS, WM_SETTEXT, 0, (LPARAM)szSize);
 
-				SendDlgItemMessage(hDlg, IDC_GENERAL_TASKBAR_NORMAL, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconNever ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_TASKBAR_MINIMIZE, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconMinimize ? BST_CHECKED : BST_UNCHECKED, 0);
-
-				SendDlgItemMessage(hDlg, IDC_GENERAL_MINIMIZEONCLOSE, BM_SETCHECK, pPrefs->m_bMinimizeOnClose ? BST_CHECKED : BST_UNCHECKED, 0);
-
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_ALLOW, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSaveAllow ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENT, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePrevent ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENTFULL, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePreventFull ? BST_CHECKED : BST_UNCHECKED, 0);
-
-				_itow_s(pPrefs->m_iHistoryListSize, szSize, 10);
-				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(HISTORY_MAX, 2));
-				SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_HISTORYCOUNT), 0);
- 
-				_itow_s(pPrefs->m_iFutureListSize, szSize, 10);
-				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(FUTURE_MAX, 2));
-				SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_GENERAL_FUTURECOUNT), 0);
-
-				SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWALBUMART, BM_SETCHECK, pPrefs->m_bShowAlbumArt ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_ARTONSELECTION, BM_SETCHECK, pPrefs->m_bArtOnSelection ? BST_CHECKED : BST_UNCHECKED, 0);
-				SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWVISART, BM_SETCHECK, pPrefs->m_bShowVisArt ? BST_CHECKED : BST_UNCHECKED, 0);
-
-				EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_SHOWVISART), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
-				EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_ARTONSELECTION), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
 			}
 			break;
 
@@ -196,17 +171,10 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 			{
 				switch (LOWORD(wParam)) 
 				{
-					case IDC_GENERAL_FOLLOWCURRENTSONG:
+					case IDC_GENERAL_NOVKHOTKEYS:
 						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_FOLLOWCURRENTSONG, BM_GETCHECK, 0, 0);
-							pPrefs->m_bFollowCurrentSong = State == BST_UNCHECKED ? FALSE : TRUE;
-						}
-						break;
-
-					case IDC_GENERAL_SMARTSORTING:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SMARTSORTING, BM_GETCHECK, 0, 0);
-							pPrefs->m_bSmartSorting = State == BST_UNCHECKED ? FALSE : TRUE;
+							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_NOVKHOTKEYS, BM_GETCHECK, 0, 0);
+							pPrefs->m_bNoVKHotkeys = State == BST_UNCHECKED ? FALSE : TRUE;
 						}
 						break;
 
@@ -287,27 +255,6 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						}
 						break;
 
-					case IDC_GENERAL_TASKBAR_NORMAL:
-						{
-							pPrefs->m_eTrayIconMode = TrayIconNever;
-							tuniacApp.m_Taskbar.Hide();
-						}
-						break;
-
-					case IDC_GENERAL_TASKBAR_MINIMIZE:
-						{
-							pPrefs->m_eTrayIconMode = TrayIconMinimize;
-							tuniacApp.m_Taskbar.Show();
-						}
-						break;
-
-					case IDC_GENERAL_MINIMIZEONCLOSE:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_MINIMIZEONCLOSE, BM_GETCHECK, 0, 0);
-							pPrefs->m_bMinimizeOnClose = State == BST_UNCHECKED ? FALSE : TRUE;
-						}
-						break;
-
 					case IDC_GENERAL_SCREEN_ALLOW:
 						{
 							pPrefs->m_eScreenSaveMode = ScreenSaveAllow;
@@ -325,94 +272,6 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 							pPrefs->m_eScreenSaveMode = ScreenSavePreventFull;
 						}
 						break;
-
-					case IDC_GENERAL_HISTORYCOUNT:
-						{
-							TCHAR szSize[4];
-							SendDlgItemMessage(hDlg, IDC_GENERAL_HISTORYCOUNT, WM_GETTEXT, 8, (LPARAM)szSize);
-							int iSize = _wtoi(szSize);
-							if(iSize < 2)
-								iSize = 2;
-							if(iSize > HISTORY_MAX)
-								iSize = HISTORY_MAX;
-							pPrefs->m_iHistoryListSize = iSize;
-						}
-						break;
-
-					case IDC_GENERAL_FUTURECOUNT_SPINNER:
-						{
-							MessageBox(NULL, L"hit", L"", 0);
-						}
-						break;
-
-					case IDC_GENERAL_FUTURECOUNT:
-						{
-							TCHAR szSize[4];
-							SendDlgItemMessage(hDlg, IDC_GENERAL_FUTURECOUNT, WM_GETTEXT, 8, (LPARAM)szSize);
-							int iSize = _wtoi(szSize);
-							if(iSize < 2)
-								iSize = 2;
-							if(iSize > FUTURE_MAX)
-								iSize = FUTURE_MAX;
-							pPrefs->m_iFutureListSize = iSize;
-						}
-						break;
-					
-					case IDC_GENERAL_SHOWALBUMART:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWALBUMART, BM_GETCHECK, 0, 0);
-							pPrefs->m_bShowAlbumArt = State == BST_UNCHECKED ? FALSE : TRUE;
-
-							if(pPrefs->m_bShowAlbumArt)
-							{
-								if(pPrefs->m_bShowVisArt)
-								{
-									if (tuniacApp.m_VisualWindow)
-										tuniacApp.m_VisualWindow->Show();
-								}
-								else
-								{
-									IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
-									if(pPlaylist)
-									{
-										IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
-										if(pIPE)
-											tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
-									}
-								}
-							}
-							else
-							{
-								if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
-									tuniacApp.m_VisualWindow->Hide();
-							}
-
-							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
-
-							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_SHOWVISART), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
-							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_ARTONSELECTION), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
-						}
-						break;
-
-					case IDC_GENERAL_ARTONSELECTION:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_ARTONSELECTION, BM_GETCHECK, 0, 0);
-							pPrefs->m_bArtOnSelection = State == BST_UNCHECKED ? FALSE : TRUE;
-						}
-						break;
-
-					case IDC_GENERAL_SHOWVISART:
-						{
-							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_SHOWVISART, BM_GETCHECK, 0, 0);
-							pPrefs->m_bShowVisArt = State == BST_UNCHECKED ? FALSE : TRUE;
-							tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
-							if (pPrefs->m_bShowVisArt && tuniacApp.m_VisualWindow)
-								tuniacApp.m_VisualWindow->Show();
-							else if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
-								tuniacApp.m_VisualWindow->Hide();
-						}
-						break;
-
 				}
 			}
 			break;
@@ -420,6 +279,185 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 		default:
 			return false;
 			break;
+	}
+
+	return true;
+}
+
+LRESULT CALLBACK CPreferences::InterfaceProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	switch (uMsg)
+	{
+		case WM_INITDIALOG:
+		{
+			SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+			pPrefs = (CPreferences *)lParam;
+
+
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_TASKBAR_NORMAL, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconNever ? BST_CHECKED : BST_UNCHECKED, 0);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_TASKBAR_MINIMIZE, BM_SETCHECK, pPrefs->m_eTrayIconMode == TrayIconMinimize ? BST_CHECKED : BST_UNCHECKED, 0);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_MINIMIZEONCLOSE, BM_SETCHECK, pPrefs->m_bMinimizeOnClose ? BST_CHECKED : BST_UNCHECKED, 0);
+
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_SHOWALBUMART, BM_SETCHECK, pPrefs->m_bShowAlbumArt ? BST_CHECKED : BST_UNCHECKED, 0);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_ARTONSELECTION, BM_SETCHECK, pPrefs->m_bArtOnSelection ? BST_CHECKED : BST_UNCHECKED, 0);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_SHOWVISART, BM_SETCHECK, pPrefs->m_bShowVisArt ? BST_CHECKED : BST_UNCHECKED, 0);
+
+			EnableWindow(GetDlgItem(hDlg, IDC_INTERFACE_SHOWVISART), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
+			EnableWindow(GetDlgItem(hDlg, IDC_INTERFACE_ARTONSELECTION), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
+
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_FOLLOWCURRENTSONG, BM_SETCHECK, pPrefs->m_bFollowCurrentSong ? BST_CHECKED : BST_UNCHECKED, 0);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_SMARTSORTING, BM_SETCHECK, pPrefs->m_bSmartSorting ? BST_CHECKED : BST_UNCHECKED, 0);
+
+			TCHAR szSize[8];
+			_itow_s(pPrefs->m_iHistoryListSize, szSize, 10);
+			//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iHistoryListSize);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_HISTORYCOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_HISTORYCOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(HISTORY_MAX, 2));
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_HISTORYCOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_INTERFACE_HISTORYCOUNT), 0);
+
+			_itow_s(pPrefs->m_iFutureListSize, szSize, 10);
+			//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iFutureListSize);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_FUTURECOUNT, WM_SETTEXT, 0, (LPARAM)szSize);
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_FUTURECOUNT_SPINNER, UDM_SETRANGE, 0, (LPARAM)MAKELONG(FUTURE_MAX, 2));
+			SendDlgItemMessage(hDlg, IDC_INTERFACE_FUTURECOUNT_SPINNER, UDM_SETBUDDY, (WPARAM)GetDlgItem(hDlg, IDC_INTERFACE_FUTURECOUNT), 0);
+
+
+		}
+		break;
+
+		case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+				case IDC_INTERFACE_TASKBAR_NORMAL:
+				{
+					pPrefs->m_eTrayIconMode = TrayIconNever;
+					tuniacApp.m_Taskbar.Hide();
+				}
+				break;
+
+				case IDC_INTERFACE_TASKBAR_MINIMIZE:
+				{
+					pPrefs->m_eTrayIconMode = TrayIconMinimize;
+					tuniacApp.m_Taskbar.Show();
+				}
+				break;
+
+				case IDC_INTERFACE_MINIMIZEONCLOSE:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_MINIMIZEONCLOSE, BM_GETCHECK, 0, 0);
+					pPrefs->m_bMinimizeOnClose = State == BST_UNCHECKED ? FALSE : TRUE;
+				}
+				break;
+
+				case IDC_INTERFACE_SHOWALBUMART:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_SHOWALBUMART, BM_GETCHECK, 0, 0);
+					pPrefs->m_bShowAlbumArt = State == BST_UNCHECKED ? FALSE : TRUE;
+
+					if (pPrefs->m_bShowAlbumArt)
+					{
+						if (pPrefs->m_bShowVisArt)
+						{
+							if (tuniacApp.m_VisualWindow)
+								tuniacApp.m_VisualWindow->Show();
+						}
+						else
+						{
+							IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetActivePlaylist();
+							if (pPlaylist)
+							{
+								IPlaylistEntry * pIPE = pPlaylist->GetActiveEntry();
+								if (pIPE)
+									tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
+							}
+						}
+					}
+					else
+					{
+						if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
+							tuniacApp.m_VisualWindow->Hide();
+					}
+
+					tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
+
+					EnableWindow(GetDlgItem(hDlg, IDC_INTERFACE_SHOWVISART), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
+					EnableWindow(GetDlgItem(hDlg, IDC_INTERFACE_ARTONSELECTION), pPrefs->m_bShowAlbumArt ? TRUE : FALSE);
+				}
+				break;
+
+				case IDC_INTERFACE_ARTONSELECTION:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_ARTONSELECTION, BM_GETCHECK, 0, 0);
+					pPrefs->m_bArtOnSelection = State == BST_UNCHECKED ? FALSE : TRUE;
+				}
+				break;
+
+				case IDC_INTERFACE_SHOWVISART:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_SHOWVISART, BM_GETCHECK, 0, 0);
+					pPrefs->m_bShowVisArt = State == BST_UNCHECKED ? FALSE : TRUE;
+					tuniacApp.m_SourceSelectorWindow->ToggleAlbumArt(pPrefs->m_bShowAlbumArt);
+					if (pPrefs->m_bShowVisArt && tuniacApp.m_VisualWindow)
+						tuniacApp.m_VisualWindow->Show();
+					else if (wcscmp(tuniacApp.GetActiveScreenName(), L"Visuals") != 0 && tuniacApp.m_VisualWindow)
+						tuniacApp.m_VisualWindow->Hide();
+				}
+				break;
+
+				case IDC_INTERFACE_FOLLOWCURRENTSONG:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_FOLLOWCURRENTSONG, BM_GETCHECK, 0, 0);
+					pPrefs->m_bFollowCurrentSong = State == BST_UNCHECKED ? FALSE : TRUE;
+				}
+				break;
+
+				case IDC_INTERFACE_SMARTSORTING:
+				{
+					int State = SendDlgItemMessage(hDlg, IDC_INTERFACE_SMARTSORTING, BM_GETCHECK, 0, 0);
+					pPrefs->m_bSmartSorting = State == BST_UNCHECKED ? FALSE : TRUE;
+				}
+				break;
+
+				case IDC_INTERFACE_HISTORYCOUNT:
+				{
+					TCHAR szSize[4];
+					SendDlgItemMessage(hDlg, IDC_INTERFACE_HISTORYCOUNT, WM_GETTEXT, 8, (LPARAM)szSize);
+					int iSize = _wtoi(szSize);
+					if (iSize < 2)
+						iSize = 2;
+					if (iSize > HISTORY_MAX)
+						iSize = HISTORY_MAX;
+					pPrefs->m_iHistoryListSize = iSize;
+				}
+				break;
+
+				case IDC_INTERFACE_FUTURECOUNT_SPINNER:
+				{
+					MessageBox(NULL, L"hit", L"", 0);
+				}
+				break;
+
+				case IDC_INTERFACE_FUTURECOUNT:
+				{
+					TCHAR szSize[4];
+					SendDlgItemMessage(hDlg, IDC_INTERFACE_FUTURECOUNT, WM_GETTEXT, 8, (LPARAM)szSize);
+					int iSize = _wtoi(szSize);
+					if (iSize < 2)
+						iSize = 2;
+					if (iSize > FUTURE_MAX)
+						iSize = FUTURE_MAX;
+					pPrefs->m_iFutureListSize = iSize;
+				}
+				break;
+			}
+		}
+		break;
+
+	default:
+		return false;
+		break;
 	}
 
 	return true;
@@ -1625,46 +1663,51 @@ CPreferences::CPreferences(void)
 	m_Pages[2].pTemplate = LockDlgRes(IDD_PREFERENCES_AUDIO);
 
 	// general
-	m_Pages[3].pszName = TEXT("Formatting");
-	m_Pages[3].pDialogFunc = (DLGPROC)&FormattingProc;
+	m_Pages[3].pszName = TEXT("Interface");
+	m_Pages[3].pDialogFunc = (DLGPROC)&InterfaceProc;
 	m_Pages[3].iParent = 0;
-	m_Pages[3].pTemplate = LockDlgRes(IDD_PREFERENCES_FORMATTING);
+	m_Pages[3].pTemplate = LockDlgRes(IDD_PREFERENCES_INTERFACE);
 
-	m_Pages[4].pszName = TEXT("Media Library");
-	m_Pages[4].pDialogFunc = (DLGPROC)&LibraryProc;
+	m_Pages[4].pszName = TEXT("Formatting");
+	m_Pages[4].pDialogFunc = (DLGPROC)&FormattingProc;
 	m_Pages[4].iParent = 0;
-	m_Pages[4].pTemplate = LockDlgRes(IDD_PREFERENCES_MEDIALIBRARY);
+	m_Pages[4].pTemplate = LockDlgRes(IDD_PREFERENCES_FORMATTING);
 
-	m_Pages[5].pszName = TEXT("File Assoc");
-	m_Pages[5].pDialogFunc = (DLGPROC)&FileAssocProc;
+	m_Pages[5].pszName = TEXT("Media Library");
+	m_Pages[5].pDialogFunc = (DLGPROC)&LibraryProc;
 	m_Pages[5].iParent = 0;
-	m_Pages[5].pTemplate = LockDlgRes(IDD_PREFERENCES_FILEASSOC);
+	m_Pages[5].pTemplate = LockDlgRes(IDD_PREFERENCES_MEDIALIBRARY);
 
-	m_Pages[6].pszName = TEXT("User Search");
-	m_Pages[6].pDialogFunc = (DLGPROC)&UserSearchFieldProc;
+	m_Pages[6].pszName = TEXT("File Assoc");
+	m_Pages[6].pDialogFunc = (DLGPROC)&FileAssocProc;
 	m_Pages[6].iParent = 0;
-	m_Pages[6].pTemplate = LockDlgRes(IDD_PREFERENCES_USERSEARCHFIELD);
+	m_Pages[6].pTemplate = LockDlgRes(IDD_PREFERENCES_FILEASSOC);
+
+	m_Pages[7].pszName = TEXT("User Search");
+	m_Pages[7].pDialogFunc = (DLGPROC)&UserSearchFieldProc;
+	m_Pages[7].iParent = 0;
+	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_USERSEARCHFIELD);
 
 	// plugins
-	m_Pages[7].pszName = TEXT("Audio");
-	m_Pages[7].pDialogFunc = (DLGPROC)&CoreAudioProc;
-	m_Pages[7].iParent = 1;
-	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
-
-	//m_Pages[8].pszName = TEXT("Import/Export");
-	//m_Pages[8].pDialogFunc = (DLGPROC)&ImportExportProc;
-	//m_Pages[8].iParent = 1;
-	//m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_IMPORTEXPORT);
-
-	m_Pages[8].pszName = TEXT("Visuals");
-	m_Pages[8].pDialogFunc = (DLGPROC)&VisualsProc;
+	m_Pages[8].pszName = TEXT("Audio");
+	m_Pages[8].pDialogFunc = (DLGPROC)&CoreAudioProc;
 	m_Pages[8].iParent = 1;
-	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
+	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
 
-	m_Pages[9].pszName = TEXT("EQ");
-	m_Pages[9].pDialogFunc = (DLGPROC)&EQProc;
-	m_Pages[9].iParent = 2;
-	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
+	//m_Pages[9].pszName = TEXT("Import/Export");
+	//m_Pages[9].pDialogFunc = (DLGPROC)&ImportExportProc;
+	//m_Pages[9].iParent = 1;
+	//m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_IMPORTEXPORT);
+
+	m_Pages[9].pszName = TEXT("Visuals");
+	m_Pages[9].pDialogFunc = (DLGPROC)&VisualsProc;
+	m_Pages[9].iParent = 1;
+	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
+
+	m_Pages[10].pszName = TEXT("EQ");
+	m_Pages[10].pDialogFunc = (DLGPROC)&EQProc;
+	m_Pages[10].iParent = 2;
+	m_Pages[10].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
 }
 
 CPreferences::~CPreferences(void)

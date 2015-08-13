@@ -192,7 +192,7 @@ protected:
 		DLGPROC			pDialogFunc;
 		HTREEITEM		hTreeItem;
 	} PrefPage;
-	PrefPage	m_Pages[10];
+	PrefPage	m_Pages[11];
 	int			m_StartPage;
 
 	HWND		m_hTextFormatToolTip;
@@ -278,6 +278,7 @@ protected:
 
 	// general
 	static LRESULT CALLBACK GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK InterfaceProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK FormattingProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK FileAssocProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
