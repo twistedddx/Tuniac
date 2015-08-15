@@ -1652,46 +1652,47 @@ CPreferences::CPreferences(void)
 	m_Pages[0].iParent = -1;
 	m_Pages[0].pTemplate = LockDlgRes(IDD_PREFERENCES_GENERAL);
 
-	m_Pages[1].pszName = TEXT("Plugins");
-	m_Pages[1].pDialogFunc = (DLGPROC)&PluginsProc;
+	m_Pages[1].pszName = TEXT("Media Library");
+	m_Pages[1].pDialogFunc = (DLGPROC)&LibraryProc;
 	m_Pages[1].iParent = -1;
-	m_Pages[1].pTemplate = LockDlgRes(IDD_PREFERENCES_PLUGINS);
+	m_Pages[1].pTemplate = LockDlgRes(IDD_PREFERENCES_MEDIALIBRARY);
 
-	m_Pages[2].pszName = TEXT("Audio");
-	m_Pages[2].pDialogFunc = (DLGPROC)&AudioProc;
+	m_Pages[2].pszName = TEXT("Plugins");
+	m_Pages[2].pDialogFunc = (DLGPROC)&PluginsProc;
 	m_Pages[2].iParent = -1;
-	m_Pages[2].pTemplate = LockDlgRes(IDD_PREFERENCES_AUDIO);
+	m_Pages[2].pTemplate = LockDlgRes(IDD_PREFERENCES_PLUGINS);
+
+	m_Pages[3].pszName = TEXT("Audio");
+	m_Pages[3].pDialogFunc = (DLGPROC)&AudioProc;
+	m_Pages[3].iParent = -1;
+	m_Pages[3].pTemplate = LockDlgRes(IDD_PREFERENCES_AUDIO);
 
 	// general
-	m_Pages[3].pszName = TEXT("Interface");
-	m_Pages[3].pDialogFunc = (DLGPROC)&InterfaceProc;
-	m_Pages[3].iParent = 0;
-	m_Pages[3].pTemplate = LockDlgRes(IDD_PREFERENCES_INTERFACE);
-
-	m_Pages[4].pszName = TEXT("Formatting");
-	m_Pages[4].pDialogFunc = (DLGPROC)&FormattingProc;
+	m_Pages[4].pszName = TEXT("Interface");
+	m_Pages[4].pDialogFunc = (DLGPROC)&InterfaceProc;
 	m_Pages[4].iParent = 0;
-	m_Pages[4].pTemplate = LockDlgRes(IDD_PREFERENCES_FORMATTING);
+	m_Pages[4].pTemplate = LockDlgRes(IDD_PREFERENCES_INTERFACE);
 
-	m_Pages[5].pszName = TEXT("Media Library");
-	m_Pages[5].pDialogFunc = (DLGPROC)&LibraryProc;
+	m_Pages[5].pszName = TEXT("Formatting");
+	m_Pages[5].pDialogFunc = (DLGPROC)&FormattingProc;
 	m_Pages[5].iParent = 0;
-	m_Pages[5].pTemplate = LockDlgRes(IDD_PREFERENCES_MEDIALIBRARY);
+	m_Pages[5].pTemplate = LockDlgRes(IDD_PREFERENCES_FORMATTING);
 
 	m_Pages[6].pszName = TEXT("File Assoc");
 	m_Pages[6].pDialogFunc = (DLGPROC)&FileAssocProc;
 	m_Pages[6].iParent = 0;
 	m_Pages[6].pTemplate = LockDlgRes(IDD_PREFERENCES_FILEASSOC);
 
+	// media library
 	m_Pages[7].pszName = TEXT("User Search");
 	m_Pages[7].pDialogFunc = (DLGPROC)&UserSearchFieldProc;
-	m_Pages[7].iParent = 0;
+	m_Pages[7].iParent = 1;
 	m_Pages[7].pTemplate = LockDlgRes(IDD_PREFERENCES_USERSEARCHFIELD);
 
 	// plugins
 	m_Pages[8].pszName = TEXT("Audio");
 	m_Pages[8].pDialogFunc = (DLGPROC)&CoreAudioProc;
-	m_Pages[8].iParent = 1;
+	m_Pages[8].iParent = 2;
 	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
 
 	//m_Pages[9].pszName = TEXT("Import/Export");
@@ -1701,12 +1702,13 @@ CPreferences::CPreferences(void)
 
 	m_Pages[9].pszName = TEXT("Visuals");
 	m_Pages[9].pDialogFunc = (DLGPROC)&VisualsProc;
-	m_Pages[9].iParent = 1;
+	m_Pages[9].iParent = 2;
 	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
 
+	// audio
 	m_Pages[10].pszName = TEXT("EQ");
 	m_Pages[10].pDialogFunc = (DLGPROC)&EQProc;
-	m_Pages[10].iParent = 2;
+	m_Pages[10].iParent = 3;
 	m_Pages[10].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
 }
 
