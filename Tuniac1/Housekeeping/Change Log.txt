@@ -1,5 +1,11 @@
 Aug, 2015
 ---------
+-fix Token helper return lines
+-expose No VK Hotkey pref
+-add Interface pref screen. Rearrange General and Interface screen to suit
+
+Aug, 2015 (150809)
+---------
 -Center Column Selection, About and SVPRender Config dialogs.
 -Get latest VC 2010 SP1 MFC security update in installer
 
