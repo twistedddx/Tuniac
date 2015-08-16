@@ -1,5 +1,8 @@
 Aug, 2015
 ---------
+-Update pref descriptions
+-Split Media library and User Search prefs to their own section
+-Update token helpers in guide and text
 -fix Token helper return lines
 -expose No VK Hotkey pref
 -add Interface pref screen. Rearrange General and Interface screen to suit
