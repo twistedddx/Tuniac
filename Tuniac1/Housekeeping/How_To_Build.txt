@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio 2013 in mind in March 2014.
+This is written with Visual Studio 2015 in mind in August 2015.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -18,14 +18,7 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 
 
-1)First install Visual Studio 2013.
-
-1a)If you have Visual Studio 2013 Express you will need the Windows Platform SDK as it's not included.
-Dot point 2 of the below link may also need to be done for Express.
-http://msdn.microsoft.com/en-us/library/ms235626%28VS.80%29.aspx
-
-Look here for errors that look like:
-cannot open include file 'winresrc.h'
+1)First install Visual Studio 2015.
 
 
 
@@ -89,7 +82,7 @@ Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libpng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 
-These cmd assume Win7 x64 and Visual Studio 2013 if you have anything else you may need to mod the file.
+These cmd assume Win10 x64 and Visual Studio 2015 if you have anything else you may need to mod the file.
 You can also get all the build recipes for individual building of libs in there.
 
 
@@ -99,14 +92,14 @@ You can also get all the build recipes for individual building of libs in there.
 5a)You need Direct X SDK June 2010.
 http://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-5b)You need the Glew 1.12.0 Binaries Windows 32-bit zip.
+5b)You need the Glew 1.13.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.12.0/glew-1.12.0-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/1.13.0/glew-1.13.0-win32.zip/download
 
 Put glew.h, glxew.h and wglew.h in
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\GL
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\GL
 And put Release\Win32\ glew32.lib and glew32s.lib in
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib
 
 Look here for errors that look like:
 Cannot open include file: 'GL/glew.h'

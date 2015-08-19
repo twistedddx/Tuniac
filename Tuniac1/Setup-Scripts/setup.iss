@@ -92,47 +92,135 @@ function DestroyIcon(hIcon: LongInt): LongInt;
 external 'DestroyIcon@user32.dll stdcall';
       
 function HasVC14x86Redist: Boolean;
+var
+  dwMajor: Cardinal;
+  dwMinor: Cardinal;
+  dwBld: Cardinal;
+
 begin
-  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
-    Result := True;
-  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
-    Result := True;
-  end else begin
-    Result := False;
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Major', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Major', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Minor', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Minor', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Bld', dwBld);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Bld', dwBld);
+
+  Result := False;
+
+  if (dwMajor >= 14) then begin
+    if (dwMinor >= 0) then begin
+      if(dwBld >=  23026) then begin
+        Result := True;
+      end;
+    end;
   end;
+  
+//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
+//    Result := True;
+//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
+//    Result := True;
+//  end else begin
+//    Result := False;
+//  end;
 end;
 
 function HasVC10x86Redist: Boolean;
+var
+  dwMajor: Cardinal;
+  dwMinor: Cardinal;
+  dwBld: Cardinal;
+
 begin
-  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
-    Result := True;
-  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
-    Result := True;
-  end else begin
-    Result := False;
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MajorVersion', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MajorVersion', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MinorVersion', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MinorVersion', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Bld', dwBld);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Bld', dwBld);
+
+  Result := False;
+
+  if (dwMajor >= 10) then begin
+    if (dwMinor >= 0) then begin
+      if(dwBld >=  40219) then begin
+        Result := True;
+      end;
+    end;
   end;
+
+//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
+//    Result := True;
+//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
+//    Result := True;
+//  end else begin
+//    Result := False;
+//  end;
 end;
 
 function HasVC14x64Redist: Boolean;
+var
+  dwMajor: Cardinal;
+  dwMinor: Cardinal;
+  dwBld: Cardinal;
+
 begin
-  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
-    Result := True;
-  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
-    Result := True;
-  end else begin
-    Result := False;
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Major', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Major', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Minor', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Minor', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Bld', dwBld);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Bld', dwBld);
+
+  Result := False;
+
+  if (dwMajor >= 14) then begin
+    if (dwMinor >= 0) then begin
+      if(dwBld >=  23026) then begin
+        Result := True;
+      end;
+    end;
   end;
+
+//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
+//    Result := True;
+//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
+//    Result := True;
+//  end else begin
+//    Result := False;
+//  end;
 end;
 
 function HasVC10x64Redist: Boolean;
+var
+  dwMajor: Cardinal;
+  dwMinor: Cardinal;
+  dwBld: Cardinal;
+
 begin
-  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
-    Result := True;
-  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
-    Result := True;
-  end else begin
-    Result := False;
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MajorVersion', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MajorVersion', dwMajor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MinorVersion', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MinorVersion', dwMinor);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Bld', dwBld);
+  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Bld', dwBld);
+
+  Result := False;
+
+  if (dwMajor >= 10) then begin
+    if (dwMinor >= 0) then begin
+      if(dwBld >=  40219) then begin
+        Result := True;
+      end;
+    end;
   end;
+
+//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
+//    Result := True;
+//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
+//    Result := True;
+//  end else begin
+//    Result := False;
+//  end;
 end;
 
 //check for direct x 2.7
