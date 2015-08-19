@@ -1,5 +1,6 @@
 Aug, 2015
 ---------
+-Pretty some prefs screens layout
 -Update pref descriptions
 -Split Media library and User Search prefs to their own section
 -Update token helpers in guide and text
