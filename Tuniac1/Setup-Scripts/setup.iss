@@ -18,6 +18,7 @@ MinVersion=0,5.01.2600sp3
 OutputDir=.
 OutputBaseFilename=..\Tuniac_Setup_{#DateTime}
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
+SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
 SolidCompression=yes
 WizardImageFile=WizardImage.bmp

@@ -438,6 +438,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(bActive)
 				{
 					m_bScreensaveActive = true;
+					if (m_Preferences.GetCloseOnScreensave())
+					{
+						DestroyWindow(hWnd);
+					}
 					if(m_Preferences.GetPauseOnScreensave())
 					{
 						if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
@@ -659,22 +663,48 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_WTSSESSION_CHANGE:
 			{
-				if(wParam == WTS_SESSION_LOCK && m_Preferences.GetPauseOnLock() ||
-					wParam == WTS_CONSOLE_DISCONNECT && m_Preferences.GetPauseOnSwitch())
+				if (wParam == WTS_SESSION_LOCK)
 				{
-					if(CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+					if(m_Preferences.GetCloseOnLock())
+						DestroyWindow(hWnd);
+					else if (m_Preferences.GetPauseOnLock())
 					{
-						m_WasPlaying = true;
-						SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
-						if(m_Preferences.GetRememberPos())
-							m_WasPlayingTime = CCoreAudio::Instance()->GetPosition();
+						if (CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+						{
+							m_WasPlaying = true;
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+							if (m_Preferences.GetRememberPos())
+								m_WasPlayingTime = CCoreAudio::Instance()->GetPosition();
+						}
 					}
 				}
 
-				if(wParam == WTS_SESSION_UNLOCK && m_Preferences.GetResumeOnLock() ||
-					wParam == WTS_CONSOLE_CONNECT && m_Preferences.GetResumeOnSwitch())
+				else if (wParam == WTS_CONSOLE_DISCONNECT)
 				{
-					SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs()*1000), NULL);
+					if (m_Preferences.GetCloseOnSwitch())
+						DestroyWindow(hWnd);
+					else if (m_Preferences.GetPauseOnSwitch())
+					{
+						if (CCoreAudio::Instance()->GetState() == STATE_PLAYING)
+						{
+							m_WasPlaying = true;
+							SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PAUSE, 0), 0);
+							if (m_Preferences.GetRememberPos())
+								m_WasPlayingTime = CCoreAudio::Instance()->GetPosition();
+						}
+					}
+				}
+
+				else if(wParam == WTS_SESSION_UNLOCK)
+				{
+					if (m_Preferences.GetResumeOnLock())
+						SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs() * 1000), NULL);
+				}
+
+				else if (wParam == WTS_CONSOLE_CONNECT)
+				{
+					if(m_Preferences.GetResumeOnSwitch())
+						SetTimer(m_hWnd, DELAYEDPLAY_TIMERID, (m_Preferences.GetDelayInSecs()*1000), NULL);
 				}
 			}
 			break;
@@ -694,7 +724,9 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 			}
 			break;
-		/*
+
+
+			/*
 		case WM_POWERBROADCAST:
 			{
 				if(wParam == PBT_APMSUSPEND)
@@ -722,10 +754,10 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						}
 					}
 				}
-
 			}
 			break;
-		*/
+			*/
+
 			//resize limits
 		case WM_GETMINMAXINFO:
 			{

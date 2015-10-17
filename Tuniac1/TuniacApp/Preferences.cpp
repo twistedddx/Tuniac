@@ -39,6 +39,9 @@
 #define MINIMIZEONCLOSE			TEXT("MinimizeOnClose")
 #define ALWAYSONTOP				TEXT("AlwaysOnTop")
 
+#define CLOSEONSCREENSAVE		TEXT("CloseOnScreensave")
+#define CLOSEONLOCK				TEXT("CloseOnLock")
+#define CLOSEONSWITCH			TEXT("CloseOnSwitch")
 #define PAUSEONSCREENSAVE		TEXT("PauseOnScreensave")
 #define PAUSEONLOCK				TEXT("PauseOnLock")
 #define PAUSEONSWITCH			TEXT("PauseOnSwitch")
@@ -150,6 +153,9 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SKIPSTREAMS, BM_SETCHECK, pPrefs->m_bSkipStreams ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_SETCHECK, pPrefs->m_bAutoSoftPause ? BST_CHECKED : BST_UNCHECKED, 0);
 
+				SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bCloseOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONLOCK, BM_SETCHECK, pPrefs->m_bCloseOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
+				SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSWITCH, BM_SETCHECK, pPrefs->m_bCloseOnSwitch ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_SETCHECK, pPrefs->m_bPauseOnScreensave ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOCK, BM_SETCHECK, pPrefs->m_bPauseOnLock ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSWITCH, BM_SETCHECK, pPrefs->m_bPauseOnSwitch ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -160,6 +166,26 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 				_itow_s(pPrefs->m_iDelayInSecs, szSize, 10);
 				//StringCchPrintf(szSize, 8, TEXT("%i"), pPrefs->m_iDelayInSecs);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_DELAYINSECS, WM_SETTEXT, 0, (LPARAM)szSize);
+
+				if(pPrefs->m_bCloseOnScreensave)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE), FALSE);
+				else if(!pPrefs->m_bPauseOnScreensave)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE), FALSE);
+
+				if (pPrefs->m_bCloseOnLock)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONLOCK), FALSE);
+				else if (!pPrefs->m_bPauseOnLock)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONLOCK), FALSE);
+
+				if (pPrefs->m_bCloseOnSwitch)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSWITCH), FALSE);
+				else if (!pPrefs->m_bPauseOnSwitch)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSWITCH), FALSE);
+
+				if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+				else
+					EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_ALLOW, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSaveAllow ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_GENERAL_SCREEN_PREVENT, BM_SETCHECK, pPrefs->m_eScreenSaveMode == ScreenSavePrevent ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -193,10 +219,92 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						}
 						break;
 
+
+					case IDC_GENERAL_CLOSEONSCREENSAVE:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSCREENSAVE, BM_GETCHECK, 0, 0);
+						pPrefs->m_bCloseOnScreensave = State == BST_UNCHECKED ? FALSE : TRUE;
+
+						if (pPrefs->m_bCloseOnScreensave)
+						{
+							SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bPauseOnScreensave = FALSE;
+							SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bResumeOnScreensave = FALSE;
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE), FALSE);
+						}
+
+						if(pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+						else
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
+					}
+					break;
+
+					case IDC_GENERAL_CLOSEONLOCK:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONLOCK, BM_GETCHECK, 0, 0);
+						pPrefs->m_bCloseOnLock = State == BST_UNCHECKED ? FALSE : TRUE;
+
+						if (pPrefs->m_bCloseOnLock)
+						{
+							SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOCK, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bPauseOnLock = FALSE;
+							SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOCK, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bResumeOnLock = FALSE;
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONLOCK), FALSE);
+						}
+
+						if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+						else
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
+					}
+					break;
+
+					case IDC_GENERAL_CLOSEONSWITCH:
+					{
+						int State = SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSWITCH, BM_GETCHECK, 0, 0);
+						pPrefs->m_bCloseOnSwitch = State == BST_UNCHECKED ? FALSE : TRUE;
+
+						if (pPrefs->m_bCloseOnSwitch)
+						{
+							SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSWITCH, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bPauseOnSwitch = FALSE;
+							SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_SETCHECK, BST_UNCHECKED, 0);
+							pPrefs->m_bResumeOnSwitch = FALSE;
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSWITCH), FALSE);
+						}
+
+						if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+						else
+							EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
+					}
+					break;
+
 					case IDC_GENERAL_PAUSEONSCREENSAVE:
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSCREENSAVE, BM_GETCHECK, 0, 0);
 							pPrefs->m_bPauseOnScreensave = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bPauseOnScreensave)
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSCREENSAVE, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bCloseOnScreensave = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE), TRUE);
+							}
+							else
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bResumeOnScreensave = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE), FALSE);
+							}
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -204,6 +312,24 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONLOCK, BM_GETCHECK, 0, 0);
 							pPrefs->m_bPauseOnLock = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bPauseOnLock)
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONLOCK, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bCloseOnLock = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONLOCK), TRUE);
+							}
+							else
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOCK, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bResumeOnLock = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONLOCK), FALSE);
+							}
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -211,6 +337,24 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_PAUSEONSWITCH, BM_GETCHECK, 0, 0);
 							pPrefs->m_bPauseOnSwitch = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bPauseOnSwitch)
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_CLOSEONSWITCH, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bCloseOnSwitch = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSWITCH), TRUE);
+							}
+							else
+							{
+								SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_SETCHECK, BST_UNCHECKED, 0);
+								pPrefs->m_bResumeOnSwitch = FALSE;
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_RESUMEONSWITCH), FALSE);
+							}
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -218,6 +362,11 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSCREENSAVE, BM_GETCHECK, 0, 0);
 							pPrefs->m_bResumeOnScreensave = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -225,6 +374,11 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONLOCK, BM_GETCHECK, 0, 0);
 							pPrefs->m_bResumeOnLock = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -232,6 +386,11 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_RESUMEONSWITCH, BM_GETCHECK, 0, 0);
 							pPrefs->m_bResumeOnSwitch = State == BST_UNCHECKED ? FALSE : TRUE;
+
+							if (pPrefs->m_bResumeOnScreensave || pPrefs->m_bResumeOnLock || pPrefs->m_bResumeOnSwitch)
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), TRUE);
+							else
+								EnableWindow(GetDlgItem(hDlg, IDC_GENERAL_REMEMBERPOS), FALSE);
 						}
 						break;
 
@@ -1731,6 +1890,9 @@ bool CPreferences::DefaultPreferences(void)
 	m_bMinimizeOnClose			= FALSE;
 	m_bAlwaysOnTop				= FALSE;
 
+	m_bCloseOnScreensave		= FALSE;
+	m_bCloseOnLock				= FALSE;
+	m_bCloseOnSwitch			= FALSE;
 	m_bPauseOnScreensave		= TRUE;
 	m_bPauseOnLock				= TRUE;
 	m_bPauseOnSwitch			= TRUE;
@@ -1880,6 +2042,30 @@ bool CPreferences::LoadPreferences(void)
 						NULL,
 						&Type,
 						(LPBYTE)&m_bAlwaysOnTop,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						CLOSEONSCREENSAVE,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bCloseOnScreensave,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						CLOSEONLOCK,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bCloseOnLock,
+						&Size);
+
+	Size = sizeof(BOOL);
+	RegQueryValueEx(	hTuniacPrefKey,
+						CLOSEONSWITCH,
+						NULL,
+						&Type,
+						(LPBYTE)&m_bCloseOnSwitch,
 						&Size);
 
 	Size = sizeof(BOOL);
@@ -2322,6 +2508,27 @@ bool CPreferences::SavePreferences(void)
 					0,
 					REG_DWORD,
 					(LPBYTE)&m_bAlwaysOnTop, 
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					CLOSEONSCREENSAVE,
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bCloseOnScreensave,
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					CLOSEONLOCK,
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bCloseOnLock,
+					sizeof(BOOL));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					CLOSEONSWITCH,
+					0,
+					REG_DWORD,
+					(LPBYTE)&m_bCloseOnSwitch,
 					sizeof(BOOL));
 
 	RegSetValueEx(	hTuniacPrefKey, 
@@ -3199,6 +3406,21 @@ BOOL		CPreferences::GetSmartSortingEnabled(void)
 BOOL		CPreferences::GetSkipStreams(void)
 {
 	return m_bSkipStreams;
+}
+
+BOOL		CPreferences::GetCloseOnScreensave(void)
+{
+	return m_bCloseOnScreensave;
+}
+
+BOOL		CPreferences::GetCloseOnLock(void)
+{
+	return m_bCloseOnLock;
+}
+
+BOOL		CPreferences::GetCloseOnSwitch(void)
+{
+	return m_bCloseOnSwitch;
 }
 
 BOOL		CPreferences::GetPauseOnScreensave(void)
