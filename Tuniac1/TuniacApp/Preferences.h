@@ -205,6 +205,9 @@ protected:
 	BOOL		m_bMinimizeOnClose;
 	BOOL		m_bAlwaysOnTop;
 
+	BOOL		m_bCloseOnScreensave;
+	BOOL		m_bCloseOnLock;
+	BOOL		m_bCloseOnSwitch;
 	BOOL		m_bPauseOnScreensave;
 	BOOL		m_bPauseOnLock;
 	BOOL		m_bPauseOnSwitch;
@@ -219,6 +222,7 @@ protected:
 	BOOL		m_bFollowCurrentSong;
 	BOOL		m_bSmartSorting;
 	BOOL		m_bSkipStreams;
+
 	BOOL		m_bShuffleState;
 	BOOL		m_bSkipPlaylistImport;
 	BOOL		m_bPlaylistSorting;
@@ -374,6 +378,9 @@ public:
 	void		SetFollowCurrentSongMode(BOOL bEnabled);
 	BOOL		GetFollowCurrentSongMode(void);
 
+	BOOL		GetCloseOnScreensave(void);
+	BOOL		GetCloseOnLock(void);
+	BOOL		GetCloseOnSwitch(void);
 	BOOL		GetPauseOnScreensave(void);
 	BOOL		GetPauseOnLock(void);
 	BOOL		GetPauseOnSwitch(void);
