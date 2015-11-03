@@ -16,16 +16,21 @@ cd ..\..\..\
 
 rem ######## zlib
 cd zlib\
-mkdir .\build
-cd build\
+
 
 rem #zlib Release x86
-rmdir /S /Q ..\build
+if exist .\build\ rmdir /S /Q .\build
+mkdir .\build
+cd build\
 "%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
-mkdir ..\Release\x86
+if exist  ..\Release\x86\ rmdir /S /Q ..\Release\x86
+mkdir -p ..\Release\x86
 move /Y .\Release\zlibstatic.lib ..\Release\x86\zlibstatic.lib
+
+
+cd ..
 
 
 rem if "64bitcl"=="false" goto done
@@ -33,11 +38,14 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 
 
 rem #zlib Release x64
-rmdir /S /Q ..\build
+if exist .\build\ rmdir /S /Q .\build
+mkdir .\build
+cd build\
 "%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14 Win64" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
-mkdir ..\Release\x64
+if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64
+mkdir -p ..\Release\x64
 move /Y .\Release\zlibstatic.lib ..\Release\x64\zlibstatic.lib
 
 move /Y .\zconf.h ..\zconf.h

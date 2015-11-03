@@ -16,16 +16,21 @@ cd ..\..\..\
 
 rem ######## turbojpeglib
 cd libjpeg-turbo\
-mkdir .\build
-cd build\
+
 
 rem #turbojpeg Release x86:
-rmdir /S /Q ..\build
+if exist .\build\ rmdir /S /Q .\build
+mkdir .\build
+cd build\
 "%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14" ..\.
 devenv libjpeg-turbo.sln /project "turbojpeg-static" /Clean
 devenv libjpeg-turbo.sln /project "turbojpeg-static" /Rebuild "Release"
+if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
 mkdir ..\Release\x86
 move /Y .\Release\turbojpeg-static.lib ..\Release\x86\turbojpeg-static.lib
+
+
+cd ..
 
 
 rem if "64bitcl"=="false" goto done
@@ -33,10 +38,13 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 
 
 rem #turbojpeg Release x64
-rmdir /S /Q ..\build
+if exist .\build\ rmdir /S /Q .\build
+mkdir .\build
+cd build\
 "%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14 Win64" ..\.
 devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Clean
 devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Rebuild "Release"
+if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64
 mkdir ..\Release\x64
 move /Y .\Release\turbojpeg-static.lib ..\Release\x64\turbojpeg-static.lib
 
