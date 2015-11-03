@@ -87,7 +87,7 @@ IDD_PREFERENCES_GENERAL DIALOGEX 0, 0, 236, 206
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Miscellaneous",IDC_STATIC,7,7,222,65
+    GROUPBOX        "Miscellaneous",IDC_STATIC,7,7,222,50
     CONTROL         "Disable VK Hotkeys (if keyboard/mouse double action)",IDC_GENERAL_NOVKHOTKEYS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,19,192,10
     CONTROL         "Automatically pause after each song",IDC_GENERAL_AUTOSOFTPAUSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,31,192,10
     CONTROL         "Automatically skip streams unless manually selected",IDC_GENERAL_SKIPSTREAMS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,43,192,10
