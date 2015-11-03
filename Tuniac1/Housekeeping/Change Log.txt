@@ -1,3 +1,12 @@
+Nov, 2015
+---------
+-move uninstaller
+-add links to data folder
+
+Oct, 2015
+---------
+-option to close on system events
+
 Aug, 2015
 ---------
 -Pretty some prefs screens layout
