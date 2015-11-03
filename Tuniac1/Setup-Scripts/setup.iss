@@ -21,6 +21,7 @@ SetupIconFile=..\TuniacApp\icons\tuniac.ico
 SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
 SolidCompression=yes
+UninstallFilesDir={app}\uninstaller
 WizardImageFile=WizardImage.bmp
 WizardSmallImageFile=WizardImageSmall.bmp
 
@@ -32,6 +33,7 @@ Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription
 Name: {app}\Guide\*.html; Type: files
 Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
+Name: {app}\unins*.*; Type: files
 
 [Files]
 Source: "isxdlfiles\isxdl.dll"; Flags: dontcopy
@@ -58,10 +60,12 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Keyboard\Native Media Players\TuniacApp"
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Keyboard\Native Media Players\TuniacApp"; ValueType: string; ValueName: "ExePath"; ValueData: "{app}\TuniacApp.exe"
 
 [Icons]
-Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe
-Name: {group}\{cm:UninstallProgram,Tuniac}; Filename: {uninstallexe}
-Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: desktopicon
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Tasks: quicklaunchicon
+Name: {group}\Tuniac; Filename: {app}\TuniacApp.exe; Comment: "Launch Tuniac"
+Name: {group}\Data Folder; Filename: {userappdata}\Tuniac; Comment: "Data Folder"
+Name: {group}\Uninstaller\{cm:UninstallProgram,Tuniac}; Filename: {uninstallexe}; Comment: "Uninstall Tuniac"
+Name: {userdesktop}\Tuniac; Filename: {app}\TuniacApp.exe; Comment: "Launch Tuniac"; Tasks: desktopicon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\Tuniac; Filename: {app}\TuniacApp.exe; Comment: "Launch Tuniac"; Tasks: quicklaunchicon
+Name: {app}\Data Folder; Filename: {userappdata}\Tuniac; Comment: "Data Folder"
 
 [Run]
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
