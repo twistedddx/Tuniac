@@ -1,3 +1,10 @@
+Jan, 2015
+---------
+-Update libs.
+-Add OGG picture support.
+-Update installer
+
+
 Nov, 2015
 ---------
 -move uninstaller
@@ -7,7 +14,11 @@ Oct, 2015
 ---------
 -option to close on system events
 
-Aug, 2015
+Aug, 2015 (150819)
+---------
+Make Tuniac installer detect if VC Redist is out of date and could be updated.
+
+Aug, 2015 (150816)
 ---------
 -Pretty some prefs screens layout
 -Update pref descriptions

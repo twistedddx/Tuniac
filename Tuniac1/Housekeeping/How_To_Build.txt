@@ -31,7 +31,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-http://www.cmake.org/files/v3.3/cmake-3.3.0-rc2-win32-x86.exe
+https://cmake.org/files/v3.4/cmake-3.4.1-win32-x86.exe
 
 Install them
 
@@ -159,6 +159,12 @@ I find it easiest to then install the standard Inno Setup installer over the top
 http://www.jrsoftware.org/download.php/is.exe
 
 This adds the right click context "Compile" for *.iss files
+
+Install Inno Download Plugin
+https://mitrichsoftware.wordpress.com/inno-setup-tools/inno-download-plugin/
+
+Make sure to check "Add IDP include path to ISPPBuiltins.iss" option during IDP installation.
+
 
 Goto D:\Code\tuniac\Tuniac1\Setup-Scripts
 Right click desired setup iss file
