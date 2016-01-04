@@ -14,6 +14,9 @@ ArchitecturesInstallIn64BitMode=x64
 Compression=lzma2/ultra
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
+DisableDirPage=No
+DisableProgramGroupPage=No
+DisableWelcomePage=No
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp3
 OutputDir=.
@@ -26,6 +29,8 @@ UninstallFilesDir={app}\uninstaller
 WizardImageFile=WizardImage.bmp
 WizardSmallImageFile=WizardImageSmall.bmp
 
+#include <idp.iss>
+
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
@@ -37,7 +42,6 @@ Name: {app}\Guide\Images\*.jpg; Type: files
 Name: {app}\unins*.*; Type: files
 
 [Files]
-Source: "isxdlfiles\isxdl.dll"; Flags: dontcopy
 Source: "WizardImageSmall.bmp"; Flags: dontcopy
 
 Source: "..\TuniacApp\images\NoAlbumArt.jpg"; DestDir: {app}\; Flags: ignoreversion
@@ -74,10 +78,10 @@ Name: {app}\Data Folder; Filename: {userappdata}\Tuniac; Comment: "Data Folder"
 
 [Run]
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 1 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 1 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 SP1 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 SP1 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Code]
@@ -89,15 +93,6 @@ var
   DownloadWantedCheckBox: TCheckBox;
   DownloadString: String;
   DownloadSize: ShortInt;
-
-  FilesDownloaded: Boolean;
-
-procedure isxdl_AddFile(URL, Filename: AnsiString);
-external 'isxdl_AddFile@files:isxdl.dll stdcall';
-function isxdl_DownloadFiles(hWnd: Integer): Integer;
-external 'isxdl_DownloadFiles@files:isxdl.dll stdcall';
-function isxdl_SetOption(Option, Value: AnsiString): Integer;
-external 'isxdl_SetOption@files:isxdl.dll stdcall';
 
 function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth, cyWidth: Integer; istepIfAniCur: LongInt; hbrFlickerFreeDraw, diFlags: LongInt): LongInt;
 external 'DrawIconEx@user32.dll stdcall';
@@ -137,7 +132,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23026) then begin
+      if(dwBld >=  23506) then begin
         Result := True;
       end;
     end;
@@ -203,7 +198,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23026) then begin
+      if(dwBld >=  23506) then begin
         Result := True;
       end;
     end;
@@ -311,7 +306,7 @@ begin
       DownloadString := DownloadString + ', ';
     end;
 
-    DownloadString := DownloadString + 'Visual C++ 2015 Runtime(';
+    DownloadString := DownloadString + 'Visual C++ 2015 Update 1 Runtime(';
 
     if not HasVC14x86Redist then begin
       DownloadString := DownloadString + 'x86';
@@ -462,7 +457,7 @@ begin
   IconFileName := 'directx.ico';
   Label1Caption :=
     'Tuniac requires the following:' + #13#10 +
-    DownloadsNeeded + #13#10#13#10 +
+  DownloadsNeeded + #13#10#13#10 +
     'Note: Downloads required are about ' + IntToStr(DownloadsSize) + 'mb in total';
   Label2Caption := 'Select below if you want this installer to get and install these files, then click Next.';
   CheckCaption := '&Download and install required files';
@@ -484,73 +479,60 @@ var
   hWnd: Integer;
   URL, FileName: String;
 begin
-  isxdl_SetOption('label', 'Downloading extra files');
-  isxdl_SetOption('description', 'Please wait while Setup is downloading extra files to your computer.');
+  idpClearFiles;
 
-  try
-    FileName := ExpandConstant('{tmp}\WizardImageSmall.bmp');
-    if not FileExists(FileName) then
-      ExtractTemporaryFile(ExtractFileName(FileName));
-    isxdl_SetOption('smallwizardimage', FileName);
-  except
-  end;
-
-  isxdl_SetOption('resume', 'false');
-
-  hWnd := StrToInt(ExpandConstant('{wizardhwnd}'));
+  idpSetOption('DetailedMode',  '1');
 
   if not HasDXJun2010 then begin
     URL := 'http://www.tuniac.org/extra/DirectX/DSETUP.dll';
     FileName := ExpandConstant('{tmp}\DSETUP.dll');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/dsetup32.dll';
     FileName := ExpandConstant('{tmp}\dsetup32.dll');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/dxdllreg_x86.cab';
     FileName := ExpandConstant('{tmp}\dxdllreg_x86.cab');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/DXSETUP.exe';
     FileName := ExpandConstant('{tmp}\DXSETUP.exe');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/dxupdate.cab';
     FileName := ExpandConstant('{tmp}\dxupdate.cab');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x64.cab';
     FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x64.cab');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
     URL := 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x86.cab';
     FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x86.cab');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe';
+    URL := 'http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
   end;      
 
   if not HasVC10x86Redist then begin
     URL := 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2010).exe');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
   end;
  
   if not HasVC10x64Redist and IsWin64 then begin
     URL := 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2010).exe');
-    isxdl_AddFile(URL, FileName);
+    idpAddFile(URL, FileName);
   end;
 
-  if isxdl_DownloadFiles(hWnd) <> 0 then begin
-    FilesDownloaded := True;
-  end;
-end;
+  idpDownloadAfter(wpPreparing);
+ end;
 
 //skip 32bit install question on 32bit only machines
 function ShouldSkipPage(PageID: Integer): Boolean;
@@ -566,8 +548,6 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-  FilesDownloaded := False;
-    
   Result := True;
 end;
 
@@ -629,8 +609,8 @@ begin
   end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
-    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-      ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=48145', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+      ShellExec('', 'https://www.microsoft.com/en-us/download/details.aspx?id=49984', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
