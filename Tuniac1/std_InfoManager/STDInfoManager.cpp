@@ -525,28 +525,39 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(void)
 {
 	int count = 0;
-
 	TagLib::ID3v2::FrameList id3TagList;
-
 
 	if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 	{
 		if(mp3File->ID3v2Tag()) 
 			count = mp3File->ID3v2Tag()->frameListMap()["APIC"].size();
 	}
-
-	else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
-	{
-		if(ttaFile->ID3v2Tag()) 
-			count = ttaFile->ID3v2Tag()->frameListMap()["APIC"].size();
-	}
-
 	else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
 	{
 		if(flacFile->pictureList().size())
 			count = flacFile->pictureList().size();
 		else if(flacFile->ID3v2Tag()) 
 			count = flacFile->ID3v2Tag()->frameListMap()["APIC"].size();
+	}
+	else if (oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>(fileRef.file()))
+	{
+		if (oggFile->tag())
+			count = oggFile->tag()->pictureList().size();
+	}
+	else if (ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File *>(fileRef.file()))
+	{
+		if (ogaFile->tag())
+			count = ogaFile->tag()->pictureList().size();
+	}
+	else if (spxFile = dynamic_cast<TagLib::Ogg::Speex::File *>(fileRef.file()))
+	{
+		if (spxFile->tag())
+			count = spxFile->tag()->pictureList().size();
+	}
+	else if (opusFile = dynamic_cast<TagLib::Ogg::Opus::File *>(fileRef.file()))
+	{
+		if (opusFile->tag())
+			count = opusFile->tag()->pictureList().size();
 	}
 	else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 	{
@@ -557,6 +568,11 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(void)
 	{
 		if(mp4File->tag())
 			count = mp4File->tag()->itemListMap()["covr"].toCoverArtList().size();
+	}
+	else if (ttaFile = dynamic_cast<TagLib::TrueAudio::File *>(fileRef.file()))
+	{
+		if (ttaFile->ID3v2Tag())
+			count = ttaFile->ID3v2Tag()->frameListMap()["APIC"].size();
 	}
 
 	fileRef = TagLib::FileRef();
@@ -578,11 +594,6 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 		if(mp3File->ID3v2Tag()) 
 			id3v2TagList = mp3File->ID3v2Tag()->frameListMap()["APIC"];
 	}
-	else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
-	{
-		if(ttaFile->ID3v2Tag()) 
-			id3v2TagList = ttaFile->ID3v2Tag()->frameListMap()["APIC"];
-	}
 	else if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
 	{
 		if(ulImageIndex < flacFile->pictureList().size())
@@ -601,11 +612,82 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 		else if(flacFile->ID3v2Tag()) 
 			id3v2TagList = flacFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
-// OGG does not support album art, only proposed fields.
-// https://wiki.xiph.org/VorbisComment#Proposed_field_names
-//	else if (oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>(fileRef.file() ))
-//	{
-//	}
+	else if (oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>(fileRef.file() ))
+	{
+		if (oggFile->tag())
+		{
+			if (ulImageIndex < oggFile->tag()->pictureList().size())
+			{
+				TagLib::FLAC::Picture * flacPic = oggFile->tag()->pictureList()[ulImageIndex];
+
+				*ulImageDataSize = flacPic->data().size();
+				*pImageData = malloc(*ulImageDataSize);
+
+				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+				StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)flacPic->mimeType().toCWString());
+
+				*ulArtType = flacPic->type();
+				bRet = true;
+			}
+		}
+	}
+	else if (ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File *>(fileRef.file()))
+	{
+		if (ogaFile->tag())
+		{
+			if (ulImageIndex < ogaFile->tag()->pictureList().size())
+			{
+				TagLib::FLAC::Picture * flacPic = oggFile->tag()->pictureList()[ulImageIndex];
+
+				*ulImageDataSize = flacPic->data().size();
+				*pImageData = malloc(*ulImageDataSize);
+
+				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+				StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)flacPic->mimeType().toCWString());
+
+				*ulArtType = flacPic->type();
+				bRet = true;
+			}
+		}
+	}
+	else if (spxFile = dynamic_cast<TagLib::Ogg::Speex::File *>(fileRef.file()))
+	{
+		if (spxFile->tag())
+		{
+			if (ulImageIndex < spxFile->tag()->pictureList().size())
+			{
+				TagLib::FLAC::Picture * flacPic = oggFile->tag()->pictureList()[ulImageIndex];
+
+				*ulImageDataSize = flacPic->data().size();
+				*pImageData = malloc(*ulImageDataSize);
+
+				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+				StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)flacPic->mimeType().toCWString());
+
+				*ulArtType = flacPic->type();
+				bRet = true;
+			}
+		}
+	}
+	else if (opusFile = dynamic_cast<TagLib::Ogg::Opus::File *>(fileRef.file()))
+	{
+		if (opusFile->tag())
+		{
+			if (ulImageIndex < opusFile->tag()->pictureList().size())
+			{
+				TagLib::FLAC::Picture * flacPic = oggFile->tag()->pictureList()[ulImageIndex];
+
+				*ulImageDataSize = flacPic->data().size();
+				*pImageData = malloc(*ulImageDataSize);
+
+				CopyMemory(*pImageData, flacPic->data().data(), *ulImageDataSize);
+				StringCchCopy((LPWSTR)szMimeType, 128, (LPTSTR)flacPic->mimeType().toCWString());
+
+				*ulArtType = flacPic->type();
+				bRet = true;
+			}
+		}
+	}
 	else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
 	{
 		if(wmaFile->tag());
@@ -662,6 +744,11 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 				}
 			}
 		}
+	}
+	else if (ttaFile = dynamic_cast<TagLib::TrueAudio::File *>(fileRef.file()))
+	{
+		if (ttaFile->ID3v2Tag())
+			id3v2TagList = ttaFile->ID3v2Tag()->frameListMap()["APIC"];
 	}
 
 	if(!id3v2TagList.isEmpty() && (ulImageIndex < id3v2TagList.size()))
