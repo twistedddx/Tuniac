@@ -1,10 +1,12 @@
-/* Copyright (C) 1996-2006 Florin Ghido, all rights reserved. */
+/* Copyright (C) 1996-2015 Florin Ghido, all rights reserved. */
+/* OptimFROG SDK v1.500 for OptimFROG Lossless/DualStream Audio Codec */
+/* Visit http://LosslessAudio.org/ for updates and more information. */
+/* @OptimFROG is also on Twitter. E-mail: florin.ghido@gmail.com */
+/* SDK and Libraries are free for non-commercial and commercial use. */
 
 
-/* OptimFROG.h contains an interface for OptimFROG.dll/.so */
-/* which works with OptimFROG Lossless/DualStream files */
-
-/* Version: 1.210, Date: 2006.03.02 */
+/* OptimFROG.h contains a C/C++ interface to DLL/SO/DYLIB Libraries for */
+/* working with OptimFROG Lossless (OFR) and DualStream (OFS) files. */
 
 
 #ifndef OPTIMFROG_H_INCLUDED
@@ -14,13 +16,8 @@
 #include "PortableTypes.h"
 
 
-#if defined(CFG_MSCVER_WIN32_MIX86)
-#pragma pack(push)
-#pragma pack(1)
-#endif
-
-#if defined(CFG_BORLANDC_WIN32_MIX86)
-#pragma option push -a1
+#if defined(CFG_MSCVER_WIN32_MIX86) || defined(CFG_BORLANDC_WIN32_MIX86) || defined(CFG_MSCVER_WIN64_MX64)
+#pragma pack(push, 1)
 #endif
 
 
@@ -60,16 +57,16 @@ typedef struct
     uInt32_t bitrate;
 
     uInt32_t version;
-    char* method;
-    char* speedup;
+    const char* method;
+    const char* speedup;
 
     sInt64_t noPoints;
     sInt64_t originalSize;
     sInt64_t compressedSize;
     sInt64_t length_ms;
 
-    char* sampleType;
-    char* channelConfig;
+    const char* sampleType;
+    const char* channelConfig;
 }
 #if defined(CFG_ATTRIBUTE_PACKED)
 __attribute__((packed))
@@ -77,19 +74,15 @@ __attribute__((packed))
 OptimFROG_Info;
 
 
-#if defined(CFG_MSCVER_WIN32_MIX86)
+#if defined(CFG_MSCVER_WIN32_MIX86) || defined(CFG_BORLANDC_WIN32_MIX86) || defined(CFG_MSCVER_WIN64_MX64)
 #pragma pack(pop)
-#endif
-
-#if defined(CFG_BORLANDC_WIN32_MIX86)
-#pragma option pop
 #endif
 
 
 typedef void (*OptimFROG_callBack)(void* callBackParam, Float64_t percentage);
 
 
-#if defined(CFG_MSCVER_WIN32_MIX86) || defined(CFG_BORLANDC_WIN32_MIX86) || defined(CFG_GNUC_MINGW32_I386) || defined(CFG_GNUC_CYGWIN_I386)
+#if defined(CFG_MSCVER_WIN32_MIX86) || defined(CFG_BORLANDC_WIN32_MIX86) || defined(CFG_GNUC_MINGW32_I386) || defined(CFG_GNUC_CYGWIN_I386) || defined(CFG_MSCVER_WIN64_MX64)
 #define IMPORT_SYMBOL __declspec(dllimport)
 #else
 #define IMPORT_SYMBOL
@@ -145,21 +138,6 @@ IMPORT_SYMBOL sInt32_t OptimFROG_infoFile(char* sourceFile, OptimFROG_Info* info
 #define OptimFROG_WriteError 3
 #define OptimFROG_FatalError 4
 #define OptimFROG_RecoverableError 5
-
-
-#define sInt8 sInt8_t
-#define uInt8 uInt8_t
-#define sInt16 sInt16_t
-#define uInt16 uInt16_t
-#define sInt32 sInt32_t
-#define uInt32 uInt32_t
-#define condition condition_t
-#define Float32 Float32_t
-#define Float64 Float64_t
-#define sInt64 sInt64_t
-#define uInt64 uInt64_t
-#define cTrue C_TRUE
-#define cFalse C_FALSE
 
 
 #endif
