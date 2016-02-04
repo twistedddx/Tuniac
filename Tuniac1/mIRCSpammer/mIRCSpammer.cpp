@@ -114,12 +114,12 @@ unsigned long	CmIRCSpammer::ThreadProc(void)
 							
 							int iLen = wcsnlen_s(szSong, 512);
 
-							HANDLE hMap = CreateFileMapping(this,
+							HANDLE hMap = CreateFileMapping(INVALID_HANDLE_VALUE,
 											NULL,
 											PAGE_READWRITE,
 											0,
-											iLen,
-											L"mIRC");
+											4096,
+											L"mIRC9");
 
 							if (GetLastError() == ERROR_ALREADY_EXISTS)
 							{
@@ -147,7 +147,7 @@ unsigned long	CmIRCSpammer::ThreadProc(void)
 									WideCharToMultiByte(CP_ACP, 0, szSong, -1, szContents, 512, NULL, FALSE);
 
 									// issue the configured mirc command to the current instance of mIRC.
-									long lRes =  SendMessage(hwnd,  WM_MCOMMAND, 1, 0L);
+									long lRes =  SendMessage(hwnd,  WM_MCOMMAND, 1, 9L);
 
 									UnmapViewOfFile(szContents);
 								}

@@ -1,6 +1,10 @@
-Jan, 2015
+Jeb, 2016
 ---------
--Update libs.
+-Fix mircspammer plugin.
+
+Jan, 2016
+---------
+-Update libs and bass decoders.
 -Add OGG picture support.
 -Update installer
 
