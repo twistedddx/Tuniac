@@ -37,6 +37,7 @@ Name: {app}\Guide\*.html; Type: files
 Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 Name: {app}\unins*.*; Type: files
+Name: {app}\bass\bass_alac.dll; Type: files
 
 [Files]
 Source: "..\TuniacApp\images\NoAlbumArt.jpg"; DestDir: {app}\; Flags: ignoreversion
