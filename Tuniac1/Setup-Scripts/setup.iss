@@ -19,7 +19,7 @@ DisableWelcomePage=No
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp3
 OutputDir=.
-OutputBaseFilename=..\Tuniac_Setup_{#DateTime}
+OutputBaseFilename=Tuniac_Setup_{#DateTime}
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
@@ -110,7 +110,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23506) then begin
+      if(dwBld >=  23918) then begin
         Result := True;
       end;
     end;
@@ -176,7 +176,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23506) then begin
+      if(dwBld >=  23918) then begin
         Result := True;
       end;
     end;
@@ -284,7 +284,7 @@ begin
       DownloadString := DownloadString + ', ';
     end;
 
-    DownloadString := DownloadString + 'Visual C++ 2015 Update 1 Runtime(';
+    DownloadString := DownloadString + 'Visual C++ 2015 Update 2 Runtime(';
 
     if not HasVC14x86Redist then begin
       DownloadString := DownloadString + 'x86';
@@ -427,8 +427,6 @@ end;
 
 procedure DownloadFiles();
 var
-  ErrorCode: Integer;
-  hWnd: Integer;
   URL, FileName: String;
 begin
   idpClearFiles;
@@ -460,7 +458,7 @@ begin
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe';
+    URL := 'http://download.microsoft.com/download/9/b/3/9b3d2920-49f7-4e76-a55c-d72b51e44537/vc_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
   end;      
@@ -472,7 +470,7 @@ begin
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/8/c/b/8cb4af84-165e-4b36-978d-e867e07fc707/vc_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     idpAddFile(URL, FileName);
   end;
@@ -553,8 +551,8 @@ begin
   end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
-    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-      ShellExec('', 'https://www.microsoft.com/en-us/download/details.aspx?id=49984', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 2 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+      ShellExec('', 'https://www.visualstudio.com/downloads/download-visual-studio-vs#d-visual-c', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
