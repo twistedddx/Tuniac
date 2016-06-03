@@ -97,8 +97,8 @@ public:
 
 	unsigned long						m_ulLastSeekMS;
 
+	float								fGain;
 	float								fAmpGain;
-
 	float								fReplayGainTrack;
 	float								fReplayGainAlbum;
 

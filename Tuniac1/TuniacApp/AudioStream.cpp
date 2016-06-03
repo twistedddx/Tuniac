@@ -373,7 +373,8 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 			
 			int samplesleft = NumSamples;
 			int offset =0;
-			
+
+
 			while(samplesleft>=4)
 			{
 				// load XMM0 with 4 samples from the audio buffer
@@ -438,7 +439,6 @@ int			CAudioStream::GetBuffer(float * pAudioBuffer, unsigned long NumSamples)
 
 #else
 
-			float fGain;
 			if(bUseAlbumGain && bAlbumHasGain)
 			{
 				fGain = fReplayGainAlbum;
