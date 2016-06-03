@@ -1156,9 +1156,10 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			break;
 
 		case FIELD_TRACKNUM:
+		case FIELD_DISCNUM:
 			{
-				short * pTrack1 = (short *)pItem1->GetField(FIELD_TRACKNUM);
-				short * pTrack2 = (short *)pItem2->GetField(FIELD_TRACKNUM);
+				short * pTrack1 = (short *)pItem1->GetField(ulSortBy);
+				short * pTrack2 = (short *)pItem2->GetField(ulSortBy);
 
 				if(pTrack1[0] > pTrack2[0])
 					return 1;

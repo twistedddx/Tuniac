@@ -114,6 +114,7 @@
 @L\tAlbum\r\n\
 @T\tTitle\r\n\
 @#\tTrack\r\n\
+@V\tDisc Number\r\n\
 @G\tGenre\r\n\
 @Y\tYear\r\n\
 @I\tPlay Time\r\n\
@@ -128,7 +129,7 @@
 @Z\tPlay Count\r\n\
 @R\tRating\r\n\
 @!\tPlay State\r\n\
-@V\tBPM\r\n\
+@W\tBPM\r\n\
 @Q\tAlbum Artist\r\n\
 @O\tComposer\n\
 ")
