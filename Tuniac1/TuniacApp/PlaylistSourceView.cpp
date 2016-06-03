@@ -258,6 +258,13 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		LVCFMT_LEFT,
 		true,
 		true
+	},
+	{
+		TEXT("Disc Number"),
+		50,
+		LVCFMT_LEFT,
+		true,
+		true
 	}
 };
 
@@ -2123,6 +2130,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 							{
 								if(HitTest.flags & LVHT_ONITEM)
 								{
+									//should we scroll listview for user up/down if required?
+
 									// draw insert icon before HitTest.iItem
 									HDC dc = GetDC(hListViewWnd);
 
@@ -2150,6 +2159,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 		case WM_LBUTTONUP:
 			{
+
 				//Added - Mark
 				if(m_Drag)
 				{

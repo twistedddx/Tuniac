@@ -175,6 +175,10 @@ static AvailableUserSearchFieldsEntry AvailableUserSearchFields[FIELD_MAXFIELD -
 	{
 		TEXT("Availability"),
 		FIELD_AVAILABILITY
+	},
+	{
+		TEXT("Disc Number"),
+		FIELD_DISCNUM
 	}
 };
 

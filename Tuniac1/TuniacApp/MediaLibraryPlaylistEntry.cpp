@@ -109,6 +109,12 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 			}
 			break;
 
+		case FIELD_DISCNUM:
+			{
+				return (void *)m_LibraryEntry.dwDisc;
+			}
+		break;
+
 		case FIELD_PLAYBACKTIME:
 			{
 				return (void *)m_LibraryEntry.ulPlaybackTime;
@@ -340,6 +346,31 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 			}
 			break;
 
+		case FIELD_DISCNUM:
+		{
+			bool bOK = false;
+			unsigned short dwNewDisc[2];
+			if (StrChr((LPTSTR)pNewData, '/') != NULL)
+			{
+				bOK = 2 == swscanf_s((LPTSTR)pNewData, TEXT("%hu/%hu"), &dwNewDisc[0], &dwNewDisc[1]);
+				if (bOK)
+					m_LibraryEntry.dwDisc[1] = dwNewDisc[1];
+				else
+					return false;
+			}
+			else
+			{
+				if (StrCmpI((LPTSTR)pNewData, L"") == 0)
+					dwNewDisc[0] = 0;
+				else
+					dwNewDisc[0] = _wtoi((LPTSTR)pNewData);
+				m_LibraryEntry.dwDisc[1] = 0;
+			}
+
+			m_LibraryEntry.dwDisc[0] = dwNewDisc[0];
+		}
+		break;
+
 		case FIELD_NUMCHANNELS:
 			{
 				if(StrCmpI((LPTSTR)pNewData, L"") == 0)
@@ -452,6 +483,11 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, unsigned long
 				m_LibraryEntry.dwTrack[0] = pNewData;
 			}
 			break;
+		case FIELD_DISCNUM:
+			{
+				m_LibraryEntry.dwDisc[0] = pNewData;
+			}
+		break;
 		case FIELD_NUMCHANNELS:
 			{
 				m_LibraryEntry.ulChannels = pNewData;
@@ -623,6 +659,19 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 				}
 			}
 			break;
+
+		case FIELD_DISCNUM:
+			{
+				if (m_LibraryEntry.dwDisc[1])
+				{
+					StringCchPrintf(szString, ulNumChars, TEXT("%hu/%hu"), m_LibraryEntry.dwDisc[0], m_LibraryEntry.dwDisc[1]);
+				}
+				else
+				{
+					StringCchPrintf(szString, ulNumChars, TEXT("%hu"), m_LibraryEntry.dwDisc[0]);
+				}
+			}
+		break;
 
 		case FIELD_PLAYBACKTIME:
 			{

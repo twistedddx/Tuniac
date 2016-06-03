@@ -2686,6 +2686,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			case '#':
 				lField = FIELD_TRACKNUM;
 				break;
+			case 'V':
+				lField = FIELD_DISCNUM;
+				break;
 			case 'G':
 				lField = FIELD_GENRE;
 				break;
@@ -2732,7 +2735,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			case 'N':
 				lField = FIELD_NUMCHANNELS;
 				break;
-			case 'V':
+			case 'W':
 				lField = FIELD_BPM;
 				break;
 			case 'Q':
