@@ -458,7 +458,7 @@ begin
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/9/b/3/9b3d2920-49f7-4e76-a55c-d72b51e44537/vc_redist.x86.exe';
+    URL := 'http://download.microsoft.com/download/0/5/0/0504B211-6090-48B1-8DEE-3FF879C29968/vc_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
   end;      
@@ -470,7 +470,7 @@ begin
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/8/c/b/8cb4af84-165e-4b36-978d-e867e07fc707/vc_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/0/5/0/0504B211-6090-48B1-8DEE-3FF879C29968/vc_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     idpAddFile(URL, FileName);
   end;
@@ -552,7 +552,7 @@ begin
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
     if MsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 2 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
-      ShellExec('', 'https://www.visualstudio.com/downloads/download-visual-studio-vs#d-visual-c', '', '', SW_SHOW, ewNoWait, ErrorCode);
+      ShellExec('', 'https://www.microsoft.com/en-us/download/details.aspx?id=51682', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
