@@ -2,27 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TuniacApp", "TuniacApp\TuniacApp.vcxproj", "{97CC9F89-20A5-454D-A824-030021ADFD15}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m3u_Plugin", "m3u_Plugin\m3u_Plugin.vcxproj", "{63870483-72AA-4286-829C-ACDD048B00F8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NowPlayingTxt_Plugin", "NowPlayingTxt\NowPlayingTxt.vcxproj", "{F5B70CFE-5F0D-4C02-8725-142E860D53F6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pls_Plugin", "pls_Plugin\pls_Plugin.vcxproj", "{73541A64-9540-425D-B97F-6011486D1DB9}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PopupNotify_Plugin", "PopupNotify\PopupNotify.vcxproj", "{466FE8B7-1602-48EA-92CF-935704656315}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPVisualPlugin", "SVPVisualPlugin\SVPVisualPlugin.vcxproj", "{EFA8E165-C0CD-49D5-B858-8FEB86A9AEF5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_InfoManager", "std_InfoManager\std_InfoManager.vcxproj", "{D1FD9348-BB12-4357-AD7E-17089D89C5E6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bass_Plugin", "bass_Plugin\BASSDecoder.vcxproj", "{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofr_Plugin", "ofr_Plugin\ofr_Plugin.vcxproj", "{1FCCD4B9-FF74-4CDD-96E2-E2625CCF2565}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tak_Plugin", "tak_Plugin\tak_Plugin.vcxproj", "{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFN_Exporter", "NFN_Exporter\NFN_Exporter.vcxproj", "{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shn_Plugin", "shn_Plugin\shn_Decoder.vcxproj", "{1FBA4217-FF74-4CDA-96E5-E2294CCF6364}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bass_Plugin", "bass_Plugin\BASSDecoder.vcxproj", "{1FBA4217-FF74-4CDD-96E5-E2294CCF6364}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tak_Plugin", "tak_Plugin\tak_Plugin.vcxproj", "{1FCCD4B9-4974-4CDD-96E2-E2694CCF7204}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mIRCSpammer_Plugin", "mIRCSpammer\mIRCSpammer.vcxproj", "{3EA65DF6-01ED-43CB-9EC6-C6F85306C0A5}"
 EndProject
@@ -30,6 +20,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMShellHook_Plugin", "MMShe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMShellHookHelper", "MMShellHookHelper\MMShellHookHelper.vcxproj", "{45013D8A-E4ED-4875-9983-6AC389447E88}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NowPlayingTxt_Plugin", "NowPlayingTxt\NowPlayingTxt.vcxproj", "{F5B70CFE-5F0D-4C02-8725-142E860D53F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PopupNotify_Plugin", "PopupNotify\PopupNotify.vcxproj", "{466FE8B7-1602-48EA-92CF-935704656315}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "m3u_Plugin", "m3u_Plugin\m3u_Plugin.vcxproj", "{63870483-72AA-4286-829C-ACDD048B00F8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFN_Exporter", "NFN_Exporter\NFN_Exporter.vcxproj", "{CB831FF9-D1E3-481A-9FA1-C57190F1CCCA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pls_Plugin", "pls_Plugin\pls_Plugin.vcxproj", "{73541A64-9540-425D-B97F-6011486D1DB9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textOutput_Plugin", "textOutput_Plugin\textOutput_Plugin.vcxproj", "{73541B64-9540-425D-B97F-6011486D1DB9}"
+EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -70,6 +73,14 @@ Global
 		{73541A64-9540-425D-B97F-6011486D1DB9}.Release|Win32.Build.0 = Release|Win32
 		{73541A64-9540-425D-B97F-6011486D1DB9}.Release|x64.ActiveCfg = Release|x64
 		{73541A64-9540-425D-B97F-6011486D1DB9}.Release|x64.Build.0 = Release|x64
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Debug|Win32.Build.0 = Debug|Win32
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Debug|x64.ActiveCfg = Debug|x64
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Debug|x64.Build.0 = Debug|x64
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|Win32.ActiveCfg = Release|Win32
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|Win32.Build.0 = Release|Win32
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|x64.ActiveCfg = Release|x64
+		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|x64.Build.0 = Release|x64
 		{466FE8B7-1602-48EA-92CF-935704656315}.Debug|Win32.ActiveCfg = Debug|Win32
 		{466FE8B7-1602-48EA-92CF-935704656315}.Debug|Win32.Build.0 = Debug|Win32
 		{466FE8B7-1602-48EA-92CF-935704656315}.Debug|x64.ActiveCfg = Debug|x64
