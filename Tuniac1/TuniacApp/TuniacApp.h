@@ -70,7 +70,7 @@
 #define HOTKEY_SHUFFLE				10
 #define HOTKEY_REPEAT				11
 #define HOTKEY_FIND					12
-
+#define HOTKEY_SOFTPAUSE			13
 
 #define NOTIFY_UPDATEWINDOWTITLE	50
 #define NOTIFY_PLAYLISTSCHANGED		51
@@ -214,5 +214,5 @@ public:
 
 	bool				GetArt(LPTSTR szSource);
 
-	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio = true);
+	bool				PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio = true, bool bRebuild = true);
 };
