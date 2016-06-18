@@ -90,7 +90,7 @@ unsigned long	CNowPlayingTxt::ThreadProc(void)
 	bool	Done = false;
 
 	m_aCopy = GlobalAddAtom(TEXT("TUNIACNOWPLAYING_COPY"));
-	RegisterHotKey(NULL, m_aCopy, MOD_WIN, VK_SUBTRACT);
+	RegisterHotKey(NULL, m_aCopy, MOD_WIN, VK_MULTIPLY);
 	while(!Done)
 	{
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
