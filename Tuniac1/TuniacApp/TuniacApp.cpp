@@ -2364,7 +2364,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Queue.Clear();
 								if(m_Preferences.GetRepeatMode() == RepeatAllQueued)
 								{
-									m_Preferences.SetRepeatMode(RepeatAll);
+									m_Preferences.SetRepeatMode(RepeatNone);
 									SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								}
 								RebuildFutureMenu();
