@@ -1330,6 +1330,18 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_PLAYPAUSE, 0), 0);
 				}
 
+				if (wParam == HOTKEY_SOFTPAUSE)
+				{
+					if (tuniacApp.m_LogWindow)
+					{
+						if (tuniacApp.m_LogWindow->GetLogOn())
+						{
+							tuniacApp.m_LogWindow->LogMessage(TEXT("Hotkeys"), TEXT("HOTKEY_SOFTPAUSE event"));
+						}
+					}
+					SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_SOFTPAUSE, 0), 0);
+				}
+
 				if (wParam == HOTKEY_STOP)
 				{
 					if (tuniacApp.m_LogWindow)
@@ -2184,8 +2196,23 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								bool bWasShuffle = m_Preferences.GetShuffleState();
 								m_Preferences.SetShuffleState(!bWasShuffle);
-								SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, HIWORD(wParam)), 0);
+
+								//SendMessage(hWnd, WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, HIWORD(wParam)), 0);
+								IPlaylist * pPlaylist = m_PlaylistManager.GetActivePlaylist();
+								if (pPlaylist)
+								{
+									//try next song for non crossfade mode
+									//do we have a valid next song, if not we have run out of songs(end of playlist?), start again
+									unsigned long ulNextFilteredIndex = pPlaylist->Next();
+									if (ulNextFilteredIndex == INVALID_PLAYLIST_INDEX)
+										ulNextFilteredIndex = 0;
+
+									//play the current song
+									PlayEntry(pPlaylist->GetEntryAtFilteredIndex(ulNextFilteredIndex), CCoreAudio::Instance()->GetState(), HIWORD(wParam), true, false);
+								}
+
 								m_Preferences.SetShuffleState(bWasShuffle);
+								RebuildFutureMenu();
 							}
 							break;
 
@@ -2599,6 +2626,7 @@ bool CTuniacApp::RegisterHotkeys(void)
 		}
 	}
 
+	RegisterHotKey(m_hWnd, HOTKEY_SOFTPAUSE, MOD_WIN + MOD_CONTROL, VK_NUMPAD5);
 	RegisterHotKey(m_hWnd, HOTKEY_STOP,			MOD_WIN, VK_NUMPAD0);
 	RegisterHotKey(m_hWnd, HOTKEY_NEXT,			MOD_WIN, VK_NUMPAD6);
 	RegisterHotKey(m_hWnd, HOTKEY_RANDNEXT,		MOD_WIN, VK_NUMPAD9);
@@ -3242,7 +3270,7 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 //			1 = auto selected song from Tuniac logic(eg track ended and next track plays)
 
 
-bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio)
+bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool bResetAudio, bool bRebuild)
 {
 	if(pIPE)
 	{
@@ -3330,7 +3358,8 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 				}
 			}
 
-			RebuildFutureMenu();
+			if(bRebuild)
+				RebuildFutureMenu();
 
 			if(GetForegroundWindow() == m_hWnd && !IsIconic(m_hWnd))
 			{
