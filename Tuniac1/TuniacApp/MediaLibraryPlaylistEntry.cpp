@@ -487,7 +487,7 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, unsigned long
 			{
 				m_LibraryEntry.dwDisc[0] = pNewData;
 			}
-		break;
+			break;
 		case FIELD_NUMCHANNELS:
 			{
 				m_LibraryEntry.ulChannels = pNewData;

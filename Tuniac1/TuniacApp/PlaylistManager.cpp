@@ -54,7 +54,8 @@ bool DriveInMask(ULONG uMask, char Letter)
 	return false;
 }
 
-CPlaylistManager::CPlaylistManager(void)
+CPlaylistManager::CPlaylistManager(void) :
+m_ulActivePlaylistIndex(INVALID_PLAYLIST_INDEX)
 {
 }
 
@@ -580,7 +581,9 @@ bool CPlaylistManager::SetActivePlaylist(unsigned long ulPlaylistNumber)
 	if(ulPlaylistNumber == INVALID_PLAYLIST_INDEX)
 		return true;
 
-	tuniacApp.m_Queue.Clear();
+	//initial load do not clear the queue
+	if(m_ulActivePlaylistIndex != INVALID_PLAYLIST_INDEX)
+		tuniacApp.m_Queue.Clear();
 
 	m_ulActivePlaylistIndex = ulPlaylistNumber;
 

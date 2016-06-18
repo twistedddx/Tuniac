@@ -24,7 +24,7 @@
 */
 
 #pragma once
-#include "iplaylist.h"
+#include "IPlaylist.h"
 
 #define SORTED_ASCENDING	0
 #define SORTED_DESCENDING	1

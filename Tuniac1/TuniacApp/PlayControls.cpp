@@ -582,7 +582,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 					m_SeekRect.left,
 					4,
 					m_SeekRect.right,
-					4 + 18);
+					22);
 
 				RECT	ArtistTitleRect;
 				SetRect(&ArtistTitleRect,
