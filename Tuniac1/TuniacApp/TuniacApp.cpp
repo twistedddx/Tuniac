@@ -484,6 +484,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_CREATE:
 			{
+
 				m_hWndStatus =  CreateWindowEx(	0,
 												STATUSCLASSNAME,
 												TEXT(""),
@@ -496,6 +497,14 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 												NULL,
 												m_hInstance,
 												NULL);
+				RECT statusRect;
+				GetWindowRect(m_hWndStatus, &statusRect);
+
+				int status_parts[2] = { statusRect.right - statusRect.left - 50, -1};
+				SendMessage(m_hWndStatus, SB_SETPARTS, 2, (LPARAM)&status_parts);
+
+				tuniacApp.SetStatusPlayMode();
+
 				m_PlayControls.Create(hWnd);
 
 				HDC hDC = GetDC(hWnd);
@@ -795,9 +804,17 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				m_PlayControls.Move(playcontrolsrect.left, playcontrolsrect.top, playcontrolsrect.right, playcontrolsrect.bottom);
 
-				SendMessage(m_hWndStatus, message, wParam, lParam);
-				SendMessage(m_hWndStatus, SB_GETRECT, 0, (LPARAM)&statusRect);
 
+
+
+				SendMessage(m_hWndStatus, message, wParam, lParam);
+
+				GetWindowRect(m_hWndStatus, &statusRect);
+				int status_parts[2] = { statusRect.right - statusRect.left - 50, -1 };
+				SendMessage(m_hWndStatus, SB_SETPARTS, 2, (LPARAM)&status_parts);
+
+
+				//SendMessage(m_hWndStatus, SB_GETRECT, 0, (LPARAM)&statusRect);
 				for(unsigned long x=0; x < m_WindowArray.GetCount(); x++)
 				{
 					if(m_Preferences.GetShowVisArt() && (wcscmp(GetActiveScreenName(), L"Source Selector") == 0) && (wcscmp(m_WindowArray[x]->GetName(), L"Visuals") == 0))
@@ -806,7 +823,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					m_WindowArray[x]->SetPos(	0,
 												playcontrolsrect.bottom,
 												Width,
-												Height - statusRect.bottom - playcontrolsrect.bottom);
+												Height - (statusRect.bottom - statusRect.top) - playcontrolsrect.bottom);
 				}
 			}
 			break;
@@ -2483,6 +2500,36 @@ bool CTuniacApp::SetStatusText(LPTSTR szStatusText)
 	return true;
 }
 
+
+bool CTuniacApp::SetStatusPlayMode(void)
+{
+	bool bShuffle = tuniacApp.m_Preferences.GetShuffleState();
+	RepeatMode eRepeatMode = tuniacApp.m_Preferences.GetRepeatMode();
+
+
+	TCHAR szStatusPlayMode[6] = TEXT("");
+
+	if (tuniacApp.m_Preferences.GetShuffleState())
+	{
+		StringCchCat(szStatusPlayMode, 6, TEXT("S "));
+	}
+	if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
+	{
+		StringCchCat(szStatusPlayMode, 6, TEXT("r"));
+	}
+	else if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
+	{
+		StringCchCat(szStatusPlayMode, 6, TEXT("R"));
+	}
+	else if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+	{
+		StringCchCat(szStatusPlayMode, 6, TEXT("RQ"));
+	}
+
+	SendMessage(m_hWndStatus, SB_SETTEXT, 1, (LPARAM)szStatusPlayMode);
+	return true;
+}
+
 LRESULT CALLBACK CTuniacApp::AddOtherProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static LPTSTR szString = (LPTSTR)(LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA);
@@ -2935,6 +2982,9 @@ void			CTuniacApp::BuildFuturePlaylistArray(void)
 						m_FutureMenu.AddTail(ulEntryID);
 						iSize--;
 					}
+					if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued && i == m_Queue.GetCount() - 1)
+						i = -1;
+
 				}
 				else
 					break;

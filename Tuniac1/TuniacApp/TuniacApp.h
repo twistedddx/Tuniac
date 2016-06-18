@@ -188,6 +188,7 @@ public:
 	LPTSTR				GetActiveScreenName(void);
 
 	bool				SetStatusText(LPTSTR szStatusText);
+	bool				SetStatusPlayMode(void);
 
 	HFONT				GetTuniacFont(int size);
 

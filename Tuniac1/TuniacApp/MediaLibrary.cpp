@@ -111,7 +111,7 @@ unsigned long CMediaLibrary::GetEntryIDByIndex(unsigned long ulIndex)
 {
 	if(ulIndex > GetCount())
 	{
-		return NULL;
+		return INVALID_PLAYLIST_INDEX;
 	}
 
 	return m_MediaLibrary[ulIndex]->GetEntryID();
@@ -126,7 +126,7 @@ unsigned long CMediaLibrary::GetEntryIDByEntry(CMediaLibraryPlaylistEntry * pIPE
 			return(m_MediaLibrary[index]->GetEntryID());
 		}
 	}
-	return(NULL);
+	return INVALID_PLAYLIST_INDEX;
 }
 
 unsigned long CMediaLibrary::GetEntryIDByURL(LPTSTR szURL)
@@ -138,7 +138,7 @@ unsigned long CMediaLibrary::GetEntryIDByURL(LPTSTR szURL)
 			return(m_MediaLibrary[index]->GetEntryID());
 		}
 	}
-	return(NULL);
+	return INVALID_PLAYLIST_INDEX;
 }
 
 unsigned long CMediaLibrary::GetIndexByEntryID(unsigned long ulEntryID)
@@ -151,7 +151,7 @@ unsigned long CMediaLibrary::GetIndexByEntryID(unsigned long ulEntryID)
 		}
 	}
 
-	return NULL;
+	return INVALID_PLAYLIST_INDEX;
 }
 
 bool CMediaLibrary::BeginAdd(unsigned long ulNumItems)
@@ -1082,7 +1082,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 		}
 
 		if(tuniacApp.m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
-			tuniacApp.m_Preferences.SetRepeatMode(RepeatAll);
+			tuniacApp.m_Preferences.SetRepeatMode(RepeatNone);
 
 	}
 
@@ -1256,7 +1256,7 @@ bool CMediaLibrary::SaveMediaLibrary(LPTSTR szLibraryFolder)
 				for(unsigned long x = 0; x < ulQueueSize; x++)
 				{
 					unsigned long ulEntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(x);
-					if(ulEntryID == NULL)
+					if(ulEntryID == INVALID_PLAYLIST_INDEX)
 						continue;
 					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 

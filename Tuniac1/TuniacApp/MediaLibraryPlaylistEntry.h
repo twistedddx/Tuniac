@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "iplaylist.h"
+#include "IPlaylist.h"
 #include "LibraryEntry.h"
 
 class CMediaLibraryPlaylistEntry :

@@ -30,6 +30,8 @@
 #include "AudioCDPlaylist.h"
 //#include "RadioTunerPlaylist.h"
 
+#define INVALID_PLAYLIST_INDEX			0xffffffff
+
 class CPlaylistManager
 {
 protected:

@@ -41,8 +41,11 @@ unsigned long		CPlayQueue::GetCount(void)
 
 unsigned long		CPlayQueue::GetEntryIDAtIndex(unsigned long ulIndex)
 {
+	if (ulIndex == INVALID_PLAYLIST_INDEX)
+		return INVALID_PLAYLIST_INDEX;
+
 	if (ulIndex > m_Queue.GetCount())
-		return NULL;
+		return INVALID_PLAYLIST_INDEX;
 	return m_Queue[ulIndex];
 }
 
@@ -69,6 +72,9 @@ bool				CPlayQueue::Remove(unsigned long ulIndex)
 
 bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 {
+	if (ulEntryID == INVALID_PLAYLIST_INDEX)
+		return false;
+
 	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
 		if(m_Queue[i] == ulEntryID)

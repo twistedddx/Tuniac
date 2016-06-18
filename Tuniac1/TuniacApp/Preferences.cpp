@@ -3346,6 +3346,7 @@ void CPreferences::SetShuffleState(BOOL bEnabled)
 				((IPlaylistEX *)pPlaylist)->RebuildPlaylistArrays();
 		}
 	}
+	tuniacApp.SetStatusPlayMode();
 }
 
 RepeatMode	CPreferences::GetRepeatMode(void)
@@ -3357,6 +3358,7 @@ void		CPreferences::SetRepeatMode(RepeatMode eMode)
 {
 	m_eRepeatMode = eMode;
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
+	tuniacApp.SetStatusPlayMode();
 }
 
 int			CPreferences::GetVisualFPS(void)
