@@ -217,6 +217,7 @@ LRESULT CALLBACK CPreferences::GeneralProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 						{
 							int State = SendDlgItemMessage(hDlg, IDC_GENERAL_AUTOSOFTPAUSE, BM_GETCHECK, 0, 0);
 							pPrefs->m_bAutoSoftPause = State == BST_UNCHECKED ? FALSE : TRUE;
+							tuniacApp.SetStatusPlayMode();
 						}
 						break;
 
@@ -3346,7 +3347,6 @@ void CPreferences::SetShuffleState(BOOL bEnabled)
 				((IPlaylistEX *)pPlaylist)->RebuildPlaylistArrays();
 		}
 	}
-	tuniacApp.SetStatusPlayMode();
 }
 
 RepeatMode	CPreferences::GetRepeatMode(void)
@@ -3358,7 +3358,6 @@ void		CPreferences::SetRepeatMode(RepeatMode eMode)
 {
 	m_eRepeatMode = eMode;
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
-	tuniacApp.SetStatusPlayMode();
 }
 
 int			CPreferences::GetVisualFPS(void)

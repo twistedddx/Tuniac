@@ -726,7 +726,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "&Clear Queue",                ID_PLAYBACK_CLEARQUEUE
-        MENUITEM "Clear Scheduled &Pause",      ID_PLAYBACK_CLEARPAUSEAT
+        MENUITEM "Clear &Pause Here",      ID_PLAYBACK_CLEARPAUSEAT
     END
     POPUP "&View"
     BEGIN

@@ -52,12 +52,14 @@ unsigned long		CPlayQueue::GetEntryIDAtIndex(unsigned long ulIndex)
 bool				CPlayQueue::Prepend(unsigned long ulEntryID)
 {
 	m_Queue.AddHead(ulEntryID);
+	tuniacApp.SetStatusPlayMode();
 	return true;
 }
 
 bool				CPlayQueue::Append(unsigned long ulEntryID)
 {
 	m_Queue.AddTail(ulEntryID);
+	tuniacApp.SetStatusPlayMode();
 	return true;
 }
 
@@ -67,6 +69,7 @@ bool				CPlayQueue::Remove(unsigned long ulIndex)
 		return NULL;
 
 	m_Queue.RemoveAt(ulIndex);
+	tuniacApp.SetStatusPlayMode();
 	return true;
 }
 
@@ -80,6 +83,7 @@ bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 		if(m_Queue[i] == ulEntryID)
 		{
 			m_Queue.RemoveAt(i);
+			tuniacApp.SetStatusPlayMode();
 			return true;
 		}
 	}
@@ -90,4 +94,5 @@ bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 void				CPlayQueue::Clear(void)
 {
 	m_Queue.RemoveAll();
+	tuniacApp.SetStatusPlayMode();
 }

@@ -500,7 +500,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				RECT statusRect;
 				GetWindowRect(m_hWndStatus, &statusRect);
 
-				int status_parts[2] = { statusRect.right - statusRect.left - 50, -1};
+				int status_parts[2] = { statusRect.right - statusRect.left - 100, -1};
 				SendMessage(m_hWndStatus, SB_SETPARTS, 2, (LPARAM)&status_parts);
 
 				tuniacApp.SetStatusPlayMode();
@@ -773,7 +773,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				if(lParam)
 				{	
 					LPMINMAXINFO lpMinMaxInfo = (LPMINMAXINFO)lParam;
-					lpMinMaxInfo->ptMinTrackSize.x = 500;
+					lpMinMaxInfo->ptMinTrackSize.x = 650;
 					lpMinMaxInfo->ptMinTrackSize.y = 445;
 				}
 			}
@@ -810,7 +810,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				SendMessage(m_hWndStatus, message, wParam, lParam);
 
 				GetWindowRect(m_hWndStatus, &statusRect);
-				int status_parts[2] = { statusRect.right - statusRect.left - 50, -1 };
+				int status_parts[2] = { statusRect.right - statusRect.left - 100, -1 };
 				SendMessage(m_hWndStatus, SB_SETPARTS, 2, (LPARAM)&status_parts);
 
 
@@ -1306,8 +1306,11 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 							}
 
-							if(m_Preferences.GetAutoSoftPause())
+							if (m_Preferences.GetAutoSoftPause())
+							{
 								m_SoftPause.bNow = true;
+								tuniacApp.SetStatusPlayMode();
+							}
 							m_iFailedSongRetry = 0;
 						}
 						break;
@@ -2170,6 +2173,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 							{
 								m_SoftPause.bNow = !m_SoftPause.bNow;
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2213,6 +2217,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 								m_Preferences.SetShuffleState(bWasShuffle);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2341,6 +2346,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetShuffleState(!m_Preferences.GetShuffleState());
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2355,6 +2361,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									m_Preferences.SetRepeatMode(RepeatNone);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2368,6 +2375,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								}
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2377,6 +2385,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2386,6 +2395,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatNone);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2395,6 +2405,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatOne);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2404,6 +2415,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatAll);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2413,6 +2425,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								m_Preferences.SetRepeatMode(RepeatAllQueued);
 								SendMessage(hWnd, WM_MENUSELECT, 0, 0);
 								RebuildFutureMenu();
+								tuniacApp.SetStatusPlayMode();
 							}
 							break;
 
@@ -2534,23 +2547,60 @@ bool CTuniacApp::SetStatusPlayMode(void)
 	RepeatMode eRepeatMode = tuniacApp.m_Preferences.GetRepeatMode();
 
 
-	TCHAR szStatusPlayMode[6] = TEXT("   ");
+	TCHAR szStatusPlayMode[32] = TEXT("");
 
 	if (tuniacApp.m_Preferences.GetShuffleState())
 	{
-		StringCchCopy(szStatusPlayMode, 6, TEXT("S "));
+		StringCchCat(szStatusPlayMode, 32, TEXT("S "));
 	}
+	else
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("   "));
+	}
+
 	if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 	{
-		StringCchCat(szStatusPlayMode, 6, TEXT("r"));
+		StringCchCat(szStatusPlayMode, 32, TEXT("r     "));
 	}
 	else if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatAll)
 	{
-		StringCchCat(szStatusPlayMode, 6, TEXT("R"));
+		StringCchCat(szStatusPlayMode, 32, TEXT("R    "));
 	}
 	else if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
 	{
-		StringCchCat(szStatusPlayMode, 6, TEXT("RQ"));
+		StringCchCat(szStatusPlayMode, 32, TEXT("RQ "));
+	}
+	else
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("      "));
+	}
+
+	if (tuniacApp.m_Queue.GetCount())
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("Q "));
+	}
+	else
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("    "));
+	}
+
+	if(tuniacApp.m_SoftPause.bNow || tuniacApp.m_Preferences.GetAutoSoftPause())
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("SP "));
+	}
+	else
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("     "));
+	}
+
+
+	if(tuniacApp.m_SoftPause.ulAt != INVALID_PLAYLIST_INDEX)
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("PH "));
+	}
+	else
+	{
+		StringCchCat(szStatusPlayMode, 32, TEXT("     "));
 	}
 
 	SendMessage(m_hWndStatus, SB_SETTEXT, 1, (LPARAM)szStatusPlayMode);
@@ -3298,6 +3348,7 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 			{
 				m_SoftPause.bNow = false;
 				m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
+				tuniacApp.SetStatusPlayMode();
 			}
 			else if(m_SoftPause.bNow || m_SoftPause.ulAt == pIPE->GetEntryID())
 			{
@@ -3307,6 +3358,7 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 				SendMessage(m_hWnd, WM_MENUSELECT, 0, 0);
 				//this will only stop the last stream, not all of them
 				CCoreAudio::Instance()->StopLast();
+				tuniacApp.SetStatusPlayMode();
 			}
 
 			UpdateState();
