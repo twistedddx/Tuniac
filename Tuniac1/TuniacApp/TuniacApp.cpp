@@ -2534,11 +2534,11 @@ bool CTuniacApp::SetStatusPlayMode(void)
 	RepeatMode eRepeatMode = tuniacApp.m_Preferences.GetRepeatMode();
 
 
-	TCHAR szStatusPlayMode[6] = TEXT("");
+	TCHAR szStatusPlayMode[6] = TEXT("   ");
 
 	if (tuniacApp.m_Preferences.GetShuffleState())
 	{
-		StringCchCat(szStatusPlayMode, 6, TEXT("S "));
+		StringCchCopy(szStatusPlayMode, 6, TEXT("S "));
 	}
 	if (tuniacApp.m_Preferences.GetRepeatMode() == RepeatOne)
 	{
