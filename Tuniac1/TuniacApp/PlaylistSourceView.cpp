@@ -895,6 +895,8 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 									tuniacApp.m_SoftPause.ulAt = INVALID_PLAYLIST_INDEX;
 								else
 									tuniacApp.m_SoftPause.ulAt = pIPE->GetEntryID();
+
+								tuniacApp.SetStatusPlayMode();
 							}
 						}
 						break;
