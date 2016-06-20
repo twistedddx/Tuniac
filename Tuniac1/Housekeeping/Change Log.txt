@@ -1,3 +1,30 @@
+Jun, 2016
+---------
+-expose Disc Num
+-textOutput_Plugin for text dumps of artist/ablums
+-ML should return INVALID_PLAYLIST_INDEX not NULL for invalid ID's as 0 is a valid ID
+-Queue should return INVALID_PLAYLIST_INDEX not NULL.
+-Fix loading of queues.
+-Fix history menu when RepeatAllQueued is on.
+-If queue fails to reload with RepeatAllQueued set to RepeatNone.
+-Queue clear should change RepeatAllQueued to RepeatNone
+-Show shuffle and repeat mode on status bar.
+-Add Queue, Soft Pause and Pause Here to play states shown on status bar.
+-Update guide for hotkeys and commandline
+-move noplayingtxt plugin hotkey from win+Numpad- (collides with popup notify) to win+Numpad*
+-add softpause global hotkey
+-rebuildfuturemenu for random next
+-update main menu short keys.
+-Change menu "Clear Scheduled Pause" to "Clear Pause Here"
+-Better vc redist locations
+-cleanup non-sse code aka unused
+
+Apr, 2016
+---------
+-bass and basswma update
+-update to vs c++ 2015 update 2
+-remove old download dll
+
 Feb, 2016
 ---------
 -Fix mircspammer plugin.
