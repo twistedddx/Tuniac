@@ -81,7 +81,7 @@ external 'DestroyIcon@user32.dll stdcall';
 
 procedure AboutButtonOnClick(Sender: TObject);
 begin
-  MsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok);
+  SuppressibleMsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok, IDOK);
 end;
 
 procedure URLLabelOnClick(Sender: TObject);
@@ -128,12 +128,12 @@ begin
 	case CurUninstallStep of
 		usUninstall:
 		begin
-			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then begin
+			if SuppressibleMsgBox('Remove all settings?', mbInformation, mb_YesNo, IDYES) = IDYES then begin
         if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then 
-          MsgBox('Error removing settings & file associations.', mbError, MB_OK);
+          SuppressibleMsgBox('Error removing settings & file associations.', mbError, MB_OK, IDOK);
 			end else begin
 			  if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-					MsgBox('Error removing file associations.', mbError, MB_OK);
+					SuppressibleMsgBox('Error removing file associations.', mbError, MB_OK, IDOK);
 			end;
 		end;
 	end;
