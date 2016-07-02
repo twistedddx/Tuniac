@@ -333,7 +333,7 @@ end;
 //about window
 procedure AboutButtonOnClick(Sender: TObject);
 begin
-  MsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok);
+  SuppressibleMsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok, IDOK);
 end;
 
 procedure URLLabelOnClick(Sender: TObject);
@@ -545,19 +545,19 @@ var
   ErrorCode: Integer;
 begin
   if not HasDXJun2010 then begin
-    if MsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+    if SuppressibleMsgBox('DirectX End-User Runtimes (June 2010) is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
       ShellExec('', 'http://www.microsoft.com/en-au/download/details.aspx?id=8109', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
-    if MsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 2 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+    if SuppressibleMsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 2 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
       ShellExec('', 'https://www.microsoft.com/en-us/download/details.aspx?id=51682', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
   if not HasVC10x86Redist or (not HasVC10x64Redist and IsWin64) then begin
-    if MsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO) = IDYES then begin
+    if SuppressibleMsgBox('Visual C++ Redistributable for Visual Studio 2010 SP1 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
       ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=26999', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
@@ -570,12 +570,12 @@ begin
 	case CurUninstallStep of
 		usUninstall:
 		begin
-			if MsgBox('Remove all settings?', mbInformation, mb_YesNo) = idYes then begin
+			if SuppressibleMsgBox('Remove all settings?', mbInformation, mb_YesNo, IDYES) = IDYes then begin
         if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-				  MsgBox('Error removing settings & file associations.', mbError, MB_OK);
+				  SuppressibleMsgBox('Error removing settings & file associations.', mbError, MB_OK, IDOK);
 			end	else begin
 			  if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-					MsgBox('Error removing file associations.', mbError, MB_OK);
+					SuppressibleMsgBox('Error removing file associations.', mbError, MB_OK, IDOK);
 			end;
 		end;
 	end;
