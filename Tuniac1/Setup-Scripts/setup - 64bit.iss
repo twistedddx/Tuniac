@@ -79,8 +79,8 @@ Name: {app}\Data Folder; Filename: {userappdata}\Tuniac; Comment: "Data Folder"
 
 [Run]
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing DirectX XAudio 2.7...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 1 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 1 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 3 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft Visual C++ 2015 Update 3 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 SP1 x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft Visual C++ 2010 SP1 x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
@@ -307,7 +307,7 @@ begin
       DownloadString := DownloadString + ', ';
     end;
 
-    DownloadString := DownloadString + 'Visual C++ 2015 Update 2 Runtime(';
+    DownloadString := DownloadString + 'Visual C++ 2015 Update 3 Runtime(';
 
     if not HasVC14x86Redist then begin
       DownloadString := DownloadString + 'x86';
@@ -507,7 +507,7 @@ begin
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/0/5/0/0504B211-6090-48B1-8DEE-3FF879C29968/vc_redist.x86.exe';
+    URL := 'http://download.microsoft.com/download/4/2/F/42FF78CE-8DE0-4C88-AD7A-5F8DFFB49F74/vc_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
   end;      
@@ -519,7 +519,7 @@ begin
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/0/5/0/0504B211-6090-48B1-8DEE-3FF879C29968/vc_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/4/2/F/42FF78CE-8DE0-4C88-AD7A-5F8DFFB49F74/vc_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     idpAddFile(URL, FileName);
   end;
@@ -608,8 +608,8 @@ begin
   end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
-    if SuppressibleMsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 2 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
-      ShellExec('', 'https://www.microsoft.com/en-us/download/details.aspx?id=51682', '', '', SW_SHOW, ewNoWait, ErrorCode);
+    if SuppressibleMsgBox('Visual C++ Redistributable for Visual Studio 2015 Update 3 is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
+      ShellExec('', 'http://www.microsoft.com/en-us/download/details.aspx?id=52982', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
 
