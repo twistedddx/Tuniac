@@ -18,9 +18,9 @@ rem ######## Taglib
 cd taglib\
 
 rem #taglib Release x86
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build32
+cd build32\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"
@@ -48,9 +48,9 @@ rem ######## Taglib x64
 
 
 rem #taglib Release x64
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build64
+cd build64\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"

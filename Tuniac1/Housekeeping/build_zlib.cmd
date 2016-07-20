@@ -19,9 +19,9 @@ cd zlib\
 
 
 rem #zlib Release x86
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build32
+cd build32\
+del *.*
 "%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
@@ -38,9 +38,9 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 
 
 rem #zlib Release x64
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build64
+cd build64\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14 Win64" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"

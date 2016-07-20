@@ -65,11 +65,10 @@ git://libpng.git.sourceforge.net/gitroot/libpng/libpng
 Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
-3e)You need libjpeg-turbo 1.5.0 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
-Navigate to C:\Code\, right click empty space and select SVN Checkout.
-In URL of repository add:
-svn://svn.code.sf.net/p/libjpeg-turbo/code/trunk
-Ensure checkout directory reads C:\Code\libjpeg-turbo
+3e)You need libjpeg-turbo 1.5.1 SVN (http://sourceforge.net/projects/libjpeg-turbo/)
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+https://github.com/libjpeg-turbo/libjpeg-turbo
 Hit OK and wait
 
 
@@ -108,9 +107,9 @@ Cannot open include file: 'GL/glew.h'
 
 6)For TuniacApp
 
-6a)You need nasm 2.12.01 win64 zip.
+6a)You need nasm 2.12.02 win64 zip.
 http://www.nasm.us/
-http://www.nasm.us/pub/nasm/releasebuilds/2.12.01/win64/nasm-2.12.01-win64.zip
+http://www.nasm.us/pub/nasm/releasebuilds/2.12.02/win64/nasm-2.12.02-win64.zip
 
 Put nasm.exe in
 C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin

@@ -18,9 +18,9 @@ rem ######## libpng
 cd libpng\
 
 rem #Release x86:
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build32
+cd build32\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
@@ -44,9 +44,9 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 
 
 rem #Release x64:
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build64
+cd build64\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
