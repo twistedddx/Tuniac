@@ -19,15 +19,15 @@ cd libjpeg-turbo\
 
 
 rem #turbojpeg Release x86:
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build32
+cd build32\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14" ..\.
-devenv libjpeg-turbo.sln /project "turbojpeg-static" /Clean
-devenv libjpeg-turbo.sln /project "turbojpeg-static" /Rebuild "Release"
+devenv libjpeg-turbo.sln /project "jpeg-static" /Clean
+devenv libjpeg-turbo.sln /project "jpeg-static" /Rebuild "Release"
 if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
 mkdir ..\Release\x86
-move /Y .\Release\turbojpeg-static.lib ..\Release\x86\turbojpeg-static.lib
+move /Y .\Release\jpeg-static.lib ..\Release\x86\jpeg-static.lib
 
 
 cd ..
@@ -38,15 +38,15 @@ call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 
 
 rem #turbojpeg Release x64
-if exist .\build\ rmdir /S /Q .\build
-mkdir .\build
-cd build\
+mkdir .\build64
+cd build64\
+del *.*
 "%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14 Win64" ..\.
-devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Clean
-devenv libjpeg-turbo.sln /Project "turbojpeg-static" /Rebuild "Release"
+devenv libjpeg-turbo.sln /Project "jpeg-static" /Clean
+devenv libjpeg-turbo.sln /Project "jpeg-static" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64
 mkdir ..\Release\x64
-move /Y .\Release\turbojpeg-static.lib ..\Release\x64\turbojpeg-static.lib
+move /Y .\Release\jpeg-static.lib ..\Release\x64\jpeg-static.lib
 
 move /Y .\jconfig.h ..\jconfig.h
 
