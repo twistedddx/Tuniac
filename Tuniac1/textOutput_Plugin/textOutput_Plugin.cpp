@@ -73,6 +73,8 @@ bool			CtextOutput_Export::BeginExport(LPTSTR szSource, unsigned long ulNumItems
 
 	if (m_File == NULL)
 		return false;
+
+	return true;
 }
 
 bool			CtextOutput_Export::ExportEntry(LibraryEntry & libraryEntry)
