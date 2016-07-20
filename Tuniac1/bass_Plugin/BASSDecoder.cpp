@@ -75,17 +75,30 @@ void DoMeta(DWORD handle, void *user)
 		meta=(char *)BASS_ChannelGetTags(handle,BASS_TAG_OGG);
 		if(meta)
 		{ // got Icecast/OGG tags
-			const char *artist=NULL,*title=NULL,*p=meta;
+			const char *artist = NULL;
+			const char *title = NULL;
+			const char *album = NULL;
+			const char *p = meta;
 			for(;*p;p+=strnlen_s(p,2048)+1)
 			{
 				if (!strnicmp(p,"artist=",7)) // found the artist
 					artist=p+7;
 				if (!strnicmp(p,"title=",6)) // found the title
 					title=p+6;
+				if (!strnicmp(p, "album=", 6)) // found the album
+					album=p+6;
 			}
-			if(artist && szTitle == NULL)
+			if (artist && title && album)
 			{
-				char text[100];
+				char text[128];
+				_snprintf(text, sizeof(text), "%s - %s - %s", artist, album, title);
+				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
+				if (m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+			}
+			else if(artist && title)
+			{
+				char text[128];
 				_snprintf(text,sizeof(text),"%s - %s",artist,title);
 				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
 				if(m_pHelper)
