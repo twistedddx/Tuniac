@@ -34,7 +34,7 @@ devenv libpng.sln /project "png_static" /Rebuild "Debug"
 if exist ..\Debug\x86\ rmdir /S /Q ..\Debug\x86
 mkdir ..\Debug\x86
 move /Y .\Debug\libpng17_staticd.lib ..\Debug\x86\libpng17_staticd.lib
-
+move /Y .\png_static.dir\Debug\png_static.pdb ..\Debug\x86\png_static.pdb
 
 cd ..
 
@@ -60,6 +60,7 @@ devenv libpng.sln /project "png_static" /Rebuild "Debug"
 if exist ..\Debug\x64\ rmdir /S /Q ..\Debug\x64
 mkdir ..\Debug\x64
 move /Y .\Debug\libpng17_staticd.lib ..\Debug\x64\libpng17_staticd.lib
+move /Y .\png_static.dir\Debug\png_static.pdb ..\Debug\x64\png_static.pdb
 
 move /Y .\pnglibconf.h ..\pnglibconf.h
 

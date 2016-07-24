@@ -133,7 +133,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23918) then begin
+      if(dwBld >=  24212) then begin
         Result := True;
       end;
     end;
@@ -199,7 +199,7 @@ begin
 
   if (dwMajor >= 14) then begin
     if (dwMinor >= 0) then begin
-      if(dwBld >=  23918) then begin
+      if(dwBld >=  24212) then begin
         Result := True;
       end;
     end;
@@ -507,7 +507,7 @@ begin
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/4/2/F/42FF78CE-8DE0-4C88-AD7A-5F8DFFB49F74/vc_redist.x86.exe';
+    URL := 'http://download.microsoft.com/download/2/a/2/2a2ef9ab-1b4b-49f0-9131-d33f79544e70/vc_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
   end;      
@@ -519,7 +519,7 @@ begin
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    URL := 'http://download.microsoft.com/download/4/2/F/42FF78CE-8DE0-4C88-AD7A-5F8DFFB49F74/vc_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/2/a/2/2a2ef9ab-1b4b-49f0-9131-d33f79544e70/vc_redist.x64.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     idpAddFile(URL, FileName);
   end;

@@ -86,6 +86,15 @@ LPTSTR CAlbumArt::GetCurrentArtSource(void)
 
 void CAlbumArt::SetJPEGErrorMessage(char * szError)
 {
+	if (tuniacApp.m_LogWindow)
+	{
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			TCHAR szMessage[MAX_PATH + 20];
+			StringCchPrintf(szMessage, MAX_PATH + 20, TEXT("libjpeg-turbo error: %S"), szError);
+			tuniacApp.m_LogWindow->LogMessage(TEXT("AlbumArt"), szMessage);
+		}
+	}
 	strcpy_s(szErrorMessage, szError);
 }
 
@@ -141,6 +150,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 	if( StrStrI(szMimeType, TEXT("image/png")) )
 	{
+		bool bOk = false;
 
 		memset(&image, 0, (sizeof image));
 		image.version = PNG_IMAGE_VERSION;
@@ -164,14 +174,26 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 			if(png_image_finish_read(&image, NULL, m_pBitmapData, 0, NULL))
 			{
-				png_image_free(&image);
-				return true;
+				bOk = true;
 			}
 
 			png_image_free(&image);
 		}
 
-		return false;
+		if (image.warning_or_error != 0)
+		{
+			if (tuniacApp.m_LogWindow)
+			{
+				if (tuniacApp.m_LogWindow->GetLogOn())
+				{
+					TCHAR szMessage[MAX_PATH + 20];
+					StringCchPrintf(szMessage, MAX_PATH + 20, TEXT("libpng error: %S"), image.message);
+					tuniacApp.m_LogWindow->LogMessage(TEXT("AlbumArt"), szMessage);
+				}
+			}
+		}
+
+		return bOk;
 	}
 
 	return false;

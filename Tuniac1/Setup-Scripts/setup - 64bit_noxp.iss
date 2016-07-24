@@ -10,6 +10,7 @@ AppPublisherURL=http://www.tuniac.org
 AppSupportURL=http://www.tuniac.org
 AppUpdatesURL=http://www.tuniac.org
 AppVerName=Tuniac 1.0
+ArchitecturesInstallIn64BitMode=x64
 Compression=lzma2/ultra
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
@@ -19,7 +20,7 @@ DisableWelcomePage=No
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp3
 OutputDir=.
-OutputBaseFilename=Tuniac_Setup_{#DateTime}
+OutputBaseFilename=Tuniac_Setup_{#DateTime}(inc 64bit)_noxp
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
@@ -51,12 +52,16 @@ Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
-Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Flags: ignoreversion
-Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
-Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion; Check: IsWin64
-Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion; Check: IsWin64
-Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
-Source: "..\Win32\Release\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
+Source: "..\x64\Release\*.exe"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion
+Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release_noxp\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release_noxp\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not Install32bitCheck;  Flags: ignoreversion
+
+Source: "..\Win32\Release_noxp\*.exe"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release_noxp\*.dll"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: Install32bitCheck and IsWin64; Flags: ignoreversion
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: Install32bitCheck and IsWin64;  Flags: ignoreversion
+Source: "..\Win32\Release_noxp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
@@ -82,6 +87,9 @@ Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: no
 
 [Code]
 var
+  Install32bitPage: TWizardPage;
+  Install32bitCheckBox: TCheckBox;
+
   DownloadWantedPage: TWizardPage;
   DownloadWantedCheckBox: TCheckBox;
   DownloadString: String;
@@ -91,7 +99,22 @@ function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth,
 external 'DrawIconEx@user32.dll stdcall';
 function DestroyIcon(hIcon: LongInt): LongInt;
 external 'DestroyIcon@user32.dll stdcall';
-      
+
+//32bit install on 64bit machine
+function Install32bitCheck: Boolean;
+begin
+  Result := Install32bitCheckBox.Checked;
+end;
+
+function IsNot64BitMode: String;
+begin
+  if Is64BitInstallMode then begin
+    Result := '0';
+  end else begin
+    Result := '1';
+  end;
+end;
+
 function HasVC14x86Redist: Boolean;
 var
   dwMajor: Cardinal;
@@ -235,7 +258,7 @@ end;
 function DownloadWantedCheck: Boolean;
 begin
   Result := DownloadWantedCheckBox.Checked;
-end;    
+end;   
 
 function IsDownloadRequired: Boolean;
 begin
@@ -249,7 +272,7 @@ begin
     Result := False;
   end;
 end;
-      
+
 function DownloadsNeeded: String;
 begin
   DownloadString := '';
@@ -407,6 +430,24 @@ begin
   Result := Page;
 end;
 
+// 32bit install option for 64bit machines
+procedure Create32bitPage;
+var
+  Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption: String;
+begin
+  Caption := '64bit operating system detected';
+  SubCaption1 := 'Which version of Tuniac would you like to install?';
+  IconFileName := 'directx.ico';
+  Label1Caption :=
+    'Tuniac comes in 32bit and 64bit.' + #13#10 +
+    'We have detected your system is 64bit capable.' + #13#10#13#10 +
+    'Note: Under 64bit the TAK, OptimFROG and SVP plugins are not available.'
+  Label2Caption := 'Select below which Tuniac you want, then click Next.';
+  CheckCaption := '&Install Tuniac 32bit instead of Tuniac 64bit';
+
+  Install32bitPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, Install32bitCheckBox);
+end;
+
 //should Tuniac go download pre-req's?
 procedure CreateDownloadWantedPage;
 var
@@ -417,7 +458,7 @@ begin
   IconFileName := 'directx.ico';
   Label1Caption :=
     'Tuniac requires the following:' + #13#10 +
-    DownloadsNeeded + #13#10#13#10 +
+  DownloadsNeeded + #13#10#13#10 +
     'Note: Downloads required are about ' + IntToStr(DownloadsSize) + 'mb in total';
   Label2Caption := 'Select below if you want this installer to get and install these files, then click Next.';
   CheckCaption := '&Download and install required files';
@@ -425,6 +466,14 @@ begin
   DownloadWantedPage := CreateCustomOptionPage(wpWelcome, Caption, SubCaption1, IconFileName, Label1Caption, Label2Caption, CheckCaption, DownloadWantedCheckBox);
 end;
 
+//reset previous user setting for 32bit install on 64bit machine
+procedure RegisterPreviousData(PreviousDataKey: Integer);
+begin
+  SetPreviousData(PreviousDataKey, 'Install32bit', IntToStr(Ord(Install32bitCheckBox.Checked)));
+  SetPreviousData(PreviousDataKey, 'DownloadWanted', IntToStr(Ord(DownloadWantedCheckBox.Checked)));
+end;
+
+//download prereq's if needed
 procedure DownloadFiles();
 var
   URL, FileName: String;
@@ -455,7 +504,7 @@ begin
     URL := 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x86.cab';
     FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x86.cab');
     idpAddFile(URL, FileName);
-  end;                                    
+  end;
 
   if not HasVC14x86Redist then begin
     URL := 'http://download.microsoft.com/download/2/a/2/2a2ef9ab-1b4b-49f0-9131-d33f79544e70/vc_redist.x64.exe';
@@ -482,11 +531,14 @@ begin
   end;
 
   idpDownloadAfter(wpPreparing);
-end;
+ end;
 
+//skip 32bit install question on 32bit only machines
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if (PageID = DownloadWantedPage.ID) and not IsDownloadRequired then begin
+  if (PageID = Install32bitPage.ID) and not Is64BitInstallMode then begin
+    Result := true;
+  end else if (PageID = DownloadWantedPage.ID) and not IsDownloadRequired then begin
     Result := true;
   end else begin
     Result := false;
@@ -511,9 +563,14 @@ var
   AboutButton, CancelButton: TButton;
   URLLabel: TNewStaticText;
 begin
+  Create32bitPage;
+
+  Install32bitCheckBox.Checked := GetPreviousData('Install32bit', IsNot64BitMode) = '1';
+
   CreateDownloadWantedPage;
 
   DownloadWantedCheckBox.Checked := IsDownloadRequired;
+
 
   { Other custom controls }
 
@@ -570,10 +627,10 @@ begin
 	case CurUninstallStep of
 		usUninstall:
 		begin
-			if SuppressibleMsgBox('Remove all settings?', mbInformation, mb_YesNo, IDYES) = IDYes then begin
-        if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-				  SuppressibleMsgBox('Error removing settings & file associations.', mbError, MB_OK, IDOK);
-			end	else begin
+			if SuppressibleMsgBox('Remove all settings?', mbInformation, mb_YesNo, IDYES) = IDYES then begin
+        if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipeprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then 
+          SuppressibleMsgBox('Error removing settings & file associations.', mbError, MB_OK, IDOK);
+			end else begin
 			  if not Exec(ExpandConstant('{app}\TuniacApp.exe'), '-dontsaveprefs -wipefileassoc -exit', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
 					SuppressibleMsgBox('Error removing file associations.', mbError, MB_OK, IDOK);
 			end;
