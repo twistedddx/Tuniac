@@ -507,7 +507,7 @@ begin
   end;
 
   if not HasVC14x86Redist then begin
-    URL := 'http://download.microsoft.com/download/2/a/2/2a2ef9ab-1b4b-49f0-9131-d33f79544e70/vc_redist.x64.exe';
+    URL := 'http://download.microsoft.com/download/9/a/2/9a2a7e36-a8af-46c0-8a78-a5eb111eefe2/vc_redist.x86.exe';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
   end;      
