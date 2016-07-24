@@ -19,7 +19,7 @@ DisableWelcomePage=No
 InternalCompressLevel=ultra
 MinVersion=0,5.01.2600sp3
 OutputDir=.
-OutputBaseFilename=Tuniac_Setup_{#DateTime}
+OutputBaseFilename=Tuniac_Setup_{#DateTime}_noxp
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
@@ -51,12 +51,12 @@ Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
-Source: "..\Win32\Release\*.exe"; DestDir: {app}\; Flags: ignoreversion
-Source: "..\Win32\Release\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release_noxp\*.exe"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Win32\Release_noxp\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
 Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion; Check: IsWin64
 Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion; Check: IsWin64
-Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
-Source: "..\Win32\Release\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
+Source: "..\Win32\Release_noxp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
+Source: "..\Win32\Release_noxp\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\TuniacApp.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\TuniacApp.exe"
