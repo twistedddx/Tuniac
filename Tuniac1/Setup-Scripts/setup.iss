@@ -4,6 +4,7 @@
 #include "setup-common_32bit.iss"
 
 [Setup]
+MinVersion=0,5.01.2600sp3
 OutputBaseFilename=Tuniac_Setup_{#DateTime}
 
 [Files]

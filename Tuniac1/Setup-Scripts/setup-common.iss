@@ -1,5 +1,7 @@
 #define DateTime GetDateTimeString('yymmdd','','')
 
+#define TuniacName 'Tuniac 1.0'
+
 #define TuniacWWW 'http://www.tuniac.org'
 
 #define VC14RedistText 'Visual Studio 2015 Update 3'
@@ -43,12 +45,12 @@
 AllowNoIcons=yes
 AppID={{A2A3A9DE-A195-4A66-8DA6-59968E0EF943}
 AppMutex=TUNIACWINDOWCLASS
-AppName=Tuniac 1.0
+AppName={#TuniacName}
 AppPublisher=Tuniac Dev Team
 AppPublisherURL={#TuniacWWW}
 AppSupportURL={#TuniacWWW}
 AppUpdatesURL={#TuniacWWW}
-AppVerName=Tuniac 1.0
+AppVerName={#TuniacName}
 Compression=lzma2/ultra
 DefaultDirName={pf}\Tuniac
 DefaultGroupName=Tuniac
@@ -56,7 +58,6 @@ DisableDirPage=No
 DisableProgramGroupPage=No
 DisableWelcomePage=No
 InternalCompressLevel=ultra
-MinVersion=0,5.01.2600sp3
 OutputDir=.
 SetupIconFile=..\TuniacApp\icons\tuniac.ico
 SetupMutex=TuniacSetup,Global\TuniacSetup
@@ -111,7 +112,7 @@ Name: {app}\Data Folder; Filename: {userappdata}\Tuniac; Comment: "Data Folder"
 [Code]
 procedure AboutButtonOnClick(Sender: TObject);
 begin
-  SuppressibleMsgBox('This installer will install the Tuniac 1.0 media player onto your computer', mbInformation, mb_Ok, IDOK);
+  SuppressibleMsgBox('This installer will install the {#TuniacName} media player onto your computer', mbInformation, mb_Ok, IDOK);
 end;
 
 procedure URLLabelOnClick(Sender: TObject);

@@ -5,6 +5,7 @@
 #include "setup-common_64bit.iss"
 
 [Setup]
+MinVersion=0,5.01.2600sp3
 OutputBaseFilename=Tuniac_Setup_{#DateTime}(inc 64bit)
 
 [Files]
