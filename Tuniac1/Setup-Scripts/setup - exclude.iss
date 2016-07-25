@@ -1,6 +1,7 @@
 #include "setup-common.iss"
 
 [Setup]
+MinVersion=0,5.01.2600sp3
 OutputBaseFilename=Tuniac_Setup_{#DateTime}(exclude)
 
 [Files]
@@ -11,10 +12,6 @@ Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\
 Source: "..\Win32\Release\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Code]
-function GetModuleHandle(lpModuleName: LongInt): LongInt;
-external 'GetModuleHandleA@kernel32.dll stdcall';
-function ExtractIcon(hInst: LongInt; lpszExeFileName: PChar; nIconIndex: LongInt): LongInt;
-external 'ExtractIconA@shell32.dll stdcall';
 function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth, cyWidth: Integer; istepIfAniCur: LongInt; hbrFlickerFreeDraw, diFlags: LongInt): LongInt;
 external 'DrawIconEx@user32.dll stdcall';
 function DestroyIcon(hIcon: LongInt): LongInt;

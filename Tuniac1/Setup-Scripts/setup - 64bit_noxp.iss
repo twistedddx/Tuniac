@@ -5,6 +5,7 @@
 #include "setup-common_64bit.iss"
 
 [Setup]
+MinVersion=0,6.0.6000
 OutputBaseFilename=Tuniac_Setup_{#DateTime}(inc 64bit)_noxp
 
 [Files]
