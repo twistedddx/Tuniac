@@ -89,8 +89,13 @@ bool CAboutWindow::Show(void)
 	{
 		TCHAR szBuild[128];
 		StringCchPrintf(szBuild, 128, TEXT("Build: %u\r\n %s"), tuniacApp.GetTuniacBuildNumber(), tuniacApp.GetTuniacBuild());
+		TCHAR szPlatform[128];
+		StringCchPrintf(szPlatform, 128, TEXT("Tuniac 1.0\n %s"), tuniacApp.GetTuniacPlatform());
+
 		ShowWindow(m_hAboutDlg, SW_SHOW);
 		SetDlgItemText(m_hAboutDlg, IDC_ABOUT_BUILD_TEXT, szBuild);
+		SetDlgItemText(m_hAboutDlg, IDC_ABOUTBOXTUNIAC_TEXT, szPlatform);
+		
 	}
 
 	return true;

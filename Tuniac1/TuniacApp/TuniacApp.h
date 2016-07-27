@@ -192,6 +192,7 @@ public:
 
 	HFONT				GetTuniacFont(int size);
 
+	LPTSTR				GetTuniacPlatform(void);
 	LPTSTR				GetTuniacBuild(void);
 	int					GetTuniacBuildNumber(void);
 
