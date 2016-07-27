@@ -2730,6 +2730,15 @@ HFONT	CTuniacApp::GetTuniacFont(int size)
 	return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 }
 
+LPTSTR	CTuniacApp::GetTuniacPlatform(void)
+{
+#ifdef _WIN64
+	return TEXT("64bit");
+#else
+	return TEXT("32bit");
+#endif
+}
+
 LPTSTR	CTuniacApp::GetTuniacBuild(void)
 {
 	return TEXT(__DATE__);
