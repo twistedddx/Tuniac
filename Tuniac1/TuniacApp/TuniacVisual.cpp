@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 #include "tuniacvisual.h"
+#include "resource.h"
 
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
@@ -58,6 +59,82 @@ CTuniacVisual::~CTuniacVisual(void)
 {
 }
 
+
+LRESULT CALLBACK CTuniacVisual::WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (uMsg == WM_INITDIALOG)
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+
+	CTuniacVisual * pCTuniacVisual = (CTuniacVisual *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	return(pCTuniacVisual->WndProc(hDlg, uMsg, wParam, lParam));
+}
+
+LRESULT CALLBACK CTuniacVisual::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CTuniacVisual * pCTuniacVisual = (CTuniacVisual *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+	{
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+		pCTuniacVisual = (CTuniacVisual *)lParam;
+
+		HWND		hParent = GetParent(hDlg);
+		RECT		rcDlg, rcParent;
+
+		GetWindowRect(hDlg, &rcDlg);
+		GetWindowRect(hParent, &rcParent);
+
+		int iWidth = rcDlg.right - rcDlg.left;
+		int iHeight = rcDlg.bottom - rcDlg.top;
+
+		int x = ((rcParent.right - rcParent.left) - iWidth) / 2 + rcParent.left;
+		int y = ((rcParent.bottom - rcParent.top) - iHeight) / 2 + rcParent.top;
+
+		int iScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+		int iScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+		if (x < 0) x = 0;
+		if (y < 0) y = 0;
+		if (x + iWidth  > iScreenWidth)  x = iScreenWidth - iWidth;
+		if (y + iHeight > iScreenHeight) y = iScreenHeight - iHeight;
+
+		MoveWindow(hDlg, x, y, iWidth, iHeight, FALSE);
+
+		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_FILLSTRIP, BM_SETCHECK, pCTuniacVisual->bFillStrip ? BST_CHECKED : BST_UNCHECKED, 0);
+	}
+	break;
+
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_TUNIACVISPREF_FILLSTRIP:
+		{
+			pCTuniacVisual->bFillStrip = true;
+
+			int State = SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_FILLSTRIP, BM_GETCHECK, 0, 0);
+			pCTuniacVisual->bFillStrip = State == BST_UNCHECKED ? FALSE : TRUE;
+			pCTuniacVisual->m_pHelper->SetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), REG_DWORD, (LPBYTE)&pCTuniacVisual->bFillStrip, sizeof(int));
+		}
+		break;
+
+		case IDOK:
+		case IDCANCEL:
+		{
+			EndDialog(hDlg, wParam);
+			return TRUE;
+		}
+		break;
+		}
+
+	default:
+		return FALSE;
+
+	}
+	return TRUE;
+}
+
 void	CTuniacVisual::Destroy(void)
 {
 	if(Samples)
@@ -76,7 +153,7 @@ LPTSTR	CTuniacVisual::GetPluginName(void)
 
 unsigned long CTuniacVisual::GetFlags(void)
 {
-	return PLUGINFLAGS_ABOUT;
+	return PLUGINFLAGS_CONFIG | PLUGINFLAGS_ABOUT;
 }
 
 bool	CTuniacVisual::SetHelper(ITuniacVisHelper *pHelper)
@@ -123,19 +200,25 @@ bool	CTuniacVisual::Attach(HDC hDC)
 
 	setVSync(1);
 
-	glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
+	//glClearColor(0.9f, 0.92f, 0.96f, 0.2f);
 	glClear (GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 
+	glEnable(GL_POLYGON_SMOOTH);
+
 	glEnable(GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_POLYGON_SMOOTH);
-
 	//Samples = (float *)VirtualAlloc(NULL, DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 	Samples = (float*)_aligned_malloc(DISPLAYSAMPLES * sizeof(float), 16);
+
+	bFillStrip = 1;
+
+	DWORD	lpRegType = REG_DWORD;
+	DWORD	iRegSize = sizeof(int);
+	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), &lpRegType, (LPBYTE)&bFillStrip, &iRegSize);
 
 	SwapBuffers(m_glDC);
 
@@ -187,70 +270,87 @@ bool	CTuniacVisual::Render(int w, int h)
 
 		//matt gray
 		glBegin(GL_QUAD_STRIP);
-		glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
-		glVertex2f(0, 0);
+		{
+			glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
+			glVertex2f(0, 0);
 
-		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-		glVertex2f(0, m_LastHeight);
+			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glVertex2f(0, m_LastHeight);
 
-		glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
-		glVertex2f(m_LastWidth, 0);
+			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glVertex2f(m_LastWidth, 0);
 
-		glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
-		glVertex2f(m_LastWidth, m_LastHeight);
+			glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
+			glVertex2f(m_LastWidth, m_LastHeight);
+		}
 		glEnd();
 
 		// draw background grid
 		glColor4f(0, 0, 0, 0.1f);
 		glBegin(GL_LINES);
-		for (unsigned long x = 0; x < m_LastWidth; x += m_LastWidth / 10)
 		{
-			glVertex2i(x, 0);
-			glVertex2i(x, m_LastHeight);
-		}
+			for (unsigned long x = 0; x < m_LastWidth; x += m_LastWidth / 10)
+			{
+				glVertex2i(x, 0);
+				glVertex2i(x, m_LastHeight);
+			}
 
-		for (unsigned long y = 0; y < m_LastHeight; y += m_LastHeight / 10)
-		{
-			glVertex2i(0, y);
-			glVertex2i(m_LastWidth, y);
+			for (unsigned long y = 0; y < m_LastHeight; y += m_LastHeight / 10)
+			{
+				glVertex2i(0, y);
+				glVertex2i(m_LastWidth, y);
+			}
 		}
 		glEnd();
 
-		if (m_pHelper->GetVisData(Samples, DISPLAYSAMPLES))
+		unsigned long ulSamples = m_pHelper->GetVisData(Samples, DISPLAYSAMPLES);
+		if (ulSamples)
 		{
-			float halfheight = ((float)m_LastHeight / 2.0f);
-			float multiplier = (float)m_LastWidth / (float)(DISPLAYSAMPLES / 2.0f);
+			float fHalfHeight = ((float)m_LastHeight * 0.5f);
+			float fSeparation = m_LastWidth / (float)ulSamples;
 
 			glColor4f(0, 0, 0, 1);
-			glBegin(GL_QUAD_STRIP);
+			glBegin(GL_TRIANGLE_STRIP);
 			{
-				for (unsigned int samp = 0; samp < DISPLAYSAMPLES - 3; samp += 2)
+				//left channel
+				unsigned long ulLeftSample = 0;
+				for (unsigned long ulPoint = 0; ulPoint < ulSamples/2; ulPoint++)
 				{
-					glVertex2f((samp*(multiplier / 4)), halfheight);
-					glVertex2f((samp*(multiplier / 4)), halfheight + (Samples[samp] * halfheight));
+					if(bFillStrip)
+						glVertex2f((float)ulPoint*fSeparation, fHalfHeight);
+	
+					glVertex2f((float)ulPoint*fSeparation, fHalfHeight + Samples[ulLeftSample] * fHalfHeight);
 
-					//glVertex2f((samp+1)*multiplier,	halfheight - (Samples[samp+2] * halfheight));
-					//glVertex2f((samp+1)*multiplier,	halfheight);
+					if (!bFillStrip)
+						glVertex2f((float)(ulPoint+1)*fSeparation, fHalfHeight + (Samples[ulLeftSample] * fHalfHeight));
+
+					ulLeftSample += 2;
 				}
 			}
 			glEnd();
 
 			glColor4f(0, 0, 0, 1);
-			glBegin(GL_QUAD_STRIP);
+			glBegin(GL_TRIANGLE_STRIP);
 			{
-				for (unsigned int samp = 1; samp < DISPLAYSAMPLES - 3; samp += 2)
+				//right channel
+				unsigned long ulRightSample = 1;
+				for (unsigned long ulPoint = ulSamples / 2; ulPoint < ulSamples; ulPoint++)
 				{
-					glVertex2f((m_LastWidth / 2) + (samp*(multiplier / 4)), halfheight);
-					glVertex2f((m_LastWidth / 2) + (samp*(multiplier / 4)), halfheight + (Samples[samp] * halfheight));
+					if (bFillStrip)
+						glVertex2f((float)ulPoint*fSeparation, fHalfHeight);
 
-					//glVertex2f((samp+1)*multiplier,	halfheight + (Samples[samp+3] * halfheight));
-					//glVertex2f((samp+1)*multiplier,	halfheight);
+					glVertex2f((float)ulPoint*fSeparation, fHalfHeight + (Samples[ulRightSample] * fHalfHeight));
+
+					if (!bFillStrip)
+						glVertex2f((float)(ulPoint + 1)*fSeparation, fHalfHeight + (Samples[ulRightSample] * fHalfHeight));
+
+					ulRightSample += 2;
 				}
 			}
 			glEnd();
 		}
 
-		//glFinish();
+		glFinish();
 		SwapBuffers(m_glDC);
 	}
 
@@ -265,6 +365,7 @@ bool	CTuniacVisual::About(HWND hWndParent)
 
 bool	CTuniacVisual::Configure(HWND hWndParent)
 {
+	DialogBoxParam(GetModuleHandle(L"tuniacapp.exe"), MAKEINTRESOURCE(IDD_TUNIACVISPREFWINDOW), hWndParent, (DLGPROC)WndProcStub, (DWORD_PTR)this);
 	return true;
 }
 
