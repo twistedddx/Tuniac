@@ -13,38 +13,45 @@ CBASSDecoder::~CBASSDecoder(void)
 
 void DoMeta(DWORD handle, void *user)
 {
+	//attempt to put station details in "artist" and track details in "title" at least.
+
 	char *icy=(char *)BASS_ChannelGetTags(handle,BASS_TAG_ICY);
 	TCHAR szArtist[128];
 	TCHAR szGenre[128];
 	TCHAR szTitle[128];
+	TCHAR szAlbum[128];
+	TCHAR szComment[128];
 	int iBitrate;
 	if(icy)
 	{ // got ICY metadata
 		for(;*icy;icy+=strnlen_s(icy,2048)+1)
 		{
+			//station name
 			if (!strnicmp(icy,"icy-name:",9))
 			{
-				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szTitle, 128);
+				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szArtist, 128);
 				if(m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
+					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
 
+			//station Genre
 			if (!strnicmp(icy,"icy-genre:",10))
 			{
 				MultiByteToWideChar(CP_ACP, 0, icy+10, -1, szGenre, 128);
 				if(m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szGenre, FIELD_GENRE);
 			}
+
+			//Station bitrate
 			if (!strnicmp(icy,"icy-br:",7))
 			{
 				iBitrate = (atoi(icy+7))*1000;
 				if(m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, (unsigned long)iBitrate, FIELD_BITRATE);
 			}
-			/* these should already been known
+			/* these should already been known during open
 			ice-samplerate:
 			ice-channels:
-			ice-bitrate:
 			*/
 		}
 	}
@@ -53,22 +60,26 @@ void DoMeta(DWORD handle, void *user)
 	{ // got Shoutcast metadata StreamTitle='title';StreamUrl='http://www.website.com';
 		char *title=strstr(meta,"StreamTitle='");
 		char *url=strstr(meta,"StreamUrl='");
+
+		// track details, normally Artist - Title
 		if(title)
 		{
 			title=strdup(title+13);
 			strchr(title,';')[-1]=0;
-			MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
+			MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
 			if(m_pHelper)
-				m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 		}
-		if(url && szArtist == NULL)
+		/* //should already be filled during import
+		if(url && szTitle == NULL)
 		{
 			url=strdup(url+11);
 			strchr(url,';')[-1]=0;
 			MultiByteToWideChar(CP_ACP, 0, url, -1, szTitle, 128);
 			if(m_pHelper)
-				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
+				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_ARTIST);
 		}
+		*/
 	}
 	else
 	{
@@ -78,6 +89,7 @@ void DoMeta(DWORD handle, void *user)
 			const char *artist = NULL;
 			const char *title = NULL;
 			const char *album = NULL;
+			const char *comment = NULL;
 			const char *p = meta;
 			for(;*p;p+=strnlen_s(p,2048)+1)
 			{
@@ -87,28 +99,39 @@ void DoMeta(DWORD handle, void *user)
 					title=p+6;
 				if (!strnicmp(p, "album=", 6)) // found the album
 					album=p+6;
+				if (!strnicmp(p, "comment=", 8)) // found the comment
+					comment = p + 8;
+				//server="Icecast-2.3.3"
+				//encoder=
 			}
-			if (artist && title && album)
+			if (strnlen_s(title, 1) && strnlen_s(artist, 1))
 			{
-				char text[128];
-				_snprintf(text, sizeof(text), "%s - %s - %s", artist, album, title);
-				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
+				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
+				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
+
+				TCHAR szText[128];
+				_snwprintf(szText, sizeof(szText), L"%s - %s", szArtist, szTitle);
+
 				if (m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+					m_pHelper->UpdateMetaData((LPTSTR)user, szText, FIELD_TITLE);
 			}
-			else if(artist && title)
+			else if(strnlen_s(title, 1))
 			{
-				char text[128];
-				_snprintf(text,sizeof(text),"%s - %s",artist,title);
-				MultiByteToWideChar(CP_ACP, 0, text, -1, szArtist, 128);
+				MultiByteToWideChar(CP_UTF8, 0, title, -1, szTitle, 128);
 				if(m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+					m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 			}
-			else if(title  && szTitle == NULL)
+			if(strnlen_s(album, 2))
 			{
-				MultiByteToWideChar(CP_ACP, 0, title, -1, szArtist, 128);
+				MultiByteToWideChar(CP_UTF8, 0, album, -1, szAlbum, 128);
 				if(m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
+					m_pHelper->UpdateMetaData((LPTSTR)user, szAlbum, FIELD_ALBUM);
+			}
+			if (strnlen_s(comment, 1))
+			{
+				MultiByteToWideChar(CP_UTF8, 0, comment, -1, szComment, 128);
+				if (m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szComment, FIELD_COMMENT);
 			}
 		}
     }
@@ -182,7 +205,6 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper, HSTREAM d
 		DoMeta(m_decodehandle, szSource);
 		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
 		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
-		//BASS_ChannelSetSync(decodehandle,BASS_SYNC_WMA_CHANGE,0,&MetaSync, szSource); // WMA
 	}
 
 	BASS_ChannelGetInfo(m_decodehandle,&info);
