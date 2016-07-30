@@ -29,7 +29,6 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 
-#define TIMES	8
 #define DISPLAYSAMPLES	512
 
 class CTuniacVisual :
@@ -45,6 +44,11 @@ protected:
 
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;
+
+	bool								bFillStrip;
+
+	static LRESULT CALLBACK WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	CTuniacVisual(void);
