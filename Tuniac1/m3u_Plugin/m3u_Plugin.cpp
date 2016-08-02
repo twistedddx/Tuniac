@@ -255,9 +255,9 @@ bool			CM3U_Export::ExportEntry(LibraryEntry & libraryEntry)
 
 	LPTSTR pszBase = wcsstr(libraryEntry.szURL, m_BaseDir);
 	if(pszBase == libraryEntry.szURL)
-		StringCchPrintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL + wcsnlen_s(m_BaseDir, MAX_PATH));
+		StringCchCopy(szData, MAX_PATH, libraryEntry.szURL + wcsnlen_s(m_BaseDir, MAX_PATH));
 	else
-		StringCchPrintf(szData, MAX_PATH, TEXT("%s"), libraryEntry.szURL);
+		StringCchCopy(szData, MAX_PATH, libraryEntry.szURL);
 
 	fputws(szData, m_File);
 	fputws(TEXT("\n"), m_File);
