@@ -45,7 +45,12 @@ protected:
 	unsigned long						m_LastWidth;
 	unsigned long						m_LastHeight;
 
+	float								fHalfHeight;
+	float								fShift;
+
 	bool								bFillStrip;
+	float								fShiftRate;
+	float								fClearRate;
 
 	static LRESULT CALLBACK WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

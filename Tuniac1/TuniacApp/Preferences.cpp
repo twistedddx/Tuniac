@@ -106,8 +106,7 @@
 #define FORMATSTRING_HELP	TEXT("\
 @U\tURL\r\n\
 @F\tFilename\r\n\
-@X\tExtension\r\n\
-@x\tEntension (without leading .)\r\n\
+@X\tFile Type\r\n\
 @K\tKind\r\n\
 @S\tSize\r\n\
 @A\tArtist\r\n\
@@ -1570,7 +1569,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 							  }
 							  if (!bFound)
 							  {
-								  StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+								  StringCchCopy(szItem, 64, AvailableUserSearchFields[i].szHeaderText);
 								  item.pszText = szItem;
 								  item.iItem = ListView_GetItemCount(hAvailableListView);
 								  ListView_InsertItem(hAvailableListView, &item);
@@ -1579,7 +1578,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 						  }
 						  for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
 						  {
-							  StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+							  StringCchCopy(szItem, 64, AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
 							  item.pszText = szItem;
 							  item.iItem = ListView_GetItemCount(hSelectedListView);
 							  ListView_InsertItem(hSelectedListView, &item);
@@ -1635,8 +1634,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 									}
 									if (!bFound)
 									{
-
-										StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+										StringCchCopy(szItem, 64, AvailableUserSearchFields[i].szHeaderText);
 										item.pszText = szItem;
 										item.iItem = ListView_GetItemCount(hAvailableListView);
 										ListView_InsertItem(hAvailableListView, &item);
@@ -1645,7 +1643,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 								}
 								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
 								{
-									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+									StringCchCopy(szItem, 64, AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
 									item.pszText = szItem;
 									item.iItem = ListView_GetItemCount(hSelectedListView);
 									ListView_InsertItem(hSelectedListView, &item);
@@ -1684,8 +1682,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 									}
 									if (!bFound)
 									{
-
-										StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+										StringCchCopy(szItem, 64, AvailableUserSearchFields[i].szHeaderText);
 										item.pszText = szItem;
 										item.iItem = ListView_GetItemCount(hAvailableListView);
 										ListView_InsertItem(hAvailableListView, &item);
@@ -1694,7 +1691,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 								}
 								for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
 								{
-									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+									StringCchCopy(szItem, 64, AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
 									item.pszText = szItem;
 									item.iItem = ListView_GetItemCount(hSelectedListView);
 									ListView_InsertItem(hSelectedListView, &item);
@@ -1724,8 +1721,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 								}
 								if (!bFound)
 								{
-
-									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+									StringCchCopy(szItem, 64, AvailableUserSearchFields[i].szHeaderText);
 									item.pszText = szItem;
 									item.iItem = ListView_GetItemCount(hAvailableListView);
 									ListView_InsertItem(hAvailableListView, &item);
@@ -1734,7 +1730,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 							}
 							for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
 							{
-								StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+								StringCchCopy(szItem, 64, AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
 								item.pszText = szItem;
 								item.iItem = ListView_GetItemCount(hSelectedListView);
 								ListView_InsertItem(hSelectedListView, &item);
@@ -1769,8 +1765,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 								}
 								if (!bFound)
 								{
-
-									StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[i].szHeaderText);
+									StringCchCopy(szItem, 64, AvailableUserSearchFields[i].szHeaderText);
 									item.pszText = szItem;
 									item.iItem = ListView_GetItemCount(hAvailableListView);
 									ListView_InsertItem(hAvailableListView, &item);
@@ -1779,7 +1774,7 @@ LRESULT CALLBACK CPreferences::UserSearchFieldProc(HWND hDlg, UINT uMsg, WPARAM 
 							}
 							for (unsigned int x = 0; x < pPrefs->m_iUserSearchFieldNum; x++)
 							{
-								StringCchPrintf(szItem, 64, TEXT("%s"), AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
+								StringCchCopy(szItem, 64, AvailableUserSearchFields[pPrefs->m_UserSearchField[x]].szHeaderText);
 								item.pszText = szItem;
 								item.iItem = ListView_GetItemCount(hSelectedListView);
 								ListView_InsertItem(hSelectedListView, &item);
@@ -3095,7 +3090,7 @@ bool	CPreferences::GetPreferencesPageName(unsigned int iPage, LPTSTR szDest, uns
 
 	if(m_Pages[i].iParent == -1)
 	{
-		StringCchPrintf(szDest, iSize, TEXT("%s"), m_Pages[i].pszName);
+		StringCchCopy(szDest, iSize, m_Pages[i].pszName);
 	}
 	else
 	{

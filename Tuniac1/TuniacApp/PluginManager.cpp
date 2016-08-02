@@ -102,8 +102,8 @@ bool			CPluginManager::Initialize(void)
 						continue;
 					}
 
-					StringCchPrintf(PE.szDllFile, 64, TEXT("%s"), w32fd.cFileName);
-					StringCchPrintf(PE.szName, 64, TEXT("%s"), PE.pPlugin->GetPluginName());
+					StringCchCopy(PE.szDllFile, 64, w32fd.cFileName);
+					StringCchCopy(PE.szName, 64, PE.pPlugin->GetPluginName());
 					PE.ulFlags = PE.pPlugin->GetFlags();
 
 					PE.bEnabled = false;
@@ -213,7 +213,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 				{
 					m_PluginArray[iPlugin].pPlugin->SetHelper(this);
 					SetThreadPriority(m_PluginArray[iPlugin].hThread, THREAD_PRIORITY_LOWEST);
-					StringCchPrintf(m_PluginArray[iPlugin].szName, 64, TEXT("%s"), m_PluginArray[iPlugin].pPlugin->GetPluginName());
+					StringCchCopy(m_PluginArray[iPlugin].szName, 64, m_PluginArray[iPlugin].pPlugin->GetPluginName());
 					m_PluginArray[iPlugin].ulFlags = m_PluginArray[iPlugin].pPlugin->GetFlags();
 					m_PluginArray[iPlugin].bEnabled = true;
 				}

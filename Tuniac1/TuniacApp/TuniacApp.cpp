@@ -2802,11 +2802,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				lField = FIELD_FILENAME;
 				break;
 			case 'X':
-				lField = FIELD_FILEEXTENSION;
-				break;
-			case 'x':
-				lField = FIELD_FILEEXTENSION;
-				bShort = true;
+				lField = FIELD_FILETYPE;
 				break;
 			case 'A':
 				lField = FIELD_ARTIST;
@@ -2882,17 +2878,17 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 
 		if (lField == 0xFFFF)
 		{
-			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
+			StringCchCopy(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			break;
 		}
 		else if (lField == 0xFFFE)
 		{
-			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
+			StringCchCopy(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			b += 1;
 		}
 		else if (lField == 0xFFFD) 
 		{
-			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
+			StringCchCopy(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("@"));
 			b += 2;
 		}
 		else if (lField == -1)
@@ -2902,23 +2898,23 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 			{
 				case STATE_STOPPED:
 					{
-						StringCchPrintf(szPlayState, 16, TEXT("Paused"));
+						StringCchCopy(szPlayState, 16, TEXT("Paused"));
 					}
 					break;
 
 				case STATE_PLAYING:
 					{
-						StringCchPrintf(szPlayState, 16, TEXT("Playing"));
+						StringCchCopy(szPlayState, 16, TEXT("Playing"));
 					}
 					break;
 
 				default:
 					{
-						StringCchPrintf(szPlayState, 16, TEXT("Stopped"));
+						StringCchCopy(szPlayState, 16, TEXT("Stopped"));
 					}
 					break;
 			}
-			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), szPlayState);
+			StringCchCopy(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), szPlayState);
 			b += 2;
 		}
 		else
@@ -2950,17 +2946,10 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 							}
 						}
 						break;
-
-					case FIELD_FILEEXTENSION:
-						{
-							if(wcsnlen_s(szFieldData, 256) > 0 && szFieldData[0] == L'.')
-								StringCchCopy(szFieldData, 256, szFieldData + 1);
-						}
-						break;
 				}
 			}
 
-			StringCchPrintf(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), TEXT("%s"), szFieldData);
+			StringCchCopy(szDest + wcsnlen_s(szDest, iDestSize), iDestSize - wcsnlen_s(szDest, iDestSize), szFieldData);
 			b += 2;
 		}
 
@@ -3151,7 +3140,7 @@ void	CTuniacApp::UpdateTitles(void)
 	if(pIPE)
 		FormatSongInfo(szWinTitle, 512, pIPE, m_Preferences.GetWindowFormatString(), true);
 	else
-		StringCchPrintf(szWinTitle, 512, TEXT("Tuniac"));
+		StringCchCopy(szWinTitle, 512, TEXT("Tuniac"));
 
 	SetWindowText(m_hWnd, szWinTitle);
 	m_Taskbar.SetTitle(szWinTitle);
@@ -3206,6 +3195,10 @@ void	CTuniacApp::UpdateMetaData(LPTSTR szURL, unsigned long pNewData, unsigned l
 
 	if(pIPE)
 	{
+		// streams can not get their own playcount
+		if (ulFieldID == FIELD_PLAYCOUNT)
+			pNewData = (unsigned long)pIPE->GetField(FIELD_PLAYCOUNT) + pNewData;
+
 		pIPE->SetField(ulFieldID, pNewData);
 
 		UpdateTitles();

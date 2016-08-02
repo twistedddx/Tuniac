@@ -50,6 +50,13 @@ CTuniacVisual::CTuniacVisual(void)
 	m_LastWidth	 = 0;
 	m_LastHeight = 0;
 
+	fHalfHeight = 0.0f;
+	fShift = 0.0f;
+	fClearRate = 0.8f;
+	fShiftRate = 0.001f;
+	
+	bFillStrip = 0;
+
 	Samples = NULL;
 	m_glRC = NULL;
 	m_glDC = NULL;
@@ -103,30 +110,69 @@ LRESULT CALLBACK CTuniacVisual::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPA
 		MoveWindow(hDlg, x, y, iWidth, iHeight, FALSE);
 
 		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_FILLSTRIP, BM_SETCHECK, pCTuniacVisual->bFillStrip ? BST_CHECKED : BST_UNCHECKED, 0);
+
+		TCHAR		tstr[32];
+
+		StringCchPrintf(tstr, 32, TEXT("Clear rate modifier %1.1f"), pCTuniacVisual->fClearRate);
+		SetDlgItemText(hDlg, IDC_TUNIACVISPREF_CLEARRATE_TEXT, tstr);
+		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_CLEARRATE_SLIDER, TBM_SETRANGE, TRUE, MAKELONG(1, 10));
+		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_CLEARRATE_SLIDER, TBM_SETPOS, TRUE, pCTuniacVisual->fClearRate * 10.0f);
+
+		StringCchPrintf(tstr, 32, TEXT("Line width modifier %1.3f"), pCTuniacVisual->fShiftRate);
+		SetDlgItemText(hDlg, IDC_TUNIACVISPREF_SHIFTRATE_TEXT, tstr);
+		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_SHIFTRATE_SLIDER, TBM_SETRANGE, TRUE, MAKELONG(0, 10));
+		SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_SHIFTRATE_SLIDER, TBM_SETPOS, TRUE, pCTuniacVisual->fShiftRate * 1000.0f);
 	}
 	break;
 
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case IDC_TUNIACVISPREF_FILLSTRIP:
-		{
-			pCTuniacVisual->bFillStrip = true;
+			case IDC_TUNIACVISPREF_FILLSTRIP:
+			{
+				pCTuniacVisual->bFillStrip = true;
 
-			int State = SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_FILLSTRIP, BM_GETCHECK, 0, 0);
-			pCTuniacVisual->bFillStrip = State == BST_UNCHECKED ? FALSE : TRUE;
-			pCTuniacVisual->m_pHelper->SetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), REG_DWORD, (LPBYTE)&pCTuniacVisual->bFillStrip, sizeof(int));
+				int State = SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_FILLSTRIP, BM_GETCHECK, 0, 0);
+				pCTuniacVisual->bFillStrip = State == BST_UNCHECKED ? FALSE : TRUE;
+				pCTuniacVisual->m_pHelper->SetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), REG_DWORD, (LPBYTE)&pCTuniacVisual->bFillStrip, sizeof(int));
+			}
+			break;
+
+			case IDOK:
+			case IDCANCEL:
+			{
+				EndDialog(hDlg, wParam);
+				return TRUE;
+			}
+			break;
+		}
+
+	case WM_HSCROLL:
+	{
+		switch (LOWORD(wParam))
+		{
+		case TB_THUMBTRACK:
+		case TB_ENDTRACK:
+		{
+			TCHAR		tstr[42];
+
+			pCTuniacVisual->fClearRate = SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_CLEARRATE_SLIDER, TBM_GETPOS, 0, 0) / 10.0f;
+			StringCchPrintf(tstr, 42, TEXT("Clear rate modifier %1.1f"), pCTuniacVisual->fClearRate);
+			SetDlgItemText(hDlg, IDC_TUNIACVISPREF_CLEARRATE_TEXT, tstr);
+
+			pCTuniacVisual->fShiftRate = SendDlgItemMessage(hDlg, IDC_TUNIACVISPREF_SHIFTRATE_SLIDER, TBM_GETPOS, 0, 0) / 1000.0f;
+			StringCchPrintf(tstr, 42, TEXT("Line width modifier %1.3f"), pCTuniacVisual->fShiftRate);
+			SetDlgItemText(hDlg, IDC_TUNIACVISPREF_SHIFTRATE_TEXT, tstr);
+			pCTuniacVisual->fShift = ((float)m_LastWidth*pCTuniacVisual->fShiftRate) + 1.0f;
+
+			pCTuniacVisual->m_pHelper->SetVisualPref(TEXT("TuniacVisual"), TEXT("ClearRate"), REG_DWORD, (LPBYTE)&pCTuniacVisual->fClearRate, sizeof(float));
+			pCTuniacVisual->m_pHelper->SetVisualPref(TEXT("TuniacVisual"), TEXT("ShiftRate"), REG_DWORD, (LPBYTE)&pCTuniacVisual->fShiftRate, sizeof(float));
+
 		}
 		break;
-
-		case IDOK:
-		case IDCANCEL:
-		{
-			EndDialog(hDlg, wParam);
-			return TRUE;
 		}
-		break;
-		}
+	}
+	break;
 
 	default:
 		return FALSE;
@@ -214,11 +260,17 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	//Samples = (float *)VirtualAlloc(NULL, DISPLAYSAMPLES * sizeof(float), MEM_COMMIT, PAGE_READWRITE);
 	Samples = (float*)_aligned_malloc(DISPLAYSAMPLES * sizeof(float), 16);
 
-	bFillStrip = 1;
+	bFillStrip = 0;
+	fClearRate = 0.8f;
+	fShift = 0.0001f;
 
 	DWORD	lpRegType = REG_DWORD;
-	DWORD	iRegSize = sizeof(int);
-	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), &lpRegType, (LPBYTE)&bFillStrip, &iRegSize);
+	DWORD	dwRegSize = sizeof(int);
+	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("FillStrip"), &lpRegType, (LPBYTE)&bFillStrip, &dwRegSize);
+
+	dwRegSize = sizeof(float);
+	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("ShiftRate"), &lpRegType, (LPBYTE)&fShiftRate, &dwRegSize);
+	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("ClearRate"), &lpRegType, (LPBYTE)&fClearRate, &dwRegSize);
 
 	SwapBuffers(m_glDC);
 
@@ -257,6 +309,8 @@ bool	CTuniacVisual::Render(int w, int h)
 		{
 			m_LastWidth = w;
 			m_LastHeight = h;
+			fHalfHeight = ((float)m_LastHeight * 0.5f);
+			fShift = ((float)m_LastWidth*fShiftRate) + 1.0f;
 
 			glViewport(0, 0, w, h);
 			glMatrixMode(GL_PROJECTION);
@@ -271,16 +325,16 @@ bool	CTuniacVisual::Render(int w, int h)
 		//matt gray
 		glBegin(GL_QUAD_STRIP);
 		{
-			glColor4f(0.9f, 0.92f, 0.96f, 0.5f);
+			glColor4f(0.9f, 0.92f, 0.96f, fClearRate);
 			glVertex2f(0, 0);
 
-			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glColor4f(0.8f, 0.82f, 0.86f, fClearRate);
 			glVertex2f(0, m_LastHeight);
 
-			glColor4f(0.8f, 0.82f, 0.86f, 0.5f);
+			glColor4f(0.8f, 0.82f, 0.86f, fClearRate);
 			glVertex2f(m_LastWidth, 0);
 
-			glColor4f(0.4f, 0.42f, 0.46f, 0.5f);
+			glColor4f(0.4f, 0.42f, 0.46f, fClearRate);
 			glVertex2f(m_LastWidth, m_LastHeight);
 		}
 		glEnd();
@@ -306,7 +360,6 @@ bool	CTuniacVisual::Render(int w, int h)
 		unsigned long ulSamples = m_pHelper->GetVisData(Samples, DISPLAYSAMPLES);
 		if (ulSamples)
 		{
-			float fHalfHeight = ((float)m_LastHeight * 0.5f);
 			float fSeparation = m_LastWidth / (float)ulSamples;
 
 			glColor4f(0, 0, 0, 1);
@@ -322,7 +375,7 @@ bool	CTuniacVisual::Render(int w, int h)
 					glVertex2f((float)ulPoint*fSeparation, fHalfHeight + Samples[ulLeftSample] * fHalfHeight);
 
 					if (!bFillStrip)
-						glVertex2f((float)(ulPoint+1)*fSeparation, fHalfHeight + (Samples[ulLeftSample] * fHalfHeight));
+						glVertex2f(((float)ulPoint*fSeparation)+fShift, fHalfHeight + (Samples[ulLeftSample] * fHalfHeight));
 
 					ulLeftSample += 2;
 				}
@@ -342,7 +395,7 @@ bool	CTuniacVisual::Render(int w, int h)
 					glVertex2f((float)ulPoint*fSeparation, fHalfHeight + (Samples[ulRightSample] * fHalfHeight));
 
 					if (!bFillStrip)
-						glVertex2f((float)(ulPoint + 1)*fSeparation, fHalfHeight + (Samples[ulRightSample] * fHalfHeight));
+						glVertex2f(((float)ulPoint*fSeparation) + fShift, fHalfHeight + (Samples[ulRightSample] * fHalfHeight));
 
 					ulRightSample += 2;
 				}
@@ -359,7 +412,7 @@ bool	CTuniacVisual::Render(int w, int h)
 
 bool	CTuniacVisual::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Tuniac included visual. Tony Million 2009"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Tuniac included visual.\nTony Million 2009\nBrett Hoyle 2016"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

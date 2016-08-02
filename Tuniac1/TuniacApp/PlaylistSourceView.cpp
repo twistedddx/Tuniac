@@ -190,7 +190,7 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		true
 	},
 	{
-		TEXT("Ext"),
+		TEXT("File Type"),
 		80,
 		LVCFMT_LEFT,
 		false,
@@ -754,7 +754,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 					else if(wmId == FILTERBYFIELD_MENUBASE + 12)
 						ulFilterByField = FIELD_FILENAME;
 					else if(wmId == FILTERBYFIELD_MENUBASE + 13)
-						ulFilterByField = FIELD_FILEEXTENSION;
+						ulFilterByField = FIELD_FILETYPE;
 					
 					CheckMenuRadioItem(m_FilterByFieldMenu, 0, 13, wmId - FILTERBYFIELD_MENUBASE, MF_BYPOSITION);
 
@@ -1649,11 +1649,11 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 											if (ulPlayOrder != INVALID_PLAYLIST_INDEX)
 												StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT("%u"), ulPlayOrder);
 											else
-												StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
+												StringCchCopy(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
 										else
 										{
-											StringCchPrintf(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
+											StringCchCopy(pDispInfo->item.pszText, pDispInfo->item.cchTextMax, TEXT(""));
 										}
 									}
 									else
@@ -2350,7 +2350,7 @@ bool CPlaylistSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 					iMenuPos = 11;
 				else if(ulFilterByField == FIELD_FILENAME)
 					iMenuPos = 12;
-				else if(ulFilterByField == FIELD_FILEEXTENSION)
+				else if(ulFilterByField == FIELD_FILETYPE)
 					iMenuPos = 13;
 
 				CheckMenuRadioItem(m_FilterByFieldMenu, 0, 13, iMenuPos, MF_BYPOSITION);
