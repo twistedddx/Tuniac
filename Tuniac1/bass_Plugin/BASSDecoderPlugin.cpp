@@ -242,48 +242,111 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 		}
 	}
 
-	/* find out what file format was actually found by BASS.
+	// find out what file format was actually found by BASS.
 	if (hStreamID)
 	{
 		BASS_CHANNELINFO bassChannelInfo;
 		BASS_ChannelGetInfo(hStreamID, &bassChannelInfo);
-		DWORD x = bassChannelInfo.ctype;
-		DWORD y = bassChannelInfo.plugin;
-
-		const BASS_PLUGININFO * pluginInfo = BASS_PluginGetInfo(bassChannelInfo.plugin);
-		int a;
-		for (a = 0; a < pluginInfo->formatc; a++) {
-			const char * formatName = pluginInfo->formats[a].name; // return it's name   
-		}
 
 
+		// bass basic
 		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_OGG)
-			LPTSTR test= L"Ogg Vorbis";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP1)
-			LPTSTR test = L"MPEG layer 1";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP2)
-			LPTSTR test = L"MPEG layer 2";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP3)
-			LPTSTR test = L"MPEG layer 3";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AIFF)
-			LPTSTR test = L"Audio IFF";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_PCM)
-			LPTSTR test = L"PCM WAVE";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_FLOAT)
-			LPTSTR test = L"Floating-point WAVE";
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MF)
+			m_pHelper->UpdateMetaData(szSource, L"ogg", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP1)
+			m_pHelper->UpdateMetaData(szSource, L"mp1", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP2)
+			m_pHelper->UpdateMetaData(szSource, L"mp2", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP3)
+			m_pHelper->UpdateMetaData(szSource, L"mp3", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AIFF)
+			m_pHelper->UpdateMetaData(szSource, L"aiff", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_PCM)
+			m_pHelper->UpdateMetaData(szSource, L"wav-pcm", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_FLOAT)
+			m_pHelper->UpdateMetaData(szSource, L"wav-float", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV)
+			m_pHelper->UpdateMetaData(szSource, L"wav", FIELD_FILETYPE);
+
+		// bass plugins
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AAC)
+			m_pHelper->UpdateMetaData(szSource, L"aac", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MP4)
+			m_pHelper->UpdateMetaData(szSource, L"mp4", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AC3)
+			m_pHelper->UpdateMetaData(szSource, L"ac3", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_ADX)
+			m_pHelper->UpdateMetaData(szSource, L"adx", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_APE)
+			m_pHelper->UpdateMetaData(szSource, L"ape", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MPC)
+			m_pHelper->UpdateMetaData(szSource, L"mpc", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_OFR)
+			m_pHelper->UpdateMetaData(szSource, L"ofr", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_SPX)
+			m_pHelper->UpdateMetaData(szSource, L"spx", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_TTA)
+			m_pHelper->UpdateMetaData(szSource, L"tta", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_ALAC)
+			m_pHelper->UpdateMetaData(szSource, L"alac", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_CD)
+			m_pHelper->UpdateMetaData(szSource, L"audio-cd", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_DSD)
+			m_pHelper->UpdateMetaData(szSource, L"dsd", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_FLAC)
+			m_pHelper->UpdateMetaData(szSource, L"flac", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_FLAC_OGG)
+			m_pHelper->UpdateMetaData(szSource, L"flac-ogg", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MIDI)
+			m_pHelper->UpdateMetaData(szSource, L"midi", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_OPUS)
+			m_pHelper->UpdateMetaData(szSource, L"opus", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WMA)
+			m_pHelper->UpdateMetaData(szSource, L"wma", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WMA_MP3)
+			m_pHelper->UpdateMetaData(szSource, L"wma-mp3", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WV)
+			m_pHelper->UpdateMetaData(szSource, L"wv", FIELD_FILETYPE);
+
+		// bass other
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_MOD)
+			m_pHelper->UpdateMetaData(szSource, L"mod", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_MTM)
+			m_pHelper->UpdateMetaData(szSource, L"mtm", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_S3M)
+			m_pHelper->UpdateMetaData(szSource, L"s3m", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_XM)
+			m_pHelper->UpdateMetaData(szSource, L"xm", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_IT)
+			m_pHelper->UpdateMetaData(szSource, L"it", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_MO3)
+			m_pHelper->UpdateMetaData(szSource, L"mo3", FIELD_FILETYPE);
+
+		/* disabled
+		// bass media foundation
+		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_MF)
 		{
 			const WAVEFORMATEX *wf = (WAVEFORMATEX*)BASS_ChannelGetTags(hStreamID, BASS_TAG_WAVEFORMAT);
-			if (wf->wFormatTag == 0x1610)
-				LPTSTR test = L"Advanced Audio Coding";
-			if (wf->wFormatTag == 0x0161 || wf->wFormatTag == 0x0162 || wf->wFormatTag == 0x0163)
-				LPTSTR test = L"Windows Media Audio";
+			if (wf->wFormatTag == 0x1600)
+				m_pHelper->UpdateMetaData(szSource, L"adts mf", FIELD_FILETYPE);
+			else if (wf->wFormatTag == 0x1602)
+				m_pHelper->UpdateMetaData(szSource, L"mpeg4 mf", FIELD_FILETYPE);
+			else if (wf->wFormatTag == 0x1610)
+				m_pHelper->UpdateMetaData(szSource, L"he-aac mf", FIELD_FILETYPE);
+			else if (wf->wFormatTag == 0x0161)
+				m_pHelper->UpdateMetaData(szSource, L"wma mf", FIELD_FILETYPE);
+			else if (wf->wFormatTag == 0x0162)
+				m_pHelper->UpdateMetaData(szSource, L"wma-pro mf", FIELD_FILETYPE);
+			else if (wf->wFormatTag == 0x0163) 
+				m_pHelper->UpdateMetaData(szSource, L"wma-lossless mf", FIELD_FILETYPE);
+			else
+				m_pHelper->UpdateMetaData(szSource, L"other mf", FIELD_FILETYPE);
 		}
-		if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV)
-			LPTSTR test = L"WAVE";
-	}
-	*/
+		*/
+		else
+			m_pHelper->UpdateMetaData(szSource, PathFindExtension(szSource)+1, FIELD_FILETYPE);
 
+	}
+	
 	return hStreamID;
 }
 
