@@ -3,6 +3,22 @@
 #include "iaudiosource.h"
 #include <cstdio>
 #include "bass.h"
+#include "bass_aac.h"
+#include "bass_ac3.h"
+#include "bass_adx.h"
+#include "bass_ape.h"
+#include "bass_mpc.h"
+#include "bass_ofr.h"
+#include "bass_spx.h"
+#include "bass_tta.h"
+#include "bassalac.h"
+#include "basscd.h"
+#include "bassdsd.h"
+#include "bassflac.h"
+#include "bassmidi.h"
+#include "bassopus.h"
+#include "basswma.h"
+#include "basswv.h"
 
 #define BUFFERSIZE (1024 * sizeof(float))
 

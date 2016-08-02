@@ -13,7 +13,7 @@ CBASSDecoder::~CBASSDecoder(void)
 
 void DoMeta(DWORD handle, void *user)
 {
-	//attempt to put station details in "artist" and track details in "title" at least.
+	//attempt to put station details in "artist" and track details in "title" at least. Leave "album" as a comment field for the user?
 
 	char *icy=(char *)BASS_ChannelGetTags(handle,BASS_TAG_ICY);
 	TCHAR szArtist[128];
@@ -104,7 +104,19 @@ void DoMeta(DWORD handle, void *user)
 				//server="Icecast-2.3.3"
 				//encoder=
 			}
-			if (strnlen_s(title, 1) && strnlen_s(artist, 1))
+			if (strnlen_s(title, 1) && strnlen_s(artist, 1) && strnlen_s(album, 1))
+			{
+				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
+				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
+				MultiByteToWideChar(CP_UTF8, 0, album, -1, szAlbum, 128);
+
+				TCHAR szText[128];
+				_snwprintf(szText, sizeof(szText), L"%s - %s - %s", szArtist, szTitle, szAlbum);
+
+				if (m_pHelper)
+					m_pHelper->UpdateMetaData((LPTSTR)user, szText, FIELD_TITLE);
+			}
+			else if (strnlen_s(title, 1) && strnlen_s(artist, 1))
 			{
 				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
 				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
@@ -120,12 +132,6 @@ void DoMeta(DWORD handle, void *user)
 				MultiByteToWideChar(CP_UTF8, 0, title, -1, szTitle, 128);
 				if(m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
-			}
-			if(strnlen_s(album, 2))
-			{
-				MultiByteToWideChar(CP_UTF8, 0, album, -1, szAlbum, 128);
-				if(m_pHelper)
-					m_pHelper->UpdateMetaData((LPTSTR)user, szAlbum, FIELD_ALBUM);
 			}
 			if (strnlen_s(comment, 1))
 			{
@@ -203,18 +209,21 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper, HSTREAM d
 	if(m_bIsStream)
 	{
 		DoMeta(m_decodehandle, szSource);
-		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_META,0,&MetaSync, szSource); // Shoutcast
-		BASS_ChannelSetSync(m_decodehandle,BASS_SYNC_OGG_CHANGE,0,&MetaSync, szSource); // Icecast/OGG
+		BASS_ChannelSetSync(m_decodehandle, BASS_SYNC_META, 0, &MetaSync, szSource); // Shoutcast
+		BASS_ChannelSetSync(m_decodehandle, BASS_SYNC_OGG_CHANGE, 0, &MetaSync, szSource); // Icecast/OGG
 	}
 
-	BASS_ChannelGetInfo(m_decodehandle,&info);
+	BASS_ChannelGetInfo(m_decodehandle, &info);
+
+	float fBitrate = 0.0f;
+	BASS_ChannelGetAttribute(m_decodehandle, BASS_ATTRIB_BITRATE, &fBitrate);
 
 	if(m_bIsStream)
 		dTime = LENGTH_STREAM;
 	else
 		dTime = LENGTH_UNKNOWN;
 
-	long long len = BASS_ChannelGetLength(m_decodehandle,BASS_POS_BYTE);
+	long long len = BASS_ChannelGetLength(m_decodehandle, BASS_POS_BYTE);
 	if(len > 0)
 		dTime = BASS_ChannelBytes2Seconds(m_decodehandle, len) * 1000;
 
@@ -223,6 +232,29 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper, HSTREAM d
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)dTime, FIELD_PLAYBACKTIME);
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.chans, FIELD_NUMCHANNELS);
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.freq, FIELD_SAMPLERATE);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)fBitrate * 1000, FIELD_BITRATE);
+
+		//m_pHelper->UpdateMetaData(szSource, (unsigned long)info.ctype, FIELD_FORMAT);
+		/*	BASS_CTYPE_STREAM_OGG	Ogg Vorbis format stream.
+			BASS_CTYPE_STREAM_MP1	MPEG layer 1 format stream.
+			BASS_CTYPE_STREAM_MP2	MPEG layer 2 format stream.
+			BASS_CTYPE_STREAM_MP3	MPEG layer 3 format stream.
+			BASS_CTYPE_STREAM_AIFF	Audio IFF format stream.
+			BASS_CTYPE_STREAM_CA	CoreAudio codec stream.Additional format information is avaliable from BASS_ChannelGetTags(BASS_TAG_CA_CODEC).
+			BASS_CTYPE_STREAM_MF	Media Foundation codec stream.Additional format information is avaliable from BASS_ChannelGetTags(BASS_TAG_WAVEFORMAT).
+			BASS_CTYPE_STREAM_WAV_PCM	Integer PCM WAVE format stream.
+			BASS_CTYPE_STREAM_WAV_FLOAT	Floating - point PCM WAVE format stream.
+			BASS_CTYPE_STREAM_WAV
+		*/
+	}
+
+	// endless streams never trigger these so trigger now
+	if (dTime == LENGTH_STREAM || dTime == LENGTH_UNKNOWN)
+	{
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+		m_pHelper->UpdateMetaData(szSource, &st, FIELD_DATELASTPLAYED);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)1, FIELD_PLAYCOUNT);
 	}
 
 	m_Buffer = (float*)_aligned_malloc(BUFFERSIZE, 16);
