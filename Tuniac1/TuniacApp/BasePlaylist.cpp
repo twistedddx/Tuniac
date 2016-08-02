@@ -77,7 +77,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 						|| m_ulTextFilterField == FIELD_COMMENT
 						|| m_ulTextFilterField == FIELD_URL
 						|| m_ulTextFilterField == FIELD_FILENAME
-						|| m_ulTextFilterField == FIELD_FILEEXTENSION)
+						|| m_ulTextFilterField == FIELD_FILETYPE)
 					{
 						if (StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(ulField), m_szTextFilter))
 						{
@@ -144,7 +144,7 @@ bool				CBasePlaylist::ApplyFilter(void)
 					|| m_ulTextFilterField == FIELD_COMMENT
 					|| m_ulTextFilterField == FIELD_URL
 					|| m_ulTextFilterField == FIELD_FILENAME
-					|| m_ulTextFilterField == FIELD_FILEEXTENSION)
+					|| m_ulTextFilterField == FIELD_FILETYPE)
 			{
 				if(StrStrI((LPTSTR)m_PlaylistArray[x].pIPE->GetField(m_ulTextFilterField), m_szTextFilter))
 				{
@@ -1086,7 +1086,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
-		case FIELD_FILEEXTENSION:
+		case FIELD_FILETYPE:
 		case FIELD_COMMENT:
 		case FIELD_GENRE:
 		case FIELD_TITLE:

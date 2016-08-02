@@ -177,7 +177,7 @@ bool			CFileAssoc::SetDefaultType(int iType)
 	{
 		if(iType == iTypeList[i])
 		{
-			StringCchPrintf(szDefault, 128, TEXT("%s"), szTypeList[i]);
+			StringCchCopy(szDefault, 128, szTypeList[i]);
 			bFound = true;
 			break;
 		}
@@ -218,7 +218,7 @@ bool			CFileAssoc::ReAssociate(int iTypes)
 						TEXT("Tuniac.audio"),
 						&hTuniacAssocKey) == ERROR_SUCCESS)
 	{
-		StringCchPrintf(szTmp, 512, TEXT("Tuniac Audio File"));
+		StringCchCopy(szTmp, 512, TEXT("Tuniac Audio File"));
 		Size = (wcsnlen_s(szTmp, 512) + 1) * sizeof(TCHAR);
 		RegSetValueEx(	hTuniacAssocKey,
 						NULL,

@@ -292,6 +292,8 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	libraryEntry.ulPlayCount = 0;
 	libraryEntry.ulKind = ENTRY_KIND_URL;
 
+	StringCchCopy(libraryEntry.szFileType, 16, L"Stream");
+
 	CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 	pIPE->SetEntryID(m_ulEntryID);
 	m_MediaLibrary.AddTail(pIPE);
@@ -416,6 +418,10 @@ bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 				StringCchCopy(libraryEntry.szTitle, 128, szFileTitle);
 			}
 
+			if(libraryEntry.szFileType[0] == TEXT('\0'))
+			{
+				StringCchCopy(libraryEntry.szFileType, 16, PathFindExtension(szURL) + 1);
+			}
 
 			CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -761,10 +767,10 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 		//	}
 		//}
-		MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+		MessageBox(NULL, TEXT("MediaLibrary is corrupt 'BytesRead != sizeof(MLDH)', resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if (MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION07 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION06 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
+	else if (MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION08 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION07 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION06 && MLDH.Version != TUNIAC_MEDIALIBRARY_VERSION05)
 	{
 		//if (tuniacApp.m_LogWindow)
 		//{
@@ -795,12 +801,72 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 						//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 				//	}
 				//}
-				MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+				MessageBox(NULL, TEXT("MediaLibrary is corrupt 'BytesRead != sizeof(unsigned long)', resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				m_MediaLibrary.RemoveAll();
 				bOK = false;
 				break;
 			}
-			if (MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION07)
+			if (MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION08)
+			{
+				LibraryEntry08 MLE;
+				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry08), &BytesRead, NULL);
+				if (BytesRead != sizeof(LibraryEntry08))
+				{
+					//if (tuniacApp.m_LogWindow)
+					//{
+					//	if (tuniacApp.m_LogWindow->GetLogOn())
+					//	{
+					//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
+					//	}
+					//}
+					MessageBox(NULL, TEXT("MediaLibrary 0.8 is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					m_MediaLibrary.RemoveAll();
+					bOK = false;
+					break;
+				}
+
+				LibraryEntry  libraryEntry;
+
+				ZeroMemory(&libraryEntry, sizeof(LibraryEntry));
+
+				StringCchCopy(libraryEntry.szURL, MAX_PATH, MLE.szURL);
+				StringCchCopy(libraryEntry.szArtist, 128, MLE.szArtist);
+				StringCchCopy(libraryEntry.szAlbum, 128, MLE.szAlbum);
+				StringCchCopy(libraryEntry.szTitle, 128, MLE.szTitle);
+				StringCchCopy(libraryEntry.szGenre, 128, MLE.szGenre);
+				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
+				StringCchCopy(libraryEntry.szAlbumArtist, 128, MLE.szAlbumArtist);
+				StringCchCopy(libraryEntry.szComposer, 128, MLE.szComposer);
+				StringCchCopy(libraryEntry.szFileType, 16, L"Unknown");
+				libraryEntry.stDateAdded = MLE.stDateAdded;
+				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
+				libraryEntry.stLastPlayed = MLE.stLastPlayed;
+				libraryEntry.dwDisc[0] = MLE.dwDisc[0];
+				libraryEntry.dwDisc[1] = MLE.dwDisc[1];
+				libraryEntry.dwTrack[0] = MLE.dwTrack[0];
+				libraryEntry.dwTrack[1] = MLE.dwTrack[1];
+				libraryEntry.ulYear = MLE.ulYear;
+				libraryEntry.ulPlaybackTime = MLE.ulPlaybackTime;
+				libraryEntry.ulPlayCount = MLE.ulPlayCount;
+				libraryEntry.ulBitRate = MLE.ulBitRate;
+				libraryEntry.ulSampleRate = MLE.ulSampleRate;
+				libraryEntry.ulChannels = MLE.ulChannels;
+				libraryEntry.ulAvailability = MLE.ulAvailability;
+				libraryEntry.ulFilesize = MLE.ulFilesize;
+				libraryEntry.ulRating = MLE.ulRating;
+				libraryEntry.ulKind = MLE.ulKind;
+				libraryEntry.fReplayGain_Album_Gain = MLE.fReplayGain_Album_Gain;
+				libraryEntry.fReplayGain_Album_Peak = MLE.fReplayGain_Album_Peak;
+				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
+				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
+				libraryEntry.ulBPM = MLE.ulBPM;
+
+				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
+
+				pIPE->SetEntryID(TempID);
+				m_MediaLibrary.AddTail(pIPE);
+			}
+			else if (MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION07)
 			{
 				LibraryEntry07 MLE;
 				ReadFile(hLibraryFile, &MLE, sizeof(LibraryEntry07), &BytesRead, NULL);
@@ -813,7 +879,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					//	}
 					//}
-					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					MessageBox(NULL, TEXT("MediaLibrary 0.7 is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
 					break;
@@ -831,6 +897,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
 				StringCchCopy(libraryEntry.szAlbumArtist, 128, MLE.szAlbumArtist);
 				StringCchCopy(libraryEntry.szComposer, 128, L"");
+				StringCchCopy(libraryEntry.szFileType, 16, L"Unknown");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;
@@ -872,7 +939,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					//	}
 					//}
-					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					MessageBox(NULL, TEXT("MediaLibrary 0.6 is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
 					break;
@@ -890,6 +957,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
 				StringCchCopy(libraryEntry.szAlbumArtist, 128, L"");
 				StringCchCopy(libraryEntry.szComposer, 128, L"");
+				StringCchCopy(libraryEntry.szFileType, 16, L"Unknown");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;
@@ -931,7 +999,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					//	}
 					//}
-					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					MessageBox(NULL, TEXT("MediaLibrary 0.5 is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
 					break;
@@ -949,6 +1017,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				StringCchCopy(libraryEntry.szComment, 128, MLE.szComment);
 				StringCchCopy(libraryEntry.szAlbumArtist, 128, L"");
 				StringCchCopy(libraryEntry.szComposer, 128, L"");
+				StringCchCopy(libraryEntry.szFileType, 16, L"Unknown");
 				libraryEntry.stDateAdded = MLE.stDateAdded;
 				libraryEntry.stFileCreationDate = MLE.stFileCreationDate;
 				libraryEntry.stLastPlayed = MLE.stLastPlayed;
@@ -990,7 +1059,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("MediaLibrary is corrupt, resetting library."));
 					//	}
 					//}
-					MessageBox(NULL, TEXT("MediaLibrary is corrupt, resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					MessageBox(NULL, TEXT("MediaLibrary is corrupt 'BytesRead != sizeof(LibraryEntry)', resetting library."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					m_MediaLibrary.RemoveAll();
 					bOK = false;
 					break;

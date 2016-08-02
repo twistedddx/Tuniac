@@ -109,8 +109,8 @@ static AvailableUserSearchFieldsEntry AvailableUserSearchFields[FIELD_MAXFIELD -
 		FIELD_KIND
 	},
 	{
-		TEXT("Ext"),
-		FIELD_FILEEXTENSION
+		TEXT("File Type"),
+		FIELD_FILETYPE
 	},
 	{
 		TEXT("Size"),

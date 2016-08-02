@@ -77,7 +77,7 @@ bool CAudioCDPlaylist::GetCDInfo(void)
 
 				StringCchPrintf(libEnt.szURL, 260,		TEXT("AUDIOCD:%c:%u"),	m_DriveLetter,		x);
 				StringCchPrintf(libEnt.szTitle, 128,		TEXT("Track %02u"),		x);
-				StringCchPrintf(libEnt.szArtist, 128,	TEXT("Unknown Artist"));
+				StringCchCopy(libEnt.szArtist, 128,	TEXT("Unknown Artist"));
 
 				IPlaylistEntry * tt = new CMediaLibraryPlaylistEntry(&libEnt);
 				m_TrackList.AddTail(tt);

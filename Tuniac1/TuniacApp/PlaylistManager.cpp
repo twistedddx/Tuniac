@@ -194,7 +194,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
 		//	}
 		//}
-		MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+		MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDH)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
 	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
@@ -230,7 +230,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 						//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
 				//	}
 				//}
-				MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+				MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDiskSubHeader)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				delete pPlaylist;
 				m_StandardPlaylists.RemoveAll();
 				bOK = false;
@@ -251,7 +251,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
 					//	}
 					//}
-					MessageBox(NULL, TEXT("Playlist Library is corrupt, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+					MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(unsigned long)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					delete pPlaylist;
 					m_StandardPlaylists.RemoveAll();
 					bOK = false;

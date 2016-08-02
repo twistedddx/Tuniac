@@ -97,6 +97,31 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 			}
 			break;
 
+
+		case FIELD_ALBUMARTIST:
+			{
+				return m_LibraryEntry.szAlbumArtist;
+			}
+			break;
+
+		case FIELD_COMPOSER:
+			{
+				return m_LibraryEntry.szComposer;
+			}
+			break;
+
+		case FIELD_FILETYPE:
+			{
+				return m_LibraryEntry.szFileType;
+				/*
+				//bits todo - something to work out streams
+				if(PathIsURL(m_LibraryEntry.szURL))
+				return L"Stream";
+				return (void *)PathFindExtension(m_LibraryEntry.szURL);
+				*/
+			}
+			break;
+
 		case FIELD_YEAR:
 			{
 				return (void *)m_LibraryEntry.ulYear;
@@ -142,14 +167,6 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 		case FIELD_KIND:
 			{
 				return (void*)m_LibraryEntry.ulKind;
-			}
-			break;
-
-		case FIELD_FILEEXTENSION:
-			{
-				if(PathIsURL(m_LibraryEntry.szURL))
-					return L"";
-				return (void *)PathFindExtension(m_LibraryEntry.szURL);
 			}
 			break;
 
@@ -223,18 +240,6 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 				return (void *)m_LibraryEntry.ulBPM;
 			}
 			break;
-
-		case FIELD_ALBUMARTIST:
-			{
-				return m_LibraryEntry.szAlbumArtist;
-			}
-			break;
-
-		case FIELD_COMPOSER:
-			{
-				return m_LibraryEntry.szComposer;
-			}
-			break;
 	}
 
 	return NULL;
@@ -277,6 +282,25 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 		case FIELD_GENRE:
 			{
 				StringCchCopy(m_LibraryEntry.szGenre, 128, (LPTSTR)pNewData);
+			}
+			break;
+
+
+		case FIELD_ALBUMARTIST:
+			{
+				StringCchCopy(m_LibraryEntry.szAlbumArtist, 128, (LPTSTR)pNewData);
+			}
+			break;
+
+		case FIELD_COMPOSER:
+			{
+				StringCchCopy(m_LibraryEntry.szComposer, 128, (LPTSTR)pNewData);
+			}
+			break;
+
+		case FIELD_FILETYPE:
+			{
+				StringCchCopy(m_LibraryEntry.szFileType, 16, (LPTSTR)pNewData);
 			}
 			break;
 
@@ -440,18 +464,6 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 				if(StrCmpI((LPTSTR)pNewData, L"") == 0)
 					pNewData = L"0";
 				m_LibraryEntry.ulBPM = wcstoul((LPTSTR)pNewData, NULL, 10);
-			}
-			break;
-
-		case FIELD_ALBUMARTIST:
-			{
-				StringCchCopy(m_LibraryEntry.szAlbumArtist, 128, (LPTSTR)pNewData);
-			}
-			break;
-
-		case FIELD_COMPOSER:
-			{
-				StringCchCopy(m_LibraryEntry.szComposer, 128, (LPTSTR)pNewData);
 			}
 			break;
 
@@ -632,6 +644,31 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			}
 			break;
 
+		case FIELD_ALBUMARTIST:
+			{
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szAlbumArtist);
+			}
+			break;
+
+		case FIELD_COMPOSER:
+			{
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szComposer);
+			}
+			break;
+
+		case FIELD_FILETYPE:
+		{
+				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szFileType);
+				/*
+				//bits todo - something to work out streams
+				if(PathIsURL(m_LibraryEntry.szURL))
+				StringCchCopy(szString, ulNumChars, TEXT("Stream"));
+				else
+				StringCchCopy(szString, ulNumChars, PathFindExtension(m_LibraryEntry.szURL));
+				*/
+			}
+			break;
+
 		case FIELD_YEAR:
 			{
 				if(m_LibraryEntry.ulYear < 1)
@@ -731,15 +768,6 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			}
 			break;
 
-		case FIELD_FILEEXTENSION:
-			{
-				if(PathIsURL(m_LibraryEntry.szURL))
-					StringCchCopy(szString, ulNumChars, TEXT(""));
-				else
-					StringCchCopy(szString, ulNumChars, PathFindExtension(m_LibraryEntry.szURL));
-			}
-			break;
-
 		case FIELD_RATING:
 			{
 				StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulRating);
@@ -809,6 +837,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
+	
 		case FIELD_REPLAYGAIN_TRACK_PEAK:
 			{
 				if(m_LibraryEntry.fReplayGain_Track_Peak)
@@ -817,6 +846,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
+	
 		case FIELD_REPLAYGAIN_ALBUM_GAIN:
 			{
 				if(m_LibraryEntry.fReplayGain_Album_Gain)
@@ -825,6 +855,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
+	
 		case FIELD_REPLAYGAIN_ALBUM_PEAK:
 			{
 				if(m_LibraryEntry.fReplayGain_Album_Peak)
@@ -833,6 +864,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("---"));
 			}
 			break;
+	
 		case FIELD_AVAILABILITY:
 			{
 				if(m_LibraryEntry.ulAvailability == AVAILABLILITY_AVAILABLE)
@@ -843,22 +875,13 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
 			}
 			break;
+	
 		case FIELD_BPM:
 			{
 				if(m_LibraryEntry.ulBPM < 1)
 					StringCchCopy(szString, ulNumChars, TEXT("---"));
 				else
 					StringCchPrintf(szString, ulNumChars, TEXT("%u"), m_LibraryEntry.ulBPM);
-			}
-			break;
-		case FIELD_ALBUMARTIST:
-			{
-				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szAlbumArtist);
-			}
-			break;
-		case FIELD_COMPOSER:
-			{
-				StringCchCopy(szString, ulNumChars, m_LibraryEntry.szComposer);
 			}
 			break;
 
