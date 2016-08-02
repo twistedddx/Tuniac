@@ -1,3 +1,21 @@
+Aug, 2016
+---------
+-streams consistently use title for track info and artist for station info
+-streams get bitrate
+-streams trigger played if length is unknown
+-change column "extension" from just checking file extension to "file type" which is actually populated with semi intelligent data from infomanagers and decoders. Allows streams to show file type now.
+-bump ml version to 0.9
+-improve ml/pl loading error messages
+-do not use printf if just a simple string copy
+-update Tuniac internal vis. New unfilled strip mode, set by default. Config screen for fill strip, width and clear rates.
+
+Jul, 2016
+---------
+-suppressible msgboxes in installer
+-VS 2015 update 3
+-fix return for textOutput_plugin
+-32/64bit text in about window.
+
 Jun, 2016
 ---------
 -expose Disc Num
