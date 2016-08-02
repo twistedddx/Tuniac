@@ -239,7 +239,7 @@ bool			CPLS_Export::ExportEntry(LibraryEntry & libraryEntry)
 		if(wcsnlen_s(libraryEntry.szArtist, 128) > 0)
 			StringCchPrintf(szData, MAX_PATH, L"%s - %s", libraryEntry.szArtist, libraryEntry.szTitle);
 		else if(wcsnlen_s(libraryEntry.szTitle, 128) > 0)
-			StringCchPrintf(szData, MAX_PATH, L"%s", libraryEntry.szTitle);
+			StringCchCopy(szData, MAX_PATH, libraryEntry.szTitle);
 	}
 	else
 	{
