@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <shellapi.h>
 #include <shlwapi.h>
+#include <Strsafe.h>
 #include "ITuniacPlugin.h"
 
 class CPopupNotify :
@@ -34,6 +35,9 @@ protected:
 	BOOL					m_bManualBlindTrigger;
 	BOOL					m_bAutoTrigger;
 	BOOL					m_bAutoBlindTrigger;
+
+	TCHAR					m_szNormalFormatString[128];
+	TCHAR					m_szStreamFormatString[128];
 
 	bool					m_bInhibit;
 
