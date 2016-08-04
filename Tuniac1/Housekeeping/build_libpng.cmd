@@ -21,7 +21,7 @@ rem #Release x86:
 mkdir .\build32
 cd build32\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
 if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
@@ -47,7 +47,7 @@ rem #Release x64:
 mkdir .\build64
 cd build64\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64

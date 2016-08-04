@@ -21,7 +21,7 @@ rem #taglib Release x86
 mkdir .\build32
 cd build32\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"
 if exist ..\taglib\Release\x86\ rmdir /S /Q ..\taglib\Release\x86
@@ -51,7 +51,7 @@ rem #taglib Release x64
 mkdir .\build64
 cd build64\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"
 if exist ..\taglib\Release\x64\ rmdir /S /Q ..\taglib\Release\x64

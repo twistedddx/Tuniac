@@ -22,7 +22,7 @@ rem #turbojpeg Release x86:
 mkdir .\build32
 cd build32\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14" ..\.
 devenv libjpeg-turbo.sln /project "jpeg-static" /Clean
 devenv libjpeg-turbo.sln /project "jpeg-static" /Rebuild "Release"
 if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
@@ -41,7 +41,7 @@ rem #turbojpeg Release x64
 mkdir .\build64
 cd build64\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14 Win64" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DCMAKE_BUILD_TYPE=Release -DWITH_JPEG8=1 -G "Visual Studio 14 Win64" ..\.
 devenv libjpeg-turbo.sln /Project "jpeg-static" /Clean
 devenv libjpeg-turbo.sln /Project "jpeg-static" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64

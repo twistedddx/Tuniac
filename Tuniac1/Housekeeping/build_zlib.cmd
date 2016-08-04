@@ -22,7 +22,7 @@ rem #zlib Release x86
 mkdir .\build32
 cd build32\
 del *.*
-"%ProgramFiles(x86)%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14" zlibstatic ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 if exist  ..\Release\x86\ rmdir /S /Q ..\Release\x86
@@ -41,7 +41,7 @@ rem #zlib Release x64
 mkdir .\build64
 cd build64\
 del *.*
-"%ProgFiles86Root%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14 Win64" zlibstatic ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -G "Visual Studio 14 Win64" zlibstatic ..\.
 devenv zlib.sln /project "zlibstatic" /Clean
 devenv zlib.sln /project "zlibstatic" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64
