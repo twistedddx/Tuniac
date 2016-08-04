@@ -1,5 +1,6 @@
 Aug, 2016
 ---------
+-add string format options to popup notify plugin
 -streams consistently use title for track info and artist for station info
 -streams get bitrate
 -streams trigger played if length is unknown
