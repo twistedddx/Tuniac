@@ -8,6 +8,36 @@
 #define ID_TIMER_FADE			(2)
 #define ID_TIMER_PAINT			(3)
 
+#define FORMATSTRING_HELP	TEXT("\
+@U\tURL\r\n\
+@F\tFilename\r\n\
+@X\tFile Type\r\n\
+@K\tKind\r\n\
+@S\tSize\r\n\
+@A\tArtist\r\n\
+@L\tAlbum\r\n\
+@T\tTitle\r\n\
+@#\tTrack\r\n\
+@V\tDisc Number\r\n\
+@G\tGenre\r\n\
+@Y\tYear\r\n\
+@I\tPlay Time\r\n\
+@i\tPlay Time (short form)\r\n\
+@D\tDate Added\r\n\
+@E\tFile Creation Date\r\n\
+@P\tLast Played Date\r\n\
+@B\tBitrate\r\n\
+@M\tSample Rate\r\n\
+@N\tChannels\r\n\
+@C\tComment\r\n\
+@Z\tPlay Count\r\n\
+@R\tRating\r\n\
+@!\tPlay State\r\n\
+@W\tBPM\r\n\
+@Q\tAlbum Artist\r\n\
+@O\tComposer\n\
+")
+
 static UINT WM_SW_APPBAR = WM_APP + 111;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
@@ -127,8 +157,8 @@ unsigned long	CPopupNotify::ThreadProc(void)
 		return false;
 
 
-	DWORD				lpRegType = REG_DWORD;
-	DWORD				iRegSize = sizeof(int);
+	DWORD	lpRegType = REG_DWORD;
+	DWORD	iRegSize = sizeof(int);
 
 	m_bAllowInhibit = false;
 	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("AllowInhibit"), &lpRegType, (LPBYTE)&m_bAllowInhibit, &iRegSize);
@@ -141,6 +171,16 @@ unsigned long	CPopupNotify::ThreadProc(void)
 	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("Auto"), &lpRegType, (LPBYTE)&m_bAutoTrigger, &iRegSize);
 	m_bAutoBlindTrigger = true;
 	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("AutoBlind"), &lpRegType, (LPBYTE)&m_bAutoBlindTrigger, &iRegSize);
+
+
+	iRegSize = 128 * sizeof(WCHAR);
+
+	StringCchCopy(m_szNormalFormatString, 128, TEXT("@T - @A"));
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("NormalFormatString"), &lpRegType, (LPBYTE)&m_szNormalFormatString, &iRegSize);
+
+	StringCchCopy(m_szStreamFormatString, 128, TEXT("@T - @A"));
+	m_pHelper->PreferencesGet(TEXT("PopupNotify"), TEXT("StreamFormatString"), &lpRegType, (LPBYTE)&m_szStreamFormatString, &iRegSize);
+
 
 	m_abd.cbSize = sizeof(APPBARDATA);
 	m_abd.hWnd = m_hWnd;
@@ -242,6 +282,17 @@ LRESULT CALLBACK	CPopupNotify::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 				SendDlgItemMessage(hDlg, IDC_TRIGGER_MANUALBLIND, BM_SETCHECK, pPopupNotify->m_bManualBlindTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTO, BM_SETCHECK, pPopupNotify->m_bAutoTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
 				SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTOBLIND, BM_SETCHECK, pPopupNotify->m_bAutoBlindTrigger ? BST_CHECKED : BST_UNCHECKED, 0);
+
+
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_NORMALFORMAT, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_NORMALFORMAT, WM_SETTEXT, 0, (LPARAM)pPopupNotify->m_szNormalFormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_NORMALFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@A - @T"));
+
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_STREAMFORMAT, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_STREAMFORMAT, WM_SETTEXT, 0, (LPARAM)pPopupNotify->m_szStreamFormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_STREAMFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@A - @T"));
+
+
 			}
 			break;
 
@@ -285,6 +336,26 @@ LRESULT CALLBACK	CPopupNotify::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 						int State = SendDlgItemMessage(hDlg, IDC_TRIGGER_AUTOBLIND, BM_GETCHECK, 0, 0);
 						pPopupNotify->m_bAutoBlindTrigger = State == BST_UNCHECKED ? FALSE : TRUE;
 						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("AutoBlind"), REG_DWORD, (LPBYTE)&m_bAutoBlindTrigger, sizeof(int));
+					}
+					break;
+
+				case IDC_FORMATTING_NORMALFORMAT:
+					{
+						SendDlgItemMessage(hDlg, IDC_FORMATTING_NORMALFORMAT, WM_GETTEXT, 256, (LPARAM)m_szNormalFormatString);
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("NormalFormatString"), REG_DWORD, (LPBYTE)&m_szNormalFormatString, (128 * sizeof(WCHAR)));
+					}
+					break;
+
+				case IDC_FORMATTING_STREAMFORMAT:
+					{
+						SendDlgItemMessage(hDlg, IDC_FORMATTING_STREAMFORMAT, WM_GETTEXT, 256, (LPARAM)m_szStreamFormatString);
+						m_pHelper->PreferencesSet(TEXT("PopupNotify"), TEXT("StreamFormatString"), REG_DWORD, (LPBYTE)&m_szStreamFormatString, (128 * sizeof(WCHAR)));
+					}
+					break;
+
+				case IDC_FORMATTING_FORMATSTRING_HELP:
+					{
+						MessageBox(hDlg, FORMATSTRING_HELP, TEXT("Help"), MB_OK | MB_ICONINFORMATION);
 					}
 					break;
 
@@ -567,9 +638,9 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 0);
 
 	if(PathIsURL(szURL))
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 0);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szStreamFormatString, 0);
 	else
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 0);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szNormalFormatString, 0);
 
 	SelectObject(hDC, (HGDIOBJ) m_SmallFontB);
     SetTextColor(hDC, GetSysColor(COLOR_INFOTEXT));
@@ -594,9 +665,9 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 1);
 
 	if(PathIsURL(szURL))
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 1);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szStreamFormatString, 1);
 	else
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 1);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szNormalFormatString, 1);
 
 	if(wcsnlen_s(szTrack, 128) > 0)
 	{
@@ -624,9 +695,9 @@ void			CPopupNotify::RePaint(HWND hWnd)
 	m_pHelper->GetTrackInfo(szURL, 128, TEXT("@U"), 2);
 
 	if(PathIsURL(szURL))
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@A - @T"), 2);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szStreamFormatString, 2);
 	else
-		m_pHelper->GetTrackInfo(szTrack, 128, TEXT("@T - @A"), 2);
+		m_pHelper->GetTrackInfo(szTrack, 128, m_szNormalFormatString, 2);
 
 	if(wcsnlen_s(szTrack, 128) > 0)
 	{

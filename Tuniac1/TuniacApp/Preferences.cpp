@@ -1316,7 +1316,6 @@ LRESULT CALLBACK CPreferences::LibraryProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 	return true;
 }
 
-
 LRESULT CALLBACK CPreferences::VisualsProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
@@ -1911,9 +1910,9 @@ bool CPreferences::DefaultPreferences(void)
 	m_bAddSingleStream			= TRUE;
 	m_bAutoSoftPause			= FALSE;
 
-	StringCchPrintf(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
-	StringCchPrintf(m_szPluginFormatString, 256, TEXT("@T - @A"));
-	StringCchPrintf(m_szListFormatString, 256, TEXT("@T - @A"));
+	StringCchCopy(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
+	StringCchCopy(m_szPluginFormatString, 256, TEXT("@T - @A"));
+	StringCchCopy(m_szListFormatString, 256, TEXT("@T - @A"));
 
 	m_bCrossfadeEnabled			= TRUE;
 	m_iCrossfadeTime			= 6;
