@@ -182,6 +182,7 @@ bool			CSHNInfoManager::GetInfo(LibraryEntry * libEnt)
 
 			if (ShnPlay_GetInfo(state, &info))
 			{
+				StringCchCopy(libEnt->szFileType, 16, L"shn");
 				libEnt->ulChannels = info.channels;
 				libEnt->ulSampleRate = info.sample_rate;
 				unsigned long ulLength = (__int64)info.sample_count * 1000 / info.sample_rate;

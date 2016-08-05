@@ -64,6 +64,8 @@ bool			CTAKInfoManager::GetInfo(LibraryEntry * libEnt)
     if (tak_SSD_GetStreamInfo (Decoder, &StreamInfo) != tak_res_Ok) 
         return false;
 
+	StringCchCopy(libEnt->szFileType, 16, L"tak");
+
     TagInfo = tak_SSD_GetAPEv2Tag(Decoder);
     if(tak_APE_Valid(TagInfo))
     {

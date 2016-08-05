@@ -17,6 +17,7 @@ void			COFRDecoderPlugin::Destroy(void)
 
 void			COFRDecoderPlugin::SetHelper(IAudioSourceHelper * pHelper)
 {
+//	m_pHelper = pHelper;
 }
 
 LPTSTR			COFRDecoderPlugin::GetName(void)
