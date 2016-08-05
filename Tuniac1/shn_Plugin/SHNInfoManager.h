@@ -1,4 +1,5 @@
 #pragma once
+#include <strsafe.h>
 #include "iinfomanager.h"
 #include <cstdio>
 #include <shnplay.h>

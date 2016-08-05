@@ -17,6 +17,7 @@ void			CshnDecoderPlugin::Destroy(void)
 
 void			CshnDecoderPlugin::SetHelper(IAudioSourceHelper * pHelper)
 {
+	//	m_pHelper = pHelper;
 }
 
 LPTSTR			CshnDecoderPlugin::GetName(void)

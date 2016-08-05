@@ -27,7 +27,8 @@ bool COFRDecoder::Open(LPTSTR szSource)
         return false;
     }
 
-    OptimFROG_getInfo(decoderInstance, &iInfo);
+	if (OptimFROG_getInfo(decoderInstance, &iInfo))
+		return false;
 
 	//work out divider for unsigned integer signed: (float)(1<<wfmex.wBitsPerSample)-1;
 	//m_divider = pow(2, (wfmex.wBitsPerSample-1))-1;

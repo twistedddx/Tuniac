@@ -4,6 +4,7 @@
 class COFRDecoderPlugin :
 	public IAudioSourceSupplier
 {
+
 public:
 	COFRDecoderPlugin(void);
 	~COFRDecoderPlugin(void);

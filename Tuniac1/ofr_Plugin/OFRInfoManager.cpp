@@ -53,7 +53,10 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 	char tempname[MAX_PATH]; 	 
 	WideCharToMultiByte(CP_UTF8, 0, libEnt->szURL, -1, tempname, MAX_PATH, 0, 0);
 
-	OptimFROG_infoFile(tempname, &iInfo, &iTags);
+	if (OptimFROG_infoFile(tempname, &iInfo, &iTags))
+		return false;
+
+	StringCchCopy(libEnt->szFileType, 16, L"ofr");
 
 	for(unsigned int i=0; i<iTags.keyCount; i++)
 	{

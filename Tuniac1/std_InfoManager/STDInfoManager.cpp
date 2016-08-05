@@ -279,6 +279,22 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		if(apeFile->APETag())
 			apeTagListMap = apeFile->APETag()->itemListMap();
 	}
+	else if (aiffFile)
+		StringCchCopy(libEnt->szFileType, 16, L"aiff");
+	else if (wavFile)
+		StringCchCopy(libEnt->szFileType, 16, L"wav");
+	else if (itFile)
+		StringCchCopy(libEnt->szFileType, 16, L"it");
+	else if (modFile)
+		StringCchCopy(libEnt->szFileType, 16, L"mod");
+	else if (s3mFile)
+		StringCchCopy(libEnt->szFileType, 16, L"s3m");
+	else if (xmFile)
+		StringCchCopy(libEnt->szFileType, 16, L"xm");
+	else if (dsfFile)
+		StringCchCopy(libEnt->szFileType, 16, L"dsf");
+	else if (ebmlFile)
+		StringCchCopy(libEnt->szFileType, 16, L"ebml");
 
 	if(!id3v2TagListMap.isEmpty())
 	{
