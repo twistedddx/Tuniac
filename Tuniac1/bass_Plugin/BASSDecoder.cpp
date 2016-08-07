@@ -66,7 +66,7 @@ void DoMeta(DWORD handle, void *user)
 		{
 			title=strdup(title+13);
 			strchr(title,';')[-1]=0;
-			MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
+			MultiByteToWideChar(CP_UTF8, 0, title, -1, szTitle, 128);
 			if(m_pHelper)
 				m_pHelper->UpdateMetaData((LPTSTR)user, szTitle, FIELD_TITLE);
 		}
@@ -106,7 +106,7 @@ void DoMeta(DWORD handle, void *user)
 			}
 			if (strnlen_s(title, 1) && strnlen_s(artist, 1) && strnlen_s(album, 1))
 			{
-				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
+				MultiByteToWideChar(CP_UTF8, 0, title, -1, szTitle, 128);
 				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
 				MultiByteToWideChar(CP_UTF8, 0, album, -1, szAlbum, 128);
 
@@ -118,7 +118,7 @@ void DoMeta(DWORD handle, void *user)
 			}
 			else if (strnlen_s(title, 1) && strnlen_s(artist, 1))
 			{
-				MultiByteToWideChar(CP_ACP, 0, title, -1, szTitle, 128);
+				MultiByteToWideChar(CP_UTF8, 0, title, -1, szTitle, 128);
 				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
 
 				TCHAR szText[128];
