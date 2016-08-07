@@ -4,6 +4,7 @@ Aug, 2016
 -streams consistently use title for track info and artist for station info
 -streams get bitrate
 -streams trigger played if length is unknown
+-stream meta from BASS is UTF-8 encoded
 -change column "extension" from just checking file extension to "file type" which is actually populated with semi intelligent data from infomanagers and decoders. Allows streams to show file type now.
 -bump ml version to 0.9
 -improve ml/pl loading error messages
