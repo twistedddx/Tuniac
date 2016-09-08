@@ -44,6 +44,9 @@ bool			CNumberedFileExporter::CanHandle(LPTSTR szSource)
 
 bool			CNumberedFileExporter::BeginExport(LPTSTR szSource, unsigned long ulNumItems)
 {
+	if (IDNO == MessageBox(NULL, TEXT("Warning: NFN_Exporter plugin creates a copy of the selected files. Eg it duplicates the files! \n\nDo you want to continue?"), TEXT("NFN_Exporter"), MB_YESNO | MB_ICONWARNING))
+		return false;
+
 	StringCchCopy(m_szExportFolder, MAX_PATH, szSource);
 
 	if(GetFileAttributes(m_szExportFolder) == INVALID_FILE_ATTRIBUTES)
