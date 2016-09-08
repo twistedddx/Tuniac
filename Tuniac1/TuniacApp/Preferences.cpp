@@ -1936,7 +1936,7 @@ bool CPreferences::DefaultPreferences(void)
 
 	StringCchCopy(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
 	StringCchCopy(m_szPluginFormatString, 256, TEXT("@T - @A"));
-	StringCchCopy(m_szListFormatString, 256, TEXT("@T - @A"));
+	StringCchCopy(m_szListFormatString, 256, TEXT("@#. @T - @A"));
 	StringCchCopy(m_szPlayLine1FormatString, 256, TEXT("#@# @T"));
 	StringCchCopy(m_szPlayLine2FormatString, 256, TEXT("@A - @L - @Y"));
 
