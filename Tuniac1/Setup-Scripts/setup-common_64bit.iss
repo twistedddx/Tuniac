@@ -1,3 +1,6 @@
+[Setup]
+ArchitecturesInstallIn64BitMode=x64
+
 [Code]
 var
   Install32bitPage: TWizardPage;
