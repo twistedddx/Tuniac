@@ -70,8 +70,8 @@ typedef struct
 	unsigned long							m_ulEntryID;
 	unsigned long							m_bNotInitialML;
 
-	bool AddFileToLibrary(LPTSTR			szURL);
-	bool AddStreamToLibrary(LPTSTR			szURL);
+	bool AddFileToLibrary(LPTSTR			szURL, bool bForceDuplicateCheck = false);
+	bool AddStreamToLibrary(LPTSTR			szURL, bool bForceDuplicateCheck = false);
 	bool AddDirectoryToLibrary(LPTSTR		szDirectory);
 
 	void AddingFilesIncrement(bool bDir);

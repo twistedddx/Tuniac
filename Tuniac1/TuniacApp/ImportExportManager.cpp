@@ -343,7 +343,8 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 	{
 
 		LPTSTR szFilters;
-		if ((szFilters = (LPTSTR)malloc(sizeof(TCHAR))) == NULL) return false;
+		if ((szFilters = (LPTSTR)malloc(sizeof(TCHAR))) == NULL)
+			return false;
 		int nSize = 0;
 		LPTSTR pDest = szFilters;
 		void * pTemp;
@@ -355,7 +356,8 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 			StringCchPrintf(szFilterText, 128, TEXT("%s (*%s)"), m_ExportExtensions[i].pExporter->GetName(), m_ExportExtensions[i].szExt);
 			StringCchPrintf(szFilterExt, 16, TEXT("*%s"), m_ExportExtensions[i].szExt);
 
-			if ((pTemp = realloc((void *)szFilters, (nSize + wcslen(szFilterText) + wcslen(szFilterExt) + 2) * sizeof(TCHAR))) == NULL) break;
+			if ((pTemp = realloc((void *)szFilters, (nSize + wcslen(szFilterText) + wcslen(szFilterExt) + 2) * sizeof(TCHAR))) == NULL)
+				break;
 			szFilters = (LPTSTR)pTemp;
 
 			pDest = szFilters + nSize;
