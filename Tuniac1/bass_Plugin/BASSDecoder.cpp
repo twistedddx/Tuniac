@@ -29,7 +29,7 @@ void DoMeta(DWORD handle, void *user)
 			//station name
 			if (!strnicmp(icy,"icy-name:",9))
 			{
-				MultiByteToWideChar(CP_ACP, 0, icy+9, -1, szArtist, 128);
+				MultiByteToWideChar(CP_UTF8, 0, icy+9, -1, szArtist, 128);
 				if(m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szArtist, FIELD_ARTIST);
 			}
@@ -37,7 +37,7 @@ void DoMeta(DWORD handle, void *user)
 			//station Genre
 			if (!strnicmp(icy,"icy-genre:",10))
 			{
-				MultiByteToWideChar(CP_ACP, 0, icy+10, -1, szGenre, 128);
+				MultiByteToWideChar(CP_UTF8, 0, icy+10, -1, szGenre, 128);
 				if(m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szGenre, FIELD_GENRE);
 			}

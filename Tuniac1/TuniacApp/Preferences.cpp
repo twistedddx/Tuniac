@@ -61,6 +61,8 @@
 #define WINDOWFORMATSTRING		TEXT("WindowFormatString")
 #define PLUGINFORMATSTRING		TEXT("PluginFormatString")
 #define LISTFORMATSTRING		TEXT("ListFormatString")
+#define PLAYLINE1FORMATSTRING	TEXT("PlayLine1FormatString")
+#define PLAYLINE2FORMATSTRING	TEXT("PlayLine2FormatString")
 
 #define CROSSFADETIME			TEXT("CrossFadeTime")
 #define CROSSFADEENABLED		TEXT("CrossFadeEnabled")
@@ -654,6 +656,16 @@ LRESULT CALLBACK CPreferences::FormattingProc(HWND hDlg, UINT uMsg, WPARAM wPara
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@T - @A"));
 				SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@F"));
 
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE1FORMAT, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE1FORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_szPlayLine1FormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE1FORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("#@#. @T"));
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE1FORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@T"));
+
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, CB_RESETCONTENT, 0, 0);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, WM_SETTEXT, 0, (LPARAM)pPrefs->m_szPlayLine2FormatString);
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@A - @L - @Y"));
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@A - @L"));
+				SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, CB_ADDSTRING, 0, (LPARAM)TEXT("@A"));
 
 				pPrefs->m_hTextFormatToolTip = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL,
 												WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
@@ -699,6 +711,18 @@ LRESULT CALLBACK CPreferences::FormattingProc(HWND hDlg, UINT uMsg, WPARAM wPara
 							SendDlgItemMessage(hDlg, IDC_FORMATTING_LISTFORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szListFormatString);
 						}
 						break;
+
+					case IDC_FORMATTING_PLAYLINE1FORMAT:
+					{
+						SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE1FORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szPlayLine1FormatString);
+					}
+					break;
+
+					case IDC_FORMATTING_PLAYLINE2FORMAT:
+					{
+						SendDlgItemMessage(hDlg, IDC_FORMATTING_PLAYLINE2FORMAT, WM_GETTEXT, 256, (LPARAM)pPrefs->m_szPlayLine2FormatString);
+					}
+					break;
 
 					case IDC_FORMATTING_FORMATSTRING_HELP:
 						{
@@ -1913,6 +1937,8 @@ bool CPreferences::DefaultPreferences(void)
 	StringCchCopy(m_szWindowFormatString, 256, TEXT("@T - @A [Tuniac]"));
 	StringCchCopy(m_szPluginFormatString, 256, TEXT("@T - @A"));
 	StringCchCopy(m_szListFormatString, 256, TEXT("@T - @A"));
+	StringCchCopy(m_szPlayLine1FormatString, 256, TEXT("#@# @T"));
+	StringCchCopy(m_szPlayLine2FormatString, 256, TEXT("@A - @L - @Y"));
 
 	m_bCrossfadeEnabled			= TRUE;
 	m_iCrossfadeTime			= 6;
@@ -2408,6 +2434,22 @@ bool CPreferences::LoadPreferences(void)
 						(LPBYTE)&m_szListFormatString,
 						&Size);
 
+	Size = 256 * sizeof(WCHAR);
+	RegQueryValueEx(	hTuniacPrefKey,
+						PLAYLINE1FORMATSTRING,
+						NULL,
+						&Type,
+						(LPBYTE)&m_szPlayLine1FormatString,
+						&Size);
+
+	Size = 256 * sizeof(WCHAR);
+	RegQueryValueEx(	hTuniacPrefKey,
+						PLAYLINE2FORMATSTRING,
+						NULL,
+						&Type,
+						(LPBYTE)&m_szPlayLine2FormatString,
+						&Size);
+
 	Size = sizeof(RECT);
 	RegQueryValueEx(	hTuniacPrefKey,
 						MAINWINDOWPOS,
@@ -2842,6 +2884,20 @@ bool CPreferences::SavePreferences(void)
 					REG_SZ,
 					(LPBYTE)&m_szListFormatString,
 					(wcsnlen_s(m_szListFormatString, 256) + 1) * sizeof(TCHAR));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					PLAYLINE1FORMATSTRING,
+					NULL,
+					REG_SZ,
+					(LPBYTE)&m_szPlayLine1FormatString,
+					(wcsnlen_s(m_szPlayLine1FormatString, 256) + 1) * sizeof(TCHAR));
+
+	RegSetValueEx(	hTuniacPrefKey,
+					PLAYLINE2FORMATSTRING,
+					NULL,
+					REG_SZ,
+					(LPBYTE)&m_szPlayLine2FormatString,
+					(wcsnlen_s(m_szPlayLine2FormatString, 256) + 1) * sizeof(TCHAR));
 
 	RegSetValueEx(	hTuniacPrefKey, 
 					MAINWINDOWPOS, 
@@ -3482,6 +3538,16 @@ LPTSTR		CPreferences::GetPluginFormatString(void)
 LPTSTR		CPreferences::GetListFormatString(void)
 {
 	return m_szListFormatString;
+}
+
+LPTSTR		CPreferences::GetPlayLine1FormatString(void)
+{
+	return m_szPlayLine1FormatString;
+}
+
+LPTSTR		CPreferences::GetPlayLine2FormatString(void)
+{
+	return m_szPlayLine2FormatString;
 }
 
 BOOL		CPreferences::GetAlwaysOnTop(void)

@@ -263,8 +263,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 					myEntryArray.AddTail(pIPE);
 			}
 
-
-			pPlaylist->AddEntryArray(myEntryArray);
+			if(myEntryArray.GetCount())
+				pPlaylist->AddEntryArray(myEntryArray);
 			
 			if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION06 && SubHeader.FilterField == 30)
 				pPlaylist->SetTextFilterField(FIELD_MAXFIELD);
