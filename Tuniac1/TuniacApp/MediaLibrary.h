@@ -69,9 +69,10 @@ typedef struct
 
 	unsigned long							m_ulEntryID;
 	unsigned long							m_bNotInitialML;
+	unsigned long							m_bForceDuplicateCheck;
 
-	bool AddFileToLibrary(LPTSTR			szURL, bool bForceDuplicateCheck = false);
-	bool AddStreamToLibrary(LPTSTR			szURL, bool bForceDuplicateCheck = false);
+	bool AddFileToLibrary(LPTSTR			szURL);
+	bool AddStreamToLibrary(LPTSTR			szURL);
 	bool AddDirectoryToLibrary(LPTSTR		szDirectory);
 
 	void AddingFilesIncrement(bool bDir);
