@@ -602,8 +602,18 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 						TCHAR szPlayLine1[256];
 						TCHAR szPlayLine2[256];
 
-						tuniacApp.FormatSongInfo(szPlayLine1, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine1FormatString(), false);
-						tuniacApp.FormatSongInfo(szPlayLine2, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine2FormatString(), false);
+						//0 = file, 1 = URL
+						unsigned long ulKind = (unsigned long)pIPE->GetField(FIELD_KIND);
+						if(ulKind)
+						{
+							tuniacApp.FormatSongInfo(szPlayLine1, 256, pIPE, L"@T", false);
+							tuniacApp.FormatSongInfo(szPlayLine2, 256, pIPE, L"@A", false);
+						}
+						else
+						{
+							tuniacApp.FormatSongInfo(szPlayLine1, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine1FormatString(), false);
+							tuniacApp.FormatSongInfo(szPlayLine2, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine2FormatString(), false);
+						}
 
 						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
 						SetBkMode(hDC, TRANSPARENT);
