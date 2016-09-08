@@ -252,6 +252,8 @@ protected:
 	TCHAR		m_szWindowFormatString[256];
 	TCHAR		m_szPluginFormatString[256];
 	TCHAR		m_szListFormatString[256];
+	TCHAR		m_szPlayLine1FormatString[256];
+	TCHAR		m_szPlayLine2FormatString[256];
 
 	RECT		m_MainWindowRect;
 
@@ -400,6 +402,8 @@ public:
 	LPTSTR		GetWindowFormatString(void);
 	LPTSTR		GetPluginFormatString(void);
 	LPTSTR		GetListFormatString(void);
+	LPTSTR		GetPlayLine1FormatString(void);
+	LPTSTR		GetPlayLine2FormatString(void);
 
 	int			GetVisualFPS(void);
 	int			GetCurrentVisual(void);

@@ -599,19 +599,16 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 					if (pIPE)
 					{
-						LPTSTR  szTitle = (LPTSTR)pIPE->GetField(FIELD_TITLE);
-						LPTSTR	szArtist = (LPTSTR)pIPE->GetField(FIELD_ARTIST);
+						TCHAR szPlayLine1[256];
+						TCHAR szPlayLine2[256];
 
-						if (szTitle == NULL)
-							szTitle = TEXT("No Song Loaded");
-
-						if (szArtist == NULL)
-							szArtist = TEXT("");
+						tuniacApp.FormatSongInfo(szPlayLine1, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine1FormatString(), false);
+						tuniacApp.FormatSongInfo(szPlayLine2, 256, pIPE, tuniacApp.m_Preferences.GetPlayLine2FormatString(), false);
 
 						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
 						SetBkMode(hDC, TRANSPARENT);
 						DrawText(hDC,
-							szTitle,
+							szPlayLine1,
 							-1,
 							&SongTitleRect,
 							DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_WORD_ELLIPSIS);
@@ -619,7 +616,7 @@ LRESULT CALLBACK CPlayControls::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 						SelectObject(hDC, tuniacApp.GetTuniacFont(FONT_SIZE_SMALL_MEDIUM));
 						SetBkMode(hDC, TRANSPARENT);
 						DrawText(hDC,
-							szArtist,
+							szPlayLine2,
 							-1,
 							&ArtistTitleRect,
 							DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX);

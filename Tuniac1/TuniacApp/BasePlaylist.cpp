@@ -199,52 +199,51 @@ void				CBasePlaylist::RebuildPlaylistArrays(void)
 	m_NormalIndexArray.RemoveAll();
 	m_RandomIndexArray.RemoveAll();
 
-	unsigned long ulCount = 0;
 	unsigned long ulCurrentIndex = 0;
-
-	bool bValid = false;
 	int iStartPos = 0;
 
 	//for each item, if not set as filtered, add
-	for(unsigned long y=0; y<m_PlaylistArray.GetCount(); y++)
+	for (unsigned long y=0; y<m_PlaylistArray.GetCount(); y++)
 	{
 		if(m_PlaylistArray[y].bFiltered == false)
 		{
 			m_NormalIndexArray.AddTail(y);
+			m_RandomIndexArray.AddTail(y);
 
-			//create shuffle list
+			//if file is active store the index so the file can be first in random array
 			if(y == m_ActiveRealIndex)
 			{
-				if(ulCount)
-				{
-					bValid = true;
-					ulCurrentIndex = y;
-				}
-				else
-				{
-					m_RandomIndexArray.AddTail(y);
-					iStartPos = 1;
-					ulCount = 1;
-				}
-				continue;
+				ulCurrentIndex = RealIndexToNormalFilteredIndex(y);
+
+				//ignore spot 0 in shuffle if active song is moved there
+				iStartPos = 1;
 			}
-			if(ulCount)
-			{
-				unsigned long ulRandNum = g_Rand.IRandom(iStartPos, ulCount);
-				if(ulRandNum == ulCount)
-					m_RandomIndexArray.AddTail(y);
-				else
-					m_RandomIndexArray.InsertBefore(ulRandNum, y);
-			}
-			else
-			{
-				m_RandomIndexArray.AddTail(y);
-			}
-			ulCount++;
 		}
 	}
-	if(bValid)
-		m_RandomIndexArray.AddHead(ulCurrentIndex);
+
+	if (m_RandomIndexArray.GetCount() > 1)
+	{
+		unsigned long ulRandNum;
+		unsigned long ulScratch;
+
+		//move active song to first position
+		if (ulCurrentIndex)
+		{
+			ulScratch = m_RandomIndexArray[ulCurrentIndex];
+			m_RandomIndexArray[ulCurrentIndex] = m_RandomIndexArray[0];
+			m_RandomIndexArray[0] = ulScratch;
+		}
+
+		for (unsigned long x = m_RandomIndexArray.GetCount() - 1; x > iStartPos; x--)
+		{
+			ulRandNum = g_Rand.IRandom(iStartPos, x);
+
+			ulScratch = m_RandomIndexArray[ulRandNum];
+			m_RandomIndexArray[ulRandNum] = m_RandomIndexArray[x];
+			m_RandomIndexArray[x] = ulScratch;
+		}
+	}
+
 }
 
 
