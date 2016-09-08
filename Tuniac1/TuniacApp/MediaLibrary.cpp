@@ -59,7 +59,8 @@ LRESULT crapProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 CMediaLibrary::CMediaLibrary() :
 	m_hAddingWindow(NULL),
 	m_ulEntryID(0),
-	m_bNotInitialML(false)
+	m_bNotInitialML(false),
+	m_bForceDuplicateCheck(false)
 {
 }
 
@@ -165,10 +166,16 @@ bool CMediaLibrary::BeginAdd(unsigned long ulNumItems)
 	m_ulAddingCountFiles = 0;
 	m_ulAddingCountDirs = 0;
 
-	if(m_MediaLibrary.GetCount())
+	if (m_MediaLibrary.GetCount())
+	{
 		m_bNotInitialML = true;
+		m_bForceDuplicateCheck = true;
+	}
 	else
+	{
 		m_bNotInitialML = false;
+		m_bForceDuplicateCheck = false;
+	}
 
 	if(m_hAddingWindow)
 	{
@@ -202,6 +209,7 @@ bool CMediaLibrary::EndAdd(void)
 
 	tuniacApp.m_SourceSelectorWindow->UpdateView();
 	m_bNotInitialML = true;
+	m_bForceDuplicateCheck = true;
 
 	return true;
 }
@@ -243,9 +251,12 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck)
 		}
 	}
 
+	if (bForceDuplicateCheck)
+		m_bForceDuplicateCheck = true;
+
 	if(PathIsURL(szItemToAdd))
 	{
-		return AddStreamToLibrary(szItemToAdd, bForceDuplicateCheck);
+		return AddStreamToLibrary(szItemToAdd);
 	}
 	else
 	{
@@ -255,29 +266,26 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck)
 		}
 		else
 		{
-			return AddFileToLibrary(szItemToAdd, bForceDuplicateCheck);
+			return AddFileToLibrary(szItemToAdd);
 		}
 	}
 	return false;
 }
 
-bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL, bool bForceDuplicateCheck)
+bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 {
+	if (m_bForceDuplicateCheck)
+	{
+		if (GetEntryByURL(szURL))
+			return false;
+	}
 	if(m_bNotInitialML)
 	{
-		if(GetEntryByURL(szURL))
-			return false;
-
 		// fill in media library specific stuff
 		while(GetEntryByEntryID(m_ulEntryID))
 		{
 			m_ulEntryID++;
 		}
-	}
-	else if (bForceDuplicateCheck)
-	{
-		if (GetEntryByURL(szURL))
-			return false;
 	}
 
 	LibraryEntry  libraryEntry;
@@ -336,16 +344,11 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL, bool bForceDuplicateCheck)
 	return true;
 }
 
-bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL, bool bForceDuplicateCheck)
+bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
 {
-	if (m_bNotInitialML)
+	if (m_bForceDuplicateCheck)
 	{
 		if (GetEntryByURL(szURL))
-			return false;
-	}
-	else if(bForceDuplicateCheck)
-	{
-		if(GetEntryByURL(szURL))
 			return false;
 	}
 
