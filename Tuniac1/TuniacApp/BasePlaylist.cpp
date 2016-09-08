@@ -213,8 +213,7 @@ void				CBasePlaylist::RebuildPlaylistArrays(void)
 			//if file is active store the index so the file can be first in random array
 			if(y == m_ActiveRealIndex)
 			{
-				ulCurrentIndex = RealIndexToNormalFilteredIndex(y);
-
+				ulCurrentIndex = m_NormalIndexArray.GetCount()-1;
 				//ignore spot 0 in shuffle if active song is moved there
 				iStartPos = 1;
 			}
