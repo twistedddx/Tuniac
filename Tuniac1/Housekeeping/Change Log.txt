@@ -1,3 +1,10 @@
+Sep, 2016
+---------
+-fix x64 setup to offer x64 option
+-more BASS utf8 instead of auto codepage
+-redo how shuffle array is built. Simpler and faster?
+-Add prefs for play controls line 1/2
+
 Aug, 2016
 ---------
 -add string format options to popup notify plugin
