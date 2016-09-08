@@ -243,12 +243,9 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck)
 		}
 	}
 
-	if(bForceDuplicateCheck)
-		m_bNotInitialML = true;
-
 	if(PathIsURL(szItemToAdd))
 	{
-		return AddStreamToLibrary(szItemToAdd);
+		return AddStreamToLibrary(szItemToAdd, bForceDuplicateCheck);
 	}
 	else
 	{
@@ -258,13 +255,13 @@ bool CMediaLibrary::AddItem(LPTSTR szItemToAdd, bool bForceDuplicateCheck)
 		}
 		else
 		{
-			return AddFileToLibrary(szItemToAdd);
+			return AddFileToLibrary(szItemToAdd, bForceDuplicateCheck);
 		}
 	}
 	return false;
 }
 
-bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
+bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL, bool bForceDuplicateCheck)
 {
 	if(m_bNotInitialML)
 	{
@@ -276,6 +273,11 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 		{
 			m_ulEntryID++;
 		}
+	}
+	else if (bForceDuplicateCheck)
+	{
+		if (GetEntryByURL(szURL))
+			return false;
 	}
 
 	LibraryEntry  libraryEntry;
@@ -334,9 +336,14 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	return true;
 }
 
-bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL)
+bool CMediaLibrary::AddFileToLibrary(LPTSTR szURL, bool bForceDuplicateCheck)
 {
-	if(m_bNotInitialML)
+	if (m_bNotInitialML)
+	{
+		if (GetEntryByURL(szURL))
+			return false;
+	}
+	else if(bForceDuplicateCheck)
 	{
 		if(GetEntryByURL(szURL))
 			return false;
