@@ -33,6 +33,7 @@ protected:
 
 	float			*	m_Buffer;
 	unsigned long		numSamples;
+	DWORD				readBytes;
 
 	bool				m_bIsStream;
 	double				dTime;

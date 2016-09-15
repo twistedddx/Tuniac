@@ -325,7 +325,7 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 	if(BASS_ChannelIsActive(m_decodehandle) == BASS_ACTIVE_STOPPED)
 		return false;
 
-	DWORD readBytes = BASS_ChannelGetData(m_decodehandle, m_Buffer, BUFFERSIZE);
+	readBytes = BASS_ChannelGetData(m_decodehandle, m_Buffer, BUFFERSIZE);
 
 	if (readBytes == -1)
 	{
