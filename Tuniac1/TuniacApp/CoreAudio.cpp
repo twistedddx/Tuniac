@@ -670,6 +670,13 @@ void	CCoreAudio::UpdateMetaData(LPTSTR szSource, float pNewData, unsigned long u
 
 void CCoreAudio::LogConsoleMessage(LPTSTR szModuleName, LPTSTR szMessage)
 {
+	if (tuniacApp.m_LogWindow)
+	{
+		if (tuniacApp.m_LogWindow->GetLogOn())
+		{
+			tuniacApp.m_LogWindow->LogMessage(szModuleName, szMessage);
+		}
+	}
 }
 
 void CCoreAudio::SetCrossfadeTime(unsigned long ulMS) 
