@@ -2,6 +2,8 @@
 
 #include "iaudiosource.h"
 #include <cstdio>
+#include <strsafe.h>
+
 #include "bass.h"
 #include "bass_aac.h"
 #include "bass_ac3.h"
@@ -30,6 +32,7 @@ protected:
 	FILE			*	m_file;
 
 	float			*	m_Buffer;
+	unsigned long		numSamples;
 
 	bool				m_bIsStream;
 	double				dTime;
