@@ -327,15 +327,6 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	DWORD readBytes = BASS_ChannelGetData(m_decodehandle, m_Buffer, BUFFERSIZE);
 
-	/*
-	if (readBytes == 0)
-	{
-		int whythis = 9;
-		return false;
-	}
-	*/
-
-
 	if (readBytes == -1)
 	{
 		if (m_pHelper)

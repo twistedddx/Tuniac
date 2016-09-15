@@ -1,4 +1,8 @@
-Sep, 2016
+Sep, 2016 (160915)
+---------
+-BASS error checking during GetBuffer() to fix reported crashes in Tuniac 64bit
+
+Sep, 2016 (160913)
 ---------
 -fix sort after initial import if playlist file was found
 -add warning to nfn export plugin about duplicating files
