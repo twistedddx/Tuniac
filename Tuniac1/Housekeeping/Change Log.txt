@@ -1,5 +1,8 @@
 Sep, 2016
 ---------
+-fix sort after initial import if playlist file was found
+-add warning to nfn export plugin about duplicating files
+-improve array building on startup
 -fix x64 setup to offer x64 option
 -more BASS utf8 instead of auto codepage
 -redo how shuffle array is built. Simpler and faster?

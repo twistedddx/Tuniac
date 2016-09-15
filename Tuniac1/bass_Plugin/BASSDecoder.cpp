@@ -326,7 +326,28 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 		return false;
 
 	DWORD readBytes = BASS_ChannelGetData(m_decodehandle, m_Buffer, BUFFERSIZE);
-	unsigned long numSamples = readBytes / sizeof(float);
+
+	/*
+	if (readBytes == 0)
+	{
+		int whythis = 9;
+		return false;
+	}
+	*/
+
+
+	if (readBytes == -1)
+	{
+		if (m_pHelper)
+		{
+			TCHAR szMessage[256];
+			StringCchPrintf(szMessage, 256, TEXT("Error code %i"), BASS_ErrorGetCode());
+			m_pHelper->LogConsoleMessage(TEXT("BASS_Plugin"), szMessage);
+		}
+		return false;
+	}
+	
+	numSamples = readBytes / sizeof(float);
 
 	if(readBytes != BUFFERSIZE)
 		ZeroMemory(&m_Buffer[numSamples], BUFFERSIZE-readBytes);
