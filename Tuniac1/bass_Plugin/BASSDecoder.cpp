@@ -329,11 +329,16 @@ bool		CBASSDecoder::GetBuffer(float ** ppBuffer, unsigned long * NumSamples)
 
 	if (readBytes == -1)
 	{
-		if (m_pHelper)
+		int iBASSError = BASS_ErrorGetCode();
+		// 45 is end of file and can happen if BASS_ChannelGetData lined up exactly with end of file
+		if (iBASSError != 45)
 		{
-			TCHAR szMessage[256];
-			StringCchPrintf(szMessage, 256, TEXT("Error code %i"), BASS_ErrorGetCode());
-			m_pHelper->LogConsoleMessage(TEXT("BASS_Plugin"), szMessage);
+			if (m_pHelper)
+			{
+				TCHAR szMessage[256];
+				StringCchPrintf(szMessage, 256, TEXT("Error code %i"), iBASSError);
+				m_pHelper->LogConsoleMessage(TEXT("BASS_Plugin"), szMessage);
+			}
 		}
 		return false;
 	}
