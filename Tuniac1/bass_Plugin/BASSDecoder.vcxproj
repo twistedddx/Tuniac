@@ -187,7 +187,8 @@ move /Y "..\Win32\Debug\bass\tak_deco_lib.dll" "..\Win32\Debug"</Command>
     <PostBuildEvent />
     <PostBuildEvent>
       <Command>xcopy ".\basslib\64bit\*.dll" "..\x64\Debug\bass" /Y /I
-move /Y "..\x64\Debug\bass\bass.dll" "..\x64\Debug"</Command>
+move /Y "..\x64\Debug\bass\bass.dll" "..\x64\Debug"
+move /Y "..\x64\Debug\bass\OptimFROG.dll" "..\x64\Debug"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_noxp|Win32'">
@@ -294,8 +295,9 @@ move /Y "..\Win32\Release\bass\tak_deco_lib.dll" "..\Win32\Release"</Command>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ".\basslib\64bit\*.dll" "..\x64\Release\bass" /Y /I
-move /Y "..\x64\Release\bass\bass.dll" "..\x64\Release"</Command>
+      <Command>xcopy ".\basslib\64bit\*.dll" "..\x64\Release_noxp\bass" /Y /I
+move /Y "..\x64\Release_noxp\bass\bass.dll" "..\x64\Release_noxp"
+move /Y "..\x64\Release_noxp\bass\OptimFROG.dll" "..\x64\Release_noxp"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -327,7 +329,8 @@ move /Y "..\x64\Release\bass\bass.dll" "..\x64\Release"</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy ".\basslib\64bit\*.dll" "..\x64\Release\bass" /Y /I
-move /Y "..\x64\Release\bass\bass.dll" "..\x64\Release"</Command>
+move /Y "..\x64\Release\bass\bass.dll" "..\x64\Release"
+move /Y "..\x64\Release\bass\OptimFROG.dll" "..\x64\Release"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

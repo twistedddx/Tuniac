@@ -1,5 +1,5 @@
-/* Copyright (C) 1996-2015 Florin Ghido, all rights reserved. */
-/* OptimFROG SDK v1.500 for OptimFROG Lossless/DualStream Audio Codec */
+/* Copyright (C) 1996-2016 Florin Ghido, all rights reserved. */
+/* OptimFROG SDK v1.600 for OptimFROG Lossless/DualStream Audio Codec */
 /* Visit http://LosslessAudio.org/ for updates and more information. */
 /* @OptimFROG is also on Twitter. E-mail: florin.ghido@gmail.com */
 /* SDK and Libraries are free for non-commercial and commercial use. */
