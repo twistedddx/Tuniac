@@ -1,6 +1,13 @@
+Sep, 2016
+---------
+-do not report BASS error 45
+-bass decoder updates
+-add optimfrog for Tuniac 64bit
+
 Sep, 2016 (160915)
 ---------
 -BASS error checking during GetBuffer() to fix reported crashes in Tuniac 64bit
+-decoder logging
 
 Sep, 2016 (160913)
 ---------
