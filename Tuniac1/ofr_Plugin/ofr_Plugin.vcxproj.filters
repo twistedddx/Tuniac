@@ -56,9 +56,4 @@
       <Filter>OptimFROG</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="OptimFROG\OptimFROG.lib">
-      <Filter>OptimFROG</Filter>
-    </Library>
-  </ItemGroup>
 </Project>
