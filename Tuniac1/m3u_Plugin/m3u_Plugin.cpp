@@ -62,6 +62,10 @@ LPTSTR			CM3U_Import::SupportedExtension(unsigned long ulExtentionNum)
 {
 	if(ulExtentionNum == 0)
 		return TEXT(".m3u");
+
+	if (ulExtentionNum == 1)
+		return TEXT(".m3u8");
+
 	return NULL;
 }
 
@@ -70,7 +74,7 @@ bool			CM3U_Import::CanHandle(LPTSTR szSource)
 	if(PathIsURL(szSource))
 		return false;
 
-	if(StrStrI(PathFindExtension(szSource), TEXT("M3U")))
+	if (StrStrI(PathFindExtension(szSource), TEXT("M3U8")) || StrStrI(PathFindExtension(szSource), TEXT("M3U")))
 		return true;
 
 	return false;
@@ -86,9 +90,10 @@ bool			CM3U_Import::BeginImport(LPTSTR szSource)
 	if(m_File == NULL)
 		return false;
 
-	StringCchCopy(m_BaseDir, 260, szSource);
-	PathRemoveFileSpec(m_BaseDir);
-	PathAddBackslash(m_BaseDir);
+	StringCchCopy(m_szBaseDir, MAX_PATH, szSource);
+	PathRemoveFileSpec(m_szBaseDir);
+	PathAddBackslash(m_szBaseDir);
+
 	return true;
 }
 
@@ -105,37 +110,41 @@ bool			CM3U_Import::ImportUrl(LPTSTR szDest, unsigned long iDestSize)
 
 	while(1)
 	{
-		if(fgetws(szDest, iDestSize, m_File) != NULL)
+		if (fgetws(szDest, iDestSize, m_File) != NULL)
 		{
-			if(wcsnlen_s(szDest, iDestSize) < 2)
+			if (wcsnlen_s(szDest, iDestSize) < 2)
 				continue;
 
-			if (!_wcsnicmp(szDest, L"#EXTM3U",7))
+			if (!_wcsnicmp(szDest, L"#EXTM3U", 7))
 				continue;
 
-			if (!_wcsnicmp(szDest, L"#EXTINF:",8))
+			if (!_wcsnicmp(szDest, L"#EXT-X-", 7))
+				continue;
+
+			if (!_wcsnicmp(szDest, L"#EXTINF:", 8))
 			{
 				TCHAR * szTemp = wcsstr(szDest, L",");
 
-				if(szTemp)
+				if (szTemp)
 				{
-			
-					if(szTemp[wcsnlen_s(szTemp, iDestSize)-1] == L'\n')
-						szTemp[wcsnlen_s(szTemp, iDestSize)-1] = L'\0';
+					int iLen = wcsnlen_s(szTemp, iDestSize);
+
+					if (szTemp[iLen - 1] == L'\n')
+						szTemp[iLen - 1] = L'\0';
 
 					StringCchCopyN(szTitle, 128, &szTemp[1], 128);
 				}
 				continue;
 			}
 
-			if(szDest[wcsnlen_s(szDest, iDestSize)-1] == L'\n')
-				szDest[wcsnlen_s(szDest, iDestSize)-1] = L'\0';
+			if (szDest[wcsnlen_s(szDest, iDestSize) - 1] == L'\n')
+				szDest[wcsnlen_s(szDest, iDestSize) - 1] = L'\0';
 
-			if(!PathIsURL(szDest) && PathIsRelative(szDest))
+			if (!PathIsURL(szDest) && PathIsRelative(szDest))
 			{
 				TCHAR szTemp[MAX_PATH];
 				StringCchCopyN(szTemp, 128, szDest, 128);
-				StringCchPrintf(szDest, iDestSize, TEXT("%s%s"), m_BaseDir, szTemp);
+				StringCchPrintf(szDest, iDestSize, TEXT("%s%s"), m_szBaseDir, szTemp);
 			}
 			return true;
 		}
@@ -199,6 +208,7 @@ LPTSTR			CM3U_Export::SupportedExtension(unsigned long ulExtentionNum)
 {
 	if(ulExtentionNum == 0)
 		return TEXT(".m3u");
+
 	return NULL;
 }
 

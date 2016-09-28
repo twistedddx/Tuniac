@@ -11,7 +11,8 @@ class CM3U_Import :
 {
 
 protected:
-	TCHAR			m_BaseDir[MAX_PATH];
+	TCHAR			m_szBaseDir[MAX_PATH];
+
 	FILE *			m_File;
 	TCHAR			szTitle[128];
 
