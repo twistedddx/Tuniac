@@ -21,6 +21,7 @@
 #include "bassopus.h"
 #include "basswma.h"
 #include "basswv.h"
+#include "basshls.h"
 
 #define BUFFERSIZE (1024 * sizeof(float))
 
