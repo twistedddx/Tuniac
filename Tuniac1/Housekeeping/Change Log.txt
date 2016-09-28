@@ -1,5 +1,9 @@
 Sep, 2016
 ---------
+-allow m3u8 files and skip #ext-x- meta
+-add basshls plugin
+-allow streams to be 260 chars long (instead of 128)
+-update tokens in text guides
 -do not report BASS error 45
 -bass decoder updates
 -add optimfrog for Tuniac 64bit
