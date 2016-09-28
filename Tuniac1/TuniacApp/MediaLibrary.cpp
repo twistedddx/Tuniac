@@ -294,7 +294,7 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 
 	// we need to set the streampath here plus a nice name
 	StringCchCopy(libraryEntry.szArtist, 128, szURL);
-	StringCchCopy(libraryEntry.szURL, 128, szURL);
+	StringCchCopy(libraryEntry.szURL, MAX_PATH, szURL);
 	GetLocalTime(&libraryEntry.stDateAdded);
 
 	libraryEntry.ulPlaybackTime = LENGTH_STREAM;
