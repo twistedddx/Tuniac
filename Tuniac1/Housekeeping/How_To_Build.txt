@@ -61,7 +61,8 @@ Hit OK and wait
 3d)You need libpng 1.7 GIT (http://libpng.sourceforge.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
-git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+git://git.code.sf.net/p/libpng/code
+Change Directory to C:\Code\libpng
 Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
