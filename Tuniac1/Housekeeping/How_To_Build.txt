@@ -31,7 +31,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-https://cmake.org/files/v3.6/cmake-3.6.1-win64-x64.msi
+https://cmake.org/files/v3.6/cmake-3.6.2-win64-x64.msi
 
 Install them
 
@@ -92,11 +92,11 @@ You can also get all the build recipes for individual building of libs in there.
 5a)You need Direct X SDK June 2010.
 http://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-5b)You need the Glew 1.13.0 Binaries Windows 32-bit zip.
+5b)You need the Glew 2.0.0 Binaries Windows 32-bit zip.
 http://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/1.13.0/glew-1.13.0-win32.zip/download
+https://sourceforge.net/projects/glew/files/glew/2.0.0/glew-2.0.0-win32.zip/download
 
-Put glew.h, glxew.h and wglew.h in
+Put glew.h, glxew.h, eglew.h and wglew.h in
 C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\GL
 And put Release\Win32\ glew32.lib and glew32s.lib in
 C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib
