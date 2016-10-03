@@ -4,18 +4,20 @@
 
 #define TuniacWWW 'http://www.tuniac.org'
 
-#define VC14RedistText 'Visual Studio 2015 Update 3'
-#define VC14RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=52982'
+#define VC14RedistText 'Visual Studio 2015 Update 3.5'
+#define VC14RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=53840'
 
-#define VC14x86Redist 'http://download.microsoft.com/download/9/a/2/9a2a7e36-a8af-46c0-8a78-a5eb111eefe2/vc_redist.x86.exe'
+#define VC14x86Redist 'http://download.microsoft.com/download/6/A/A/6AA4EDFF-645B-48C5-81CC-ED5963AEAD48/vc_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
 #define VC14x86RedistdwMinor 0
-#define VC14x86RedistdwBld 24212
+#define VC14x86RedistdwBld 24215
+#define VC14x86RedistSize 14
 
-#define VC14x64Redist 'http://download.microsoft.com/download/2/a/2/2a2ef9ab-1b4b-49f0-9131-d33f79544e70/vc_redist.x64.exe'
+#define VC14x64Redist 'http://download.microsoft.com/download/6/A/A/6AA4EDFF-645B-48C5-81CC-ED5963AEAD48/vc_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
 #define VC14x64RedistdwMinor 0
-#define VC14x64RedistdwBld 24212
+#define VC14x64RedistdwBld 24215
+#define VC14x64RedistSize 15
 
 #define VC10RedistText  'Visual Studio 2010 SP1'
 #define VC10RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=26999'
@@ -24,11 +26,13 @@
 #define VC10x86RedistdwMajor 10
 #define VC10x86RedistdwMinor 0
 #define VC10x86RedistdwBld 40219
+#define VC10x86RedistSize 9
            
 #define VC10x64Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe'
 #define VC10x64RedistdwMajor 10
 #define VC10x64RedistdwMinor 0
 #define VC10x64RedistdwBld 40219
+#define VC10x64RedistSize 10
 
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'
 #define DXJun2010Text 'DirectX End-User Runtimes (June 2010)'
@@ -40,6 +44,7 @@
 #define DXJun2010dxupdate 'http://www.tuniac.org/extra/DirectX/dxupdate.cab'
 #define DXJun2010Jun2010_XAudio_x64 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x64.cab'
 #define DXJun2010Jun2010_XAudio_x86 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x86.cab'
+#define DXJun2010Size = 3
 
 [Setup]
 AllowNoIcons=yes

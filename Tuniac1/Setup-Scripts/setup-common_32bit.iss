@@ -226,23 +226,23 @@ begin
   DownloadSize := 0;
 
   if not HasDXJun2010  then begin
-    DownloadSize := DownloadSize + 3;
+    DownloadSize := DownloadSize + {#DXJun2010Size};
   end;
 
   if not HasVC10x86Redist then begin
-    DownloadSize := DownloadSize + 13;
+    DownloadSize := DownloadSize + {#VC10x86RedistSize};
   end;
 
   if not HasVC14x86Redist then begin
-    DownloadSize := DownloadSize + 13;
+    DownloadSize := DownloadSize + {#VC14x86RedistSize};
   end;
 
   if not HasVC10x64Redist and IsWin64 then begin
-    DownloadSize := DownloadSize + 14;
+    DownloadSize := DownloadSize + {#VC10x64RedistSize};
   end;
 
   if not HasVC14x64Redist and IsWin64 then begin
-    DownloadSize := DownloadSize + 14;
+    DownloadSize := DownloadSize + {#VC14x64RedistSize};
   end;
 
   Result := DownloadSize;
