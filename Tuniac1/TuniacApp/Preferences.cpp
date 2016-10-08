@@ -3027,18 +3027,24 @@ LRESULT CALLBACK CPreferences::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 				GetWindowRect(hDlg, &rcDlg);
 				GetWindowRect(hParent, &rcParent);
 				GetWindowRect(hTree, &rcTree);
-			        
+			       
+				//size of pref window
 				int iWidth  = rcDlg.right  - rcDlg.left;
 				int iHeight = rcDlg.bottom - rcDlg.top;
 
+				//find middle of Tuniac window
 				int x = ((rcParent.right - rcParent.left) -  iWidth) / 2 + rcParent.left;
 				int y = ((rcParent.bottom - rcParent.top) - iHeight) / 2 + rcParent.top;
 
+				//screen size
 				int iScreenWidth  = GetSystemMetrics(SM_CXSCREEN);
 				int iScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 			    
+				//if middle of tuniac is offscreen, zero to edge (top and left)
 				if(x < 0) x = 0;
 				if(y < 0) y = 0;
+
+				//if pref window edge would exceed screen on bottom or right, bring it back to fit.
 				if(x + iWidth  > iScreenWidth)  x = iScreenWidth  - iWidth;
 				if(y + iHeight > iScreenHeight) y = iScreenHeight - iHeight;
 
@@ -3049,7 +3055,7 @@ LRESULT CALLBACK CPreferences::WndProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
 				m_PagePos.left = rcTree.right - rcTree.left + 12;
 
 				m_PagePos.right = rcDlg.right - rcDlg.left - m_PagePos.left - 10;
-				m_PagePos.bottom = rcDlg.bottom - rcDlg.top - 62;
+				m_PagePos.bottom = rcDlg.bottom - rcDlg.top - 80;
 
 				int iItemHeight = TreeView_GetItemHeight(hTree);
 				TreeView_SetItemHeight(hTree, iItemHeight * 1.2);
