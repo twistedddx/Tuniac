@@ -11,3 +11,6 @@
 #include <windows.h>
 
 // TODO: reference additional headers your program requires here
+#include <shlwapi.h>
+#include <Strsafe.h>
+#include <shellapi.h>

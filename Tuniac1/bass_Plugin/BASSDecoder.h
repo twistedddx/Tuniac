@@ -1,8 +1,6 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include <cstdio>
-#include <strsafe.h>
 
 #include "bass.h"
 #include "bass_aac.h"

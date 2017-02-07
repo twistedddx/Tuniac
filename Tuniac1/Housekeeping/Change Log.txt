@@ -1,3 +1,10 @@
+Feb, 2017
+---------
+-Update bass flac, opus, wv, dsd, midi
+-Update taglib, libjpeg-turbo, libpng, zlib
+-Update project to VS 2017
+-Clean up projects include paths and linked libraries.
+
 Sep, 2016
 ---------
 -allow m3u8 files and skip #ext-x- meta

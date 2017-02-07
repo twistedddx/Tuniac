@@ -6,22 +6,22 @@
 
 [Setup]
 MinVersion=0,6.0.6000
-OutputBaseFilename=Tuniac_Setup_{#DateTime}(inc 64bit)_noxp
+OutputBaseFilename=Tuniac_Setup_{#DateTime}(inc 64bit)_xp
 
 [Files]
 Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
 
 Source: "..\x64\Release\*.exe"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion
 Source: "..\x64\Release\*.dll"; DestDir: {app}\; Check: not Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
-Source: "..\Win32\Release_noxp\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not Install32bitCheck; Flags: ignoreversion
-Source: "..\Win32\Release_noxp\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not Install32bitCheck;  Flags: ignoreversion
+Source: "..\Win32\Release_xp\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: not Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release_xp\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: not Install32bitCheck;  Flags: ignoreversion
 
-Source: "..\Win32\Release_noxp\*.exe"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion
-Source: "..\Win32\Release_noxp\*.dll"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release_xp\*.exe"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release_xp\*.dll"; DestDir: {app}\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
 Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Check: Install32bitCheck and IsWin64; Flags: ignoreversion
 Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Check: Install32bitCheck and IsWin64;  Flags: ignoreversion
-Source: "..\Win32\Release_noxp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Check: Install32bitCheck; Flags: ignoreversion
-Source: "..\Win32\Release_noxp\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs
+Source: "..\Win32\Release_xp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Check: Install32bitCheck; Flags: ignoreversion
+Source: "..\Win32\Release_xp\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Check: Install32bitCheck; Flags: ignoreversion recursesubdirs
 
 [Code]
 //skip 32bit install question on 32bit only machines

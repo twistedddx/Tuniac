@@ -30,16 +30,14 @@
 
 #include <windows.h>
 
-//#include <tmschema.h>
-
 #include <Commdlg.h>
-#include <commctrl.h>
+
 
 // windows shell stuff
 #include <shlobj.h>
 #include <shellapi.h>
 #include <shlwapi.h>
-#include <shobjidl.h>
+
 
 #include <strsafe.h>
 
@@ -60,12 +58,9 @@
 
 #include <Wtsapi32.h>
 
-//#include <math.h>
-//#include <winsock2.h>
 
 #include "Array.h"
 #include "TuniacApp.h"
-//#include "Random.h"
 #include "sfmt.h"
 
 extern CTuniacApp		tuniacApp;

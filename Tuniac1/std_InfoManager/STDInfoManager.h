@@ -1,6 +1,4 @@
 #pragma once
-#include <strsafe.h>
-
 #include "iinfomanager.h"
 
 #include "tag.h"

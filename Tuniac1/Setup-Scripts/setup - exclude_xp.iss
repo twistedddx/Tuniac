@@ -1,41 +1,27 @@
-#include <idp.iss>
-
 #include "setup-common.iss"
-#include "setup-common_32bit.iss"
 
 [Setup]
 MinVersion=0,6.0.6000
-OutputBaseFilename=Tuniac_Setup_{#DateTime}_noxp
+OutputBaseFilename=Tuniac_Setup_{#DateTime}(exclude)_xp
 
 [Files]
-Source: "..\Guide\*"; DestDir: {app}\Guide\; Flags: ignoreversion recursesubdirs
-
-Source: "..\Win32\Release_noxp\*.exe"; DestDir: {app}\; Flags: ignoreversion
-Source: "..\Win32\Release_noxp\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
+Source: "..\Win32\Release_xp\*.exe"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Win32\Release_xp\*.dll"; DestDir: {app}\; Flags: ignoreversion recursesubdirs; Excludes: "MMShellHookHelper.dll"
 Source: "..\x64\Release\plugins\MMShellHookHelper.exe"; DestDir: {app}\plugins\; Flags: ignoreversion; Check: IsWin64
-Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll"; Flags: ignoreversion; Check: IsWin64
-Source: "..\Win32\Release_noxp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
-Source: "..\Win32\Release_noxp\visuals\vis\*.*"; DestDir: {app}\visuals\vis\; Flags: ignoreversion recursesubdirs
+Source: "..\x64\Release\plugins\MMShellHook_Plugin.dll"; DestDir: {app}\plugins\; DestName: "MMShellHookHelper.dll";  Flags: ignoreversion; Check: IsWin64
+Source: "..\Win32\Release_xp\visuals\verdana14.glf"; DestDir: {app}\visuals\; Flags: ignoreversion
 
 [Code]
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  if (PageID = DownloadWantedPage.ID) and not IsDownloadRequired then begin
-    Result := true;
-  end else begin
-    Result := false;
-  end;
-end;
+function DrawIconEx(hdc: LongInt; xLeft, yTop: Integer; hIcon: LongInt; cxWidth, cyWidth: Integer; istepIfAniCur: LongInt; hbrFlickerFreeDraw, diFlags: LongInt): LongInt;
+external 'DrawIconEx@user32.dll stdcall';
+function DestroyIcon(hIcon: LongInt): LongInt;
+external 'DestroyIcon@user32.dll stdcall';
 
 procedure InitializeWizard();
 var
   AboutButton, CancelButton: TButton;
   URLLabel: TNewStaticText;
 begin
-  CreateDownloadWantedPage;
-
-  DownloadWantedCheckBox.Checked := IsDownloadRequired;
-
   { Other custom controls }
 
   CancelButton := WizardForm.CancelButton;
@@ -50,7 +36,7 @@ begin
   AboutButton.Parent := WizardForm;
 
   URLLabel := TNewStaticText.Create(WizardForm);
-  URLLabel.Caption := '{#TuniacWWW}';
+  URLLabel.Caption := 'www.tuniac.org';
   URLLabel.Cursor := crHand;
   URLLabel.OnClick := @URLLabelOnClick;
   URLLabel.Parent := WizardForm;
