@@ -1,6 +1,6 @@
 /*
 	BASSMIDI 2.4 C/C++ header file
-	Copyright (c) 2006-2014 Un4seen Developments Ltd.
+	Copyright (c) 2006-2016 Un4seen Developments Ltd.
 
 	See the BASSMIDI.CHM file for more detailed documentation
 */
@@ -57,6 +57,7 @@ typedef DWORD HSOUNDFONT;	// soundfont handle
 #define BASS_MIDI_FONT_MEM		0x10000
 #define BASS_MIDI_FONT_MMAP		0x20000
 #define BASS_MIDI_FONT_XGDRUMS	0x40000
+#define BASS_MIDI_FONT_NOFX		0x80000
 
 typedef struct {
 	HSOUNDFONT font;	// soundfont
@@ -102,7 +103,8 @@ typedef struct {
 #define BASS_MIDI_MARK_COPY		6	// copyright notice
 #define BASS_MIDI_MARK_TRACK	7	// track name
 #define BASS_MIDI_MARK_INST		8	// instrument name
-#define BASS_MIDI_MARK_TICK		0x10000 // FLAG: get position in ticks (otherwise bytes)
+#define BASS_MIDI_MARK_TRACKSTART	9	// track start (SMF2)
+#define BASS_MIDI_MARK_TICK		0x10000 // flag: get position in ticks (otherwise bytes)
 
 // MIDI events
 #define MIDI_EVENT_NOTE				1
@@ -169,6 +171,7 @@ typedef struct {
 #define MIDI_EVENT_CHANPRES_PITCH	66
 #define MIDI_EVENT_CHANPRES_FILTER	67
 #define MIDI_EVENT_CHANPRES_VOLUME	68
+#define MIDI_EVENT_MOD_VIBRATO		69
 #define MIDI_EVENT_MODRANGE			69
 #define MIDI_EVENT_BANK_LSB			70
 #define MIDI_EVENT_KEYPRES			71
@@ -176,6 +179,10 @@ typedef struct {
 #define MIDI_EVENT_KEYPRES_PITCH	73
 #define MIDI_EVENT_KEYPRES_FILTER	74
 #define MIDI_EVENT_KEYPRES_VOLUME	75
+#define MIDI_EVENT_SOSTENUTO		76
+#define MIDI_EVENT_MOD_PITCH		77
+#define MIDI_EVENT_MOD_FILTER		78
+#define MIDI_EVENT_MOD_VOLUME		79
 #define MIDI_EVENT_MIXLEVEL			0x10000
 #define MIDI_EVENT_TRANSPOSE		0x10001
 #define MIDI_EVENT_SYSTEMEX			0x10002
@@ -200,8 +207,10 @@ typedef struct {
 // BASS_MIDI_StreamEvents modes
 #define BASS_MIDI_EVENTS_STRUCT		0 // BASS_MIDI_EVENT structures
 #define BASS_MIDI_EVENTS_RAW		0x10000 // raw MIDI event data
-#define BASS_MIDI_EVENTS_SYNC		0x1000000 // FLAG: trigger event syncs
-#define BASS_MIDI_EVENTS_NORSTATUS	0x2000000 // FLAG: no running status
+#define BASS_MIDI_EVENTS_SYNC		0x1000000 // flag: trigger event syncs
+#define BASS_MIDI_EVENTS_NORSTATUS	0x2000000 // flag: no running status
+#define BASS_MIDI_EVENTS_CANCEL		0x4000000 // flag: cancel pending events
+#define BASS_MIDI_EVENTS_TIME		0x8000000 // flag: delta-time info is present
 
 // BASS_MIDI_StreamGetChannel special channels
 #define BASS_MIDI_CHAN_CHORUS		(DWORD)-1
@@ -217,6 +226,8 @@ typedef struct {
 #define BASS_ATTRIB_MIDI_CHANS		0x12002
 #define BASS_ATTRIB_MIDI_VOICES		0x12003
 #define BASS_ATTRIB_MIDI_VOICES_ACTIVE 0x12004
+#define BASS_ATTRIB_MIDI_STATE		0x12005
+#define BASS_ATTRIB_MIDI_SRC		0x12006
 #define BASS_ATTRIB_MIDI_TRACK_VOL	0x12100 // + track #
 
 // Additional tag type
@@ -257,6 +268,7 @@ BOOL BASSMIDIDEF(BASS_MIDI_StreamEvent)(HSTREAM handle, DWORD chan, DWORD event,
 DWORD BASSMIDIDEF(BASS_MIDI_StreamEvents)(HSTREAM handle, DWORD mode, const void *events, DWORD length);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvent)(HSTREAM handle, DWORD chan, DWORD event);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvents)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events);
+DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEventsEx)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events, DWORD start, DWORD count);
 HSTREAM BASSMIDIDEF(BASS_MIDI_StreamGetChannel)(HSTREAM handle, DWORD chan);
 
 HSOUNDFONT BASSMIDIDEF(BASS_MIDI_FontInit)(const void *file, DWORD flags);
@@ -272,6 +284,8 @@ BOOL BASSMIDIDEF(BASS_MIDI_FontPack)(HSOUNDFONT handle, const void *outfile, con
 BOOL BASSMIDIDEF(BASS_MIDI_FontUnpack)(HSOUNDFONT handle, const void *outfile, DWORD flags);
 BOOL BASSMIDIDEF(BASS_MIDI_FontSetVolume)(HSOUNDFONT handle, float volume);
 float BASSMIDIDEF(BASS_MIDI_FontGetVolume)(HSOUNDFONT handle);
+
+DWORD BASSMIDIDEF(BASS_MIDI_ConvertEvents)(const BYTE *data, DWORD length, BASS_MIDI_EVENT *events, DWORD count, DWORD flags);
 
 BOOL BASSMIDIDEF(BASS_MIDI_InGetDeviceInfo)(DWORD device, BASS_MIDI_DEVICEINFO *info);
 BOOL BASSMIDIDEF(BASS_MIDI_InInit)(DWORD device, MIDIINPROC *proc, void *user);

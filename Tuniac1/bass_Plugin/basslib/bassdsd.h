@@ -1,6 +1,6 @@
 /*
 	BASSDSD 2.4 C/C++ header file
-	Copyright (c) 2014 Un4seen Developments Ltd.
+	Copyright (c) 2014-2017 Un4seen Developments Ltd.
 
 	See the BASSDSD.CHM file for more detailed documentation
 */
@@ -31,6 +31,7 @@ extern "C" {
 // Additional BASS_DSD_StreamCreateFile/etc flags
 #define BASS_DSD_RAW				0x200
 #define BASS_DSD_DOP				0x400
+#define BASS_DSD_DOP_AA				0x800
 
 // BASS_CHANNELINFO type
 #define BASS_CTYPE_STREAM_DSD		0x11700
