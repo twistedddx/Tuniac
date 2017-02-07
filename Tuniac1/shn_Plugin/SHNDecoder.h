@@ -1,7 +1,8 @@
 #pragma once
 #include "iaudiosource.h"
-#include <cstdio>
+
 #include <shnplay.h>
+
 
 class CshnDecoder :
 	public IAudioSource

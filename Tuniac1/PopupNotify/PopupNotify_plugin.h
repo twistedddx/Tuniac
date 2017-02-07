@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cstdio>
-#include <shellapi.h>
-#include <shlwapi.h>
-#include <Strsafe.h>
 #include "ITuniacPlugin.h"
 
 class CPopupNotify :

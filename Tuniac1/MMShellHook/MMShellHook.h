@@ -2,11 +2,6 @@
 
 #include "ITuniacPlugin.h"
 
-#include <windows.h>
-#include <Shellapi.h>
-#include <shlwapi.h>
-#include <strsafe.h>
-
 #define DllExport __declspec(dllexport)
 
 extern "C"

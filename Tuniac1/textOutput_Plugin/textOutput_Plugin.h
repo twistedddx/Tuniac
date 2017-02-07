@@ -1,9 +1,6 @@
 #pragma once
 
 #include "ITuniacExportPlugin.h"
-#include <cstdio>
-#include "shlwapi.h"
-#include <strsafe.h>
 
 class CtextOutput_Export :
 	public ITuniacExportPlugin

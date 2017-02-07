@@ -11,13 +11,10 @@
 #include <windows.h>
 
 // TODO: reference additional headers your program requires here
-#include <shlobj.h>
-#include <shellapi.h>
 #include <shlwapi.h>
-
-#include <stdint.h>
-#include <stdlib.h>
+#include <shlobj.h>
 
 #include <strsafe.h>
 
-#include "resource.h"
+#include <string>
+

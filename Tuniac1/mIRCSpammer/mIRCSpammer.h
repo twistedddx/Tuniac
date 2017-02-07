@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ITuniacPlugin.h"
-#include "shlwapi.h"
+
 
 //#define WM_MCOMMAND WM_USER + 200
 

@@ -4,35 +4,35 @@
 
 #define TuniacWWW 'http://www.tuniac.org'
 
-#define VC14RedistText 'Visual Studio 2015 Update 3.5'
-#define VC14RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=53840'
+#define VC14RedistText 'Microsoft Visual C++ 2017 RC'
+#define VC14RedistManual 'http://www.visualstudio.com/downloads/#microsoft-visual-c-redistributable-for-visual-studio-2017-rc'
 
-#define VC14x86Redist 'http://download.microsoft.com/download/6/A/A/6AA4EDFF-645B-48C5-81CC-ED5963AEAD48/vc_redist.x86.exe'
+#define VC14x86Redist 'http://download.microsoft.com/download/e/6/6/e66c5871-7afe-4640-a454-786eabe8aae8/vc_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 0
-#define VC14x86RedistdwBld 24215
+#define VC14x86RedistdwMinor 10
+#define VC14x86RedistdwBld 24629
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'http://download.microsoft.com/download/6/A/A/6AA4EDFF-645B-48C5-81CC-ED5963AEAD48/vc_redist.x64.exe'
+#define VC14x64Redist 'http://download.microsoft.com/download/7/2/5/72572684-052f-4aa9-9170-9d40813a87be/vc_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
 #define VC14x64RedistdwMinor 0
 #define VC14x64RedistdwBld 24215
-#define VC14x64RedistSize 15
+#define VC14x64RedistSize 14
 
-#define VC10RedistText  'Visual Studio 2010 SP1'
-#define VC10RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=26999'
+;#define VC10RedistText  'Microsoft Visual C++ 2010 SP1'
+;#define VC10RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=26999'
 
-#define VC10x86Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe'
-#define VC10x86RedistdwMajor 10
-#define VC10x86RedistdwMinor 0
-#define VC10x86RedistdwBld 40219
-#define VC10x86RedistSize 9
+;#define VC10x86Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe'
+;#define VC10x86RedistdwMajor 10
+;#define VC10x86RedistdwMinor 0
+;#define VC10x86RedistdwBld 40219
+;#define VC10x86RedistSize 9
            
-#define VC10x64Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe'
-#define VC10x64RedistdwMajor 10
-#define VC10x64RedistdwMinor 0
-#define VC10x64RedistdwBld 40219
-#define VC10x64RedistSize 10
+;#define VC10x64Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe'
+;#define VC10x64RedistdwMajor 10
+;#define VC10x64RedistdwMinor 0
+;#define VC10x64RedistdwBld 40219
+;#define VC10x64RedistSize 10
 
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'
 #define DXJun2010Text 'DirectX End-User Runtimes (June 2010)'
@@ -96,8 +96,8 @@ Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversi
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing {#DXJun2010XAudioText}...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+;Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+;Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Registry]

@@ -5,12 +5,12 @@ set ProgFiles86Root=%ProgramFiles%
 :64bitWindows
 
 set 64bitcl=true
-if exist "%ProgFiles86Root%\Microsoft Visual Studio 14.0\VC\bin\amd64\cl.exe" goto 64bitcl
+if exist "%ProgFiles86Root%\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.24911\bin\HostX86\x86\cl.exe" goto 64bitcl
 set 64bitcl=false
 :64bitcl
 
 
-call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+call "%Programfiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
 cd ..\..\..\
 
@@ -18,10 +18,10 @@ rem ######## libpng
 cd libpng\
 
 rem #Release x86:
+rmdir /s /q .\build32
 mkdir .\build32
 cd build32\
-del *.*
-"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 14" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 15" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
 if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
@@ -40,14 +40,14 @@ cd ..
 
 
 rem if "64bitcl"=="false" goto done
-call "%Programfiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+call "%Programfiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
 
 rem #Release x64:
+rmdir /s /q .\build64
 mkdir .\build64
 cd build64\
-del *.*
-"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 14 Win64" ..\.
+"%ProgFilesRoot%\CMake\bin\cmake" -DPNG_STATIC=1 -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 15 Win64" ..\.
 devenv libpng.sln /project "png_static" /Clean
 devenv libpng.sln /project "png_static" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64

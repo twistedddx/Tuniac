@@ -12,4 +12,4 @@
 
 // TODO: reference additional headers your program requires here
 #include <shlwapi.h>
-#include <Commdlg.h>
+#include <strsafe.h>
