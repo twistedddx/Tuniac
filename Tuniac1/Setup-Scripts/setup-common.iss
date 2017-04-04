@@ -4,20 +4,20 @@
 
 #define TuniacWWW 'http://www.tuniac.org'
 
-#define VC14RedistText 'Microsoft Visual C++ 2017 RC'
-#define VC14RedistManual 'http://www.visualstudio.com/downloads/#microsoft-visual-c-redistributable-for-visual-studio-2017-rc'
+#define VC14RedistText 'Microsoft Visual C++ 2017'
+#define VC14RedistManual 'https://www.visualstudio.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'http://download.microsoft.com/download/e/6/6/e66c5871-7afe-4640-a454-786eabe8aae8/vc_redist.x86.exe'
+#define VC14x86Redist 'https://download.microsoft.com/download/7/a/6/7a68af9f-3761-4781-809b-b6df0f56d24c/vc_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
 #define VC14x86RedistdwMinor 10
-#define VC14x86RedistdwBld 24629
+#define VC14x86RedistdwBld 25008
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'http://download.microsoft.com/download/7/2/5/72572684-052f-4aa9-9170-9d40813a87be/vc_redist.x64.exe'
+#define VC14x64Redist 'https://download.microsoft.com/download/8/9/d/89d195e1-1901-4036-9a75-fbe46443fc5a/vc_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 0
-#define VC14x64RedistdwBld 24215
-#define VC14x64RedistSize 14
+#define VC14x64RedistdwMinor 10
+#define VC14x64RedistdwBld 25008
+#define VC14x64RedistSize 15
 
 ;#define VC10RedistText  'Microsoft Visual C++ 2010 SP1'
 ;#define VC10RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=26999'

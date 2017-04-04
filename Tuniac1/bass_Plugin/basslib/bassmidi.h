@@ -1,6 +1,6 @@
 /*
 	BASSMIDI 2.4 C/C++ header file
-	Copyright (c) 2006-2016 Un4seen Developments Ltd.
+	Copyright (c) 2006-2017 Un4seen Developments Ltd.
 
 	See the BASSMIDI.CHM file for more detailed documentation
 */
@@ -186,9 +186,13 @@ typedef struct {
 #define MIDI_EVENT_MIXLEVEL			0x10000
 #define MIDI_EVENT_TRANSPOSE		0x10001
 #define MIDI_EVENT_SYSTEMEX			0x10002
+#define MIDI_EVENT_SPEED			0x10004
 
 #define MIDI_EVENT_END				0
 #define MIDI_EVENT_END_TRACK		0x10003
+
+#define MIDI_EVENT_NOTES			0x20000
+#define MIDI_EVENT_VOICES			0x20001
 
 #define MIDI_SYSTEM_DEFAULT			0
 #define MIDI_SYSTEM_GM1				1
@@ -228,6 +232,7 @@ typedef struct {
 #define BASS_ATTRIB_MIDI_VOICES_ACTIVE 0x12004
 #define BASS_ATTRIB_MIDI_STATE		0x12005
 #define BASS_ATTRIB_MIDI_SRC		0x12006
+#define BASS_ATTRIB_MIDI_KILL		0x12007
 #define BASS_ATTRIB_MIDI_TRACK_VOL	0x12100 // + track #
 
 // Additional tag type
@@ -235,6 +240,15 @@ typedef struct {
 
 // BASS_ChannelGetLength/GetPosition/SetPosition mode
 #define BASS_POS_MIDI_TICK		2		// tick position
+
+typedef BOOL (CALLBACK MIDIFILTERPROC)(HSTREAM handle, DWORD track, BASS_MIDI_EVENT *event, BOOL seeking, void *user);
+/* Event filtering callback function.
+handle : MIDI stream handle
+track  : Track containing the event
+event  : The event
+seeking: TRUE = the event is being processed while seeking, FALSE = it is being played
+user   : The 'user' parameter value given when calling BASS_MIDI_StreamSetFilter
+RETURN : TRUE = process the event, FALSE = drop the event */
 
 // BASS_MIDI_FontPack flags
 #define BASS_MIDI_PACK_NOHEAD		1	// don't send a WAV header to the encoder
@@ -247,7 +261,7 @@ typedef struct {
 } BASS_MIDI_DEVICEINFO;
 
 typedef void (CALLBACK MIDIINPROC)(DWORD device, double time, const BYTE *buffer, DWORD length, void *user);
-/* User MIDI input callback function.
+/* MIDI input callback function.
 device : MIDI input device
 time   : Timestamp
 buffer : Buffer containing MIDI data
@@ -269,7 +283,9 @@ DWORD BASSMIDIDEF(BASS_MIDI_StreamEvents)(HSTREAM handle, DWORD mode, const void
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvent)(HSTREAM handle, DWORD chan, DWORD event);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvents)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEventsEx)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events, DWORD start, DWORD count);
+BOOL BASSMIDIDEF(BASS_MIDI_StreamGetPreset)(HSTREAM handle, DWORD chan, BASS_MIDI_FONT *font);
 HSTREAM BASSMIDIDEF(BASS_MIDI_StreamGetChannel)(HSTREAM handle, DWORD chan);
+BOOL BASSMIDIDEF(BASS_MIDI_StreamSetFilter)(HSTREAM handle, BOOL seeking, MIDIFILTERPROC *proc, void *user);
 
 HSOUNDFONT BASSMIDIDEF(BASS_MIDI_FontInit)(const void *file, DWORD flags);
 HSOUNDFONT BASSMIDIDEF(BASS_MIDI_FontInitUser)(const BASS_FILEPROCS *procs, void *user, DWORD flags);
