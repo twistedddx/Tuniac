@@ -7,16 +7,16 @@
 #define VC14RedistText 'Microsoft Visual C++ 2017'
 #define VC14RedistManual 'https://www.visualstudio.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.microsoft.com/download/7/a/6/7a68af9f-3761-4781-809b-b6df0f56d24c/vc_redist.x86.exe'
+#define VC14x86Redist 'https://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
 #define VC14x86RedistdwMinor 10
-#define VC14x86RedistdwBld 25008
+#define VC14x86RedistdwBld 25017
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.microsoft.com/download/8/9/d/89d195e1-1901-4036-9a75-fbe46443fc5a/vc_redist.x64.exe'
+#define VC14x64Redist 'https://download.microsoft.com/download/3/b/f/3bf6e759-c555-4595-8973-86b7b4312927/vc_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
 #define VC14x64RedistdwMinor 10
-#define VC14x64RedistdwBld 25008
+#define VC14x64RedistdwBld 25017
 #define VC14x64RedistSize 15
 
 ;#define VC10RedistText  'Microsoft Visual C++ 2010 SP1'
