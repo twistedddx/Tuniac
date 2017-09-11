@@ -5,11 +5,14 @@
 
 #pragma pack (push, 8)
 
+#define WAVEFORM_SIZE 512  //Sonique visuals expect this size
+#define SPECTRUM_SIZE 256  //Sonique visuals expect this size
+
 typedef struct 
 {
 	unsigned long	MillSec;			// Sonique sets this to the time stamp of end this block of data
-	signed char		Waveform[2][512];	// Sonique sets this to the PCM data being outputted at this time
-	unsigned char	Spectrum[2][256];	// Sonique sets this to a lowfidely version of the spectrum data
+	signed char		Waveform[2][WAVEFORM_SIZE];	// Sonique sets this to the PCM data being outputted at this time
+	unsigned char	Spectrum[2][SPECTRUM_SIZE];	// Sonique sets this to a lowfidely version of the spectrum data
 										//   being outputted at this time
 } VisData;
 
