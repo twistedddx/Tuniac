@@ -3,6 +3,9 @@
 #include "svprenderer.h"
 #include "resource.h"
 
+#define FFT_SIZE (SPECTRUM_SIZE*2)  //256 - FFT second half is not useful to us. So FFT size is twice the size of desired spectrum size.
+#define VISDATA_SIZE WAVEFORM_SIZE  //512
+
 LRESULT CALLBACK SVPRenderer::WndProcStub(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if(uMsg == WM_INITDIALOG)
@@ -352,9 +355,9 @@ SVPRenderer::SVPRenderer(void)
 	m_hDC = NULL;
 	m_glRC = NULL;
 
-	kiss_cfg = kiss_fft_alloc(512,0,NULL,NULL);
-	in_freq_data = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * 512 );
-	out_freq_data = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * 512 );
+	kiss_cfg = kiss_fft_alloc(FFT_SIZE,0,NULL,NULL);
+	in_freq_data = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * FFT_SIZE);
+	out_freq_data = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * FFT_SIZE);
 }
 
 SVPRenderer::~SVPRenderer(void)
@@ -475,7 +478,7 @@ bool	SVPRenderer::Attach(HDC hDC)
 
 		ulOldNumChannels = (unsigned long)m_pHelper->GetVariable(Variable_NumChannels);
 
-		visdata = (float*)_aligned_malloc(512 * ulOldNumChannels * sizeof(float), 16);
+		visdata = (float*)_aligned_malloc(VISDATA_SIZE * ulOldNumChannels * sizeof(float), 16);
 
 	
 		m_LastMove = GetTickCount();
@@ -552,17 +555,17 @@ bool SVPRenderer::RenderVisual(void)
 			}
 
 			ulOldNumChannels = ulNumChannels;
-			visdata = (float*)_aligned_malloc(512 * ulNumChannels * sizeof(float), 16);
+			visdata = (float*)_aligned_malloc(VISDATA_SIZE * ulNumChannels * sizeof(float), 16);
 		}
 
 		vd.MillSec	= (unsigned long)m_pHelper->GetVariable(Variable_PositionMS);
 
-		m_pHelper->GetVisData(visdata, 512 * ulNumChannels);
+		m_pHelper->GetVisData(visdata, VISDATA_SIZE * ulNumChannels);
 
 		if(m_TheVisual->NeedsWaveform())
 		{
 			int sample = 0;
-			for(int x=0; x<512; x++)
+			for(int x=0; x < WAVEFORM_SIZE; x++)
 			{
 				if(ulNumChannels == 1)
 				{
@@ -581,7 +584,7 @@ bool SVPRenderer::RenderVisual(void)
 		{
 			if(ulNumChannels == 1)
 			{
-				for(int d = 0; d < 512; d++)
+				for(int d = 0; d < FFT_SIZE; d++)
 				{
 					in_freq_data[d].r = visdata[d];
 					in_freq_data[d].i = 0;
@@ -589,7 +592,7 @@ bool SVPRenderer::RenderVisual(void)
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
 
 				vd.Spectrum[1][0] = vd.Spectrum[0][0] = min(255,out_freq_data[0].r * 512);
-				for(int p = 1; p < 256; p++)
+				for(int p = 1; p < (SPECTRUM_SIZE); p++)
 				{
 					vd.Spectrum[1][p] = vd.Spectrum[0][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}
@@ -597,7 +600,7 @@ bool SVPRenderer::RenderVisual(void)
 			else
 			{
 				int sample = 0;
-				for(int x=0; x<512; x++)
+				for(int x=0; x < FFT_SIZE; x++)
 				{
 					in_freq_data[x].r = visdata[sample];
 					in_freq_data[x].i = 0;
@@ -605,13 +608,13 @@ bool SVPRenderer::RenderVisual(void)
 				}
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
 				vd.Spectrum[0][0] = min(255,out_freq_data[0].r * 512);
-				for(int p = 1; p < 256; p++)
+				for(int p = 1; p < (SPECTRUM_SIZE); p++)
 				{
 					vd.Spectrum[0][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}
 
 				sample = 0;
-				for(int x=0; x<512; x++)
+				for(int x=0; x < FFT_SIZE; x++)
 				{
 					in_freq_data[x].r = visdata[sample+1];
 					in_freq_data[x].i = 0;
@@ -619,7 +622,7 @@ bool SVPRenderer::RenderVisual(void)
 				}
 				kiss_fft(kiss_cfg, in_freq_data, out_freq_data);
 				vd.Spectrum[1][0] = min(255,out_freq_data[0].r * 512);
-				for(int p = 1; p < 256; p++)
+				for(int p = 1; p < (SPECTRUM_SIZE); p++)
 				{
 					vd.Spectrum[1][p] = min(255,sqrt(pow((((out_freq_data[p].r)/512)*2), 2) + pow((((out_freq_data[p].i)/512)*2), 2)) * 512);
 				}
@@ -904,14 +907,14 @@ bool SVPRenderer::SetActiveVisual(int visindex)
 	vd.MillSec = 0;
 	for(int i=0; i<2; i++)
 	{
-		for(int x = 0; x < 512; x++)
+		for(int x = 0; x < WAVEFORM_SIZE; x++)
 		{
 			vd.Waveform[i][x] = 0;
 		}
 	}
 	for(int i=0; i<2; i++)
 	{
-		for(int x = 0; x < 256; x++)
+		for(int x = 0; x < (SPECTRUM_SIZE); x++)
 		{
 			vd.Spectrum[i][x] = 0;
 		}
