@@ -4,35 +4,22 @@
 
 #define TuniacWWW 'http://www.tuniac.org'
 
-#define VC14RedistText 'Microsoft Visual C++ 2017'
+#define VC14RedistText 'Microsoft Visual C++ 2017 Update 3'
 #define VC14RedistManual 'https://www.visualstudio.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe'
+#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/11100229/78c1e864d806e36f6035d80a0e80399e/VC_redist.x86.exe'
+#define VC14x86RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 10
-#define VC14x86RedistdwBld 25017
+#define VC14x86RedistdwMinor 11
+#define VC14x86RedistdwBld 25325
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.microsoft.com/download/3/b/f/3bf6e759-c555-4595-8973-86b7b4312927/vc_redist.x64.exe'
+#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/11100230/15ccb3f02745c7b206ad10373cbca89b/VC_redist.x64.exe'
+#define VC14x64RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 10
-#define VC14x64RedistdwBld 25017
+#define VC14x64RedistdwMinor 11
+#define VC14x64RedistdwBld 25325
 #define VC14x64RedistSize 15
-
-;#define VC10RedistText  'Microsoft Visual C++ 2010 SP1'
-;#define VC10RedistManual 'http://www.microsoft.com/en-us/download/details.aspx?id=26999'
-
-;#define VC10x86Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe'
-;#define VC10x86RedistdwMajor 10
-;#define VC10x86RedistdwMinor 0
-;#define VC10x86RedistdwBld 40219
-;#define VC10x86RedistSize 9
-           
-;#define VC10x64Redist 'http://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe'
-;#define VC10x64RedistdwMajor 10
-;#define VC10x64RedistdwMinor 0
-;#define VC10x64RedistdwBld 40219
-;#define VC10x64RedistSize 10
 
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'
 #define DXJun2010Text 'DirectX End-User Runtimes (June 2010)'
@@ -96,8 +83,6 @@ Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversi
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing {#DXJun2010XAudioText}...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-;Filename: "{tmp}\vcredist_x86(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-;Filename: "{tmp}\vcredist_x64(2010).exe"; StatusMsg: "Installing Microsoft {#VC10RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Registry]
