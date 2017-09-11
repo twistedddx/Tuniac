@@ -33,48 +33,7 @@ begin
       end;
     end;
   end;
-  
-//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
-//    Result := True;
-//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x86', 'Installed') then begin
-//    Result := True;
-//  end else begin
-//    Result := False;
-//  end;
 end;
-
-//function HasVC10x86Redist: Boolean;
-//var
-//  dwMajor: Cardinal;
-//  dwMinor: Cardinal;
-//  dwBld: Cardinal;
-
-//begin
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MajorVersion', dwMajor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MajorVersion', dwMajor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MinorVersion', dwMinor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'MinorVersion', dwMinor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Bld', dwBld);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Bld', dwBld);
-
-//  Result := False;
-
-//  if (dwMajor >= {#VC10x86RedistdwMajor}) then begin
-//    if (dwMinor >= {#VC10x86RedistdwMinor}) then begin
-//      if(dwBld >= {#VC10x86RedistdwBld}) then begin
-//        Result := True;
-//      end;
-//    end;
-//  end;
-
-//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
-//    Result := True;
-//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86', 'Installed') then begin
-//    Result := True;
-//  end else begin
-//    Result := False;
-//  end;
-//end;
 
 function HasVC14x64Redist: Boolean;
 var
@@ -99,48 +58,7 @@ begin
       end;
     end;
   end;
-
-//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
-//    Result := True;
-//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Installed' ) then begin
-//    Result := True;
-//  end else begin
-//    Result := False;
-//  end;
 end;
-
-//function HasVC10x64Redist: Boolean;
-//var
-//  dwMajor: Cardinal;
-//  dwMinor: Cardinal;
-//  dwBld: Cardinal;
-
-//begin
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MajorVersion', dwMajor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MajorVersion', dwMajor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MinorVersion', dwMinor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'MinorVersion', dwMinor);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Bld', dwBld);
-//  RegQueryDWordValue( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Bld', dwBld);
-
-//  Result := False;
-
-//  if (dwMajor >= {#VC10x64RedistdwMajor}) then begin
-//    if (dwMinor >= {#VC10x64RedistdwMinor}) then begin
-//      if(dwBld >=  {#VC10x64RedistdwBld}) then begin
-//        Result := True;
-//      end;
-//    end;
-//  end;
-
-//  if RegValueExists( HKLM, 'SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
-//    Result := True;
-//  end else if RegValueExists( HKLM, 'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x64', 'Installed') then begin
-//    Result := True;
-//  end else begin
-//    Result := False;
-//  end;
-//end;
 
 //check for direct x 2.7
 function HasDXJun2010: Boolean;
@@ -157,12 +75,10 @@ end;
 
 function IsDownloadRequired: Boolean;
 begin
-  if not HasVC14x86Redist or not HasDXJun2010 then begin //or not HasVC10x86Redist
+  if not HasVC14x86Redist or not HasDXJun2010 then begin
     Result:= True;
   end else if not HasVC14x64Redist and IsWin64 then begin
     Result:= True;
-//  end else if not HasVC10x64Redist and IsWin64 then begin
-//    Result:= True;
   end else begin
     Result := False;
   end;
@@ -175,27 +91,6 @@ begin
   if not HasDXJun2010  then begin
     DownloadString := DownloadString + '{#DXJun2010XAudioText }';
   end;
-
- // if not HasVC10x86Redist or (not HasVC10x64Redist and IsWin64) then begin
- //   if Length(DownloadString) > 0 then begin
- //     DownloadString := DownloadString + ', ';
- //   end;
-
- //   DownloadString := DownloadString + '{#VC10RedistText} Runtime(';
-
- //   if not HasVC10x86Redist then begin
- //     DownloadString := DownloadString + 'x86';
- //     if not HasVC10x64Redist and IsWin64 then begin
- //       DownloadString := DownloadString + '/';
- //     end;
- //   end;
-
- //   if not HasVC10x64Redist and IsWin64 then begin
- //     DownloadString := DownloadString + 'x64';
- //   end;
-
- //   DownloadString := DownloadString + ')';
- // end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
     if Length(DownloadString) > 0 then begin
@@ -229,17 +124,9 @@ begin
     DownloadSize := DownloadSize + {#DXJun2010Size};
   end;
 
-//  if not HasVC10x86Redist then begin
-//    DownloadSize := DownloadSize + {#VC10x86RedistSize};
-//  end;
-
   if not HasVC14x86Redist then begin
     DownloadSize := DownloadSize + {#VC14x86RedistSize};
   end;
-
-//  if not HasVC10x64Redist and IsWin64 then begin
-//    DownloadSize := DownloadSize + {#VC10x64RedistSize};
-//  end;
 
   if not HasVC14x64Redist and IsWin64 then begin
     DownloadSize := DownloadSize + {#VC14x64RedistSize};
@@ -332,7 +219,7 @@ end;
 
 procedure DownloadFiles();
 var
-  URL, FileName: String;
+  URL, URLMIRROR, FileName: String;
 begin
   idpClearFiles;
 
@@ -364,27 +251,19 @@ begin
 
   if not HasVC14x86Redist then begin
     URL := '{#VC14x86Redist}';
+    URLMIRROR := '{#VC14x86RedistMIRROR}';
     FileName := ExpandConstant('{tmp}\vcredist_x86(2015).exe');
     idpAddFile(URL, FileName);
+    idpAddMirror(URL, URLMirror);
   end;      
-
-//  if not HasVC10x86Redist then begin
-//    URL := '{#VC10x86Redist}';
-//    FileName := ExpandConstant('{tmp}\vcredist_x86(2010).exe');
-//    idpAddFile(URL, FileName);
-//  end;
 
   if not HasVC14x64Redist and IsWin64 then begin
     URL := '{#VC14x64Redist}';
+    URLMIRROR := '{#VC14x64RedistMIRROR}';
     FileName := ExpandConstant('{tmp}\vcredist_x64(2015).exe');
     idpAddFile(URL, FileName);
+    idpAddMirror(URL, URLMIRROR);
   end;
- 
-//  if not HasVC10x64Redist and IsWin64 then begin
-//    URL := '{#VC10x64Redist}';
-//    FileName := ExpandConstant('{tmp}\vcredist_x64(2010).exe');
-//    idpAddFile(URL, FileName);
-//  end;
 
   idpDownloadAfter(wpPreparing);
 end;
@@ -417,10 +296,4 @@ begin
       ShellExec('', '{#VC14RedistManual}', '', '', SW_SHOW, ewNoWait, ErrorCode);
     end;
   end;
-
-//  if not HasVC10x86Redist or (not HasVC10x64Redist and IsWin64) then begin
-//    if SuppressibleMsgBox('Visual C++ Redistributable for {#VC10RedistText} is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
-//      ShellExec('', '{#VC10RedistManual}', '', '', SW_SHOW, ewNoWait, ErrorCode);
-//    end;
-//  end;
 end;
