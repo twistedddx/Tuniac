@@ -1,6 +1,6 @@
 /*
 	BASSHLS 2.4 C/C++ header file
-	Copyright (c) 2015 Un4seen Developments Ltd.
+	Copyright (c) 2015-2017 Un4seen Developments Ltd.
 
 	See the BASSHLS.CHM file for more detailed documentation
 */
@@ -27,6 +27,8 @@ extern "C" {
 
 // additional tag type
 #define BASS_TAG_HLS_EXTINF		0x14000 // segment's EXTINF tag : UTF-8 string
+#define BASS_TAG_HLS_STREAMINF	0x14001 // EXT-X-STREAM-INF tag : UTF-8 string
+#define BASS_TAG_HLS_DATE		0x14002 // EXT-X-PROGRAM-DATE-TIME tag : UTF-8 string
 
 // additional BASS_StreamGetFilePosition mode
 #define BASS_FILEPOS_HLS_SEGMENT	0x10000	// segment sequence number
