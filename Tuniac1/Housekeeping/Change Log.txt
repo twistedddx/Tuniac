@@ -1,3 +1,9 @@
+Sep, 2017
+---------
+-Update bass plugins
+-Update VS redist
+-Add VS mirrors in installer
+
 Feb, 2017
 ---------
 -Update bass flac, opus, wv, dsd, midi
