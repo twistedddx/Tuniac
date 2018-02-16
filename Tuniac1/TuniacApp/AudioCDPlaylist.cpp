@@ -142,6 +142,16 @@ unsigned long		CAudioCDPlaylist::GetPlaylistType(void)
 	return PLAYLIST_TYPE_CD;
 }
 
+void				CAudioCDPlaylist::SetPlaylistID(unsigned long ulPlaylistID)
+{
+	m_ulPlaylistID = ulPlaylistID;
+}
+
+unsigned long		CAudioCDPlaylist::GetPlaylistID(void)
+{
+	return m_ulPlaylistID;
+}
+
 bool				CAudioCDPlaylist::SetPlaylistName(LPTSTR szPlaylistName)
 {
 	if(szPlaylistName)
@@ -174,6 +184,23 @@ unsigned long		CAudioCDPlaylist::Next(void)
 	return INVALID_PLAYLIST_INDEX;
 }
 
+bool		CAudioCDPlaylist::CheckFilteredIndex(unsigned long ulIndex)
+{
+	//invalid
+	if (ulIndex == INVALID_PLAYLIST_INDEX)
+			return false;
+
+	//too low
+	if (ulIndex < 0)
+		return false;
+
+	//too high, m_NormalIndexArray/m_RandomIndexArray should be the same length
+	if (ulIndex >= m_TrackList.GetCount())
+		return false;
+
+	return true;
+}
+
 unsigned long		CAudioCDPlaylist::GetNextFilteredIndexForFilteredIndex(unsigned long ulNormalFilteredIndex)
 {
 	if(ulNormalFilteredIndex < (GetNumItems()-1))
@@ -187,11 +214,6 @@ unsigned long		CAudioCDPlaylist::GetNextFilteredIndexForFilteredIndex(unsigned l
 IPlaylistEntry	*	CAudioCDPlaylist::GetActiveEntry(void)
 {
 	return m_TrackList[m_ActiveItem];
-}
-
-IPlaylistEntry *	CAudioCDPlaylist::GetEntryAtIndex(unsigned long Index)
-{
-	return m_TrackList[Index];
 }
 
 unsigned long		CAudioCDPlaylist::GetActiveFilteredIndex(void)

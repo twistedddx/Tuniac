@@ -164,10 +164,19 @@ public:
 	struct
 	{
 		bool bNow;
-		unsigned long ulAt;
+		unsigned long ulPlaylistID;
+		unsigned long ulEntryID;
 	}							m_SoftPause;
 	IndexArray					m_PlaySelected;
-	IndexArray					m_FutureMenu;
+
+
+	typedef struct
+	{
+		unsigned long		m_FutureItemPlaylistID;
+		unsigned long		m_FutureItemEntryID;
+	} FutureEntry;
+
+	Array<FutureEntry, 20>				m_FutureMenu;
 
 	//int								m_iCPUCount;
 	DWORD								m_dwWinVer;
@@ -204,8 +213,8 @@ public:
 	HMENU				GetFutureMenu(void);
 	IPlaylistEntry *	GetFuturePlaylistEntry(int iFromCurrent);
 	unsigned long		GetFuturePlaylistEntryID(int iFromCurrent);
-	void				BuildFuturePlaylistArray(void);
-	void				RebuildFutureMenu(void);
+	bool				BuildFuturePlaylistArray(void);
+	bool				RebuildFutureMenu(void);
 
 	void				UpdateState(void);
 	void				UpdateTitles(void);

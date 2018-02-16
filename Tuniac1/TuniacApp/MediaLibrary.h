@@ -46,7 +46,7 @@ typedef struct
 {
 	unsigned long Version;
 	unsigned long NumEntries;
-	unsigned long PauseAt;
+	unsigned long PauseAt; //obsolete, moved to pl db since pl 0.8
 } MLDiskHeader;
 
 class CMediaLibrary  

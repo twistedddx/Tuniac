@@ -42,8 +42,8 @@ public:
 	CMediaLibraryPlaylistEntry(LibraryEntry * pIPE);
 	~CMediaLibraryPlaylistEntry(void);
 
-	unsigned long GetEntryID(void);
-	void SetEntryID(unsigned long ulEntryID);
+	unsigned long	GetEntryID(void);
+	void			SetEntryID(unsigned long ulEntryID);
 
 	bool			IsDirty(void);
 

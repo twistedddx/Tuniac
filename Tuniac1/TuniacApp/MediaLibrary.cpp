@@ -322,9 +322,9 @@ bool CMediaLibrary::AddStreamToLibrary(LPTSTR szURL)
 	unsigned long ulPlaylistCount = tuniacApp.m_PlaylistManager.GetNumPlaylists();
 	for(unsigned long i = 0; i < ulPlaylistCount; i++)
 	{
-		if(StrCmpI(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i)->GetPlaylistName(), L"Streams") == 0)
+		if(StrCmpI(tuniacApp.m_PlaylistManager.GetPlaylistByIndex(i)->GetPlaylistName(), L"Streams") == 0)
 		{
-			IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(i);
+			IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(i);
 			if(pPlaylist)
 			{
 				((IPlaylistEX *)pPlaylist)->AddEntryArray(playlistEntries);
@@ -794,14 +794,15 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 	}
 	else
 	{
-		tuniacApp.m_SoftPause.ulAt = MLDH.PauseAt;
+		//removed since pl 0.8
+		//tuniacApp.m_SoftPause.ulEntryID = MLDH.PauseAt;
 		
-
-		unsigned long	TempID;
+		unsigned long	TempPlaylistID;
+		unsigned long	TempEntryID;
 
 		for(unsigned long x = 0; x < MLDH.NumEntries; x++)
 		{
-			ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
+			ReadFile(hLibraryFile, &TempEntryID, sizeof(unsigned long), &BytesRead, NULL);
 			if(BytesRead != sizeof(unsigned long))
 			{
 				//if (tuniacApp.m_LogWindow)
@@ -873,7 +874,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-				pIPE->SetEntryID(TempID);
+				pIPE->SetEntryID(TempEntryID);
 				m_MediaLibrary.AddTail(pIPE);
 			}
 			else if (MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION07)
@@ -933,7 +934,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-				pIPE->SetEntryID(TempID);
+				pIPE->SetEntryID(TempEntryID);
 				m_MediaLibrary.AddTail(pIPE);
 			}
 			else if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION06)
@@ -993,7 +994,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-				pIPE->SetEntryID(TempID);
+				pIPE->SetEntryID(TempEntryID);
 				m_MediaLibrary.AddTail(pIPE);	
 			}
 			else if(MLDH.Version == TUNIAC_MEDIALIBRARY_VERSION05)
@@ -1053,7 +1054,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
-				pIPE->SetEntryID(TempID);
+				pIPE->SetEntryID(TempEntryID);
 				m_MediaLibrary.AddTail(pIPE);	
 			}
 			else
@@ -1075,7 +1076,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 					break;
 				}
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&MLE);
-				pIPE->SetEntryID(TempID);
+				pIPE->SetEntryID(TempEntryID);
 				m_MediaLibrary.AddTail(pIPE);	
 			}
 
@@ -1102,7 +1103,8 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 			{
 				for(unsigned long x = 0; x < ulQueueSize; x++)
 				{
-					ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
+					ReadFile(hLibraryFile, &TempPlaylistID, sizeof(unsigned long), &BytesRead, NULL);
+					ReadFile(hLibraryFile, &TempEntryID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))
 					{
 						//if (tuniacApp.m_LogWindow)
@@ -1117,7 +1119,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 						bOK = false;
 						break;
 					}
-					tuniacApp.m_Queue.Append(TempID);
+					tuniacApp.m_Queue.Append(TempPlaylistID, TempEntryID);
 				}
 			}
 
@@ -1139,7 +1141,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 			{
 				for(unsigned long x = 0; x < ulHistorySize; x++)
 				{
-					ReadFile(hLibraryFile, &TempID, sizeof(unsigned long), &BytesRead, NULL);
+					ReadFile(hLibraryFile, &TempEntryID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))
 					{
 						//if (tuniacApp.m_LogWindow)
@@ -1155,7 +1157,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 						break;
 					}
 
-					tuniacApp.m_History.AddEntryID(TempID);
+					tuniacApp.m_History.AddEntryID(TempEntryID);
 				}
 			}
 		}
@@ -1254,7 +1256,7 @@ bool CMediaLibrary::SaveMediaLibrary(LPTSTR szLibraryFolder)
 	}
 	MLDH.Version			= TUNIAC_MEDIALIBRARY_VERSION;
 	MLDH.NumEntries			= m_MediaLibrary.GetCount();
-	MLDH.PauseAt			= tuniacApp.m_SoftPause.ulAt;
+	MLDH.PauseAt			= 0; //obsolete, moved to pl db since pl 0.8
 
 	WriteFile(hLibraryFile, &MLDH, sizeof(MLDH), &BytesWritten, NULL);
 	if(BytesWritten != sizeof(MLDH))
@@ -1334,9 +1336,12 @@ bool CMediaLibrary::SaveMediaLibrary(LPTSTR szLibraryFolder)
 			{
 				for(unsigned long x = 0; x < ulQueueSize; x++)
 				{
+					unsigned long ulPlaylistID = tuniacApp.m_Queue.GetPlaylistIDAtIndex(x);
 					unsigned long ulEntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(x);
-					if(ulEntryID == INVALID_PLAYLIST_INDEX)
+					if(ulPlaylistID == INVALID_PLAYLIST_INDEX || ulEntryID == INVALID_PLAYLIST_INDEX)
 						continue;
+
+					WriteFile(hLibraryFile, &ulPlaylistID, sizeof(unsigned long), &BytesWritten, NULL);
 					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 
 					if(BytesWritten != sizeof(unsigned long))

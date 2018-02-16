@@ -196,7 +196,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							if(tuniacApp.m_Preferences.GetArtOnSelection())
 							{
 								LPNMITEMACTIVATE lpnmitem	= (LPNMITEMACTIVATE)lParam;
-								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtIndex(lpnmitem->iItem);
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtNormalFilteredIndex(lpnmitem->iItem);
 								if(pIPE)
 									tuniacApp.GetArt((LPTSTR)pIPE->GetField(FIELD_URL));
 							}
@@ -209,7 +209,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 
 							if(lpnmitem->iItem != -1)
 							{
-								tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulActivePlaylistIndex);
+								tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(m_ulActivePlaylistIndex);
 								if(m_pCDPlaylist->SetActiveFilteredIndex(lpnmitem->iItem))
 								{
 									tuniacApp.PlayEntry(m_pCDPlaylist->GetActiveEntry(), true, false);
@@ -225,7 +225,7 @@ LRESULT CALLBACK			CAudioCDSourceView::WndProc(HWND hDlg, UINT message, WPARAM w
 							NMLVDISPINFO * pDispInfo = (NMLVDISPINFO *) lParam;
 							if(pDispInfo->item.iItem != -1)
 							{
-								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtIndex(pDispInfo->item.iItem);
+								IPlaylistEntry * pIPE = m_pCDPlaylist->GetEntryAtNormalFilteredIndex(pDispInfo->item.iItem);
 
 								if(pIPE)
 								{
@@ -311,7 +311,7 @@ bool CAudioCDSourceView::EditTrackInfo()
 
 bool CAudioCDSourceView::SetPlaylistSource(unsigned long ulPlaylistIndex)
 {
-	IPlaylist * t = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulPlaylistIndex);
+	IPlaylist * t = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(ulPlaylistIndex);
 
 	if(t->GetPlaylistType() == PLAYLIST_TYPE_CD)
 	{

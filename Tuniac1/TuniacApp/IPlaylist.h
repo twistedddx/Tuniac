@@ -106,11 +106,16 @@ public:
 	virtual unsigned long		GetFlags(void)								= 0;
 	virtual unsigned long		GetPlaylistType(void)						= 0;
 
+	virtual void				SetPlaylistID(unsigned long szPlaylistID)	= 0;
+	virtual unsigned long		GetPlaylistID(void)							= 0;
+
 	virtual bool				SetPlaylistName(LPTSTR szPlaylistName)		= 0;
 	virtual LPTSTR				GetPlaylistName(void)						= 0;
 
 	virtual unsigned long		Previous(void)								= 0;
 	virtual unsigned long		Next(void)									= 0;
+
+	virtual bool				CheckFilteredIndex(unsigned long ulFilteredIndex) = 0;
 
 	virtual unsigned long		GetActiveFilteredIndex(void)										= 0;
 	virtual bool				SetActiveFilteredIndex(unsigned long ulFilteredIndex)				= 0;
@@ -169,7 +174,7 @@ public:
 
 	virtual bool				Sort(unsigned long ulSortBy)					= 0;
 
-	virtual bool				AddEntryArray(EntryArray & entryArray)			= 0;
+	virtual bool				AddEntryArray(EntryArray & entryArray, bool bApplyFilter = true)			= 0;
 
 	virtual bool				DeleteRealIndexArray(IndexArray &	indexArray) = 0;
 	virtual bool				DeleteNormalFilteredIndexArray(IndexArray &	indexArray)							= 0;

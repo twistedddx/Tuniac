@@ -1,3 +1,11 @@
+Feb, 2018
+---------
+-allow soft pause and queue's across playlists
+(add playlist id for playlists, store playlist id for entries in soft pause and queues, pl db 0.8 to store playlist id in various areas)
+-optimize startup to not rebuild playlists needlessly and other general code cleanups
+-add button to launch tuniac.org in about window
+-bass and basshls update
+
 Sep, 2017
 ---------
 -Update bass plugins

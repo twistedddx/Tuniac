@@ -326,6 +326,10 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(iItemHit > 0 && GetVisiblePlaylistIndex() < iItemHit)
 								iItemHit--;
 
+							//last spot gives -1 so correct
+							if (iItemHit == -2)
+								iItemHit = tuniacApp.m_PlaylistManager.m_StandardPlaylists.GetCount();
+
 							tuniacApp.m_PlaylistManager.MoveStandardPlaylist(GetVisiblePlaylistIndex(), iItemHit);
 							UpdateList();
 							ShowPlaylistAtIndex(iItemHit);
@@ -724,13 +728,13 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 							for(unsigned long i = m_DeleteArray.GetCount(); i > 0; i--)
 							{
-								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_DeleteArray[i - 1]))
+								if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistByIndex(m_DeleteArray[i - 1]))
 								{
 									CCoreAudio::Instance()->Reset();
-									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+									tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(0);
 								}
 
-								if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(m_DeleteArray[i - 1]))
+								if(tuniacApp.m_PlaylistManager.DeletePlaylistByIndex(m_DeleteArray[i - 1]))
 								{
 									if(m_ulVisiblePlaylistIndex == m_DeleteArray[i - 1])
 									{
@@ -753,7 +757,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
 							if(iSel >= 0)
 							{
-								if(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel)->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
+								if(tuniacApp.m_PlaylistManager.GetPlaylistByIndex(iSel)->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
 									ListView_EditLabel(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), iSel);
 							}
 						}
@@ -770,13 +774,13 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(IDNO == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
 								break;
 
-							if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel))
+							if(tuniacApp.m_PlaylistManager.GetActivePlaylist() == tuniacApp.m_PlaylistManager.GetPlaylistByIndex(iSel))
 							{
 									CCoreAudio::Instance()->Reset();
-									tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+									tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(0);
 							}
 
-							if(tuniacApp.m_PlaylistManager.DeletePlaylistAtIndex(iSel))
+							if(tuniacApp.m_PlaylistManager.DeletePlaylistByIndex(iSel))
 							{
 								if(m_ulVisiblePlaylistIndex == iSel)
 								{
@@ -799,7 +803,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 							CCoreAudio::Instance()->Reset();
 							ShowPlaylistAtIndex(iSel);
-							tuniacApp.m_PlaylistManager.SetActivePlaylist(m_ulVisiblePlaylistIndex);
+							tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(m_ulVisiblePlaylistIndex);
 							if(tuniacApp.m_PlaylistManager.GetActivePlaylist())
 								tuniacApp.m_PlaylistManager.GetActivePlaylist()->SetActiveFilteredIndex(0);
 
@@ -888,7 +892,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					case ID_COPYTO:
 						{
 							IPlaylist * pSource = GetVisiblePlaylist();
-							IPlaylist * pDest = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_AltDragDest);
+							IPlaylist * pDest = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(m_AltDragDest);
 							if(pSource->GetFlags() & PLAYLIST_FLAGS_EXTENDED && pDest->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IPlaylistEntry *	pPE = NULL;
@@ -913,7 +917,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					case ID_REMOVEFROM:
 						{
 							IPlaylist * pSource = GetVisiblePlaylist();
-							IPlaylist * pDest = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_AltDragDest);
+							IPlaylist * pDest = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(m_AltDragDest);
 							if(pSource->GetFlags() & PLAYLIST_FLAGS_EXTENDED && pDest->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 							{
 								IndexArray IA;
@@ -938,7 +942,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
 							if(iSel >= 0)
 							{
-								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel);
+								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(iSel);
 								if(pPlaylist)
 								{
 									if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -953,7 +957,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							int iSel = ListView_GetSelectionMark(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR));
 							if(iSel >= 0)
 							{
-								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(iSel);
+								IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(iSel);
 								if(pPlaylist)
 								{
 									if(pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
@@ -1081,7 +1085,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								int x = pDispInfo->item.iItem;
 
-								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(x);
 
 								if(pList)
 								{
@@ -1104,7 +1108,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								int x = pDispInfo->item.iItem;
 
-								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(x);
 								if(pList)
 								{
 									if(pList->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
@@ -1128,7 +1132,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							{
 								int x = pDispInfo->item.iItem;
 
-								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+								IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(x);
 								if(pList)
 								{
 									if(pList->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
@@ -1221,7 +1225,7 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 
 		case WM_RENAMEITEM:
 			{
-				if(tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(lParam)->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
+				if(tuniacApp.m_PlaylistManager.GetPlaylistByIndex(lParam)->GetFlags() & PLAYLIST_FLAGS_CANRENAME)
 				{
 					ListView_EditLabel(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), lParam);
 				}
@@ -1299,7 +1303,9 @@ IPlaylist * CSourceSelectorWindow::GetPlaylistFromPoint(LPPOINT lpPoint)
 	if(x == -1)
 		return NULL;
 
-	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(x);
+	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(x);
+	if (x == INVALID_PLAYLIST_INDEX)
+		int x = 2;
 	return pPlaylist;
 }
 
@@ -1323,7 +1329,7 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 
 	m_ulVisiblePlaylistIndex = ulIndex;
 
-	IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(ulIndex);
+	IPlaylist * pList = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(ulIndex);
 	if(pList)
 	{
 		switch(pList->GetPlaylistType())
@@ -1378,7 +1384,7 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 
 IPlaylist	*	CSourceSelectorWindow::GetVisiblePlaylist()
 {
-	return tuniacApp.m_PlaylistManager.GetPlaylistAtIndex(m_ulVisiblePlaylistIndex);
+	return tuniacApp.m_PlaylistManager.GetPlaylistByIndex(m_ulVisiblePlaylistIndex);
 }
 
 unsigned long	CSourceSelectorWindow::GetVisiblePlaylistIndex()

@@ -32,7 +32,14 @@
 class CPlayQueue
 {
 protected:
-	IndexArray m_Queue;
+
+	typedef struct
+	{
+		unsigned long		m_QueueItemPlaylistID;
+		unsigned long		m_QueueItemEntryID;
+	} QueueEntry;
+
+	Array<QueueEntry, 20>				m_Queue;
 
 public:
 	CPlayQueue(void);
@@ -40,12 +47,14 @@ public:
 
 	unsigned long		GetCount(void);
 
+	unsigned long		GetPlaylistIDAtIndex(unsigned long ulIndex);
 	unsigned long		GetEntryIDAtIndex(unsigned long ulIndex);
 
-	bool				Prepend(unsigned long ulEntryID);
-	bool				Append(unsigned long ulEntryID);
+	bool				Prepend(unsigned long ulPlaylistID, unsigned long ulEntryID);
+	bool				Append(unsigned long ulPlaylistID, unsigned long ulEntryID);
 
 	bool				Remove(unsigned long ulIndex);
+	bool				RemovePlaylistID(unsigned long ulPlaylistID);
 	bool				RemoveEntryID(unsigned long ulEntryID);
 	void				Clear(void);
 };

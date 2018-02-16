@@ -39,6 +39,16 @@ unsigned long		CPlayQueue::GetCount(void)
 	return m_Queue.GetCount();
 }
 
+unsigned long		CPlayQueue::GetPlaylistIDAtIndex(unsigned long ulIndex)
+{
+	if (ulIndex == INVALID_PLAYLIST_INDEX)
+		return INVALID_PLAYLIST_INDEX;
+
+	if (ulIndex > m_Queue.GetCount())
+		return INVALID_PLAYLIST_INDEX;
+	return m_Queue[ulIndex].m_QueueItemPlaylistID;
+}
+
 unsigned long		CPlayQueue::GetEntryIDAtIndex(unsigned long ulIndex)
 {
 	if (ulIndex == INVALID_PLAYLIST_INDEX)
@@ -46,19 +56,27 @@ unsigned long		CPlayQueue::GetEntryIDAtIndex(unsigned long ulIndex)
 
 	if (ulIndex > m_Queue.GetCount())
 		return INVALID_PLAYLIST_INDEX;
-	return m_Queue[ulIndex];
+	return m_Queue[ulIndex].m_QueueItemEntryID;
 }
 
-bool				CPlayQueue::Prepend(unsigned long ulEntryID)
+bool				CPlayQueue::Prepend(unsigned long ulPlaylistID, unsigned long ulEntryID)
 {
-	m_Queue.AddHead(ulEntryID);
+	QueueEntry QE;
+	QE.m_QueueItemPlaylistID = ulPlaylistID;
+	QE.m_QueueItemEntryID = ulEntryID;
+
+	m_Queue.AddHead(QE);
 	tuniacApp.SetStatusPlayMode();
 	return true;
 }
 
-bool				CPlayQueue::Append(unsigned long ulEntryID)
+bool				CPlayQueue::Append(unsigned long ulPlaylistID, unsigned long ulEntryID)
 {
-	m_Queue.AddTail(ulEntryID);
+	QueueEntry QE;
+	QE.m_QueueItemPlaylistID = ulPlaylistID;
+	QE.m_QueueItemEntryID = ulEntryID;
+
+	m_Queue.AddTail(QE);
 	tuniacApp.SetStatusPlayMode();
 	return true;
 }
@@ -73,14 +91,14 @@ bool				CPlayQueue::Remove(unsigned long ulIndex)
 	return true;
 }
 
-bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
+bool				CPlayQueue::RemovePlaylistID(unsigned long ulPlaylistID)
 {
-	if (ulEntryID == INVALID_PLAYLIST_INDEX)
+	if (ulPlaylistID == INVALID_PLAYLIST_INDEX)
 		return false;
 
-	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
+	for (unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
-		if(m_Queue[i] == ulEntryID)
+		if (m_Queue[i].m_QueueItemPlaylistID == ulPlaylistID)
 		{
 			m_Queue.RemoveAt(i);
 			tuniacApp.SetStatusPlayMode();
@@ -90,6 +108,22 @@ bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 	return false;
 }
 
+bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
+{
+	if (ulEntryID == INVALID_PLAYLIST_INDEX)
+		return false;
+
+	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
+	{
+		if(m_Queue[i].m_QueueItemEntryID == ulEntryID)
+		{
+			m_Queue.RemoveAt(i);
+			tuniacApp.SetStatusPlayMode();
+			return true;
+		}
+	}
+	return false;
+}
 
 void				CPlayQueue::Clear(void)
 {
