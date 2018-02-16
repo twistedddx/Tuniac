@@ -12,8 +12,7 @@
 #endif
 #define IDC_STATIC      (-1)
 
-#include "winresrc.h"
-
+#include "winresrc.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -175,12 +174,10 @@ BEGIN
     COMBOBOX        IDC_FORMATTING_PLUGINFORMAT,12,60,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "History and Future list format:",-1,12,81,100,8
     COMBOBOX        IDC_FORMATTING_LISTFORMAT,12,90,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-
     LTEXT           "Play control line 1:",-1,12,111,100,8
     COMBOBOX        IDC_FORMATTING_PLAYLINE1FORMAT,12,120,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Play control line 2:",-1,12,141,100,8
     COMBOBOX        IDC_FORMATTING_PLAYLINE2FORMAT,12,150,210,70,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-
     PUSHBUTTON      "Help on tokens",IDC_FORMATTING_FORMATSTRING_HELP,122,180,100,14
 END
 
@@ -413,6 +410,7 @@ CAPTION "About Tuniac"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,202,119,50,14
+    PUSHBUTTON      "tuniac.org",IDC_ABOUT_TUNIACORG,140,119,50,14
     ICON            IDI_TUNIAC,IDC_STATIC,23,12,20,20,SS_CENTERIMAGE
     LTEXT           "Tuniac 1.0",IDC_ABOUTBOXTUNIAC_TEXT,61,14,107,30
     LTEXT           "Developed by \nTony Million, Brett Hoyle, Blur, Mike Vierya, Daniel, Brice and RA",IDC_ABOUTBOXDEV_TEXT,7,46,245,16
@@ -757,7 +755,7 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "Home",                        40008
+        MENUITEM "Home",                        ID_FILE_FORCESAVEMEDIALIBRARY
     END
     POPUP "&Help"
     BEGIN
