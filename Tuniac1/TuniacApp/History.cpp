@@ -141,7 +141,7 @@ bool		CHistory::PlayHistoryIndex(unsigned long ulIndex)
 	}
 	if(pIPE == NULL)
 	{
-		tuniacApp.m_PlaylistManager.SetActivePlaylist(0);
+		tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(0);
 		tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 		pIPE = tuniacApp.m_MediaLibrary.GetEntryByEntryID(ulEntryID);
 	}

@@ -108,9 +108,9 @@ Cannot open include file: 'GL/glew.h'
 
 6)For TuniacApp
 
-6a)You need nasm 2.13.01 win64 zip.
+6a)You need nasm 2.13.03 win64 zip.
 http://www.nasm.us/
-http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/win64/nasm-2.13.01-win64.zip
+http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/win64/nasm-2.13.03-win64.zip
 
 Put nasm.exe in
 C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin

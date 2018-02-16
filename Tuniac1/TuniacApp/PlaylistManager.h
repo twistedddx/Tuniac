@@ -38,6 +38,8 @@ protected:
 	HANDLE						m_hThread;
 	unsigned long				m_dwThreadID;
 
+	unsigned long				m_ulPlaylistID;
+
 	static unsigned long __stdcall PMThreadStub(void * in);
 	unsigned long PMThreadProc(void);
 
@@ -72,17 +74,25 @@ public:
 
 	unsigned long	GetNumPlaylists(void);
 
-	IPlaylist *		GetPlaylistAtIndex(unsigned long ulIndex);
+	IPlaylist *		GetPlaylistByIndex(unsigned long ulIndex);
+	IPlaylist *		GetPlaylistByID(unsigned long ulID);
+
+	unsigned long	GetPlaylistIndexByID(unsigned long ulID);
+	unsigned long	GetPlaylistIDByIndex(unsigned long ulIndex);
+
 	IPlaylist *		GetActivePlaylist(void);
 	unsigned long	GetActivePlaylistIndex(void);
+	unsigned long	GetActivePlaylistID(void);
+
 
 	bool			SetActiveByEntry(IPlaylistEntry * pIPE);
-	bool			SetActivePlaylist(unsigned long ulPlaylistNumber);
-
+	bool			SetActivePlaylistByIndex(unsigned long ulIndex);
+	bool			SetActivePlaylistByID(unsigned long ulID);
 
 	bool			CreateNewStandardPlaylist(LPTSTR szName);
 	bool			CreateNewStandardPlaylistWithIDs(LPTSTR szName, EntryArray & newIDs);
 	bool			MoveStandardPlaylist(unsigned long ulIndex, unsigned long ulNewIndex);
 
-	bool			DeletePlaylistAtIndex(unsigned long ulPlaylistNumber);
+	bool			DeletePlaylistByIndex(unsigned long ulIndex);
+	bool			DeletePlaylistByID(unsigned long ulID);
 };

@@ -324,6 +324,16 @@ unsigned long		CBasePlaylist::GetPlaylistType(void)
 	return PLAYLIST_TYPE_UNKNOWN;
 }
 
+void				CBasePlaylist::SetPlaylistID(unsigned long ulPlaylistID)
+{
+	m_ulPlaylistID = ulPlaylistID;
+}
+
+unsigned long		CBasePlaylist::GetPlaylistID(void)
+{
+	return m_ulPlaylistID;
+}
+
 bool				CBasePlaylist::SetPlaylistName(LPTSTR szPlaylistName)
 {
 	if(szPlaylistName)
@@ -433,10 +443,24 @@ unsigned long		CBasePlaylist::Next(void)
 
 	if (tuniacApp.m_Queue.GetCount())
 	{
-		unsigned long ulFilteredIndex = GetFilteredIndexforEntryID(tuniacApp.m_Queue.GetEntryIDAtIndex(0));
-		//check the queue is for a valid file
-		if(CheckFilteredIndex(ulFilteredIndex))
-			return ulFilteredIndex;
+		unsigned long ulPlaylistID = tuniacApp.m_Queue.GetPlaylistIDAtIndex(0);
+		IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByID(ulPlaylistID);
+		if (pPlaylist)
+		{
+			if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
+			{
+				unsigned long ulEntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(0);
+				unsigned long ulFilteredIndex = ((IPlaylistEX *)pPlaylist)->GetFilteredIndexforEntryID(ulEntryID);
+				if (pPlaylist->CheckFilteredIndex(ulFilteredIndex))
+				{
+					if (ulPlaylistID != GetPlaylistID())
+						tuniacApp.m_PlaylistManager.SetActivePlaylistByID(ulPlaylistID);
+
+					return ulFilteredIndex;
+				}
+			}
+		}
+
 	}
 
 	unsigned long ulActiveFilteredIndex = GetActiveFilteredIndex();
@@ -1172,7 +1196,7 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 }
 
 
-bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
+bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray, bool bApplyFilter)
 {
 	PlaylistEntry PE;
 
@@ -1184,7 +1208,8 @@ bool				CBasePlaylist::AddEntryArray(EntryArray & entryArray)
 		m_PlaylistArray.AddTail(PE);
 	}
 
-	ApplyFilter();
+	if(bApplyFilter)
+		ApplyFilter();
 	return true;
 }
 

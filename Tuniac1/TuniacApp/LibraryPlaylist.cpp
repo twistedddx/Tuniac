@@ -31,6 +31,7 @@
 
 CLibraryPlaylist::CLibraryPlaylist(void)
 {
+	m_ulPlaylistID = 0;
 	StringCchCopy(m_szPlaylistName, 128, TEXT("Media Library"));
 }
 
