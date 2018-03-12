@@ -193,6 +193,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if (!m_PlaylistManager.Initialize(m_szLibraryFolder))
 		return false;
 
+	//had to wait for playlists to be created to load history.
+	tuniacApp.m_History.RebuildHistoryMenu();
+
 	IWindow * t;
 
 	//create the main medialibrary window	
@@ -1610,7 +1613,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 									{
 										if(m_MediaLibrary.GetCount() > ulMLOldCount)
 										{
-											m_PlaylistManager.SetActivePlaylistByIndex(0);
+											//m_PlaylistManager.SetActivePlaylistByIndex(0);
 											for(unsigned long i = ulMLOldCount; i < m_MediaLibrary.GetCount(); i++)
 											{
 												m_Queue.Append(0, m_MediaLibrary.GetEntryIDByIndex(i));
@@ -3072,11 +3075,11 @@ bool			CTuniacApp::BuildFuturePlaylistArray(void)
 				{
 					ulPlaylistID = tuniacApp.m_Queue.GetPlaylistIDAtIndex(i);
 					pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByID(ulPlaylistID);
-					pPlaylistEX = (IPlaylistEX *)pPlaylist;
 					if (pPlaylist)
 					{
 						if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 						{
+							pPlaylistEX = (IPlaylistEX *)pPlaylist;
 							unsigned long ulEntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(i);
 							if (pPlaylistEX->GetFilteredIndexforEntryID(ulEntryID) != INVALID_PLAYLIST_INDEX)
 							{
@@ -3439,7 +3442,7 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 				if (pPlaylist->GetFlags() & PLAYLIST_FLAGS_EXTENDED)
 				{
 					//add history
-					m_History.AddEntryID(pIPE->GetEntryID());
+					m_History.AddHistoryItem(pPlaylist->GetPlaylistID(), pIPE->GetEntryID());
 
 					unsigned long ulIndex = pPlaylist->GetActiveNormalFilteredIndex();
 					//remove playselected

@@ -1,8 +1,14 @@
+Mar, 2018
+---------
+-add playlist id to history menu so history keeps track of where a song was played from, instead of just playing from ML playlist.
+
 Feb, 2018
 ---------
 -allow soft pause and queue's across playlists
 (add playlist id for playlists, store playlist id for entries in soft pause and queues, pl db 0.8 to store playlist id in various areas)
--optimize startup to not rebuild playlists needlessly and other general code cleanups
+-optimize startup to not rebuild playlists needlessly
+-other general code cleanups
+(fixes future queue bugs, fixes highlight of active playlist after move/delete etc, fixes loading of soft pause)
 -add button to launch tuniac.org in about window
 -bass and basshls update
 

@@ -33,27 +33,39 @@
 class CHistory
 {
 protected:
-	HMENU						m_hMenu;
-	IndexArray					m_History;
+	HMENU						m_hHistoryMenu;
+	typedef struct
+	{
+		unsigned long		m_HistoryItemPlaylistID;
+		unsigned long		m_HistoryItemEntryID;
+	} HistoryEntry;
+
+	Array<HistoryEntry, 10>				m_History;
 
 public:
 	CHistory(void);
 	~CHistory(void);
 	
-	bool		Initialize();
-	bool		Shutdown();
+	bool			Initialize();
+	bool			Shutdown();
 
-	void		AddEntryID(unsigned long ulEntryID);
-	
-	void		RebuildMenuBase(void);
+	void			RebuildMenuBase(void);
+	void			PopupMenu(int x, int y);
 
-	bool		RemoveEntryID(unsigned long ulEntryID);
-	void		Clear(void);
-	
-	void		PopupMenu(int x, int y);
-	bool		PlayHistoryIndex(unsigned long ulIndex);
-	unsigned long GetHistoryEntryID(unsigned long ulIndex);
+	void			RebuildHistoryMenu(void);
+
+	bool			PlayHistoryIndex(unsigned long ulIndex);
 
 	unsigned long	GetCount(void);
 
+	void			InitAddHistoryItem(unsigned long ulPlaylistID, unsigned long ulEntryID);
+	void			AddHistoryItem(unsigned long ulPlaylistID, unsigned long ulEntryID);
+	
+	unsigned long	GetPlaylistIDAtIndex(unsigned long ulIndex);
+	unsigned long	GetEntryIDAtIndex(unsigned long ulIndex);
+
+	void			RemovePlaylistID(unsigned long ulPlaylistID);
+	void			RemoveEntryID(unsigned long ulEntryID);
+
+	void			Clear(void);
 };

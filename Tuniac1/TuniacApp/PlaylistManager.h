@@ -75,7 +75,7 @@ public:
 	unsigned long	GetNumPlaylists(void);
 
 	IPlaylist *		GetPlaylistByIndex(unsigned long ulIndex);
-	IPlaylist *		GetPlaylistByID(unsigned long ulID);
+	IPlaylist *		GetPlaylistByID(unsigned long ulPlaylistID);
 
 	unsigned long	GetPlaylistIndexByID(unsigned long ulID);
 	unsigned long	GetPlaylistIDByIndex(unsigned long ulIndex);

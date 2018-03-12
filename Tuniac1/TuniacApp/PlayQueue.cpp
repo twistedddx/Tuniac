@@ -91,10 +91,10 @@ bool				CPlayQueue::Remove(unsigned long ulIndex)
 	return true;
 }
 
-bool				CPlayQueue::RemovePlaylistID(unsigned long ulPlaylistID)
+void				CPlayQueue::RemovePlaylistID(unsigned long ulPlaylistID)
 {
 	if (ulPlaylistID == INVALID_PLAYLIST_INDEX)
-		return false;
+		return;
 
 	for (unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
@@ -102,16 +102,14 @@ bool				CPlayQueue::RemovePlaylistID(unsigned long ulPlaylistID)
 		{
 			m_Queue.RemoveAt(i);
 			tuniacApp.SetStatusPlayMode();
-			return true;
 		}
 	}
-	return false;
 }
 
-bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
+void				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 {
 	if (ulEntryID == INVALID_PLAYLIST_INDEX)
-		return false;
+		return;
 
 	for(unsigned long i = 0; i < m_Queue.GetCount(); i++)
 	{
@@ -119,10 +117,8 @@ bool				CPlayQueue::RemoveEntryID(unsigned long ulEntryID)
 		{
 			m_Queue.RemoveAt(i);
 			tuniacApp.SetStatusPlayMode();
-			return true;
 		}
 	}
-	return false;
 }
 
 void				CPlayQueue::Clear(void)
