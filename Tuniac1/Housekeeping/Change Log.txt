@@ -1,6 +1,7 @@
 Mar, 2018
 ---------
 -add playlist id to history menu so history keeps track of where a song was played from, instead of just playing from ML playlist.
+-update text in installer to show 2017 instead of 2015
 
 Feb, 2018
 ---------
