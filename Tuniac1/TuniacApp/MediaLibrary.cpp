@@ -1141,6 +1141,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 			{
 				for(unsigned long x = 0; x < ulHistorySize; x++)
 				{
+					ReadFile(hLibraryFile, &TempPlaylistID, sizeof(unsigned long), &BytesRead, NULL);
 					ReadFile(hLibraryFile, &TempEntryID, sizeof(unsigned long), &BytesRead, NULL);
 					if(BytesRead != sizeof(unsigned long))
 					{
@@ -1157,7 +1158,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 						break;
 					}
 
-					tuniacApp.m_History.AddEntryID(TempEntryID);
+					tuniacApp.m_History.InitAddHistoryItem(TempPlaylistID, TempEntryID);
 				}
 			}
 		}
@@ -1381,9 +1382,12 @@ bool CMediaLibrary::SaveMediaLibrary(LPTSTR szLibraryFolder)
 
 				for(int x = ulHistorySize - 1; x >= 0; x--)
 				{
-					unsigned long ulEntryID = tuniacApp.m_History.GetHistoryEntryID(x);
-					if(ulEntryID == INVALID_PLAYLIST_INDEX)
+					unsigned long ulPlaylistID = tuniacApp.m_History.GetPlaylistIDAtIndex(x);
+					unsigned long ulEntryID = tuniacApp.m_History.GetEntryIDAtIndex(x);
+					if(ulPlaylistID == INVALID_PLAYLIST_INDEX || ulEntryID == INVALID_PLAYLIST_INDEX)
 						continue;
+
+					WriteFile(hLibraryFile, &ulPlaylistID, sizeof(unsigned long), &BytesWritten, NULL);
 					WriteFile(hLibraryFile, &ulEntryID, sizeof(unsigned long), &BytesWritten, NULL);
 
 					if(BytesWritten != sizeof(unsigned long))

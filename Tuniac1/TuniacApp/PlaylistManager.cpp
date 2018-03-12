@@ -711,22 +711,22 @@ IPlaylist *		CPlaylistManager::GetPlaylistByIndex(unsigned long ulIndex)
 	return NULL;
 }
 
-IPlaylist *		CPlaylistManager::GetPlaylistByID(unsigned long ulID)
+IPlaylist *		CPlaylistManager::GetPlaylistByID(unsigned long ulPlaylistID)
 {
-	return GetPlaylistByIndex(GetPlaylistIndexByID(ulID));
+	return GetPlaylistByIndex(GetPlaylistIndexByID(ulPlaylistID));
 }
 
-unsigned long CPlaylistManager::GetPlaylistIndexByID(unsigned long ulID)
+unsigned long CPlaylistManager::GetPlaylistIndexByID(unsigned long ulPlaylistID)
 {
 	unsigned long ulIndex = 0;
 
-	if (ulID == 0)
+	if (ulPlaylistID == 0)
 		return ulIndex;
 
 	for (unsigned long index = 0; index < m_CDPlaylists.GetCount(); index++)
 	{
 		ulIndex++;
-		if (m_CDPlaylists[index]->GetPlaylistID() == ulID)
+		if (m_CDPlaylists[index]->GetPlaylistID() == ulPlaylistID)
 		{
 			return ulIndex;
 		}
@@ -735,7 +735,7 @@ unsigned long CPlaylistManager::GetPlaylistIndexByID(unsigned long ulID)
 	for (unsigned long index = 0; index < m_StandardPlaylists.GetCount(); index++)
 	{
 		ulIndex++;
-		if (m_StandardPlaylists[index]->GetPlaylistID() == ulID)
+		if (m_StandardPlaylists[index]->GetPlaylistID() == ulPlaylistID)
 		{
 			return ulIndex;
 		}

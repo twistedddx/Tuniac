@@ -39,7 +39,7 @@ protected:
 		unsigned long		m_QueueItemEntryID;
 	} QueueEntry;
 
-	Array<QueueEntry, 20>				m_Queue;
+	Array<QueueEntry, 10>				m_Queue;
 
 public:
 	CPlayQueue(void);
@@ -54,7 +54,7 @@ public:
 	bool				Append(unsigned long ulPlaylistID, unsigned long ulEntryID);
 
 	bool				Remove(unsigned long ulIndex);
-	bool				RemovePlaylistID(unsigned long ulPlaylistID);
-	bool				RemoveEntryID(unsigned long ulEntryID);
+	void				RemovePlaylistID(unsigned long ulPlaylistID);
+	void				RemoveEntryID(unsigned long ulEntryID);
 	void				Clear(void);
 };
