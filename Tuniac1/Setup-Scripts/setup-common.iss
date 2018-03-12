@@ -7,18 +7,18 @@
 #define VC14RedistText 'Microsoft Visual C++ 2017 Update 3'
 #define VC14RedistManual 'https://www.visualstudio.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/100349138/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe'
+#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/11687613/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe'
 #define VC14x86RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 12
-#define VC14x86RedistdwBld 25810
+#define VC14x86RedistdwMinor 13
+#define VC14x86RedistdwBld 26020
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/100349091/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe'
+#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/11687625/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe'
 #define VC14x64RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 12
-#define VC14x64RedistdwBld 25810
+#define VC14x64RedistdwMinor 13
+#define VC14x64RedistdwBld 26020
 #define VC14x64RedistSize 15
 
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'
@@ -81,8 +81,8 @@ Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversi
 
 [Run]
 Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing {#DXJun2010XAudioText}...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x86(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
-Filename: "{tmp}\vcredist_x64(2015).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x86(2017).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
+Filename: "{tmp}\vcredist_x64(2017).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent
 
 [Registry]

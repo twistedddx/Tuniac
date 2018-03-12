@@ -31,7 +31,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-https://cmake.org/files/v3.9/cmake-3.9.2-win64-x64.msi
+https://cmake.org/files/v3.10/cmake-3.10.2-win64-x64.msi
 
 Install them
 
@@ -118,7 +118,7 @@ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2015/libjpeg-turbo_1.5_vs2015.zip
+http://www.wasteofcash.com/Tuniac/VS2017/libjpeg-turbo_1.5_vs2017.zip
 extract to D:\Code\libjpeg-turbo
 
 Look here for errors that look like:
@@ -127,7 +127,7 @@ Cannot open include file: 'jpeglib.h'
 6c)Build libpng static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2015/libpng1.7_vs2015.zip
+http://www.wasteofcash.com/Tuniac/VS2017/libpng1.7_vs2017.zip
 extract to D:\Code\libpng
 
 Look here for errors that look like:
@@ -136,10 +136,10 @@ Cannot open include file: 'libpng.h'
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2015/zlib_1.2.8_vs2015.zip
+http://www.wasteofcash.com/Tuniac/VS2017/zlib_1.2.8_vs2017.zip
 extract to D:\Code\zlib
 
-http://www.wasteofcash.com/Tuniac/VS2015/taglib_2_vs2015.zip
+http://www.wasteofcash.com/Tuniac/VS2017/taglib_2_vs2017.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:
