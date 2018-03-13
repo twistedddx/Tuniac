@@ -31,9 +31,10 @@
 
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 8)
+#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 9)
 
 //past
+#define TUNIAC_PLAYLISTLIBRARY_VERSION08		MAKELONG(0, 8)
 #define TUNIAC_PLAYLISTLIBRARY_VERSION07		MAKELONG(0, 7)
 #define TUNIAC_PLAYLISTLIBRARY_VERSION06		MAKELONG(0, 6)
 #define TUNIAC_PLAYLISTLIBRARY_VERSION05		MAKELONG(0, 5)
@@ -145,7 +146,15 @@ typedef struct
 {
 	unsigned long	PauseAtPlaylistID;
 	unsigned long	PauseAtEntryID;
+	unsigned long	QueuedNumEntries;
+	unsigned long	HistoryNumEntries;
 } PLDiskCommonHeader;
+
+typedef struct
+{
+	unsigned long	PlaylistID;
+	unsigned long	EntryID;
+} PLDiskCommonSubHeader;
 
 typedef struct
 {
@@ -208,27 +217,23 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		//if (tuniacApp.m_LogWindow)
 		//{
 		//	if (tuniacApp.m_LogWindow->GetLogOn())
-		//	{
 				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
-		//	}
 		//}
 		MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDH)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION07 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
+	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION08 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION07 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
 	{
 		//if (tuniacApp.m_LogWindow)
 		//{
 		//	if (tuniacApp.m_LogWindow->GetLogOn())
-		//	{
 				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is saved in an incompatable version, resetting playlists."));
-		//	}
 		//}
 		MessageBox(NULL, TEXT("Playlist Library is saved in an incompatable version, resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	//0.8 and newer only (has playlist ID's and active is ID not index)
-	else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION)
+	//0.8 and newer only (has playlist ID's and active is ID not index). Soft pause, Queue and History are now here
+	else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION || PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08)
 	{
 		for (unsigned long ulPlaylist = 0; ulPlaylist < PLDH.NumEntries; ulPlaylist++)
 		{
@@ -244,9 +249,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				//if (tuniacApp.m_LogWindow)
 				//{
 				//	if (tuniacApp.m_LogWindow->GetLogOn())
-				//	{
 				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
-				//	}
 				//}
 				MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDiskSubHeader)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				delete pPlaylist;
@@ -266,9 +269,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 					//if (tuniacApp.m_LogWindow)
 					//{
 					//	if (tuniacApp.m_LogWindow->GetLogOn())
-					//	{
 					//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
-					//	}
 					//}
 					MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(unsigned long)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					delete pPlaylist;
@@ -309,7 +310,6 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 					pPlaylist->SetActiveNormalFilteredIndex(0);
 					pPlaylist->RebuildPlaylistArrays();
 				}
-				//pPlaylist->RebuildPlaylistArrays();
 			}
 			else
 				pPlaylist->ApplyFilter();
@@ -340,33 +340,95 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				m_LibraryPlaylist.SetActiveNormalFilteredIndex(0);
 				m_LibraryPlaylist.RebuildPlaylistArrays();
 			}
-			//m_LibraryPlaylist.RebuildPlaylistArrays();
 		}
 		else
 			m_LibraryPlaylist.ApplyFilter();
 
 
-		PLDiskCommonHeader CommonHeader;
+
 		unsigned long ulPauseAtPlaylistID;
 		unsigned long ulPauseAtEntryID;
-
-		ReadFile(hFile, &CommonHeader, sizeof(PLDiskCommonHeader), &ulBytesRead, NULL);
-		if (ulBytesRead != sizeof(PLDiskCommonHeader))
+		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08)
 		{
-			//if (tuniacApp.m_LogWindow)
-			//{
-			//	if (tuniacApp.m_LogWindow->GetLogOn())
-			//	{
-			//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist DB is corrupt."));
-			//	}
-			//}
-			MessageBox(NULL, TEXT("Playlist DB is corrupt 'ulBytesRead != sizeof(PLDiskCommonHeader)'"), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
-			bOK = false;
+			PLDiskCommonSubHeader CommonHeader;
+
+			ReadFile(hFile, &CommonHeader, sizeof(PLDiskCommonSubHeader), &ulBytesRead, NULL);
+			if (ulBytesRead != sizeof(PLDiskCommonSubHeader))
+			{
+				//if (tuniacApp.m_LogWindow)
+				//{
+				//	if (tuniacApp.m_LogWindow->GetLogOn())
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist DB is corrupt."));
+				//}
+				MessageBox(NULL, TEXT("Playlist DB is corrupt 'ulBytesRead != sizeof(PLDiskCommonHeader)'"), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+				bOK = false;
+			}
+			else
+			{
+				tuniacApp.m_SoftPause.ulPlaylistID = CommonHeader.PlaylistID;
+				tuniacApp.m_SoftPause.ulEntryID = CommonHeader.EntryID;
+			}
 		}
 		else
 		{
-			tuniacApp.m_SoftPause.ulPlaylistID = CommonHeader.PauseAtPlaylistID;
-			tuniacApp.m_SoftPause.ulEntryID = CommonHeader.PauseAtEntryID;
+			PLDiskCommonHeader CommonHeader;
+
+			ReadFile(hFile, &CommonHeader, sizeof(PLDiskCommonHeader), &ulBytesRead, NULL);
+			if (ulBytesRead != sizeof(PLDiskCommonHeader))
+			{
+				//if (tuniacApp.m_LogWindow)
+				//{
+				//	if (tuniacApp.m_LogWindow->GetLogOn())
+				//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist DB is corrupt."));
+				//}
+				MessageBox(NULL, TEXT("Playlist DB is corrupt 'ulBytesRead != sizeof(PLDiskCommonHeader)'"), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+				bOK = false;
+			}
+			else
+			{
+				tuniacApp.m_SoftPause.ulPlaylistID = CommonHeader.PauseAtPlaylistID;
+				tuniacApp.m_SoftPause.ulEntryID = CommonHeader.PauseAtEntryID;
+
+				for (unsigned long ulQueueSize = 0; ulQueueSize < CommonHeader.QueuedNumEntries; ulQueueSize++)
+				{
+					PLDiskCommonSubHeader SubHeader;
+					ReadFile(hFile, &SubHeader, sizeof(PLDiskCommonSubHeader), &ulBytesRead, NULL);
+					if (ulBytesRead != sizeof(PLDiskCommonSubHeader))
+					{
+						//if (tuniacApp.m_LogWindow)
+						//{
+						//	if (tuniacApp.m_LogWindow->GetLogOn())
+						//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("Queue is corrupt, resetting queue."));
+						//}
+						MessageBox(NULL, TEXT("Queue is corrupt, resetting queue."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+						tuniacApp.m_Queue.Clear();
+						bOK = false;
+						break;
+					}
+					tuniacApp.m_Queue.Append(SubHeader.PlaylistID, SubHeader.EntryID);
+				}
+
+				for (unsigned long x = 0; x < CommonHeader.HistoryNumEntries; x++)
+				{
+					PLDiskCommonSubHeader SubHeader;
+					ReadFile(hFile, &SubHeader, sizeof(PLDiskCommonSubHeader), &ulBytesRead, NULL);
+					if (ulBytesRead != sizeof(PLDiskCommonSubHeader))
+					{
+						//if (tuniacApp.m_LogWindow)
+						//{
+						//	if (tuniacApp.m_LogWindow->GetLogOn())
+						//tuniacApp.m_LogWindow->LogMessage(TEXT("MediaLibrary"), TEXT("History list is corrupt, resetting list."));
+						//}
+						MessageBox(NULL, TEXT("History list is corrupt, resetting list."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
+						tuniacApp.m_History.Clear();
+						bOK = false;
+						break;
+					}
+
+					tuniacApp.m_History.AddHistoryItem(SubHeader.PlaylistID, SubHeader.EntryID);
+				}
+			}
+
 		}
 	}
 	//0.7 and older only (no playlist ID's and active is index)
@@ -387,9 +449,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 				//if (tuniacApp.m_LogWindow)
 				//{
 				//	if (tuniacApp.m_LogWindow->GetLogOn())
-				//	{
 						//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
-				//	}
 				//}
 				MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDiskSubHeader)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 				delete pPlaylist;
@@ -410,9 +470,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 					//if (tuniacApp.m_LogWindow)
 					//{
 					//	if (tuniacApp.m_LogWindow->GetLogOn())
-					//	{
 							//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist Library is corrupt, resetting playlists."));
-					//	}
 					//}
 					MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(unsigned long)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 					delete pPlaylist;
@@ -502,9 +560,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 	//if (tuniacApp.m_LogWindow)
 	//{
 	//	if (tuniacApp.m_LogWindow->GetLogOn())
-	//	{
 			//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist load complete"));
-	//	}
 	//}
 
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
@@ -571,9 +627,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 		if (tuniacApp.m_LogWindow)
 		{
 			if (tuniacApp.m_LogWindow->GetLogOn())
-			{
 				tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library header information."));
-			}
 		}
 		MessageBox(NULL, TEXT("Error saving Playlist Library header information."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
@@ -599,9 +653,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 				if (tuniacApp.m_LogWindow)
 				{
 					if (tuniacApp.m_LogWindow->GetLogOn())
-					{
 						tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
-					}
 				}
 				MessageBox(NULL, TEXT("Error saving Playlist Library."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 				bOK = false;
@@ -617,9 +669,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 					if (tuniacApp.m_LogWindow)
 					{
 						if (tuniacApp.m_LogWindow->GetLogOn())
-						{
 							tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Playlist Library."));
-						}
 					}
 					MessageBox(NULL, TEXT("Error saving Playlist Library."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 					bOK = false;
@@ -637,6 +687,8 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 
 		CommonHeader.PauseAtPlaylistID = tuniacApp.m_SoftPause.ulPlaylistID;
 		CommonHeader.PauseAtEntryID = tuniacApp.m_SoftPause.ulEntryID;
+		CommonHeader.QueuedNumEntries = tuniacApp.m_Queue.GetCount();
+		CommonHeader.HistoryNumEntries = tuniacApp.m_History.GetCount();
 
 		WriteFile(hFile, &CommonHeader, sizeof(PLDiskCommonHeader), &ulBytesWritten, NULL);
 		if (ulBytesWritten != sizeof(PLDiskCommonHeader))
@@ -644,12 +696,59 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 			if (tuniacApp.m_LogWindow)
 			{
 				if (tuniacApp.m_LogWindow->GetLogOn())
-				{
 					tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving common data."));
-				}
 			}
 			MessageBox(NULL, TEXT("Error saving common data."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
 			bOK = false;
+		}
+
+		for (int x = 0; x < CommonHeader.QueuedNumEntries; x++)
+		{
+			PLDiskCommonSubHeader SubHeader;
+			ZeroMemory(&SubHeader, sizeof(PLDiskCommonSubHeader));
+
+
+			SubHeader.PlaylistID = tuniacApp.m_Queue.GetPlaylistIDAtIndex(x);
+			SubHeader.EntryID = tuniacApp.m_Queue.GetEntryIDAtIndex(x);
+
+			WriteFile(hFile, &SubHeader, sizeof(PLDiskCommonSubHeader), &ulBytesWritten, NULL);
+			if (ulBytesWritten != sizeof(PLDiskCommonSubHeader))
+			{
+				if (tuniacApp.m_LogWindow)
+				{
+					if (tuniacApp.m_LogWindow->GetLogOn())
+						tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving Queue."));
+				}
+				MessageBox(NULL, TEXT("Error saving Queue."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
+				bOK = false;
+				break;
+			}
+		}
+
+		if (tuniacApp.m_Queue.GetCount() == 0 && tuniacApp.m_Preferences.GetRepeatMode() == RepeatAllQueued)
+			tuniacApp.m_Preferences.SetRepeatMode(RepeatNone);
+
+		for (int x = CommonHeader.HistoryNumEntries - 1; x >= 0; x--)
+		{
+			PLDiskCommonSubHeader SubHeader;
+			ZeroMemory(&SubHeader, sizeof(PLDiskCommonSubHeader));
+
+
+			SubHeader.PlaylistID = tuniacApp.m_History.GetPlaylistIDAtIndex(x);
+			SubHeader.EntryID = tuniacApp.m_History.GetEntryIDAtIndex(x);
+
+			WriteFile(hFile, &SubHeader, sizeof(PLDiskCommonSubHeader), &ulBytesWritten, NULL);
+			if (ulBytesWritten != sizeof(PLDiskCommonSubHeader))
+			{
+				if (tuniacApp.m_LogWindow)
+				{
+					if (tuniacApp.m_LogWindow->GetLogOn())
+						tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Error saving History."));
+				}
+				MessageBox(NULL, TEXT("Error saving History."), TEXT("Save Error"), MB_OK | MB_ICONWARNING);
+				bOK = false;
+				break;
+			}
 		}
 
 	}
@@ -659,9 +758,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 	//if (tuniacApp.m_LogWindow)
 	//{
 	//	if (tuniacApp.m_LogWindow->GetLogOn())
-	//	{
 			//tuniacApp.m_LogWindow->LogMessage(TEXT("PlaylistManager"), TEXT("Playlist save complete"));
-	//	}
 	//}
 
 	return bOK;

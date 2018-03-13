@@ -128,9 +128,7 @@ bool				CLibraryPlaylist::DeleteRealIndex(unsigned long ulRealIndex)
 		if (tuniacApp.m_LogWindow)
 		{
 			if (tuniacApp.m_LogWindow->GetLogOn())
-			{
 				tuniacApp.m_LogWindow->LogMessage(TEXT("LibraryPlaylist"), TEXT("Removing files from HDD."));
-			}
 		}
 		if (!PathIsURL(szURL))
 		{

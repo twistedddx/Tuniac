@@ -83,9 +83,7 @@ bool			CImportExportManager::Initialize(void)
 						if (tuniacApp.m_LogWindow)
 						{
 							if (tuniacApp.m_LogWindow->GetLogOn())
-							{
 								tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), szError);
-							}
 						}
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
@@ -117,9 +115,7 @@ bool			CImportExportManager::Initialize(void)
 						if (tuniacApp.m_LogWindow)
 						{
 							if (tuniacApp.m_LogWindow->GetLogOn())
-							{
 								tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), szError);
-							}
 						}
 						MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					}
@@ -406,9 +402,7 @@ bool			CImportExportManager::Export(EntryArray & entryArray, LPTSTR szSource)
 	if (tuniacApp.m_LogWindow)
 	{
 		if (tuniacApp.m_LogWindow->GetLogOn())
-		{
 			tuniacApp.m_LogWindow->LogMessage(TEXT("ImportExportManager"), TEXT("Error exporting playlist."));
-		}
 	}
 	MessageBox(tuniacApp.getMainWindow(), TEXT("Error exporting playlist."), TEXT("Tuniac"), MB_OK | MB_ICONWARNING);
 	return false;
