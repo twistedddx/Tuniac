@@ -81,9 +81,7 @@ bool			CPluginManager::Initialize(void)
 					if (tuniacApp.m_LogWindow)
 					{
 						if (tuniacApp.m_LogWindow->GetLogOn())
-						{
 							tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
-						}
 					}
 					MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONWARNING);
 					FreeLibrary(hDLL);
@@ -240,9 +238,7 @@ bool			CPluginManager::EnablePlugin(unsigned int iPlugin, bool bEnabled)
 			if (tuniacApp.m_LogWindow)
 			{
 				if (tuniacApp.m_LogWindow->GetLogOn())
-				{
 					tuniacApp.m_LogWindow->LogMessage(TEXT("PluginManager"), szError);
-				}
 			}
 			MessageBox(tuniacApp.getMainWindow(), szError, TEXT("Error"), MB_OK | MB_ICONERROR);
 			return false;
@@ -433,9 +429,7 @@ void		CPluginManager::LogMessage(LPTSTR szModuleName, LPTSTR szMessage)
 	if (tuniacApp.m_LogWindow)
 	{
 		if (tuniacApp.m_LogWindow->GetLogOn())
-		{
 			tuniacApp.m_LogWindow->LogMessage(szModuleName, szMessage);
-		}
 	}
 }
 
