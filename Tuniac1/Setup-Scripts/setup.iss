@@ -1,7 +1,7 @@
 #include <idp.iss>
 
-#include "setup-common.iss"
-#include "setup-common_32bit.iss"
+#include "include\setup-common.iss"
+#include "include\setup-common_32bit.iss"
 
 [Setup]
 MinVersion=0,5.01.2600sp3

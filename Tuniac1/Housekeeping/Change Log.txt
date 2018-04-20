@@ -1,5 +1,6 @@
 Apr, 2018
 ---------
+-Setup now uses same icon as main app
 -Fix "create playlists of playlist files during import"
 
 Mar, 2018

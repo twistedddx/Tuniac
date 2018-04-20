@@ -1,4 +1,4 @@
-#include "setup-common.iss"
+#include "include\setup-common.iss"
 
 [Setup]
 MinVersion=0,6.0.6000

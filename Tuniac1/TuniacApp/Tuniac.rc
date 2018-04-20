@@ -12,7 +12,8 @@
 #endif
 #define IDC_STATIC      (-1)
 
-#include "winresrc.h"
+#include "winresrc.h"
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
