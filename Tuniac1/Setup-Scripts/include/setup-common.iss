@@ -56,8 +56,8 @@ SetupMutex=TuniacSetup,Global\TuniacSetup
 ShowTasksTreeLines=yes
 SolidCompression=yes
 UninstallFilesDir={app}\uninstaller
-WizardImageFile=WizardImage.bmp
-WizardSmallImageFile=WizardImageSmall.bmp
+WizardImageFile=include\WizardImage.bmp
+WizardSmallImageFile=include\WizardImageSmall2.bmp
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
@@ -71,7 +71,7 @@ Name: {app}\unins*.*; Type: files
 Name: {app}\bass\bass_alac.dll; Type: files
 
 [Files]
-Source: "WizardImageSmall.bmp"; Flags: dontcopy
+Source: "include\WizardImageSmall2.bmp"; Flags: dontcopy
 
 Source: "..\TuniacApp\images\NoAlbumArt.jpg"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\Change Log.txt"; DestDir: {app}\; Flags: ignoreversion
