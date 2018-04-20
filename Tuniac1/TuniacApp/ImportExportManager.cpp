@@ -277,6 +277,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 	bool bStreamList = false;
 	bool bAutoAddPlaylists = tuniacApp.m_Preferences.GetAutoAddPlaylists();
 	bool bAddSingleStream = tuniacApp.m_Preferences.GetAddSingleStream();
+	bool bStreamFound = false;
 
 	CMediaLibraryPlaylistEntry * pStreamEntry;
 	TCHAR szFilename[MAX_PATH] = L"";
@@ -300,6 +301,7 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 				bStreamList = PathIsURL(szFilename);
 				if(bStreamList) //auto fill details for streams
 				{
+					bStreamFound = true;
 					TCHAR szTitle[128] = L"";
 					if(pImporter->ImportTitle(szTitle, 128))
 					{
@@ -313,13 +315,13 @@ bool			CImportExportManager::ImportFrom(ITuniacImportPlugin * pImporter, LPTSTR 
 						if(wcscmp((LPTSTR)pPE->GetField(FIELD_TITLE), L"") == 0)
 							pPE->SetField(FIELD_TITLE, L"[Unknown Stream]");
 					}
-					if(bAddSingleStream) //pls and m3u contain numerous mirrors of the same stream normally. Normal behaviour is to only add the first
+					if (bAddSingleStream) //pls and m3u contain numerous mirrors of the same stream normally. Normal behaviour is to only add the first
 						break;
 				}
 			}
 		} while(pImporter->ImportUrl(szFilename, MAX_PATH));
 
-		if(bAutoAddPlaylists && !bAddSingleStream) //create a Tuniac playlist of this playlist file except when single adding streams
+		if(bAutoAddPlaylists && !bStreamFound) //create a Tuniac playlist of this playlist file except for stream playlists
 		{
 			TCHAR	szFileTitle[128];
 			GetFileTitle(szSource, szFileTitle, 128);

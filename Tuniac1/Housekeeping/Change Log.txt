@@ -1,3 +1,7 @@
+Apr, 2018
+---------
+-Fix "create playlists of playlist files during import"
+
 Mar, 2018
 ---------
 -add playlist id to history menu so history keeps track of where a song was played from, instead of just playing from ML playlist.
