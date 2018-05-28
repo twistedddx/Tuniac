@@ -1,3 +1,7 @@
+May, 2018
+---------
+-Correct Windows version check in installer to allow XP installs for XP installer.
+
 Apr, 2018
 ---------
 -Setup now uses same icon as main app
@@ -461,7 +465,6 @@ Jun, 2011
 -BASS, taglib and jpeglib updates
 -SVPRenderer dont attach if no visuals and throw error message
 -VisualWindow handle a visual that doesnt want to attach
-
 
 May, 2011
 ---------
