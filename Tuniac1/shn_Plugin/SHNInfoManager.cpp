@@ -185,6 +185,7 @@ bool			CSHNInfoManager::GetInfo(LibraryEntry * libEnt)
 				StringCchCopy(libEnt->szFileType, 16, L"shn");
 				libEnt->ulChannels = info.channels;
 				libEnt->ulSampleRate = info.sample_rate;
+				libEnt->ulBitsPerSample = info.bits_per_sample;
 				unsigned long ulLength = (__int64)info.sample_count * 1000 / info.sample_rate;
 				libEnt->ulPlaybackTime		= ulLength;
 				libEnt->ulBitRate = (unsigned long)(ShnInfoUtilFileStream_GetLength(stream) * 8 / (ulLength / 1000));

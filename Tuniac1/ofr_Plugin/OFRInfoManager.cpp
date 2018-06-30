@@ -60,57 +60,57 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	for(unsigned int i=0; i<iTags.keyCount; i++)
 	{
-		if(strcmp(iTags.keys[i], "Album") == 0)
+		if(strcmpi(iTags.keys[i], "Album") == 0)
 		{
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szAlbum, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Title") == 0)
+		if(strcmpi(iTags.keys[i], "Title") == 0)
 		{
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szTitle, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Artist") == 0)
+		if(strcmpi(iTags.keys[i], "Artist") == 0)
 		{
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szArtist, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Genre") == 0)
+		if(strcmpi(iTags.keys[i], "Genre") == 0)
 		{
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szGenre, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Comment") == 0)
+		if(strcmpi(iTags.keys[i], "Comment") == 0)
 		{
 			MultiByteToWideChar(CP_UTF8, 0, iTags.values[i], strnlen_s(iTags.values[i], 128), libEnt->szComment, 128);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Year") == 0)
+		if(strcmpi(iTags.keys[i], "Year") == 0)
 		{
 			libEnt->ulYear = strtoul(iTags.values[i], NULL, 10);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "Track") == 0)
+		if(strcmpi(iTags.keys[i], "Track") == 0)
 		{
 			libEnt->dwTrack[0] = strtoul(iTags.values[i], NULL, 10);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "replaygain_track_gain") == 0)
+		if(strcmpi(iTags.keys[i], "replaygain_track_gain") == 0)
 		{
 			libEnt->fReplayGain_Track_Gain = atof(iTags.values[i]);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "replaygain_track_peak") == 0)
+		if(strcmpi(iTags.keys[i], "replaygain_track_peak") == 0)
 		{
 			libEnt->fReplayGain_Track_Peak = atof(iTags.values[i]);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "replaygain_album_gain") == 0)
+		if(strcmpi(iTags.keys[i], "replaygain_album_gain") == 0)
 		{
 			libEnt->fReplayGain_Album_Gain = atof(iTags.values[i]);
 			continue;
 		}
-		if(strcmp(iTags.keys[i], "replaygain_album_peak") == 0)
+		if(strcmpi(iTags.keys[i], "replaygain_album_peak") == 0)
 		{
 			libEnt->fReplayGain_Album_Peak = atof(iTags.values[i]);
 			continue;
@@ -119,7 +119,8 @@ bool			COFRInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	libEnt->ulBitRate			= (iInfo.bitrate * 1000);
 	libEnt->ulChannels			= iInfo.channels;
-	libEnt->ulSampleRate		= iInfo.bitspersample;
+	libEnt->ulBitsPerSample		= iInfo.bitspersample;
+	libEnt->ulSampleRate		= iInfo.samplerate;
 	libEnt->ulPlaybackTime		= iInfo.length_ms;
 
 	return true;

@@ -3,6 +3,8 @@ Jun, 2018
 -Add Bits Per Sample field.
 -User Search has its own internal idenitifer so pl db doesn't need to be migrated each time a field gets added.
 -Improve sorting by samplerate and channels
+-correct OFR samplerate
+-case insensitive about tag field names for OFR and TAK.
 
 May, 2018
 ---------
