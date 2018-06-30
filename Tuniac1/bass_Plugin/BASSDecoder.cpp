@@ -233,6 +233,7 @@ bool CBASSDecoder::Open(LPTSTR szSource, IAudioSourceHelper * pHelper, HSTREAM d
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.chans, FIELD_NUMCHANNELS);
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.freq, FIELD_SAMPLERATE);
 		m_pHelper->UpdateMetaData(szSource, (unsigned long)fBitrate * 1000, FIELD_BITRATE);
+		m_pHelper->UpdateMetaData(szSource, (unsigned long)info.origres, FIELD_BITSPERSAMPLE);
 
 		//m_pHelper->UpdateMetaData(szSource, (unsigned long)info.ctype, FIELD_FORMAT);
 		/*	BASS_CTYPE_STREAM_OGG	Ogg Vorbis format stream.

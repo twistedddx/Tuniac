@@ -31,14 +31,16 @@
 
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 9)
+#define TUNIAC_PLAYLISTLIBRARY_VERSION		MAKELONG(0, 10) //add bitspersample
 
 //past
-#define TUNIAC_PLAYLISTLIBRARY_VERSION08		MAKELONG(0, 8)
-#define TUNIAC_PLAYLISTLIBRARY_VERSION07		MAKELONG(0, 7)
-#define TUNIAC_PLAYLISTLIBRARY_VERSION06		MAKELONG(0, 6)
-#define TUNIAC_PLAYLISTLIBRARY_VERSION05		MAKELONG(0, 5)
-#define TUNIAC_PLAYLISTLIBRARY_VERSION04		MAKELONG(0, 4)
+
+#define TUNIAC_PLAYLISTLIBRARY_VERSION09		MAKELONG(0, 9) //move queue and history to pl db
+#define TUNIAC_PLAYLISTLIBRARY_VERSION08		MAKELONG(0, 8) //add playlist Id's and move softpause to pl db
+#define TUNIAC_PLAYLISTLIBRARY_VERSION07		MAKELONG(0, 7) //add Disc Num
+#define TUNIAC_PLAYLISTLIBRARY_VERSION06		MAKELONG(0, 6) //add composer
+#define TUNIAC_PLAYLISTLIBRARY_VERSION05		MAKELONG(0, 5) //add albumartist
+#define TUNIAC_PLAYLISTLIBRARY_VERSION04		MAKELONG(0, 4) //add availability and bpm
 
 bool DriveInMask(ULONG uMask, char Letter)
 {
@@ -222,7 +224,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		MessageBox(NULL, TEXT("Playlist Library is corrupt 'ulBytesRead != sizeof(PLDH)', resetting playlists."), TEXT("Startup Error"), MB_OK | MB_ICONWARNING);
 		bOK = false;
 	}
-	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION08 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION07 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
+	else if (PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION09 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION08 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION07 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.Version != TUNIAC_PLAYLISTLIBRARY_VERSION04)
 	{
 		//if (tuniacApp.m_LogWindow)
 		//{
@@ -233,7 +235,7 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		bOK = false;
 	}
 	//0.8 and newer only (has playlist ID's and active is ID not index). Soft pause, Queue and History are now here
-	else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION || PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08)
+	else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION || PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION09 || PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08)
 	{
 		for (unsigned long ulPlaylist = 0; ulPlaylist < PLDH.NumEntries; ulPlaylist++)
 		{
@@ -286,7 +288,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 			if (myEntryArray.GetCount())
 				pPlaylist->AddEntryArray(myEntryArray, false);
 
-			pPlaylist->SetTextFilterField(SubHeader.FilterField);
+			if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION09 && SubHeader.FilterField == 31)
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
+			else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08 && SubHeader.FilterField == 31)
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
+			else
+				pPlaylist->SetTextFilterField(SubHeader.FilterField);
+
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
 			SubHeader.Filter[127] = L'\0';
 			pPlaylist->SetTextFilter(SubHeader.Filter);
@@ -316,7 +324,13 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		}
 
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
-		m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
+
+		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION09 && PLDH.LibraryFilterField == 31)
+			m_LibraryPlaylist.SetTextFilterField(FIELD_USERSEARCH);
+		else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08 && PLDH.LibraryFilterField == 31)
+			m_LibraryPlaylist.SetTextFilterField(FIELD_USERSEARCH);
+		else
+			m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
 
 		m_LibraryPlaylist.SetTextFilterReversed(PLDH.LibraryFilterReverse);
 		PLDH.LibraryFilter[127] = L'\0';
@@ -487,14 +501,17 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 			if(myEntryArray.GetCount())
 				pPlaylist->AddEntryArray(myEntryArray);
 			
-			if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION06 && SubHeader.FilterField == 30)
-				pPlaylist->SetTextFilterField(FIELD_MAXFIELD);
+			if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION07 && SubHeader.FilterField == 31)
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
+			else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION06 && SubHeader.FilterField == 30)
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
 			else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION05 && SubHeader.FilterField == 29)
-				pPlaylist->SetTextFilterField(FIELD_MAXFIELD);
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
 			else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && SubHeader.FilterField == 28)
-				pPlaylist->SetTextFilterField(FIELD_MAXFIELD);
+				pPlaylist->SetTextFilterField(FIELD_USERSEARCH);
 			else
 				pPlaylist->SetTextFilterField(SubHeader.FilterField);
+
 			pPlaylist->SetTextFilterReversed(SubHeader.FilterReverse);
 			SubHeader.Filter[127] = L'\0';
 			pPlaylist->SetTextFilter(SubHeader.Filter);
@@ -523,11 +540,11 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 		m_LibraryPlaylist.SetPlaylistName(PLDH.Name);
 
 		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION06 && PLDH.LibraryFilterField == 30)
-			m_LibraryPlaylist.SetTextFilterField(FIELD_MAXFIELD);
+			m_LibraryPlaylist.SetTextFilterField(FIELD_USERSEARCH);
 		else if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION05 && PLDH.LibraryFilterField == 29)
-			m_LibraryPlaylist.SetTextFilterField(FIELD_MAXFIELD);
+			m_LibraryPlaylist.SetTextFilterField(FIELD_USERSEARCH);
 		else if(PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION04 && PLDH.LibraryFilterField == 28)
-			m_LibraryPlaylist.SetTextFilterField(FIELD_MAXFIELD);
+			m_LibraryPlaylist.SetTextFilterField(FIELD_USERSEARCH);
 		else
 			m_LibraryPlaylist.SetTextFilterField(PLDH.LibraryFilterField);
 

@@ -126,6 +126,7 @@
 @B\tBitrate\r\n\
 @M\tSample Rate\r\n\
 @N\tChannels\r\n\
+@H\tBits Per Sample\r\n\
 @C\tComment\r\n\
 @Z\tPlay Count\r\n\
 @R\tRating\r\n\

@@ -1,0 +1,28 @@
+@U - URL
+@F - Filename
+@X - File Type
+@K - Kind
+@S - Size
+@A - Artist
+@L - Album
+@T - Title
+@# - Track
+@V - Disc Number
+@G - Genre
+@Y - Year
+@I - Play Time
+@i - Play Time (short form)
+@D - Date Added
+@E - File Creation Date
+@P - Last Played Date
+@B - Bitrate
+@M - Sample Rate
+@N - Channels
+@H - Bits Per Sample
+@C - Comment
+@Z - Play Count
+@R - Rating
+@! - Play State
+@W - BPM
+@Q - Album Artist
+@O - Composer

@@ -176,6 +176,12 @@ void *	CMediaLibraryPlaylistEntry::GetField(unsigned long ulFieldID)
 			}
 			break;
 
+		case FIELD_BITSPERSAMPLE:
+			{
+				return (void *)m_LibraryEntry.ulBitsPerSample;
+			}
+			break;
+
 		case FIELD_DATEADDED:
 			{
 				return & m_LibraryEntry.stDateAdded;
@@ -467,6 +473,14 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, void * pNewDa
 			}
 			break;
 
+		case FIELD_BITSPERSAMPLE:
+			{
+				if (StrCmpI((LPTSTR)pNewData, L"") == 0)
+					pNewData = L"0";
+				m_LibraryEntry.ulBitsPerSample = wcstoul((LPTSTR)pNewData, NULL, 10);
+			}
+			break;
+
 		default:
 			return false;
 	}
@@ -545,6 +559,11 @@ bool	CMediaLibraryPlaylistEntry::SetField(unsigned long ulFieldID, unsigned long
 				m_LibraryEntry.ulBPM = pNewData;
 			}
 			break;
+		case FIELD_BITSPERSAMPLE:
+			{
+				m_LibraryEntry.ulBitsPerSample = pNewData;
+			}
+		break;
 
 		default:
 			return false;
@@ -765,6 +784,12 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 					StringCchCopy(szString, ulNumChars, TEXT("7.1"));
 				if(m_LibraryEntry.ulChannels > 8)
 					StringCchCopy(szString, ulNumChars, TEXT("Plenty"));
+			}
+			break;
+
+		case FIELD_BITSPERSAMPLE:
+			{
+				StringCchPrintf(szString, ulNumChars, TEXT("%u bits"), m_LibraryEntry.ulBitsPerSample);
 			}
 			break;
 

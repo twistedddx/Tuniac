@@ -265,6 +265,13 @@ static HeaderEntry HeaderEntries[FIELD_MAXFIELD] =
 		LVCFMT_LEFT,
 		true,
 		true
+	},
+	{
+		TEXT("Bits Per Sample"),
+		50,
+		LVCFMT_LEFT,
+		true,
+		true
 	}
 };
 
@@ -731,7 +738,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 						return TRUE;
 					}
 
-					unsigned long ulFilterByField = FIELD_MAXFIELD;
+					unsigned long ulFilterByField = FIELD_USERSEARCH;
 
 					if(wmId == FILTERBYFIELD_MENUBASE + 2)
 						ulFilterByField = FIELD_ARTIST;

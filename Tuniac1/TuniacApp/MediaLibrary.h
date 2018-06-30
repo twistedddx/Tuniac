@@ -34,12 +34,13 @@
 #define BEGIN_ADD_UNKNOWNNUMBER		(-1)
 
 // only increment this when a change becomes incompatable with older versions!
-#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 9)
+#define TUNIAC_MEDIALIBRARY_VERSION		MAKELONG(0, 10) //adds ulBitsPerSample, ulSampleType. Move softpause, queue and history to PL DB(actually began mid ML09)
 
 //Past versions
-#define TUNIAC_MEDIALIBRARY_VERSION08		MAKELONG(0, 8)
-#define TUNIAC_MEDIALIBRARY_VERSION07		MAKELONG(0, 7)
-#define TUNIAC_MEDIALIBRARY_VERSION06		MAKELONG(0, 6)
+#define TUNIAC_MEDIALIBRARY_VERSION09		MAKELONG(0, 9) //add szFileType
+#define TUNIAC_MEDIALIBRARY_VERSION08		MAKELONG(0, 8) //add szComposer
+#define TUNIAC_MEDIALIBRARY_VERSION07		MAKELONG(0, 7) //add szAlbumArtist
+#define TUNIAC_MEDIALIBRARY_VERSION06		MAKELONG(0, 6) //add ulBPM
 #define TUNIAC_MEDIALIBRARY_VERSION05		MAKELONG(0, 5)
 
 typedef struct
