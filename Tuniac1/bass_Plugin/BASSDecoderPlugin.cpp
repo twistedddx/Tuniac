@@ -261,7 +261,7 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_AIFF)
 			m_pHelper->UpdateMetaData(szSource, L"aiff", FIELD_FILETYPE);
 		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_PCM)
-			m_pHelper->UpdateMetaData(szSource, L"wav-pcm", FIELD_FILETYPE);
+			m_pHelper->UpdateMetaData(szSource, L"wav", FIELD_FILETYPE);
 		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV_FLOAT)
 			m_pHelper->UpdateMetaData(szSource, L"wav-float", FIELD_FILETYPE);
 		else if (bassChannelInfo.ctype == BASS_CTYPE_STREAM_WAV)
