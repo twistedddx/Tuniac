@@ -37,7 +37,7 @@ CBasePlaylist::CBasePlaylist(void)
 	StringCchCopy(m_szPlaylistName, 128, TEXT(""));
 
 	StringCchCopy(m_szTextFilter, 128, TEXT(""));
-	m_ulTextFilterField = FIELD_MAXFIELD;
+	m_ulTextFilterField = FIELD_USERSEARCH;
 	m_bTextFilterReversed = false;
 }
 
@@ -60,8 +60,8 @@ bool				CBasePlaylist::ApplyFilter(void)
 			//default false = include, true = exclude
 			m_PlaylistArray[x].bFiltered = m_bTextFilterReversed ? false : true;
 
-			//default filter(FIELD_MAXFIELD) is any title, artist, album and filename matches
-			if(m_ulTextFilterField == FIELD_MAXFIELD)
+			//default filter(FIELD_USERSEARCH) is any title, artist, album and filename matches
+			if(m_ulTextFilterField == FIELD_USERSEARCH)
 			{
 
 				for (unsigned int i = 0; i < tuniacApp.m_Preferences.GetUserSearchFieldNum(); i++)
@@ -865,7 +865,7 @@ LPTSTR				CBasePlaylist::GetTextFilter(void)
 
 bool				CBasePlaylist::SetTextFilterField(unsigned long ulFieldID)
 {
-	if(ulFieldID > FIELD_MAXFIELD)
+	if(ulFieldID > FIELD_MAXFIELD && ulFieldID != FIELD_USERSEARCH)
 		return false;
 	m_ulTextFilterField = ulFieldID;
 	return true;
@@ -1067,6 +1067,8 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 
+		case FIELD_RATING:
+		case FIELD_FILESIZE:
 		case FIELD_REPLAYGAIN_TRACK_GAIN:
 		case FIELD_REPLAYGAIN_TRACK_PEAK:
 		case FIELD_REPLAYGAIN_ALBUM_GAIN:
@@ -1074,16 +1076,26 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 		case FIELD_BPM:
 		case FIELD_PLAYBACKTIME:
 		case FIELD_BITRATE:
+		case FIELD_PLAYCOUNT:
+		{
+			if (pItem1->GetField(ulSortBy) > pItem2->GetField(ulSortBy))
+				return 1;
+			else if (pItem1->GetField(ulSortBy) < pItem2->GetField(ulSortBy))
+				return -1;
+		}
+		break;
+
+		case FIELD_YEAR:
+		case FIELD_BITSPERSAMPLE:
 		case FIELD_SAMPLERATE:
 		case FIELD_NUMCHANNELS:
-		case FIELD_RATING:
-		case FIELD_FILESIZE:
-		case FIELD_PLAYCOUNT:
 			{
 				if(pItem1->GetField(ulSortBy) > pItem2->GetField(ulSortBy))
 					return 1;
 				else if(pItem1->GetField(ulSortBy) < pItem2->GetField(ulSortBy))
 					return -1;
+
+				return Sort_CompareItems(pItem1, pItem2, FIELD_ALBUM);
 			}
 			break;
 /*
@@ -1096,16 +1108,6 @@ int CBasePlaylist::Sort_CompareItems (IPlaylistEntry * pItem1, IPlaylistEntry * 
 			}
 			break;
 */
-		case FIELD_YEAR:
-			{
-				if(pItem1->GetField(FIELD_YEAR) > pItem2->GetField(FIELD_YEAR))
-					return 1;
-				else if(pItem1->GetField(FIELD_YEAR) < pItem2->GetField(FIELD_YEAR))
-					return -1;
-				return Sort_CompareItems(pItem1, pItem2, FIELD_ALBUM);
-			}
-			break;
-
 		case FIELD_FILETYPE:
 		case FIELD_COMMENT:
 		case FIELD_GENRE:

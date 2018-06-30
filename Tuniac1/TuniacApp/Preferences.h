@@ -179,6 +179,10 @@ static AvailableUserSearchFieldsEntry AvailableUserSearchFields[FIELD_MAXFIELD -
 	{
 		TEXT("Disc Number"),
 		FIELD_DISCNUM
+	},
+	{
+		TEXT("Bits Per Sample"),
+		FIELD_BITSPERSAMPLE
 	}
 };
 

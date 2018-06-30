@@ -2822,7 +2822,7 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				break;
 			case 'R':
 				lField = FIELD_RATING;
-				break;
+				break; 
 			case 'C':
 				lField = FIELD_COMMENT;
 				break;
@@ -2843,6 +2843,9 @@ bool	CTuniacApp::FormatSongInfo(LPTSTR szDest, unsigned int iDestSize, IPlaylist
 				break;
 			case 'O':
 				lField = FIELD_COMPOSER;
+				break;
+			case 'H':
+				lField = FIELD_BITSPERSAMPLE;
 				break;
 		}
 

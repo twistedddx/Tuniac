@@ -1,3 +1,9 @@
+Jun, 2018
+---------
+-Add Bits Per Sample field.
+-User Search has its own internal idenitifer so pl db doesn't need to be migrated each time a field gets added.
+-Improve sorting by samplerate and channels
+
 May, 2018
 ---------
 -Correct Windows version check in installer to allow XP installs for XP installer.

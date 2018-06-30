@@ -75,7 +75,8 @@
 #define FIELD_ALBUMARTIST					28
 #define FIELD_COMPOSER						29
 #define FIELD_DISCNUM						30
-//#define FIELD_STATIONNAME					31
+#define FIELD_BITSPERSAMPLE					31
+//#define FIELD_STATIONNAME					32
 
 class IAudioFileIO
 {

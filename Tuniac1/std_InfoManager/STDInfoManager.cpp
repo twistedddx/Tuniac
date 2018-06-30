@@ -187,6 +187,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		else
 			libEnt->ulPlaybackTime = LENGTH_UNKNOWN;
 		libEnt->ulSampleRate		= audioProps->sampleRate();
+
+		libEnt->ulBitsPerSample = 16; //more accurately updated per file type below
 	}
 
 	tag = fileRef.tag();
@@ -204,6 +206,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if(flacFile)
 	{
+		TagLib::FLAC::AudioProperties * flacProps = 0;
+		flacProps = dynamic_cast<TagLib::FLAC::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = flacProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"flac");
 		if(flacFile->xiphComment())
 			vorbisTagListMap = flacFile->xiphComment()->fieldListMap();
@@ -221,6 +226,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(mp4File)
 	{
+		TagLib::MP4::AudioProperties * mp4Props = 0;
+		mp4Props = dynamic_cast<TagLib::MP4::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = mp4Props->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"mp4");
 		if(mp4File->tag())
 			mp4TagListMap = mp4File->tag()->itemListMap();
@@ -233,12 +241,18 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(ttaFile)
 	{
+		TagLib::TrueAudio::AudioProperties * ttaProps = 0;
+		ttaProps = dynamic_cast<TagLib::TrueAudio::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = ttaProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"tta");
 		if(ttaFile->ID3v2Tag())
 			id3v2TagListMap = ttaFile->ID3v2Tag()->frameListMap();
 	}
 	else if(wvFile)
 	{
+		TagLib::WavPack::AudioProperties * wvProps = 0;
+		wvProps = dynamic_cast<TagLib::WavPack::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = wvProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wv");
 		if(wvFile->APETag())
 			apeTagListMap = wvFile->APETag()->itemListMap();;
@@ -251,6 +265,9 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(ogaFile)
 	{
+		TagLib::Ogg::FLAC::AudioProperties * ogaProps = 0;
+		ogaProps = dynamic_cast<TagLib::Ogg::FLAC::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = ogaProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"oga");
 		if(ogaFile->tag())
 			vorbisTagListMap = ogaFile->tag()->fieldListMap();
@@ -269,32 +286,63 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(wmaFile)
 	{
+		TagLib::ASF::AudioProperties * asfProps = 0;
+		asfProps = dynamic_cast<TagLib::ASF::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = asfProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wma");
 		if(wmaFile->tag())
 			wmaTagListMap = wmaFile->tag()->attributeListMap();
 	}
 	else if(apeFile)
 	{
+		TagLib::APE::AudioProperties * apeProps = 0;
+		apeProps = dynamic_cast<TagLib::APE::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = apeProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"ape");
 		if(apeFile->APETag())
 			apeTagListMap = apeFile->APETag()->itemListMap();
 	}
 	else if (aiffFile)
+	{
+		TagLib::RIFF::AIFF::AudioProperties * aiffProps = 0;
+		aiffProps = dynamic_cast<TagLib::RIFF::AIFF::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = aiffProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"aiff");
+	}
 	else if (wavFile)
+	{
+		TagLib::RIFF::WAV::AudioProperties * wavProps = 0;
+		wavProps = dynamic_cast<TagLib::RIFF::WAV::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = wavProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wav");
+	}
 	else if (itFile)
+	{
 		StringCchCopy(libEnt->szFileType, 16, L"it");
+	}
 	else if (modFile)
+	{
 		StringCchCopy(libEnt->szFileType, 16, L"mod");
+	}
 	else if (s3mFile)
+	{
 		StringCchCopy(libEnt->szFileType, 16, L"s3m");
+	}
 	else if (xmFile)
+	{
 		StringCchCopy(libEnt->szFileType, 16, L"xm");
+	}
 	else if (dsfFile)
+	{
+		TagLib::DSF::AudioProperties * dsfProps = 0;
+		dsfProps = dynamic_cast<TagLib::DSF::AudioProperties *>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = dsfProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"dsf");
+	}
 	else if (ebmlFile)
+	{
 		StringCchCopy(libEnt->szFileType, 16, L"ebml");
+	}
 
 	if(!id3v2TagListMap.isEmpty())
 	{

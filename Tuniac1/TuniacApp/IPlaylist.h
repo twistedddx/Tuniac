@@ -58,10 +58,13 @@
 #define FIELD_ALBUMARTIST					28
 #define FIELD_COMPOSER						29
 #define FIELD_DISCNUM						30
-//#define FIELD_STATIONNAME					31
+#define FIELD_BITSPERSAMPLE					31
+//#define FIELD_STATIONNAME					32
 
 
-#define FIELD_MAXFIELD						31
+#define FIELD_MAXFIELD						32
+
+#define FIELD_USERSEARCH					0xffffffff
 
 
 #define PLAYLIST_TYPE_UNKNOWN				0
