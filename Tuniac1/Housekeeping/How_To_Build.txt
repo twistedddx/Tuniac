@@ -31,7 +31,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-https://cmake.org/files/v3.11/cmake-3.11.2-win64-x64.msi
+https://cmake.org/files/v3.12/cmake-3.12.0-win64-x64.msi
 
 Install them
 
@@ -66,7 +66,7 @@ Change Directory to C:\Code\libpng
 Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
-3e)You need libjpeg-turbo 1.5 GIT (http://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 2.0 GIT (http://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
