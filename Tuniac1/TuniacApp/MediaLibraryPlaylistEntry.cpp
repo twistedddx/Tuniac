@@ -766,30 +766,35 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 			{
 				if(m_LibraryEntry.ulChannels == 0)
 					StringCchCopy(szString, ulNumChars, TEXT("Mute"));
-				if(m_LibraryEntry.ulChannels == 1)
+				else if(m_LibraryEntry.ulChannels == 1)
 					StringCchCopy(szString, ulNumChars, TEXT("Mono"));
-				if(m_LibraryEntry.ulChannels == 2)
+				else if(m_LibraryEntry.ulChannels == 2)
 					StringCchCopy(szString, ulNumChars, TEXT("Stereo"));
-				if(m_LibraryEntry.ulChannels == 3)
+				else if(m_LibraryEntry.ulChannels == 3)
 					StringCchCopy(szString, ulNumChars, TEXT("2.1"));
-				if(m_LibraryEntry.ulChannels == 4)
+				else if(m_LibraryEntry.ulChannels == 4)
 					StringCchCopy(szString, ulNumChars, TEXT("Quad"));
-				if(m_LibraryEntry.ulChannels == 5)
+				else if(m_LibraryEntry.ulChannels == 5)
 					StringCchCopy(szString, ulNumChars, TEXT("5"));
-				if(m_LibraryEntry.ulChannels == 6)
+				else if(m_LibraryEntry.ulChannels == 6)
 					StringCchCopy(szString, ulNumChars, TEXT("5.1"));
-				if(m_LibraryEntry.ulChannels == 7)
+				else if(m_LibraryEntry.ulChannels == 7)
 					StringCchCopy(szString, ulNumChars, TEXT("6.1"));
-				if(m_LibraryEntry.ulChannels == 8)
+				else if(m_LibraryEntry.ulChannels == 8)
 					StringCchCopy(szString, ulNumChars, TEXT("7.1"));
-				if(m_LibraryEntry.ulChannels > 8)
+				else
 					StringCchCopy(szString, ulNumChars, TEXT("Plenty"));
 			}
 			break;
 
 		case FIELD_BITSPERSAMPLE:
 			{
-				StringCchPrintf(szString, ulNumChars, TEXT("%u bits"), m_LibraryEntry.ulBitsPerSample);
+				if (m_LibraryEntry.ulBitsPerSample == BITRATE_UNKNOWN)
+					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
+				else if (m_LibraryEntry.ulBitsPerSample == BITRATE_UNDEFINABLE)
+					StringCchCopy(szString, ulNumChars, TEXT("Undefinable"));
+				else
+					StringCchPrintf(szString, ulNumChars, TEXT("%u bits"), m_LibraryEntry.ulBitsPerSample);
 			}
 			break;
 

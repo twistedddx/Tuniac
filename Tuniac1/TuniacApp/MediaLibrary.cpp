@@ -861,7 +861,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
 				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
 				libraryEntry.ulBPM = MLE.ulBPM;
-				libraryEntry.ulBitsPerSample = 16;
+				libraryEntry.ulBitsPerSample = BITRATE_UNKNOWN;
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -920,7 +920,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
 				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
 				libraryEntry.ulBPM = MLE.ulBPM;
-				libraryEntry.ulBitsPerSample = 16;
+				libraryEntry.ulBitsPerSample = BITRATE_UNKNOWN;
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -979,7 +979,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
 				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
 				libraryEntry.ulBPM = MLE.ulBPM;
-				libraryEntry.ulBitsPerSample = 16;
+				libraryEntry.ulBitsPerSample = BITRATE_UNKNOWN;
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -1038,7 +1038,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
 				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
 				libraryEntry.ulBPM = MLE.ulBPM;
-				libraryEntry.ulBitsPerSample = 16;
+				libraryEntry.ulBitsPerSample = BITRATE_UNKNOWN;
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
@@ -1097,7 +1097,7 @@ bool CMediaLibrary::LoadMediaLibrary(LPTSTR szLibraryFolder)
 				libraryEntry.fReplayGain_Track_Gain = MLE.fReplayGain_Track_Gain;
 				libraryEntry.fReplayGain_Track_Peak = MLE.fReplayGain_Track_Peak;
 				libraryEntry.ulBPM = 0;
-				libraryEntry.ulBitsPerSample = 16;
+				libraryEntry.ulBitsPerSample = BITRATE_UNKNOWN;
 
 				CMediaLibraryPlaylistEntry * pIPE = new CMediaLibraryPlaylistEntry(&libraryEntry);
 
