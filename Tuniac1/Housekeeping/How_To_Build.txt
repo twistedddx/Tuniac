@@ -31,7 +31,7 @@ http://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 http://www.cmake.org/
-https://cmake.org/files/v3.12/cmake-3.12.0-win64-x64.msi
+https://cmake.org/files/v3.12/cmake-3.12.1-win64-x64.msi
 
 Install them
 

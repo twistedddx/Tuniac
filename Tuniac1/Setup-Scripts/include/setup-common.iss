@@ -5,20 +5,20 @@
 #define TuniacWWW 'http://www.tuniac.org'
 
 #define VC14RedistText 'Microsoft Visual C++ Redistributable 2017'
-#define VC14RedistManual 'https://www.visualstudio.com/downloads/?q=Redistributable'
+#define VC14RedistManual 'https://visualstudio.microsoft.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/12319034/ccd261eb0e095411af3b306273231b68/VC_redist.x86.exe'
+#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/749aa419-f9e4-4578-a417-a43786af205e/d59197078cc425377be301faba7dd87a/vc_redist.x86.exe'
 #define VC14x86RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 14
-#define VC14x86RedistdwBld 26429
+#define VC14x86RedistdwMinor 15
+#define VC14x86RedistdwBld 26706
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/12328699/a80e967515b2a4faf37bf15387f1c5c3/VC_redist.x64.exe'
+#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/20ef12bb-5283-41d7-90f7-eb3bb7355de7/8b58fd89f948b2430811db3da92299a6/vc_redist.x64.exe'
 #define VC14x64RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 14
-#define VC14x64RedistdwBld 26429
+#define VC14x64RedistdwMinor 15
+#define VC14x64RedistdwBld 26706
 #define VC14x64RedistSize 15
 
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'

@@ -1,3 +1,6 @@
+Aug, 2018
+-update SDK and redist for VS 15.8.2
+
 Jun, 2018
 ---------
 -Add Bits Per Sample field.
