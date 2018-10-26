@@ -66,7 +66,7 @@ BOOL CALLBACK AboutProc(HWND hwndDlg,
             switch (LOWORD(wParam)) 
             { 
 				case IDC_ABOUT_TUNIACORG:
-					ShellExecute(NULL, L"open", L"http://www.tuniac.org/", NULL, NULL, NULL);
+					ShellExecute(NULL, L"open", L"http://tuni.ac/", NULL, NULL, NULL);
 					return TRUE;
 
                 case IDOK: 

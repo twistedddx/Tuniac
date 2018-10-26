@@ -2,20 +2,20 @@
 
 #define TuniacName 'Tuniac 1.0'
 
-#define TuniacWWW 'http://www.tuniac.org'
+#define TuniacWWW 'http://tuni.ac'
 
 #define VC14RedistText 'Microsoft Visual C++ Redistributable 2017'
 #define VC14RedistManual 'https://visualstudio.microsoft.com/downloads/?q=Redistributable'
 
 #define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/749aa419-f9e4-4578-a417-a43786af205e/d59197078cc425377be301faba7dd87a/vc_redist.x86.exe'
-#define VC14x86RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x86.exe'
+#define VC14x86RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
 #define VC14x86RedistdwMinor 15
 #define VC14x86RedistdwBld 26706
 #define VC14x86RedistSize 14
 
 #define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/20ef12bb-5283-41d7-90f7-eb3bb7355de7/8b58fd89f948b2430811db3da92299a6/vc_redist.x64.exe'
-#define VC14x64RedistMIRROR 'http://www.tuniac.org/extra/Redist/VC_redist.x64.exe'
+#define VC14x64RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
 #define VC14x64RedistdwMinor 15
 #define VC14x64RedistdwBld 26706
@@ -24,13 +24,13 @@
 #define DXJun2010XAudioText 'DirectX XAudio 2.7'
 #define DXJun2010Text 'DirectX End-User Runtimes (June 2010)'
 #define DXJun2010Manual 'http://www.microsoft.com/en-au/download/details.aspx?id=8109'                        
-#define DXJun2010DSETUP 'http://www.tuniac.org/extra/DirectX/DSETUP.dll'
-#define DXJun2010dsetup32 'http://www.tuniac.org/extra/DirectX/dsetup32.dll'
-#define DXJun2010dxdllreg_x86 'http://www.tuniac.org/extra/DirectX/dxdllreg_x86.cab'
-#define DXJun2010DXSETUP 'http://www.tuniac.org/extra/DirectX/DXSETUP.exe'
-#define DXJun2010dxupdate 'http://www.tuniac.org/extra/DirectX/dxupdate.cab'
-#define DXJun2010Jun2010_XAudio_x64 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x64.cab'
-#define DXJun2010Jun2010_XAudio_x86 'http://www.tuniac.org/extra/DirectX/Jun2010_XAudio_x86.cab'
+#define DXJun2010DSETUP 'http://tuni.ac/extra/DirectX/DSETUP.dll'
+#define DXJun2010dsetup32 'http://tuni.ac/extra/DirectX/dsetup32.dll'
+#define DXJun2010dxdllreg_x86 'http://tuni.ac/extra/DirectX/dxdllreg_x86.cab'
+#define DXJun2010DXSETUP 'http://tuni.ac/extra/DirectX/DXSETUP.exe'
+#define DXJun2010dxupdate 'http://tuni.ac/extra/DirectX/dxupdate.cab'
+#define DXJun2010Jun2010_XAudio_x64 'http://tuni.ac/extra/DirectX/Jun2010_XAudio_x64.cab'
+#define DXJun2010Jun2010_XAudio_x86 'http://tuni.ac/extra/DirectX/Jun2010_XAudio_x86.cab'
 #define DXJun2010Size = 3
 
 [Setup]
