@@ -2039,7 +2039,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						//help -> about tuniac
 						case ID_HELP_HOMEPAGE:
 							{
-								ShellExecute(NULL, NULL, TEXT("http://www.tuniac.org/"), NULL, NULL, SW_SHOW);
+								ShellExecute(NULL, NULL, TEXT("http://tuni.ac/"), NULL, NULL, SW_SHOW);
 							}
 							break;
 
@@ -2052,7 +2052,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 								PathRemoveFileSpec(szHelp);
 								StringCchCat(szHelp, 512, TEXT("\\Guide\\index.html"));
 								if(PathFileExists(szHelp) == FALSE)
-									StringCchCopy(szHelp, 512, TEXT("http://www.tuniac.org/Guide/"));
+									StringCchCopy(szHelp, 512, TEXT("http://tuni.ac/Guide/"));
 
 								ShellExecute(NULL, NULL, szHelp, NULL, NULL, SW_SHOW);
 							}
