@@ -24,14 +24,14 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 2)You require TortoiseSVN, TortoiseGIT and CMake or equals
 
-http://tortoisesvn.net/
-http://tortoisesvn.net/downloads.html
+https://tortoisesvn.net/
+https://tortoisesvn.net/downloads.html
 
-http://code.google.com/p/tortoisegit/
+https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
-http://www.cmake.org/
-https://cmake.org/files/v3.12/cmake-3.12.1-win64-x64.msi
+https://cmake.org/
+https://cmake.org/files/v3.13/cmake-3.13.3-win64-x64.msi
 
 Install them
 
@@ -39,26 +39,27 @@ Install them
 
 3)Gather repositories
 
-3a)You need Tuniac 1.0 SVN (http://sourceforge.net/projects/tuniac/)
+3a)You need Tuniac 1.0 SVN (https://sourceforge.net/projects/tuniac/)
 Navigate to C:\Code\, right click empty space and select SVN Checkout.
 In URL of repository add:
-https://tuniac.svn.sourceforge.net/svnroot/tuniac
+https://svn.code.sf.net/p/tuniac/code/
+Change Directory to C:\Code\Tuniac
 Hit OK and wait
 
-3b)You should get zlib 1.2.11 GIT (http://zlib.net/)
+3b)You should get zlib 1.2.11 GIT (https://zlib.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/madler/zlib.git
 Hit OK and wait
 
-3c)You need TagLib 2 GIT (http://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 2 GIT (https://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Tick Branch and enter "taglib2" in to text box.
 Hit OK and wait
 
-3d)You need libpng 1.7 GIT (http://libpng.sourceforge.net/)
+3d)You need libpng 1.7 GIT (https://libpng.sourceforge.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 git://git.code.sf.net/p/libpng/code
@@ -66,7 +67,7 @@ Change Directory to C:\Code\libpng
 Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
-3e)You need libjpeg-turbo 2.0 GIT (http://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 2.0 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -90,10 +91,10 @@ You can also get all the build recipes for individual building of libs in there.
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
 5a)You need Direct X SDK June 2010.
-http://www.microsoft.com/en-us/download/details.aspx?id=6812
+https://microsoft.com/en-us/download/details.aspx?id=6812
 
 5b)You need the Glew 2.1.0 Binaries Windows 32-bit zip.
-http://glew.sourceforge.net/
+https://glew.sourceforge.net/
 https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0-win32.zip/download
 
 Put glew.h, glxew.h, eglew.h and wglew.h in
@@ -108,17 +109,16 @@ Cannot open include file: 'GL/glew.h'
 
 6)For TuniacApp
 
-6a)You need nasm 2.13.03 win64 zip.
-http://www.nasm.us/
-http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/win64/nasm-2.13.03-win64.zip
+6a)You need nasm.
+https://nasm.us/
+https://nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-installer-x64.exe
 
-Put nasm.exe in
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
+
 
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2017/libjpeg-turbo_1.5_vs2017.zip
+https://wasteofcash.com/Tuniac/VS2017/libjpeg-turbo_1.5_vs2017.zip
 extract to D:\Code\libjpeg-turbo
 
 Look here for errors that look like:
@@ -127,7 +127,7 @@ Cannot open include file: 'jpeglib.h'
 6c)Build libpng static lib
 
 You can use my files if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2017/libpng1.7_vs2017.zip
+https://wasteofcash.com/Tuniac/VS2017/libpng1.7_vs2017.zip
 extract to D:\Code\libpng
 
 Look here for errors that look like:
@@ -136,10 +136,10 @@ Cannot open include file: 'libpng.h'
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-http://www.wasteofcash.com/Tuniac/VS2017/zlib_1.2.8_vs2017.zip
+https://wasteofcash.com/Tuniac/VS2017/zlib_1.2.8_vs2017.zip
 extract to D:\Code\zlib
 
-http://www.wasteofcash.com/Tuniac/VS2017/taglib_2_vs2017.zip
+https://wasteofcash.com/Tuniac/VS2017/taglib_2_vs2017.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:
@@ -150,13 +150,13 @@ Cannot open include file: 'tag.h'
 8)To build installer from scripts
 
 You need Inno QuickStart Pack
-http://www.jrsoftware.org/isinfo.php
-http://www.jrsoftware.org/download.php/ispack.exe
+https://jrsoftware.org/isinfo.php
+https://jrsoftware.org/download.php/ispack.exe
 
 Install everything it offers in the installer.
 
 I find it easiest to then install the standard Inno Setup installer over the top of that
-http://www.jrsoftware.org/download.php/is.exe
+https://jrsoftware.org/download.php/is.exe
 
 This adds the right click context "Compile" for *.iss files
 
