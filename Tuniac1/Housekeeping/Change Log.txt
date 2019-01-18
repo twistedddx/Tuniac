@@ -1,3 +1,7 @@
+Jan, 2019
+---------
+-update to bass 2.4.14
+
 Oct, 2018
 ---------
 -Change website to http://tuni.ac

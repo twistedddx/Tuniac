@@ -12,23 +12,29 @@ xcopy /Q Tuniac1 Tuniac1_src /E /I
 Echo Entering temp DIR
 cd Tuniac1_src
 
-Echo Deleting build folders from temp DIR
+Echo Deleting .vs folders from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S .vs*') DO RMDIR /S /Q "%%G"
+
+Echo Deleting Win32 build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S Win32*') DO RMDIR /S /Q "%%G"
 
-Echo Deleting build folders from temp DIR
+Echo Deleting x64 build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S x64*') DO RMDIR /S /Q "%%G"
 
-Echo Deleting build folders from temp DIR
+Echo Deleting release build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S release*') DO RMDIR /S /Q "%%G"
 
-Echo Deleting build folders from temp DIR
+Echo Deleting debug build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S debug*') DO RMDIR /S /Q "%%G"
 
-Echo Deleting build folders from temp DIR
+Echo Deleting ipch build folders from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S ipch*') DO RMDIR /S /Q "%%G"
 
 Echo Deleting user files from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.user') DO DEL /Q "%%G"
+
+Echo Deleting db files from temp DIR
+FOR /F "tokens=*" %%G IN ('DIR /B /S *.db') DO DEL /Q "%%G"
 
 Echo Deleting ncb files from temp DIR
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.ncb') DO DEL /Q "%%G"
