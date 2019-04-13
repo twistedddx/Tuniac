@@ -1,6 +1,6 @@
 /*
 	BASSHLS 2.4 C/C++ header file
-	Copyright (c) 2015-2017 Un4seen Developments Ltd.
+	Copyright (c) 2015-2019 Un4seen Developments Ltd.
 
 	See the BASSHLS.CHM file for more detailed documentation
 */
@@ -22,10 +22,15 @@ extern "C" {
 #define BASSHLSDEF(f) WINAPI f
 #endif
 
+// additional BASS_SetConfig options
+#define BASS_CONFIG_HLS_DOWNLOAD_TAGS	0x10900
+#define BASS_CONFIG_HLS_BANDWIDTH		0x10901
+#define BASS_CONFIG_HLS_DELAY			0x10902
+
 // additional sync type
 #define BASS_SYNC_HLS_SEGMENT	0x10300
 
-// additional tag type
+// additional tag types
 #define BASS_TAG_HLS_EXTINF		0x14000 // segment's EXTINF tag : UTF-8 string
 #define BASS_TAG_HLS_STREAMINF	0x14001 // EXT-X-STREAM-INF tag : UTF-8 string
 #define BASS_TAG_HLS_DATE		0x14002 // EXT-X-PROGRAM-DATE-TIME tag : UTF-8 string
