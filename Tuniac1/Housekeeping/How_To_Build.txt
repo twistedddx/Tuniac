@@ -31,7 +31,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://cmake.org/files/v3.13/cmake-3.13.3-win64-x64.msi
+https://cmake.org/files/v3.14/cmake-3.14.5-win64-x64.msi
 
 Install them
 
@@ -153,10 +153,14 @@ You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
 https://jrsoftware.org/download.php/ispack.exe
 
+http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe (if you prefer 5.x)
+
 Install everything it offers in the installer.
 
 I find it easiest to then install the standard Inno Setup installer over the top of that
 https://jrsoftware.org/download.php/is.exe
+
+http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe (if you prefer 5.x)
 
 This adds the right click context "Compile" for *.iss files
 

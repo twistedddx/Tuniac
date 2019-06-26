@@ -277,7 +277,7 @@ function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
   if IsDownloadRequired and DownloadWantedCheck then begin
     DownloadFiles();
-  end
+  end;
   Result := '';
 end;
 
