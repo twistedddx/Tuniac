@@ -16,6 +16,7 @@ extern "C" {
 
 // Additional BASS_AC3_StreamCreateFile/User/URL flags
 #define BASS_AC3_DYNAMIC_RANGE	0x800	// enable dynamic range compression
+#define BASS_AC3_STEREO			0x400000 // downmatrix to stereo
 
 // BASS_CHANNELINFO type
 #define BASS_CTYPE_STREAM_AC3	0x11000
