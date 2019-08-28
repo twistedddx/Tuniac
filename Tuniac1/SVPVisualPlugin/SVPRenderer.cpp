@@ -1039,7 +1039,7 @@ bool	SVPRenderer::Notify(unsigned long Notification)
 
 bool	SVPRenderer::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Sonique SVP renderer. Tony Million & Brett Hoyle 2010"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Sonique SVP renderer. Tony Million & Brett Hoyle 2010 \r\nUsing: \r\nGLEW - http://glew.sourceforge.net/ \r\nkissFFT - http://kissfft.sourceforge.net/ \r\nglFont2 - http://diyhpl.us/~bryan/irc/darpa/avm/meta/meta/QRG/code-library/lisp/opengl/_devel/glfont2/glfont.htm"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

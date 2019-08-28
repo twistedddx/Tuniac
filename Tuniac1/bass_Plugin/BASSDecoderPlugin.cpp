@@ -170,7 +170,7 @@ unsigned long	CBASSDecoderPlugin::GetFlags(void)
 
 bool			CBASSDecoderPlugin::About(HWND hParent)
 {
-    MessageBox(hParent, TEXT("BASS Plugin\nUsing BASS 2.4\nCopyright (c) 1999-2010 Un4seen Developments Ltd."), GetName(), MB_OK | MB_ICONINFORMATION);
+    MessageBox(hParent, TEXT("BASS Plugin\nUsing BASS 2.4\nCopyright (c) 1999-2019 Un4seen Developments Ltd."), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 

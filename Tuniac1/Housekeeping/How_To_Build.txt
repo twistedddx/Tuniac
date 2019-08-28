@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio 2015 in mind in August 2015.
+This is written with Visual Studio 2016 in mind in August 2019.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -18,7 +18,7 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 
 
-1)First install Visual Studio 2015.
+1)First install Visual Studio 2016.
 
 
 
@@ -31,7 +31,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://cmake.org/files/v3.14/cmake-3.14.5-win64-x64.msi
+https://cmake.org/files/v3.15/cmake-3.15.2-win64-x64.msi
 
 Install them
 
@@ -83,27 +83,15 @@ Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libpng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 
-These cmd assume Win10 x64 and Visual Studio 2015 if you have anything else you may need to mod the file.
+These cmd assume Win10 x64 and Visual Studio 2016 if you have anything else you may need to mod the file.
 You can also get all the build recipes for individual building of libs in there.
 
 
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
-5a)You need Direct X SDK June 2010.
+You need Direct X SDK June 2010.
 https://microsoft.com/en-us/download/details.aspx?id=6812
-
-5b)You need the Glew 2.1.0 Binaries Windows 32-bit zip.
-https://glew.sourceforge.net/
-https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0-win32.zip/download
-
-Put glew.h, glxew.h, eglew.h and wglew.h in
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\GL
-And put Release\Win32\ glew32.lib and glew32s.lib in
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib
-
-Look here for errors that look like:
-Cannot open include file: 'GL/glew.h'
 
 
 
@@ -118,7 +106,7 @@ https://nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-installer-x64.
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-https://wasteofcash.com/Tuniac/VS2017/libjpeg-turbo_1.5_vs2017.zip
+https://tuni.ac/extra/VS2019/libjpeg-turbo_203_vs2019.zip
 extract to D:\Code\libjpeg-turbo
 
 Look here for errors that look like:
@@ -127,7 +115,7 @@ Cannot open include file: 'jpeglib.h'
 6c)Build libpng static lib
 
 You can use my files if you cant get it to build right:
-https://wasteofcash.com/Tuniac/VS2017/libpng1.7_vs2017.zip
+https://tuni.ac/extra/VS2019/libpng17_vs2019.zip
 extract to D:\Code\libpng
 
 Look here for errors that look like:
@@ -136,10 +124,10 @@ Cannot open include file: 'libpng.h'
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-https://wasteofcash.com/Tuniac/VS2017/zlib_1.2.8_vs2017.zip
+https://tuni.ac/extra/VS2019/zlib_128_vs2019.zip
 extract to D:\Code\zlib
 
-https://wasteofcash.com/Tuniac/VS2017/taglib_2_vs2017.zip
+https://tuni.ac/extra/VS2019/taglib_2_vs2019.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:

@@ -4,8 +4,8 @@
 
 #include "ituniacvisplugin.h"
 
-#include <GL/glew.h>
-
+#include "kiss_fft.h"
+#include "GL\glew.h"
 #include "glfont2.h"
 using namespace glfont;
 
@@ -15,7 +15,7 @@ using namespace Gdiplus;
 #include "SoniqueVis.h"
 #include "Array.h"
 #include "CriticalSection.h"
-#include "kiss_fft.h"
+
 
 class SVPRenderer :
 	public ITuniacVisPlugin

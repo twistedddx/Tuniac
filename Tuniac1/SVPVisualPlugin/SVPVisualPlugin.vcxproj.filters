@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{466ab2b1-b069-4033-a158-e59bd6637ccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="kiss_fft.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SoniqueVis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -30,17 +30,14 @@
     <ClCompile Include="SVPVisualPlugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glfont2.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="include\kiss_fft.c">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="include\glfont2.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="_kiss_fft_guts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kiss_fft.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -53,8 +50,14 @@
     <ClInclude Include="SVPRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glfont2.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\kiss_fft.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\glfont2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\_kiss_fft_guts.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
