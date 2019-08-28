@@ -3,7 +3,7 @@
 #include "Array.h"
 #include <strsafe.h>
 #include <cstdint>
-#include <vector>
+#include <string>
 #include "bass.h"
 #include <mmreg.h>
 

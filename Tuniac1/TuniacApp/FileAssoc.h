@@ -23,7 +23,8 @@
 	Copyright (C) 2003-2014 Brett Hoyle
 */
 
-#include <vector>
+//#include <vector>
+#include <string>
 
 #pragma once
 

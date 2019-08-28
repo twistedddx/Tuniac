@@ -1,4 +1,4 @@
-call "%Programfiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+call "%Programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
 echo Working dir: %cd%
 
@@ -15,7 +15,7 @@ rmdir /s /q .\build32
 mkdir .\build32
 cd build32\
 echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 15" ..\.
+"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 16 2019" -A Win32 ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"
 if exist ..\taglib\Release\x86\ rmdir /S /Q ..\taglib\Release\x86
@@ -38,7 +38,7 @@ move /Y .\taglib\Debug\tag.pdb ..\taglib\Debug\x86\tag.pdb
 cd ..
 echo Working dir: %cd%
 
-call "%Programfiles(x86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+call "%Programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
 
 rem ######## Taglib x64
@@ -49,7 +49,7 @@ rmdir /s /q .\build64
 mkdir .\build64
 cd build64\
 echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 15 Win64" ..\.
+"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 16 2019" -A x64 ..\.
 devenv taglib.sln /project "tag" /Clean
 devenv taglib.sln /project "tag" /Rebuild "Release"
 if exist ..\taglib\Release\x64\ rmdir /S /Q ..\taglib\Release\x64
