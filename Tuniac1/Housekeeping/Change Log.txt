@@ -1,3 +1,7 @@
+Feb, 2020
+---------
+-add replaygain reading from id3v2 and mp4
+
 Jan, 2020
 ---------
 -update to bass 2.4.15
