@@ -33,6 +33,7 @@
 #include "id3v2tag.h"
 #include "attachedpictureframe.h"
 #include "relativevolumeframe.h"
+#include "textidentificationframe.h"
 
 #include "xiphcomment.h"
 #include "oggflacfile.h"
