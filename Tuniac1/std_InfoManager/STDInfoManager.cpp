@@ -398,6 +398,24 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			//libEnt->fReplayGain_Track_Peak  = relVol->peakVolume();
 		}
 
+		if (!id3v2TagListMap["TXXX"].isEmpty())
+		{
+			TagLib::ID3v2::FrameList id3v2TagList = id3v2TagListMap["TXXX"];
+
+			for (TagLib::ID3v2::FrameList::Iterator it = id3v2TagList.begin(); it != id3v2TagList.end(); ++it)
+			{
+				TagLib::ID3v2::UserTextIdentificationFrame* TXXXFrame =	static_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(*it);
+				if (TXXXFrame->description() == "replaygain_track_gain")
+					libEnt->fReplayGain_Track_Gain = atof(TXXXFrame->fieldList()[1].toCString());
+				if (TXXXFrame->description() == "replaygain_track_peak")
+					libEnt->fReplayGain_Track_Peak = atof(TXXXFrame->fieldList()[1].toCString());
+				if (TXXXFrame->description() == "replaygain_album_gain")
+					libEnt->fReplayGain_Album_Gain = atof(TXXXFrame->fieldList()[1].toCString());
+				if (TXXXFrame->description() == "replaygain_album_peak")
+					libEnt->fReplayGain_Album_Peak = atof(TXXXFrame->fieldList()[1].toCString());
+			}
+		}
+
 		if(!id3v2TagListMap["TBPM"].isEmpty())
 		{
 			libEnt->ulBPM = id3v2TagListMap["TBPM"].front()->toString().toInt();
@@ -437,6 +455,15 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 		if(mp4TagListMap["trkn"].isValid())
 			libEnt->dwTrack[1] = mp4TagListMap["trkn"].toIntPair().second;
+
+		if (mp4TagListMap["----:com.apple.iTunes:replaygain_track_gain"].isValid())
+			libEnt->fReplayGain_Track_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_gain"].toString().toCString());
+		if (mp4TagListMap["----:com.apple.iTunes:replaygain_track_peak"].isValid())
+			libEnt->fReplayGain_Track_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_peak"].toString().toCString());
+		if (mp4TagListMap["----:com.apple.iTunes:replaygain_album_gain"].isValid())
+			libEnt->fReplayGain_Album_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_gain"].toString().toCString());
+		if (mp4TagListMap["----:com.apple.iTunes:replaygain_album_peak"].isValid())
+			libEnt->fReplayGain_Album_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_peak"].toString().toCString());
 
 		if(mp4TagListMap["tmpo"].isValid())
 			libEnt->ulBPM = mp4TagListMap["tmpo"].toInt();
