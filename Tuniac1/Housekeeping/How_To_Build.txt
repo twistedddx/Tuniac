@@ -99,7 +99,7 @@ https://microsoft.com/en-us/download/details.aspx?id=6812
 
 6a)You need nasm.
 https://nasm.us/
-https://nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-installer-x64.exe
+https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-x64.exe
 
 
 
