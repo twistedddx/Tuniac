@@ -163,6 +163,7 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	CCoreAudio::Instance()->SetVolumePercent(m_Preferences.GetVolumePercent());
 	CCoreAudio::Instance()->EnableEQ(m_Preferences.GetEQEnabled());
 	CCoreAudio::Instance()->SetEQGain(m_Preferences.GetEQLowGain(), m_Preferences.GetEQMidGain(), m_Preferences.GetEQHighGain());
+	CCoreAudio::Instance()->SetCrossfadeTime(m_Preferences.GetCrossfadeTime()*1000);
 	CCoreAudio::Instance()->SetAmpGain(m_Preferences.GetAmpGain());
 	CCoreAudio::Instance()->SetAudioBufferSize(m_Preferences.GetAudioBuffering());
 	CCoreAudio::Instance()->EnableReplayGain(m_Preferences.ReplayGainEnabled());
