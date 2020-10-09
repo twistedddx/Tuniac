@@ -1031,6 +1031,7 @@ LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LP
 							pPrefs->m_iCrossfadeTime = SendDlgItemMessage(hDlg, IDC_CROSSFADE_TIME_SLIDER, TBM_GETPOS, 0, 0); 
 							StringCchPrintf(tstr, 42, TEXT("Crossfade for %d seconds"), pPrefs->m_iCrossfadeTime);
 							SetDlgItemText(hDlg, IDC_CROSSFADE_TIME_TEXT, tstr);
+							CCoreAudio::Instance()->SetCrossfadeTime(pPrefs->m_iCrossfadeTime * 1000);
 
 							pPrefs->m_iAudioBuffering = SendDlgItemMessage(hDlg, IDC_BUFFER_TIME_SLIDER, TBM_GETPOS, 0, 0); 
 							StringCchPrintf(tstr, 42, TEXT("Buffer length %d milliseconds"), pPrefs->m_iAudioBuffering);
