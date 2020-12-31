@@ -1,3 +1,15 @@
+Dec, 2020
+---------
+-BASS FLAC update
+-libjpeg-turbo update
+-VS/SDK updates
+
+
+Oct, 2020
+---------
+-Bass update
+-Fix crossfade time
+
 Feb, 2020
 ---------
 -add replaygain reading from id3v2 and mp4
