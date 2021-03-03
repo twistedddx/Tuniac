@@ -46,6 +46,8 @@ class CTuniacSkin
 protected:
 	TCHAR				m_BasePath[512];
 
+	DWORD				m_dwMutedAccentColor;
+
 	//bool				LoadTheme(LPTSTR szThemeName);
 
 public:
@@ -56,5 +58,9 @@ public:
 	bool				Shutdown(void);
 
 	HICON				GetIcon(unsigned long ulIcon);
+
+	DWORD				GetAccentColor(void);
+	void				SetMutedAccentColor(DWORD dwRGB);
+	DWORD				GetMutedAccentColor(void);
 
 };

@@ -194,6 +194,8 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if (!m_PlaylistManager.Initialize(m_szLibraryFolder))
 		return false;
 
+	m_Skin.SetMutedAccentColor(m_Skin.GetAccentColor());
+
 	IWindow * t;
 
 	//create the main medialibrary window	
@@ -2426,6 +2428,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		case WM_SYSCOLORCHANGE:
 			{
+				m_Skin.SetMutedAccentColor(m_Skin.GetAccentColor());
 				m_PlayControls.SysColorChange(wParam, lParam);
 			}
 			break;
