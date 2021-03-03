@@ -119,13 +119,14 @@ static ThemeIcon ThemeIconSet[THEMEICON_MAXICON] =
 
 CTuniacSkin::CTuniacSkin(void)
 {
+	m_dwMutedAccentColor = RGB(236, 243, 254);
 }
 
 CTuniacSkin::~CTuniacSkin(void)
 {
 }
 
-bool			CTuniacSkin::Initialize(void)
+bool	CTuniacSkin::Initialize(void)
 {
 	for(int i = 0; i < THEMEICON_MAXICON; i++)
 	{
@@ -137,7 +138,7 @@ bool			CTuniacSkin::Initialize(void)
 	return true;
 }
 
-bool			CTuniacSkin::Shutdown(void)
+bool	CTuniacSkin::Shutdown(void)
 {
 	return true;
 }
@@ -172,9 +173,29 @@ bool			CTuniacSkin::LoadTheme(LPTSTR szThemeName)
 	return true;
 }
 */
-HICON			CTuniacSkin::GetIcon(unsigned long ulIcon)
+HICON	CTuniacSkin::GetIcon(unsigned long ulIcon)
 {
 	if(ulIcon >= THEMEICON_MAXICON)
 		return NULL;
 	return ThemeIconSet[ulIcon].hHandle;
+}
+
+DWORD	CTuniacSkin::GetAccentColor(void)
+{
+	return GetSysColor(COLOR_GRADIENTACTIVECAPTION);
+}
+
+void	CTuniacSkin::SetMutedAccentColor(DWORD dwRGB)
+{
+	int iMutedR = 255 - ((255 - GetRValue(dwRGB)) * 0.3);
+	int iMutedG = 255 - ((255 - GetGValue(dwRGB)) * 0.3);
+	int iMutedB = 255 - ((255 - GetBValue(dwRGB)) * 0.3);
+
+	m_dwMutedAccentColor = RGB(iMutedR, iMutedG, iMutedB);
+}
+
+
+DWORD	CTuniacSkin::GetMutedAccentColor(void)
+{
+	return m_dwMutedAccentColor;
 }

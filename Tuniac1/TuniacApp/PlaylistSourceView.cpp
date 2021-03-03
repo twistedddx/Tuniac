@@ -33,8 +33,9 @@
 #define WM_SHOWACTIVEITEM			(WM_APP+3)
 #define WM_SETFOCUSFILTER			(WM_APP+4)
 
-#define DARKCOL						RGB(236, 243, 254)
-#define BARCOLOR					GetSysColor(COLOR_MENUHILIGHT)
+//#define DARKCOL						RGB(236, 243, 254)
+//#define DARKCOL					GetSysColor(COLOR_GRADIENTACTIVECAPTION)
+
 
 #define FILTERBYFIELD_MENUBASE		(7000)
 
@@ -46,6 +47,8 @@ typedef struct
 	bool			bEditable;
 	bool			bFilterable;
 } HeaderEntry;
+
+
 
 static HeaderEntry HeaderEntries[FIELD_MAXFIELD] = 
 {
@@ -1695,7 +1698,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 								{
 									if ((pLVCD->nmcd.dwItemSpec % 2) == 0)
 									{
-										pLVCD->clrTextBk = DARKCOL;
+										pLVCD->clrTextBk = tuniacApp.m_Skin.GetMutedAccentColor();
 										SetWindowLongPtr(hDlg, DWLP_MSGRESULT, CDRF_NEWFONT);
 									}
 
