@@ -1,3 +1,9 @@
+Mar, 2021
+---------
+-Add Window accent colour to playlist interleaved colour. Use Accent Colour Picker to enable colour within Windows.
+-BASS ALAC update
+-back to taglib1
+
 Dec, 2020
 ---------
 -BASS FLAC update
