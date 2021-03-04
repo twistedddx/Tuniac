@@ -1,6 +1,8 @@
 Mar, 2021
 ---------
--Add Window accent colour to playlist interleaved colour. Use Accent Colour Picker to enable colour within Windows.
+-Add Window accent colour to playlist interleaved colour. Uses Active captions (gradient) accent colour.
+Use Accent Applicator to enable colour within Windows. https://www.microsoft.com/en-us/p/accent-applicator/9mv99lwl2hk5
+
 -BASS ALAC update
 -back to taglib1
 
