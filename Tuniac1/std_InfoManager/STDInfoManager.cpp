@@ -51,8 +51,10 @@ CSTDInfoManager::CSTDInfoManager(void)
 	modFile = NULL;
 	s3mFile = NULL;
 	xmFile = NULL;
+	/* taglib2
 	dsfFile = NULL;
 	ebmlFile = NULL;
+	*/
 }
 
 CSTDInfoManager::~CSTDInfoManager(void)
@@ -155,10 +157,12 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(xmFile = dynamic_cast<TagLib::XM::File *>( fileRef.file() ))
 			return true;
+		/* taglib2
 		else if (dsfFile = dynamic_cast<TagLib::DSF::File *>(fileRef.file()))
 			return true;
 		else if (ebmlFile = dynamic_cast<TagLib::EBML::File *>(fileRef.file()))
 			return true;
+		*/
 
 	}
 
@@ -205,8 +209,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 
 	if(flacFile)
 	{
-		TagLib::FLAC::AudioProperties * flacProps = 0;
-		flacProps = dynamic_cast<TagLib::FLAC::AudioProperties *>(fileRef.audioProperties());
+		TagLib::FLAC::Properties * flacProps = 0;
+		flacProps = dynamic_cast<TagLib::FLAC::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = flacProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"flac");
 		if(flacFile->xiphComment())
@@ -226,8 +230,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(mp4File)
 	{
-		TagLib::MP4::AudioProperties * mp4Props = 0;
-		mp4Props = dynamic_cast<TagLib::MP4::AudioProperties *>(fileRef.audioProperties());
+		TagLib::MP4::Properties * mp4Props = 0;
+		mp4Props = dynamic_cast<TagLib::MP4::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = mp4Props->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"mp4");
 		if(mp4File->tag())
@@ -242,8 +246,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(ttaFile)
 	{
-		TagLib::TrueAudio::AudioProperties * ttaProps = 0;
-		ttaProps = dynamic_cast<TagLib::TrueAudio::AudioProperties *>(fileRef.audioProperties());
+		TagLib::TrueAudio::Properties * ttaProps = 0;
+		ttaProps = dynamic_cast<TagLib::TrueAudio::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = ttaProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"tta");
 		if(ttaFile->ID3v2Tag())
@@ -251,8 +255,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(wvFile)
 	{
-		TagLib::WavPack::AudioProperties * wvProps = 0;
-		wvProps = dynamic_cast<TagLib::WavPack::AudioProperties *>(fileRef.audioProperties());
+		TagLib::WavPack::Properties * wvProps = 0;
+		wvProps = dynamic_cast<TagLib::WavPack::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = wvProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wv");
 		if(wvFile->APETag())
@@ -267,8 +271,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(ogaFile)
 	{
-		TagLib::Ogg::FLAC::AudioProperties * ogaProps = 0;
-		ogaProps = dynamic_cast<TagLib::Ogg::FLAC::AudioProperties *>(fileRef.audioProperties());
+		TagLib::Ogg::FLAC::Properties * ogaProps = 0;
+		ogaProps = dynamic_cast<TagLib::Ogg::FLAC::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = ogaProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"oga");
 		if(ogaFile->tag())
@@ -290,8 +294,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(wmaFile)
 	{
-		TagLib::ASF::AudioProperties * asfProps = 0;
-		asfProps = dynamic_cast<TagLib::ASF::AudioProperties *>(fileRef.audioProperties());
+		TagLib::ASF::Properties * asfProps = 0;
+		asfProps = dynamic_cast<TagLib::ASF::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = asfProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wma");
 		if(wmaFile->tag())
@@ -299,8 +303,8 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(apeFile)
 	{
-		TagLib::APE::AudioProperties * apeProps = 0;
-		apeProps = dynamic_cast<TagLib::APE::AudioProperties *>(fileRef.audioProperties());
+		TagLib::APE::Properties * apeProps = 0;
+		apeProps = dynamic_cast<TagLib::APE::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = apeProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"ape");
 		if(apeFile->APETag())
@@ -308,15 +312,15 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if (aiffFile)
 	{
-		TagLib::RIFF::AIFF::AudioProperties * aiffProps = 0;
-		aiffProps = dynamic_cast<TagLib::RIFF::AIFF::AudioProperties *>(fileRef.audioProperties());
+		TagLib::RIFF::AIFF::Properties * aiffProps = 0;
+		aiffProps = dynamic_cast<TagLib::RIFF::AIFF::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = aiffProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"aiff");
 	}
 	else if (wavFile)
 	{
-		TagLib::RIFF::WAV::AudioProperties * wavProps = 0;
-		wavProps = dynamic_cast<TagLib::RIFF::WAV::AudioProperties *>(fileRef.audioProperties());
+		TagLib::RIFF::WAV::Properties * wavProps = 0;
+		wavProps = dynamic_cast<TagLib::RIFF::WAV::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = wavProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"wav");
 	}
@@ -340,6 +344,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->ulBitsPerSample = BITRATE_UNKNOWN;
 		StringCchCopy(libEnt->szFileType, 16, L"xm");
 	}
+	/* taglib2
 	else if (dsfFile)
 	{
 		TagLib::DSF::AudioProperties * dsfProps = 0;
@@ -352,6 +357,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->ulBitsPerSample = BITRATE_UNKNOWN;
 		StringCchCopy(libEnt->szFileType, 16, L"ebml");
 	}
+	*/
 
 	if(!id3v2TagListMap.isEmpty())
 	{
@@ -457,13 +463,13 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 			libEnt->dwTrack[1] = mp4TagListMap["trkn"].toIntPair().second;
 
 		if (mp4TagListMap["----:com.apple.iTunes:replaygain_track_gain"].isValid())
-			libEnt->fReplayGain_Track_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_gain"].toString().toCString());
+			libEnt->fReplayGain_Track_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_gain"].toStringList().toString().toCString());
 		if (mp4TagListMap["----:com.apple.iTunes:replaygain_track_peak"].isValid())
-			libEnt->fReplayGain_Track_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_peak"].toString().toCString());
+			libEnt->fReplayGain_Track_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_track_peak"].toStringList().toString().toCString());
 		if (mp4TagListMap["----:com.apple.iTunes:replaygain_album_gain"].isValid())
-			libEnt->fReplayGain_Album_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_gain"].toString().toCString());
+			libEnt->fReplayGain_Album_Gain = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_gain"].toStringList().toString().toCString());
 		if (mp4TagListMap["----:com.apple.iTunes:replaygain_album_peak"].isValid())
-			libEnt->fReplayGain_Album_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_peak"].toString().toCString());
+			libEnt->fReplayGain_Album_Peak = atof(mp4TagListMap["----:com.apple.iTunes:replaygain_album_peak"].toStringList().toString().toCString());
 
 		if(mp4TagListMap["tmpo"].isValid())
 			libEnt->ulBPM = mp4TagListMap["tmpo"].toInt();
@@ -592,10 +598,12 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		s3mFile = NULL;
 	if (xmFile)
 		xmFile = NULL;
+	/* taglib2
 	if (dsfFile)
 		dsfFile = NULL;
 	if (ebmlFile)
 		ebmlFile = NULL;
+	*/
 
 	return true;
 }

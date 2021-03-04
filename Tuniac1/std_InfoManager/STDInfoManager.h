@@ -10,9 +10,11 @@
 
 #include "asffile.h"
 
+/* taglib2
 #include "dsffile.h"
 
 #include "ebmlfile.h"
+*/
 
 #include "flacFile.h"
 #include "flacpicture.h"
@@ -76,8 +78,10 @@ protected:
 	TagLib::Mod::File *modFile;
 	TagLib::S3M::File *s3mFile;
 	TagLib::XM::File *xmFile;
+	/* taglib2
 	TagLib::DSF::File *dsfFile;
 	TagLib::EBML::File *ebmlFile;
+	*/
 
 public:
 	CSTDInfoManager(void);
