@@ -24,6 +24,7 @@
 */
 
 #pragma once
+#include <time.h>
 #include "IPlaylist.h"
 
 #define SORTED_ASCENDING	0

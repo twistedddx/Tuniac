@@ -252,7 +252,7 @@ begin
   if not HasVC14x86Redist then begin
     URL := '{#VC14x86Redist}';
     URLMIRROR := '{#VC14x86RedistMIRROR}';
-    FileName := ExpandConstant('{tmp}\vcredist_x86(2017).exe');
+    FileName := ExpandConstant('{tmp}\vcredist_x86(2019).exe');
     idpAddFile(URL, FileName);
     idpAddMirror(URL, URLMirror);
   end;      
@@ -260,7 +260,7 @@ begin
   if not HasVC14x64Redist and IsWin64 then begin
     URL := '{#VC14x64Redist}';
     URLMIRROR := '{#VC14x64RedistMIRROR}';
-    FileName := ExpandConstant('{tmp}\vcredist_x64(2017).exe');
+    FileName := ExpandConstant('{tmp}\vcredist_x64(2019).exe');
     idpAddFile(URL, FileName);
     idpAddMirror(URL, URLMIRROR);
   end;
