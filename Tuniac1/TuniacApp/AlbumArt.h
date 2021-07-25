@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include "png.h"
+#include <setjmp.h>
 #include "jpeglib.h"
+#include "png.h"
+//#include "spng.h"
 
 class CAlbumArt
 {
@@ -43,7 +45,7 @@ protected:
 	char					szErrorMessage[JMSG_LENGTH_MAX];
 	TCHAR					szCurrentArtSource[MAX_PATH];
 
-	png_image				image;
+	//
 
 
 public:

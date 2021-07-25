@@ -152,6 +152,59 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 	{
 		bool bOk = false;
 
+		/*
+		int r = 0;
+		unsigned char *out = NULL;
+		size_t out_size;
+
+		spng_ctx *ctx = spng_ctx_new(0);
+		spng_set_crc_action(ctx, SPNG_CRC_USE, SPNG_CRC_USE);
+
+		spng_set_image_limits(ctx, 4096, 4096);
+
+		size_t limit = 1024 * 1024 * 64;
+		spng_set_chunk_limits(ctx, limit, limit);
+
+		r = spng_set_png_buffer(ctx, pCompressedData, ulDataLength);
+		if (r == 0)
+		{
+			r = spng_decoded_image_size(ctx, SPNG_FMT_RGBA8, &out_size);
+			if (r == 0)
+			{
+
+				if (m_pBitmapData)
+				{
+					free(m_pBitmapData);
+					m_pBitmapData = NULL;
+				}
+
+				m_pBitmapData = malloc(out_size);
+				if (!m_pBitmapData)
+					return false;
+
+				r = spng_decode_image(ctx, m_pBitmapData, out_size, SPNG_FMT_RGBA8, 0);
+			}
+		}
+
+		if (r)
+		{
+			bOk = false;
+			if (tuniacApp.m_LogWindow)
+			{
+				if (tuniacApp.m_LogWindow->GetLogOn())
+				{
+					TCHAR szMessage[MAX_PATH + 20];
+					StringCchPrintf(szMessage, MAX_PATH + 20, TEXT("libspng error: %S"), spng_strerror(r));
+					tuniacApp.m_LogWindow->LogMessage(TEXT("AlbumArt"), szMessage);
+				}
+			}
+		}
+
+		spng_ctx_free(ctx);
+		*/
+
+		png_image				image;
+
 		memset(&image, 0, (sizeof image));
 		image.version = PNG_IMAGE_VERSION;
 
@@ -177,7 +230,6 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 				bOk = true;
 			}
 
-			png_image_free(&image);
 		}
 
 		if (image.warning_or_error != 0)
@@ -192,6 +244,8 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 				}
 			}
 		}
+
+		png_image_free(&image);
 
 		return bOk;
 	}

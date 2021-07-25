@@ -31,7 +31,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2-win64-x64.msi
+https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-windows-x86_64.msi
 
 Install them
 
@@ -52,11 +52,11 @@ In Clone existing repository add:
 https://github.com/madler/zlib.git
 Hit OK and wait
 
-3c)You need TagLib 2 GIT (https://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 1.12.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
-Tick Branch and enter "taglib2" in to text box.
+Tick Branch and enter "taglib" in to text box.
 Hit OK and wait
 
 3d)You need libpng 1.7 GIT (https://libpng.sourceforge.net/)
@@ -67,7 +67,7 @@ Change Directory to C:\Code\libpng
 Tick Branch and enter "libpng17" in to text box.
 Hit OK and wait
 
-3e)You need libjpeg-turbo 2.0 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 2.1.1 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -106,7 +106,7 @@ https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-https://tuni.ac/extra/VS2019/libjpeg-turbo_203_vs2019.zip
+https://tuni.ac/extra/VS2019/libjpeg-turbo_211_vs2019.zip
 extract to D:\Code\libjpeg-turbo
 
 Look here for errors that look like:
@@ -124,10 +124,10 @@ Cannot open include file: 'libpng.h'
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-https://tuni.ac/extra/VS2019/zlib_128_vs2019.zip
+https://tuni.ac/extra/VS2019/zlib_1211_vs2019.zip
 extract to D:\Code\zlib
 
-https://tuni.ac/extra/VS2019/taglib_2_vs2019.zip
+https://tuni.ac/extra/VS2019/taglib_1120_vs2019.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:
