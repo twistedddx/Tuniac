@@ -45,9 +45,6 @@ protected:
 	char					szErrorMessage[JMSG_LENGTH_MAX];
 	TCHAR					szCurrentArtSource[MAX_PATH];
 
-	//
-
-
 public:
 	CAlbumArt(void);
 	~CAlbumArt(void);
