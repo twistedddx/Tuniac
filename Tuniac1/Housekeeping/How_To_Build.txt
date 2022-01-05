@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio Community 2019 in mind in January 2022.
+This is written with Visual Studio Community 2022 in mind in January 2022.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -18,7 +18,7 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 
 
-1)First install Visual Studio 2019.
+1)First install Visual Studio 2022.
 
 
 
@@ -88,12 +88,12 @@ These cmd assume Win10 x64 and Visual Studio 2019 if you have anything else you 
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
 
-You need Direct X SDK June 2010.
-https://microsoft.com/en-us/download/details.aspx?id=6812
+Note that 64 bit build works but there is no 64 bit SVP plugins to load.
+If you compile the solution this is skipped.
 
 
 
-6)For TuniacApp (also needs Direct X June 2010 for XAudio 2.7)
+6)For TuniacApp
 
 6a)You need nasm.
 https://nasm.us/

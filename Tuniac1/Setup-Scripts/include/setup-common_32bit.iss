@@ -60,24 +60,14 @@ begin
   end;
 end;
 
-//check for direct x 2.7
-function HasDXJun2010: Boolean;
-var
-  XAudio2: String;
-begin
-  Result := RegQueryStringValue( HKCR, 'CLSID\{5a508685-a254-4fba-9b82-9a24b00306af}', '', XAudio2 );
-end;
-
-function DownloadWantedCheck: Boolean;
+  function DownloadWantedCheck: Boolean;
 begin
   Result := DownloadWantedCheckBox.Checked;
 end;    
 
 function IsDownloadRequired: Boolean;
 begin
-  if not HasVC14x86Redist or not HasDXJun2010 then begin
-    Result:= True;
-  end else if not HasVC14x64Redist and IsWin64 then begin
+  if not HasVC14x64Redist and IsWin64 then begin
     Result:= True;
   end else begin
     Result := False;
@@ -87,10 +77,6 @@ end;
 function DownloadsNeeded: String;
 begin
   DownloadString := '';
-
-  if not HasDXJun2010  then begin
-    DownloadString := DownloadString + '{#DXJun2010XAudioText }';
-  end;
 
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
     if Length(DownloadString) > 0 then begin
@@ -119,10 +105,6 @@ end;
 function DownloadsSize: ShortInt;
 begin
   DownloadSize := 0;
-
-  if not HasDXJun2010  then begin
-    DownloadSize := DownloadSize + {#DXJun2010Size};
-  end;
 
   if not HasVC14x86Redist then begin
     DownloadSize := DownloadSize + {#VC14x86RedistSize};
@@ -225,30 +207,6 @@ begin
 
   idpSetOption('DetailedMode',  '1');
 
-  if not HasDXJun2010 then begin
-    URL := '{#DXJun2010DSETUP}';
-    FileName := ExpandConstant('{tmp}\DSETUP.dll');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010dsetup32}';
-    FileName := ExpandConstant('{tmp}\dsetup32.dll');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010dxdllreg_x86}';
-    FileName := ExpandConstant('{tmp}\dxdllreg_x86.cab');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010DXSETUP}';
-    FileName := ExpandConstant('{tmp}\DXSETUP.exe');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010dxupdate}';
-    FileName := ExpandConstant('{tmp}\dxupdate.cab');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010Jun2010_XAudio_x64}';
-    FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x64.cab');
-    idpAddFile(URL, FileName);
-    URL := '{#DXJun2010Jun2010_XAudio_x86}';
-    FileName := ExpandConstant('{tmp}\Jun2010_XAudio_x86.cab');
-    idpAddFile(URL, FileName);
-  end;                                    
-
   if not HasVC14x86Redist then begin
     URL := '{#VC14x86Redist}';
     URLMIRROR := '{#VC14x86RedistMIRROR}';
@@ -285,12 +243,6 @@ procedure DeinitializeSetup();
 var
   ErrorCode: Integer;
 begin
-  if not HasDXJun2010 then begin
-    if SuppressibleMsgBox('{#DXJun2010Text} is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
-      ShellExec('', '{#DXJun2010Manual}', '', '', SW_SHOW, ewNoWait, ErrorCode);
-    end;
-  end;
-
   if not HasVC14x86Redist or (not HasVC14x64Redist and IsWin64) then begin
     if SuppressibleMsgBox('Visual C++ Redistributable for {#VC14RedistText} is required but not found and automatic download has failed. Go to manual download?', mbConfirmation, MB_YESNO, IDNO) = IDYES then begin
       ShellExec('', '{#VC14RedistManual}', '', '', SW_SHOW, ewNoWait, ErrorCode);
