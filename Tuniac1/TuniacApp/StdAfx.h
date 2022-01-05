@@ -51,7 +51,7 @@
 #include <mmreg.h>
 #include <ks.h>
 #include <ksmedia.h>
-#include <XAudio2.h>
+#include <XAUDIO2REDIST.H>
 
 #include <cstdio>
 #include <memory.h>
