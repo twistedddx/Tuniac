@@ -154,8 +154,8 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 		/*
 		int r = 0;
-		unsigned char *out = NULL;
-		size_t out_size;
+		//unsigned char *out = NULL;
+		size_t out_size = 0;
 
 		spng_ctx *ctx = spng_ctx_new(0);
 		spng_set_crc_action(ctx, SPNG_CRC_USE, SPNG_CRC_USE);
@@ -182,13 +182,36 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 				if (!m_pBitmapData)
 					return false;
 
-				r = spng_decode_image(ctx, m_pBitmapData, out_size, SPNG_FMT_RGBA8, 0);
+
+				unsigned char* RGBAOutput;
+				unsigned char* BGRAOutput;
+
+				r = spng_decode_image(ctx, RGBAOutput, out_size, SPNG_FMT_RGBA8, 0);
+				if (r == 0)
+				{
+					int offset = 0;
+
+					for (int y = 0; y < 350; y++) {
+						for (int x = 0; x < 350; x++) {
+
+							auto temp = BGRAOutput[offset];
+							BGRAOutput[offset] = RGBAOutput[offset + 2];
+							BGRAOutput[offset + 1] = RGBAOutput[offset + 1];
+							BGRAOutput[offset + 2] = temp;
+							BGRAOutput[offset + 3] = RGBAOutput[offset + 3];
+							offset += 4;
+						}
+					}
+
+					m_pBitmapData = BGRAOutput;
+
+					bOk = true;
+				}
 			}
 		}
 
 		if (r)
 		{
-			bOk = false;
 			if (tuniacApp.m_LogWindow)
 			{
 				if (tuniacApp.m_LogWindow->GetLogOn())
@@ -246,6 +269,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 		}
 
 		png_image_free(&image);
+	
 
 		return bOk;
 	}
