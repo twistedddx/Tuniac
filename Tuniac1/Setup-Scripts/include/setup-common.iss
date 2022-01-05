@@ -7,31 +7,19 @@
 #define VC14RedistText 'Microsoft Visual C++ Redistributable 2019'
 #define VC14RedistManual 'https://visualstudio.microsoft.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/888b4c07-c602-499a-9efb-411188496ce7/F3A86393234099BEDD558FD35AB538A6E4D9D4F99AD5ADFA13F603D4FF8A42DC/VC_redist.x86.exe'
+#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/2250605e-e48f-43ed-ba6e-e0cc18bc530d/AC75A82D873E6B6F98B1D293042380764D7D263C43438E50D564FA58C9F891C2/VC_redist.x86.exe'
 #define VC14x86RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 29
-#define VC14x86RedistdwBld 30040
+#define VC14x86RedistdwMinor 30
+#define VC14x86RedistdwBld 30704
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe'
+#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/2250605e-e48f-43ed-ba6e-e0cc18bc530d/A9F5D2EAF67BF0DB0178B6552A71C523C707DF0E2CC66C06BFBC08BDC53387E7/VC_redist.x64.exe'
 #define VC14x64RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 29
-#define VC14x64RedistdwBld 30040
-#define VC14x64RedistSize 15
-
-#define DXJun2010XAudioText 'DirectX XAudio 2.7'
-#define DXJun2010Text 'DirectX End-User Runtimes (June 2010)'
-#define DXJun2010Manual 'http://www.microsoft.com/en-au/download/details.aspx?id=8109'                        
-#define DXJun2010DSETUP 'http://tuni.ac/extra/DirectX/DSETUP.dll'
-#define DXJun2010dsetup32 'http://tuni.ac/extra/DirectX/dsetup32.dll'
-#define DXJun2010dxdllreg_x86 'http://tuni.ac/extra/DirectX/dxdllreg_x86.cab'
-#define DXJun2010DXSETUP 'http://tuni.ac/extra/DirectX/DXSETUP.exe'
-#define DXJun2010dxupdate 'http://tuni.ac/extra/DirectX/dxupdate.cab'
-#define DXJun2010Jun2010_XAudio_x64 'http://tuni.ac/extra/DirectX/Jun2010_XAudio_x64.cab'
-#define DXJun2010Jun2010_XAudio_x86 'http://tuni.ac/extra/DirectX/Jun2010_XAudio_x86.cab'
-#define DXJun2010Size = 3
+#define VC14x64RedistdwMinor 30
+#define VC14x64RedistdwBld 30704
+#define VC14x64RedistSize 24
 
 [Setup]
 AllowNoIcons=yes
@@ -80,7 +68,6 @@ Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 
 [Run]
-Filename: "{tmp}\DXSETUP.exe"; StatusMsg: "Installing {#DXJun2010XAudioText}...(Please wait!)"; Parameters: "/silent"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x86(2019).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x86 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: "{tmp}\vcredist_x64(2019).exe"; StatusMsg: "Installing Microsoft {#VC14RedistText} x64 Runtime... (Please wait!)"; Parameters: "/q /norestart"; Flags: skipifdoesntexist;
 Filename: {app}\TuniacApp.exe; Description: {cm:LaunchProgram,Tuniac}; Flags: nowait postinstall skipifsilent

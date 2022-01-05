@@ -1,3 +1,8 @@
+Jan, 2022
+---------
+-Move from XAudio 2.7 to XAudio 2.9. Min OS support is now Windows 7 SP1
+-bass, bassopus and basshls update
+
 Mar, 2021
 ---------
 -Add Window accent colour to playlist interleaved colour. Uses Active captions (gradient) accent colour.
