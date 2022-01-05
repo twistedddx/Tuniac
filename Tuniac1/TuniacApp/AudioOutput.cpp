@@ -167,11 +167,13 @@ unsigned long CAudioOutput::ThreadProc(void)
 				//song ended. buffer empty, packetizer finished and output to be finished
 				else if(getbufferret == -1)
 				{
+
 					// write an empty end of stream buffer!
 					XAUDIO2_BUFFER buf	= {0};
-					buf.AudioBytes		= 0;
+					buf.AudioBytes		= 8;  //8 byte as xaudio 2.9 doesn't like 0. xuadio 2.7 is fine with 0.
 					buf.pAudioData		= (BYTE*)pOffset;
 					buf.Flags = XAUDIO2_END_OF_STREAM;
+
 					m_pSourceVoice->SubmitSourceBuffer( &buf );
 				}
 				//else
