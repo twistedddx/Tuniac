@@ -263,6 +263,9 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	if(!m_PluginManager.Initialize())
 		return false;
 
+	if (!m_ServicePluginManager.Initialize())
+		return false;
+
 	//create tray menu
 	m_TrayMenu = GetSubMenu(LoadMenu(m_hInstance, MAKEINTRESOURCE(IDR_TRAYMENU)), 0);
 	CheckMenuItem(m_TrayMenu, ID_PLAYBACK_TOGGLE_SHUFFLE, m_Preferences.GetShuffleState() ? MF_CHECKED | MF_BYCOMMAND : MF_UNCHECKED | MF_BYCOMMAND);
@@ -358,6 +361,7 @@ bool CTuniacApp::Shutdown()
 	m_PlaylistManager.Shutdown(m_szLibraryFolder, m_bSaveML);
 	m_MediaLibrary.Shutdown(m_szLibraryFolder, m_bSaveML);
 
+	m_ServicePluginManager.Shutdown();
 	m_PluginManager.Shutdown();
 
 	m_Preferences.SetActiveWindow(m_ActiveScreen);

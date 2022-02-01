@@ -49,6 +49,7 @@
 #include "TuniacSkin.h"
 
 #include "PluginManager.h"
+#include "ServicePluginManager.h"
 
 
 #define FONT_SIZE_LARGE				0
@@ -154,6 +155,7 @@ public:
 	Array<IWindow *,3>			m_WindowArray;
 
 	CPluginManager				m_PluginManager;
+	CServicePluginManager		m_ServicePluginManager;
 	CTaskbar					m_Taskbar;
 
 	CHistory					m_History;

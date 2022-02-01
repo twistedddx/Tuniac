@@ -393,6 +393,7 @@
     <ClCompile Include="PlayQueueSourceView.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="Preferences.cpp" />
+    <ClCompile Include="ServicePluginManager.cpp" />
     <ClCompile Include="sfmt.cpp" />
     <ClCompile Include="SourceSelectorWindow.cpp" />
     <ClCompile Include="SSE_Utils.cpp" />
@@ -435,6 +436,7 @@
     <ClInclude Include="ITuniacExportPlugin.h" />
     <ClInclude Include="ITuniacImportPlugin.h" />
     <ClInclude Include="ITuniacPlugin.h" />
+    <ClInclude Include="ITuniacServicePlugin.h" />
     <ClInclude Include="ITuniacVisPlugin.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="LibraryEntry.h" />
@@ -454,6 +456,7 @@
     <ClInclude Include="Preferences.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ringbuffer.h" />
+    <ClInclude Include="ServicePluginManager.h" />
     <ClInclude Include="sfmt.h" />
     <ClInclude Include="SourceSelectorWindow.h" />
     <ClInclude Include="SSE_Utils.h" />

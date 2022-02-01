@@ -928,6 +928,189 @@ LRESULT CALLBACK CPreferences::PluginsProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 	return true;
 }
 
+LRESULT CALLBACK CPreferences::ServicesProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	CPreferences* pPrefs = (CPreferences*)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+	{
+		SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+		pPrefs = (CPreferences*)lParam;
+
+		HWND hListView = GetDlgItem(hDlg, IDC_SERVICEPLUGIN_LIST);
+		ListView_SetExtendedListViewStyle(hListView, LVS_EX_CHECKBOXES | LVS_EX_FULLROWSELECT);
+
+		LVCOLUMN	lvC;
+		lvC.mask = LVCF_WIDTH | LVCF_TEXT;
+		lvC.cx = 305;
+		lvC.pszText = TEXT("");
+		ListView_InsertColumn(hListView, 0, &lvC);
+
+		LVITEM item;
+		item.mask = LVIF_TEXT;
+		item.iSubItem = 0;
+
+		for (unsigned int i = 0; i < tuniacApp.m_ServicePluginManager.GetNumPlugins(); i++)
+		{
+			ServicePluginEntry* pPE = tuniacApp.m_ServicePluginManager.GetPluginAtIndex(i);
+			if (pPE == NULL) break;
+
+			TCHAR szItem[128];
+			StringCchPrintf(szItem, 128, TEXT("%s (%s)"), pPE->szName, pPE->szDllFile);
+
+			item.pszText = szItem;
+			item.iItem = i;
+			ListView_InsertItem(hListView, &item);
+		}
+		SendMessage(hDlg, WM_USER, 0, 0);
+
+	}
+	break;
+
+	case WM_USER:
+	{
+		HWND hList = GetDlgItem(hDlg, IDC_SERVICEPLUGIN_LIST);
+
+		for (unsigned int i = 0; i < tuniacApp.m_ServicePluginManager.GetNumPlugins(); i++)
+		{
+			ListView_SetCheckState(hList, i, tuniacApp.m_ServicePluginManager.IsPluginEnabled(i) ? TRUE : FALSE);
+		}
+	}
+	break;
+
+	case WM_NOTIFY:
+	{
+		LPNMHDR lpNotify = (LPNMHDR)lParam;
+
+		switch (lpNotify->code)
+		{
+		case LVN_ITEMCHANGED:
+		{
+			LPNMLISTVIEW lpView = (LPNMLISTVIEW)lpNotify;
+			int iSel = ListView_GetNextItem(lpView->hdr.hwndFrom, -1, LVNI_SELECTED);
+			if (iSel >= 0)
+			{
+				ServicePluginEntry* pPE = tuniacApp.m_ServicePluginManager.GetPluginAtIndex(iSel);
+
+				if (pPE != NULL && pPE->ulFlags & SERVICEPLUGINFLAGS_ABOUT)
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_ABOUT), TRUE);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_ABOUT), FALSE);
+				}
+
+				if (pPE != NULL && pPE->ulFlags & SERVICEPLUGINFLAGS_CONFIG)
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_CONFIGURE), TRUE);
+				}
+				else
+				{
+					EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_CONFIGURE), FALSE);
+				}
+
+
+			}
+			else
+			{
+				EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_ABOUT), FALSE);
+				EnableWindow(GetDlgItem(hDlg, IDC_SERVICEPLUGIN_CONFIGURE), FALSE);
+			}
+
+			if (lpView->iItem == -1) break;
+
+			if ((lpView->uChanged & LVIF_STATE) && lpView->uOldState && (lpView->uNewState & LVIS_STATEIMAGEMASK))
+			{
+				bool bChecked = ListView_GetCheckState(lpView->hdr.hwndFrom, lpView->iItem);
+				if (bChecked != tuniacApp.m_ServicePluginManager.IsPluginEnabled(lpView->iItem))
+				{
+					tuniacApp.m_ServicePluginManager.EnablePlugin(lpView->iItem, bChecked);
+					SendMessage(hDlg, WM_USER, 0, 0);
+				}
+			}
+
+		}
+		break;
+
+		case NM_DBLCLK:
+		{
+			SendMessage(hDlg, WM_COMMAND, MAKELONG(IDC_SERVICEPLUGIN_CONFIGURE, 0), 0);
+		}
+		break;
+		}
+	}
+	break;
+
+	case WM_COMMAND:
+	{
+		WORD wCmdID = LOWORD(wParam);
+		HWND hList = GetDlgItem(hDlg, IDC_SERVICEPLUGIN_LIST);
+
+		switch (wCmdID)
+		{
+		case IDC_SERVICEPLUGIN_ABOUT:
+		{
+			int iSel = ListView_GetNextItem(hList, -1, LVNI_SELECTED);
+			if (iSel < 0) break;
+			ServicePluginEntry* pPE = tuniacApp.m_ServicePluginManager.GetPluginAtIndex(iSel);
+			if (pPE == NULL || !(pPE->ulFlags & SERVICEPLUGINFLAGS_ABOUT)) break;
+
+			if (pPE->pPlugin == NULL)
+			{
+				if (IDYES == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
+				{
+					tuniacApp.m_ServicePluginManager.EnablePlugin(iSel, TRUE);
+					SendMessage(hDlg, WM_USER, 0, 0);
+				}
+			}
+			if (pPE->pPlugin != NULL)
+				pPE->pPlugin->About(hDlg);
+		}
+		break;
+
+		case IDC_SERVICEPLUGIN_CONFIGURE:
+		{
+			int iSel = ListView_GetNextItem(hList, -1, LVNI_SELECTED);
+			if (iSel < 0) break;
+			ServicePluginEntry* pPE = tuniacApp.m_ServicePluginManager.GetPluginAtIndex(iSel);
+			if (pPE == NULL || !(pPE->ulFlags & SERVICEPLUGINFLAGS_CONFIG)) break;
+
+			if (pPE->pPlugin == NULL)
+			{
+				if (IDYES == MessageBox(hDlg, TEXT("Plugin must be loaded to do this.\n\nEnable plugin now?"), TEXT(""), MB_YESNO | MB_ICONINFORMATION))
+				{
+					tuniacApp.m_ServicePluginManager.EnablePlugin(iSel, TRUE);
+					SendMessage(hDlg, WM_USER, 0, 0);
+				}
+			}
+			if (pPE->pPlugin != NULL)
+				pPE->pPlugin->Configure(hDlg);
+		}
+		break;
+
+		case IDC_SERVICEPLUGIN_ENABLEALL:
+		case IDC_SERVICEPLUGIN_DISABLEALL:
+		{
+			for (unsigned int i = 0; i < tuniacApp.m_ServicePluginManager.GetNumPlugins(); i++)
+			{
+				tuniacApp.m_ServicePluginManager.EnablePlugin(i, wCmdID == IDC_SERVICEPLUGIN_ENABLEALL);
+			}
+			SendMessage(hDlg, WM_USER, 0, 0);
+		}
+		break;
+		}
+	}
+	break;
+	default:
+		return false;
+		break;
+	}
+
+	return true;
+}
+
 LRESULT CALLBACK CPreferences::AudioProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	CPreferences * pPrefs = (CPreferences *)(LONG_PTR)GetWindowLongPtr(hDlg, GWLP_USERDATA);
@@ -1876,21 +2059,21 @@ CPreferences::CPreferences(void)
 	m_Pages[8].iParent = 2;
 	m_Pages[8].pTemplate = LockDlgRes(IDD_PREFERENCES_COREAUDIO);
 
-	//m_Pages[9].pszName = TEXT("Import/Export");
-	//m_Pages[9].pDialogFunc = (DLGPROC)&ImportExportProc;
-	//m_Pages[9].iParent = 1;
-	//m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_IMPORTEXPORT);
-
-	m_Pages[9].pszName = TEXT("Visuals");
-	m_Pages[9].pDialogFunc = (DLGPROC)&VisualsProc;
+	m_Pages[9].pszName = TEXT("Services");
+	m_Pages[9].pDialogFunc = (DLGPROC)&ServicesProc;
 	m_Pages[9].iParent = 2;
-	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
+	m_Pages[9].pTemplate = LockDlgRes(IDD_PREFERENCES_SERVICES);
+
+	m_Pages[10].pszName = TEXT("Visuals");
+	m_Pages[10].pDialogFunc = (DLGPROC)&VisualsProc;
+	m_Pages[10].iParent = 2;
+	m_Pages[10].pTemplate = LockDlgRes(IDD_PREFERENCES_VISUALS);
 
 	// audio
-	m_Pages[10].pszName = TEXT("EQ");
-	m_Pages[10].pDialogFunc = (DLGPROC)&EQProc;
-	m_Pages[10].iParent = 3;
-	m_Pages[10].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
+	m_Pages[11].pszName = TEXT("EQ");
+	m_Pages[11].pDialogFunc = (DLGPROC)&EQProc;
+	m_Pages[11].iParent = 3;
+	m_Pages[11].pTemplate = LockDlgRes(IDD_PREFERENCES_EQ);
 }
 
 CPreferences::~CPreferences(void)
