@@ -31,7 +31,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.23.1/cmake-3.23.1-windows-x86_64.msi
 
 Install them
 
@@ -46,7 +46,7 @@ https://svn.code.sf.net/p/tuniac/code/
 Change Directory to C:\Code\Tuniac
 Hit OK and wait
 
-3b)You should get zlib 1.2.11 GIT (https://zlib.net/)
+3b)You should get zlib 1.2.12 GIT (https://zlib.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/madler/zlib.git
@@ -56,18 +56,15 @@ Hit OK and wait
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
-Tick Branch and enter "taglib" in to text box.
 Hit OK and wait
 
-3d)You need libpng 1.7 GIT (https://libpng.sourceforge.net/)
+3d)You need libspng 0.7.2 GIT (https://libspng.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
-git://git.code.sf.net/p/libpng/code
-Change Directory to C:\Code\libpng
-Tick Branch and enter "libpng17" in to text box.
+https://github.com/randy408/libspng.git
 Hit OK and wait
 
-3e)You need libjpeg-turbo 2.1.1 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 2.1.4 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -83,7 +80,7 @@ Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libpng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 
-These cmd assume Win10 x64 and Visual Studio 2019 if you have anything else you may need to mod the file.
+These cmd assume Win10 x64 and Visual Studio 2022 if you have anything else you may need to mod the file.
 
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
@@ -104,7 +101,7 @@ https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-
 6b)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
-https://tuni.ac/extra/VS2019/libjpeg-turbo_211_vs2019.zip
+https://tuni.ac/extra/VS2022/libjpeg-turbo_212_vs2022.zip
 extract to D:\Code\libjpeg-turbo
 
 Look here for errors that look like:
@@ -113,19 +110,19 @@ Cannot open include file: 'jpeglib.h'
 6c)Build libpng static lib
 
 You can use my files if you cant get it to build right:
-https://tuni.ac/extra/VS2019/libpng17_vs2019.zip
+https://tuni.ac/extra/VS2022/libspng_072_vs2022.zip
 extract to D:\Code\libpng
 
 Look here for errors that look like:
-Cannot open include file: 'libpng.h'
+Cannot open include file: 'spng.h'
 
 7)std_Infomanager, build taglib static lib
 
 You can use my project if you cant get it to build right:
-https://tuni.ac/extra/VS2019/zlib_1211_vs2019.zip
+https://tuni.ac/extra/VS2022/zlib_1212_vs2022.zip
 extract to D:\Code\zlib
 
-https://tuni.ac/extra/VS2019/taglib_1120_vs2019.zip
+https://tuni.ac/extra/VS2022/taglib_1120_vs2022.zip
 extract to D:\Code\taglib\taglib
 
 Look here for errors that look like:

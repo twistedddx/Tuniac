@@ -1,3 +1,10 @@
+Apr, 2022
+---------
+-Swap from libpng to libspng
+-bass ape, flac and cd update
+-zlib, taglib, libjpeg-turbo update
+
+
 Jan, 2022
 ---------
 -Move from XAudio 2.7 to XAudio 2.9. Min OS support is now Windows 7 SP1
