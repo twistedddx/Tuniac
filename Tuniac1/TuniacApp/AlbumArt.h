@@ -27,8 +27,8 @@
 
 #include <setjmp.h>
 #include "jpeglib.h"
-#include "png.h"
-//#include "spng.h"
+//#include "png.h"
+#include "spng.h"
 
 class CAlbumArt
 {

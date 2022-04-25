@@ -104,6 +104,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 	if(StrStrI(szMimeType, TEXT("image/jpeg")) || StrStrI(szMimeType, TEXT("image/jpg")))
 	{
+
 		if(setjmp(sSetjmpBuffer))
 		{
 			//jpeglib-turbo error, check if its likely a png file!
@@ -152,7 +153,6 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 	{
 		bool bOk = false;
 
-		/*
 		int r = 0;
 		//unsigned char *out = NULL;
 		size_t out_size = 0;
@@ -171,7 +171,6 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 			r = spng_decoded_image_size(ctx, SPNG_FMT_RGBA8, &out_size);
 			if (r == 0)
 			{
-
 				if (m_pBitmapData)
 				{
 					free(m_pBitmapData);
@@ -183,27 +182,30 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 					return false;
 
 
-				unsigned char* RGBAOutput;
-				unsigned char* BGRAOutput;
+				unsigned char* pOutData = (unsigned char*)m_pBitmapData;
 
-				r = spng_decode_image(ctx, RGBAOutput, out_size, SPNG_FMT_RGBA8, 0);
+				r = spng_decode_image(ctx, pOutData, out_size, SPNG_FMT_RGBA8, 0);
+				struct spng_ihdr ihdr;
+				spng_get_ihdr(ctx, &ihdr);
+
+				m_ulBitmapWidth = ihdr.width;
+				m_ulBitmapHeight = ihdr.height;
+
 				if (r == 0)
 				{
 					int offset = 0;
 
-					for (int y = 0; y < 350; y++) {
-						for (int x = 0; x < 350; x++) {
-
-							auto temp = BGRAOutput[offset];
-							BGRAOutput[offset] = RGBAOutput[offset + 2];
-							BGRAOutput[offset + 1] = RGBAOutput[offset + 1];
-							BGRAOutput[offset + 2] = temp;
-							BGRAOutput[offset + 3] = RGBAOutput[offset + 3];
+					//swap rgba to bgra
+					for (int y = 0; y < m_ulBitmapWidth; y++) {
+						for (int x = 0; x < m_ulBitmapHeight; x++) {
+							auto temp = pOutData[offset];
+							pOutData[offset] = pOutData[offset + 2];
+							//pOutData[offset + 1] = pOutData[offset + 1];
+							pOutData[offset + 2] = temp;
+							//pOutData[offset + 3] = pOutData[offset + 3];
 							offset += 4;
 						}
 					}
-
-					m_pBitmapData = BGRAOutput;
 
 					bOk = true;
 				}
@@ -224,7 +226,8 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 		}
 
 		spng_ctx_free(ctx);
-		*/
+
+		/*
 
 		png_image				image;
 
@@ -269,7 +272,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 		}
 
 		png_image_free(&image);
-	
+	*/
 
 		return bOk;
 	}
