@@ -6,7 +6,7 @@
 #include "bass_aac.h"
 #include "bass_ac3.h"
 #include "bass_adx.h"
-#include "bass_ape.h"
+#include "bassape.h"
 #include "bass_mpc.h"
 #include "bass_ofr.h"
 #include "bass_spx.h"
