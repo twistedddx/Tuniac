@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "JellyfinService.h"
 #include "resource.h"
+#include "rapidjson/document.h"
+
+using namespace rapidjson;
 
 BOOL APIENTRY DllMain(HANDLE hModule,
 	DWORD  ulReason,
@@ -86,6 +89,9 @@ LRESULT CALLBACK	CJellyfinService::DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, 
 					return TRUE;
 				}
 				break;
+				case IDC_LOGIN:
+					Login();
+					break;
 			}
 			break;
 
@@ -107,4 +113,68 @@ bool			CJellyfinService::Configure(HWND hWndParent)
 	DialogBoxParam(GetModuleHandle(L"Jellyfin_Plugin.dll"), MAKEINTRESOURCE(IDD_NOTIFYPREFWINDOW), hWndParent, (DLGPROC)DlgProcStub, (DWORD_PTR)this);
 
 	return true;
+}
+
+void CJellyfinService::Login()
+{
+	/*std::string json = DoHttpRequest();
+	Document document;
+	document.Parse(json.c_str());
+
+	if (document.HasParseError())
+		return;*/
+
+	// TODO
+}
+
+std::string CJellyfinService::DoHttpRequest(LPCWSTR host, bool https, LPCWSTR path)
+{
+	HINTERNET hSession = InternetOpen(L"Mozilla/5.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+	HINTERNET hConnect = InternetConnect(hSession, host, https ? INTERNET_DEFAULT_HTTPS_PORT : INTERNET_DEFAULT_HTTP_PORT, L"", L"", INTERNET_SERVICE_HTTP, 0, 0);
+	HINTERNET hHttpFile = HttpOpenRequest(hConnect, L"GET", path, NULL, NULL, NULL, INTERNET_FLAG_RELOAD | (https ? INTERNET_FLAG_SECURE : 0), 0);
+
+	if (!HttpSendRequest(hHttpFile, NULL, 0, 0, 0))
+	{
+		InternetCloseHandle(hHttpFile);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hSession);
+		return "";
+	}
+
+	DWORD dwFileSize;
+	dwFileSize = BUFSIZ;
+
+	char* buffer;
+	buffer = new char[dwFileSize + 1];
+
+	std::string data = "";
+
+	while (true) {
+		DWORD dwBytesRead;
+		BOOL bRead;
+
+		bRead = InternetReadFile(
+			hHttpFile,
+			buffer,
+			dwFileSize + 1,
+			&dwBytesRead);
+
+		if (dwBytesRead == 0)
+			break;
+
+		if (!bRead) {
+			printf("InternetReadFile error : <%lu>\n", GetLastError());
+		}
+		else {
+			buffer[dwBytesRead] = 0;
+			data.append(buffer);
+			printf("Retrieved %lu data bytes: %s\n", dwBytesRead, buffer);
+		}
+	}
+
+	InternetCloseHandle(hHttpFile);
+	InternetCloseHandle(hConnect);
+	InternetCloseHandle(hSession);
+
+	return data;
 }

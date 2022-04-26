@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ITuniacServicePlugin.h"
+#include <Shlwapi.h>
+#include <WinInet.h>
+#include <string>
 
 class CJellyfinService :
 	public ITuniacServicePlugin
@@ -26,4 +29,8 @@ public:
 
 	bool				About(HWND hWndParent);
 	bool				Configure(HWND hWndParent);
+
+private:
+	void				Login(void);
+	std::string			DoHttpRequest(LPCWSTR host, bool https, LPCWSTR path);
 };
