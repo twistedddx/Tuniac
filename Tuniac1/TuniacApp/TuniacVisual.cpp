@@ -216,6 +216,7 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	m_glRC = NULL;
 	m_glDC = hDC;
 
+
 	GLuint		PixelFormat;
 
 	PIXELFORMATDESCRIPTOR pfd ;
@@ -272,7 +273,9 @@ bool	CTuniacVisual::Attach(HDC hDC)
 	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("ShiftRate"), &lpRegType, (LPBYTE)&fShiftRate, &dwRegSize);
 	m_pHelper->GetVisualPref(TEXT("TuniacVisual"), TEXT("ClearRate"), &lpRegType, (LPBYTE)&fClearRate, &dwRegSize);
 
+	glFinish();
 	SwapBuffers(m_glDC);
+
 
 	return true;
 }
@@ -280,6 +283,7 @@ bool	CTuniacVisual::Attach(HDC hDC)
 bool	CTuniacVisual::Detach()
 {
 	//flush
+	glFinish();
 	SwapBuffers(m_glDC);
 
 	if (m_glRC)
