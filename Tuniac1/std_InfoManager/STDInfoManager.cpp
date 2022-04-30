@@ -68,7 +68,7 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 35;
+	return 34;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
@@ -108,8 +108,8 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".wow"),
 		TEXT(".s3m"),
 		TEXT(".it"),
-		TEXT(".xm"),
-		TEXT(".dsf")
+		TEXT(".xm")
+		//TEXT(".dsf")
 
 	};
 
@@ -849,13 +849,13 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 					*ulImageDataSize = coverArt.data().size();
 					*pImageData = malloc(*ulImageDataSize);
 
-					if(coverArt.format() == 13)
+					if(coverArt.format() == TagLib::MP4::CoverArt::Format::JPEG)
 						StringCchCopy(szMimeType, 128, TEXT("image/jpeg"));
-					else if(coverArt.format() == 14)
+					else if(coverArt.format() == TagLib::MP4::CoverArt::Format::PNG)
 						StringCchCopy(szMimeType, 128, TEXT("image/png"));
-					else if(coverArt.format() == 27)
+					else if(coverArt.format() == TagLib::MP4::CoverArt::Format::BMP)
 						StringCchCopy(szMimeType, 128, TEXT("image/bmp"));
-					else if(coverArt.format() == 12)
+					else if(coverArt.format() == TagLib::MP4::CoverArt::Format::GIF)
 						StringCchCopy(szMimeType, 128, TEXT("image/gif"));
 
 					CopyMemory(*pImageData, coverArt.data().data(), *ulImageDataSize);

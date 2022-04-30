@@ -30,7 +30,7 @@ CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 		exts.AddTail(std::wstring(L".mtm"));
 		exts.AddTail(std::wstring(L".umx"));
 
-		// fine and load additional plugins in ./bass/bass*.dll folder
+		// find and load additional plugins in ./bass/bass*.dll folder
 		TCHAR				szFilename[MAX_PATH];
 		TCHAR				szFilePath[MAX_PATH];
 		WIN32_FIND_DATA		w32fd;
@@ -159,8 +159,8 @@ LPTSTR			CBASSDecoderPlugin::GetName(void)
 
 GUID			CBASSDecoderPlugin::GetPluginID(void)
 {
-	static const GUID mpcPluginGUID = {0x65d0eaf3, 0x21f8, 0x4db9, {0xb1, 0x61, 0x28, 0x5d, 0xb6, 0xe1, 0xe2, 0x66} };
-	return(mpcPluginGUID);
+	static const GUID bassPluginGUID = {0x65d0eaf3, 0x21f8, 0x4db9, {0xb1, 0x61, 0x28, 0x5d, 0xb6, 0xe1, 0xe2, 0x66} };
+	return(bassPluginGUID);
 }
 
 unsigned long	CBASSDecoderPlugin::GetFlags(void)
@@ -170,7 +170,7 @@ unsigned long	CBASSDecoderPlugin::GetFlags(void)
 
 bool			CBASSDecoderPlugin::About(HWND hParent)
 {
-    MessageBox(hParent, TEXT("BASS Plugin\nUsing BASS 2.4\nCopyright (c) 1999-2019 Un4seen Developments Ltd."), GetName(), MB_OK | MB_ICONINFORMATION);
+    MessageBox(hParent, TEXT("BASS Plugin\nUsing BASS 2.4\nCopyright (c) 1999-2022 Un4seen Developments Ltd."), GetName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
