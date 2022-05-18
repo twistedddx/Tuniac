@@ -335,6 +335,7 @@
   <ItemGroup>
     <ClInclude Include="include\glfont2.h" />
     <ClInclude Include="include\kiss_fft.h" />
+    <ClInclude Include="include\kiss_fft_log.h" />
     <ClInclude Include="include\_kiss_fft_guts.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SoniqueVis.h" />

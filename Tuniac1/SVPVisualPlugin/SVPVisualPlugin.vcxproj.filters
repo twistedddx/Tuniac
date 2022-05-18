@@ -59,6 +59,9 @@
     <ClInclude Include="include\_kiss_fft_guts.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\kiss_fft_log.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="arrow.bmp">
