@@ -1,3 +1,8 @@
+May, 2022
+---------
+-update kissfft
+-bass midi
+
 Apr, 2022
 ---------
 -Swap from libpng to libspng

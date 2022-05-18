@@ -7,18 +7,18 @@
 #define VC14RedistText 'Microsoft Visual C++ Redistributable 2019'
 #define VC14RedistManual 'https://visualstudio.microsoft.com/downloads/?q=Redistributable'
 
-#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/2250605e-e48f-43ed-ba6e-e0cc18bc530d/AC75A82D873E6B6F98B1D293042380764D7D263C43438E50D564FA58C9F891C2/VC_redist.x86.exe'
+#define VC14x86Redist 'https://download.visualstudio.microsoft.com/download/pr/06ed1d94-3f28-47a5-8025-e7bf9da634da/2ACBFE92157C1CF1A7B524A9325824046D83DBFA3FEB1CBD4DD02A42E020F77C/VC_redist.x86.exe'
 #define VC14x86RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 30
-#define VC14x86RedistdwBld 30704
+#define VC14x86RedistdwMinor 32
+#define VC14x86RedistdwBld 31326
 #define VC14x86RedistSize 14
 
-#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/2250605e-e48f-43ed-ba6e-e0cc18bc530d/A9F5D2EAF67BF0DB0178B6552A71C523C707DF0E2CC66C06BFBC08BDC53387E7/VC_redist.x64.exe'
+#define VC14x64Redist 'https://download.visualstudio.microsoft.com/download/pr/6b6923b0-3045-4379-a96f-ef5506a65d5b/426A34C6F10EA8F7DA58A8C976B586AD84DD4BAB42A0CFDBE941F1763B7755E5/VC_redist.x64.exe'
 #define VC14x64RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 30
-#define VC14x64RedistdwBld 30704
+#define VC14x64RedistdwMinor 32
+#define VC14x64RedistdwBld 31326
 #define VC14x64RedistSize 24
 
 [Setup]
@@ -57,6 +57,7 @@ Name: {app}\Guide\*.css; Type: files
 Name: {app}\Guide\Images\*.jpg; Type: files
 Name: {app}\unins*.*; Type: files
 Name: {app}\bass\bass_alac.dll; Type: files
+Name: {app}\bass\bass_ape.dll; Type: files
 
 [Files]
 Source: "include\WizardImageSmall2.bmp"; Flags: dontcopy
