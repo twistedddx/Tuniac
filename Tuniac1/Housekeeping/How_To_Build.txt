@@ -22,16 +22,13 @@ Keep spaces out of the folder paths also. Eg dont use E:\purple monkey\tuniac\Tu
 
 
 
-2)You require TortoiseSVN, TortoiseGIT and CMake or equals
-
-https://tortoisesvn.net/
-https://tortoisesvn.net/downloads.html
+2)You require TortoiseGIT and CMake or equals
 
 https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.23.1/cmake-3.23.1-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2-windows-x86_64.msi
 
 Install them
 
@@ -40,10 +37,9 @@ Install them
 3)Gather repositories
 
 3a)You need Tuniac 1.0 SVN (https://sourceforge.net/projects/tuniac/)
-Navigate to C:\Code\, right click empty space and select SVN Checkout.
-In URL of repository add:
-https://svn.code.sf.net/p/tuniac/code/
-Change Directory to C:\Code\Tuniac
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+https://github.com/twistedddx/Tuniac.git
 Hit OK and wait
 
 3b)You should get zlib 1.2.12 GIT (https://zlib.net/)
@@ -58,7 +54,7 @@ In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
 
-3d)You need libspng 0.7.2 GIT (https://libspng.org/)
+3d)You need libspng 0.7.3 GIT (https://libspng.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/randy408/libspng.git
@@ -73,11 +69,11 @@ Hit OK and wait
 
 
 
-4)Build dependencies (turbojpeglib, taglib/zlib)
+4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
 
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_zlib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
-Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libpng.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libspng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 
 These cmd assume Win10 x64 and Visual Studio 2022 if you have anything else you may need to mod the file.
@@ -92,13 +88,7 @@ If you compile the solution this is skipped.
 
 6)For TuniacApp
 
-6a)You need nasm.
-https://nasm.us/
-https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-x64.exe
-
-
-
-6b)Build libjpeg-turbo static lib
+6a)Build libjpeg-turbo static lib
 
 You can use my files if you cant get it to build right:
 https://tuni.ac/extra/VS2022/libjpeg-turbo_212_vs2022.zip
@@ -107,7 +97,7 @@ extract to D:\Code\libjpeg-turbo
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
-6c)Build libpng static lib
+6b)Build libspng static lib
 
 You can use my files if you cant get it to build right:
 https://tuni.ac/extra/VS2022/libspng_072_vs2022.zip
@@ -134,7 +124,7 @@ Cannot open include file: 'tag.h'
 
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
-https://jrsoftware.org/download.php/ispack.exe
+http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe
 
 http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe
 
@@ -143,7 +133,6 @@ Install everything it offers in the installer.
 I find it easiest to then install the standard Inno Setup installer over the top of that
 https://jrsoftware.org/download.php/is.exe
 
-http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe
 
 This adds the right click context "Compile" for *.iss files
 
