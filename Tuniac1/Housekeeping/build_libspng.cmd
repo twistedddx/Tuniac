@@ -14,7 +14,7 @@ rmdir /s /q .\build32
 mkdir .\build32
 cd build32\
 echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DSPNG_SHARED=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 17 2022" -A Win32 ..\.
+"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 17 2022" -A Win32 ..\.
 devenv libspng.sln /project "spng_static" /Clean
 devenv libspng.sln /project "spng_static" /Rebuild "Release"
 if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
@@ -45,7 +45,7 @@ rmdir /s /q .\build64
 mkdir .\build64
 cd build64\
 echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 17 2022" -A x64 ..\.
+"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 17 2022" -A x64 ..\.
 devenv libspng.sln /project "spng_static" /Clean
 devenv libspng.sln /project "spng_static" /Rebuild "Release"
 if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64

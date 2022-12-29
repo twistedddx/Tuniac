@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1-windows-x86_64.msi
 
 Install them
 
@@ -48,7 +48,7 @@ In Clone existing repository add:
 https://github.com/madler/zlib.git
 Hit OK and wait
 
-3c)You need TagLib 1.12.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 1.13.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
@@ -60,7 +60,7 @@ In Clone existing repository add:
 https://github.com/randy408/libspng.git
 Hit OK and wait
 
-3e)You need libjpeg-turbo 2.1.4 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 2.1.5 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
