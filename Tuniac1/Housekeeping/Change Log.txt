@@ -1,3 +1,10 @@
+Dec, 2022
+---------
+-Fix running VS redist installer during Tuniac install
+-Update XAudio to 1.2.10
+-Update BASS flac, dsd, wv
+-Use permalink to vs redist
+
 May, 2022
 ---------
 -update kissfft
