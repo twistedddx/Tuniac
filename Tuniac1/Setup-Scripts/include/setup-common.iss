@@ -10,16 +10,16 @@
 #define VC14x86Redist 'https://aka.ms/vs/17/release/vc_redist.x86.exe'
 #define VC14x86RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x86.exe'
 #define VC14x86RedistdwMajor 14
-#define VC14x86RedistdwMinor 32
-#define VC14x86RedistdwBld 31332
+#define VC14x86RedistdwMinor 34
+#define VC14x86RedistdwBld 31931
 #define VC14x86RedistSize 14
 
 #define VC14x64Redist 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
 #define VC14x64RedistMIRROR 'http://tuni.ac/extra/Redist/VC_redist.x64.exe'
 #define VC14x64RedistdwMajor 14
-#define VC14x64RedistdwMinor 32
-#define VC14x64RedistdwBld 31332
-#define VC14x64RedistSize 24
+#define VC14x64RedistdwMinor 34
+#define VC14x64RedistdwBld 31931
+#define VC14x64RedistSize 25
 
 [Setup]
 AllowNoIcons=yes
