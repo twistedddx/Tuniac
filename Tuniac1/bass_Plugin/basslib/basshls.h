@@ -1,6 +1,6 @@
 /*
 	BASSHLS 2.4 C/C++ header file
-	Copyright (c) 2015-2021 Un4seen Developments Ltd.
+	Copyright (c) 2015-2023 Un4seen Developments Ltd.
 
 	See the BASSHLS.CHM file for more detailed documentation
 */
@@ -42,6 +42,7 @@ extern "C" {
 #define BASS_TAG_HLS_STREAMINF	0x14001 // EXT-X-STREAM-INF tag : UTF-8 string
 #define BASS_TAG_HLS_DATE		0x14002 // EXT-X-PROGRAM-DATE-TIME tag : UTF-8 string
 #define BASS_TAG_HLS_SDT		0x14003 // DVB SDT : variable length block
+#define BASS_TAG_HLS_EMSG		0x14004 // fMP4 emsg : variable length block
 
 // additional BASS_StreamGetFilePosition mode
 #define BASS_FILEPOS_HLS_SEGMENT	0x10000	// segment sequence number
@@ -55,12 +56,12 @@ HSTREAM BASSHLSDEF(BASS_HLS_StreamCreateURL)(const char *url, DWORD flags, DOWNL
 #if defined(_WIN32) && !defined(NOBASSOVERLOADS)
 static inline HSTREAM BASS_HLS_StreamCreateFile(BOOL mem, const WCHAR *file, QWORD offset, QWORD length, DWORD flags)
 {
-	return BASS_HLS_StreamCreateFile(mem, (const void*)file, offset, length, flags|BASS_UNICODE);
+	return BASS_HLS_StreamCreateFile(mem, (const void*)file, offset, length, flags | BASS_UNICODE);
 }
 
 static inline HSTREAM BASS_HLS_StreamCreateURL(const WCHAR *url, DWORD flags, DOWNLOADPROC *proc, void *user)
 {
-	return BASS_HLS_StreamCreateURL((const char*)url, flags|BASS_UNICODE, proc, user);
+	return BASS_HLS_StreamCreateURL((const char*)url, flags | BASS_UNICODE, proc, user);
 }
 #endif
 #endif

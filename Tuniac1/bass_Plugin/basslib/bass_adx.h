@@ -27,7 +27,7 @@ typedef struct
 #define BASS_TAG_ADX_LOOP 	0x12000	// ADX loop structure
 
 // BASS_CHANNELINFO type
-#define BASS_CTYPE_STREAM_ADX	0x1F000 // ADX stream type (not splitted on version 3 or 4)
+#define BASS_CTYPE_STREAM_ADX	0x1F000 // ADX stream type (not splitted on version 3 or 4 or 5)
 
 
 HSTREAM BASSADXDEF(BASS_ADX_StreamCreateFile)(BOOL mem, const void *file, QWORD offset, QWORD length, DWORD flags);
