@@ -175,7 +175,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	TagLib::Ogg::FieldListMap vorbisTagListMap;
 	TagLib::APE::ItemListMap apeTagListMap;
 	TagLib::ID3v2::FrameListMap id3v2TagListMap;
-	TagLib::MP4::ItemListMap mp4TagListMap;
+	TagLib::MP4::ItemMap mp4TagListMap;
 	TagLib::ASF::AttributeListMap wmaTagListMap;
 	
 	TagLib::AudioProperties * audioProps = 0;
@@ -235,7 +235,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->ulBitsPerSample = mp4Props->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"mp4");
 		if(mp4File->tag())
-			mp4TagListMap = mp4File->tag()->itemListMap();
+			mp4TagListMap = mp4File->tag()->itemMap();
 	}
 	else if(mpcFile)
 	{
@@ -627,7 +627,7 @@ bool			CSTDInfoManager::SetInfo(LibraryEntry * libEnt)
 
 		if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
 		{
-			if(mp3File->save(TagLib::MPEG::File::AllTags, false, 3))
+			if(mp3File->save(TagLib::MPEG::File::AllTags, TagLib::File::StripNone, TagLib::ID3v2::v3))
 			{
 				fileRef = TagLib::FileRef();
 				return true;
@@ -689,7 +689,7 @@ unsigned long	CSTDInfoManager::GetNumberOfAlbumArts(void)
 	else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
 	{
 		if(mp4File->tag())
-			count = mp4File->tag()->itemListMap()["covr"].toCoverArtList().size();
+			count = mp4File->tag()->itemMap()["covr"].toCoverArtList().size();
 	}
 	else if (ttaFile = dynamic_cast<TagLib::TrueAudio::File *>(fileRef.file()))
 	{
@@ -838,7 +838,7 @@ bool			CSTDInfoManager::GetAlbumArt(	unsigned long		ulImageIndex,
 	{
 		if(mp4File->tag())
 		{
-			TagLib::MP4::Item mp4TagItem = mp4File->tag()->itemListMap()["covr"];
+			TagLib::MP4::Item mp4TagItem = mp4File->tag()->itemMap()["covr"];
 
 			if(mp4TagItem.isValid())
 			{
