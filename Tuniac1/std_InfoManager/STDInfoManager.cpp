@@ -51,8 +51,8 @@ CSTDInfoManager::CSTDInfoManager(void)
 	modFile = NULL;
 	s3mFile = NULL;
 	xmFile = NULL;
-	/* taglib2
 	dsfFile = NULL;
+	/* taglib2
 	ebmlFile = NULL;
 	*/
 }
@@ -109,7 +109,7 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".s3m"),
 		TEXT(".it"),
 		TEXT(".xm")
-		//TEXT(".dsf")
+		TEXT(".dsf")
 
 	};
 
@@ -157,10 +157,10 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 			return true;
 		else if(xmFile = dynamic_cast<TagLib::XM::File *>( fileRef.file() ))
 			return true;
-		/* taglib2
-		else if (dsfFile = dynamic_cast<TagLib::DSF::File *>(fileRef.file()))
+		else if (dsfFile = dynamic_cast<TagLib::DSF::File *>(fileRef.file() ))
 			return true;
-		else if (ebmlFile = dynamic_cast<TagLib::EBML::File *>(fileRef.file()))
+		/* taglib2
+		else if (ebmlFile = dynamic_cast<TagLib::EBML::File *>(fileRef.file() ))
 			return true;
 		*/
 

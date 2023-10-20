@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.28.0-rc2/cmake-3.28.0-rc2-windows-x86_64.msi
 
 Install them
 
@@ -42,25 +42,25 @@ In Clone existing repository add:
 https://github.com/twistedddx/Tuniac.git
 Hit OK and wait
 
-3b)You should get zlib 1.2.12 GIT (https://zlib.net/)
+3b)You should get zlib 1.3 GIT (https://zlib.net/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/madler/zlib.git
 Hit OK and wait
 
-3c)You need TagLib 1.13.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
+3c)You need TagLib 2.0.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
 
-3d)You need libspng 0.7.3 GIT (https://libspng.org/)
+3d)You need libspng 0.7.4 GIT (https://libspng.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/randy408/libspng.git
 Hit OK and wait
 
-3e)You need libjpeg-turbo 2.1.5 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
+3e)You need libjpeg-turbo 3.0.1 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -71,10 +71,21 @@ Hit OK and wait
 
 4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
 
+Taglib requires utf8cpp:
+https://github.com/nemtrif/utfcpp
+Download zip
+https://github.com/nemtrif/utfcpp/archive/refs/heads/master.zip
+Extract to D:\Code\taglib\3rdparty\utfcpp
+
+git clone https://github.com/Microsoft/vcpkg.git
+.\vcpkg\bootstrap-vcpkg.bat
+.\vcpkg\vcpkg integrate install
+.\vcpkg\vcpkg install cppunit utfcpp zlib --triplet x64-windows
+
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_zlib.cmd
-Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libspng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 
 These cmd assume Win10 x64 and Visual Studio 2022 if you have anything else you may need to mod the file.
 

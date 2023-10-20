@@ -10,9 +10,10 @@
 
 #include "asffile.h"
 
-/* taglib2
+
 #include "dsffile.h"
 
+/* taglib2
 #include "ebmlfile.h"
 */
 
@@ -78,8 +79,8 @@ protected:
 	TagLib::Mod::File *modFile;
 	TagLib::S3M::File *s3mFile;
 	TagLib::XM::File *xmFile;
-	/* taglib2
 	TagLib::DSF::File *dsfFile;
+	/* taglib2
 	TagLib::EBML::File *ebmlFile;
 	*/
 
