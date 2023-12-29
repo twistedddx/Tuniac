@@ -269,7 +269,7 @@ bool			CVisualWindow::CreatePluginWindow(HWND hParent, HINSTANCE hInstance)
 
 bool			CVisualWindow::DestroyPluginWindow(void)
 {
-
+	CAutoLock m(&m_RenderLock);
 
 	if(m_hThread)
 	{

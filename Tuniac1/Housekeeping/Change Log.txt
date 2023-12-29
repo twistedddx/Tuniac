@@ -1,7 +1,11 @@
+Jan, 2023
+---------
+-Fix svp opengl crash on Intel GPU
+
 Dec, 2022
 ---------
 -Fix running VS redist installer during Tuniac install
--Update XAudio to 1.2.10
+-Update XAudio to 1.2.11
 -Update BASS flac, dsd, wv
 -Use permalink to vs redist
 
