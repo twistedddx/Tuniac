@@ -5,64 +5,53 @@ echo Working dir: %cd%
 cd ..\..\..\
 echo Working dir: %cd%
 
-rem ######## libpng
+rem #set VCPKG_ROOT for cppunit/zlib/utf8cpp
+set VCPKG_ROOT="%cd%\vcpkg"
+set PATH=%VCPKG_ROOT%;%PATH%
+echo VCPKG_ROOT: %VCPKG_ROOT%
+
+rem ######## libspng
+echo LibSPNG
 cd libspng\
 echo Working dir: %cd%
 
-rem #Release x86:
+rem ######## LibSPNG x86
+echo x86
 rmdir /s /q .\build32
 mkdir .\build32
-cd build32\
-echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 17 2022" -A Win32 ..\.
-devenv libspng.sln /project "spng_static" /Clean
-devenv libspng.sln /project "spng_static" /Rebuild "Release"
-if exist ..\Release\x86\ rmdir /S /Q ..\Release\x86
 timeout /t 1 /nobreak > NUL
-mkdir ..\Release\x86
-timeout /t 1 /nobreak > NUL
-move /Y .\Release\spng_static.lib ..\Release\x86\spng_static.lib
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build32 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DSPNG_STATIC=1 -A=Win32
 
-rem #Debug x86:
-devenv libspng.sln /project "spng_static" /Clean
-devenv libspng.sln /project "spng_static" /Rebuild "Debug"
-if exist ..\Debug\x86\ rmdir /S /Q ..\Debug\x86
-timeout /t 1 /nobreak > NUL
-mkdir ..\Debug\x86
-timeout /t 1 /nobreak > NUL
-move /Y .\Debug\spng_static.lib ..\Debug\x86\spng_static.lib
-move /Y .\Debug\spng_static.pdb ..\Debug\x86\spng_static.pdb
+rem # LibSPNG Release x86:
+echo Release x86
+"%ProgramFiles%\CMake\bin\cmake" --build .\build32 --target spng_static --config Release
 
+rem # LibSPNG Debug x86:
+echo Debug x86
+"%ProgramFiles%\CMake\bin\cmake" --build .\build32 --target spng_static --config Debug
 
-cd ..
-echo Working dir: %cd%
-
+rem ######## LibSPNG x64
+echo x64
 call "%Programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
+rem #set VCPKG_ROOT for cppunit/zlib/utf8cpp
+cd ..
+set VCPKG_ROOT="%cd%\vcpkg"
+set PATH=%VCPKG_ROOT%;%PATH%
+echo VCPKG_ROOT: %VCPKG_ROOT%
+cd libspng\
 
-rem #Release x64:
 rmdir /s /q .\build64
 mkdir .\build64
-cd build64\
-echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DSPNG_STATIC=1 -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 17 2022" -A x64 ..\.
-devenv libspng.sln /project "spng_static" /Clean
-devenv libspng.sln /project "spng_static" /Rebuild "Release"
-if exist ..\Release\x64\ rmdir /S /Q ..\Release\x64
 timeout /t 1 /nobreak > NUL
-mkdir ..\Release\x64
-timeout /t 1 /nobreak > NUL
-move /Y .\Release\spng_static.lib ..\Release\x64\spng_static.lib
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build64 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DSPNG_STATIC=1 -A=x64
 
-rem #Debug x64:
-devenv libspng.sln /project "spng_static" /Clean
-devenv libspng.sln /project "spng_static" /Rebuild "Debug"
-if exist ..\Debug\x64\ rmdir /S /Q ..\Debug\x64
-timeout /t 1 /nobreak > NUL
-mkdir ..\Debug\x64
-timeout /t 1 /nobreak > NUL
-move /Y .\Debug\spng_static.lib ..\Debug\x64\spng_static.lib
-move /Y .\Debug\spng_static.pdb ..\Debug\x64\spng_static.pdb
+rem # LibSPNG Release x64:
+echo Release x64
+"%ProgramFiles%\CMake\bin\cmake" --build .\build64 --target spng_static --config Release
 
+rem # LibSPNG Debug x64:
+echo Debug x64
+"%ProgramFiles%\CMake\bin\cmake" --build .\build64 --target spng_static --config Debug
 
 pause

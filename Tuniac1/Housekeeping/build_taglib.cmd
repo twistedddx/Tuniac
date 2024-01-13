@@ -5,70 +5,53 @@ echo Working dir: %cd%
 cd ..\..\..\
 echo Working dir: %cd%
 
+rem #set VCPKG_ROOT for cppunit/zlib/utf8cpp
+set VCPKG_ROOT="%cd%\vcpkg"
+set PATH=%VCPKG_ROOT%;%PATH%
+echo VCPKG_ROOT: %VCPKG_ROOT%
+
 rem ######## Taglib
+echo Taglib
 cd taglib\
 echo Working dir: %cd%
 
-
-rem #taglib Release x86
+rem ######## Taglib x86
+echo x86
 rmdir /s /q .\build32
 mkdir .\build32
-cd build32\
-echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x86\zlibstatic.lib -G "Visual Studio 17 2022" -A Win32 ..\.
-devenv taglib.sln /project "tag" /Clean
-devenv taglib.sln /project "tag" /Rebuild "Release"
-if exist ..\taglib\Release\x86\ rmdir /S /Q ..\taglib\Release\x86
 timeout /t 1 /nobreak > NUL
-mkdir ..\taglib\Release\x86
-timeout /t 1 /nobreak > NUL
-move /Y .\taglib\Release\tag.lib ..\taglib\Release\x86\tag.lib
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build32 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DBUILD_SHARED_LIBS=OFF -DWITH_ZLIB=ON -A=Win32
 
-rem #taglib Debug x86
-devenv taglib.sln /project "tag" /Clean
-devenv taglib.sln /project "tag" /Rebuild "Debug"
-if exist ..\taglib\Debug\x86\ rmdir /S /Q ..\taglib\Debug\x86
-timeout /t 1 /nobreak > NUL
-mkdir ..\taglib\Debug\x86
-timeout /t 1 /nobreak > NUL
-move /Y .\taglib\Debug\tag.lib ..\taglib\Debug\x86\tag.lib
-move /Y .\taglib\Debug\tag.pdb ..\taglib\Debug\x86\tag.pdb
+rem # Taglib Release x86
+echo Release x86
+"%ProgramFiles%\CMake\bin\cmake" --build .\build32 --target tag --config Release
 
-
-cd ..
-echo Working dir: %cd%
-
-call "%Programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-
+rem # Taglib Debug x86
+echo Debug x86
+"%ProgramFiles%\CMake\bin\cmake" --build .\build32 --target tag --config Debug
 
 rem ######## Taglib x64
+echo x64
+call "%Programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
+rem #set VCPKG_ROOT for cppunit/zlib/utf8cpp
+cd ..
+set VCPKG_ROOT="%cd%\vcpkg"
+set PATH=%VCPKG_ROOT%;%PATH%
+echo VCPKG_ROOT: %VCPKG_ROOT%
+cd taglib\
 
-rem #taglib Release x64
 rmdir /s /q .\build64
 mkdir .\build64
-cd build64\
-echo Working dir: %cd%
-"%ProgramFiles%\CMake\bin\cmake" -DBUILD_SHARED_LIBS=OFF -DZLIB_INCLUDE_DIR=..\..\zlib\ -DZLIB_LIBRARY=..\..\zlib\Release\x64\zlibstatic.lib -G "Visual Studio 17 2022" -A x64 ..\.
-devenv taglib.sln /project "tag" /Clean
-devenv taglib.sln /project "tag" /Rebuild "Release"
-if exist ..\taglib\Release\x64\ rmdir /S /Q ..\taglib\Release\x64
 timeout /t 1 /nobreak > NUL
-mkdir ..\taglib\Release\x64
-timeout /t 1 /nobreak > NUL
-move /Y .\taglib\Release\tag.lib ..\taglib\Release\x64\tag.lib
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build64 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DBUILD_SHARED_LIBS=OFF -DWITH_ZLIB=ON -A=x64
+
+rem #taglib Release x64
+echo Release x64
+"%ProgramFiles%\CMake\bin\cmake" --build .\build64 --target tag --config Release
 
 rem #taglib Debug x64
-devenv taglib.sln /project "tag" /Clean
-devenv taglib.sln /project "tag" /Rebuild "Debug"
-if exist ..\taglib\Debug\x64\ rmdir /S /Q ..\taglib\Debug\x64
-timeout /t 1 /nobreak > NUL
-mkdir ..\taglib\Debug\x64
-timeout /t 1 /nobreak > NUL
-move /Y .\taglib\Debug\tag.lib ..\taglib\Debug\x64\tag.lib
-move /Y .\taglib\Debug\tag.pdb ..\taglib\Debug\x64\tag.pdb
-
-move /Y .\taglib_config.h ..\taglib_config.h
-
+echo Debug x64
+"%ProgramFiles%\CMake\bin\cmake" --build .\build64 --target tag --config Debug
 
 pause

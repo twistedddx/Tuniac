@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio Community 2022 in mind in January 2022.
+This is written with Visual Studio Community 2022 in mind in January 2024.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.28.0-rc2/cmake-3.28.0-rc2-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1-windows-x86_64.msi
 
 Install them
 
@@ -36,31 +36,25 @@ Install them
 
 3)Gather repositories
 
-3a)You need Tuniac 1.0 SVN (https://sourceforge.net/projects/tuniac/)
+3a)You need Tuniac 1.0 git (https://tuni.ac/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/twistedddx/Tuniac.git
 Hit OK and wait
 
-3b)You should get zlib 1.3 GIT (https://zlib.net/)
-Navigate to C:\Code\, right click empty space and select GIT Clone.
-In Clone existing repository add:
-https://github.com/madler/zlib.git
-Hit OK and wait
-
-3c)You need TagLib 2.0.0 GIT (https://developer.kde.org/~wheeler/taglib.html)
+3b)You need TagLib 2.0.0 GIT (https://taglib.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/taglib/taglib
 Hit OK and wait
 
-3d)You need libspng 0.7.4 GIT (https://libspng.org/)
+3c)You need libspng 0.7.4 GIT (https://libspng.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/randy408/libspng.git
 Hit OK and wait
 
-3e)You need libjpeg-turbo 3.0.1 GIT (https://sourceforge.net/projects/libjpeg-turbo/)
+3d)You need libjpeg-turbo 3.0.1 GIT (https://libjpeg-turbo.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -71,23 +65,12 @@ Hit OK and wait
 
 4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
 
-Taglib requires utf8cpp:
-https://github.com/nemtrif/utfcpp
-Download zip
-https://github.com/nemtrif/utfcpp/archive/refs/heads/master.zip
-Extract to D:\Code\taglib\3rdparty\utfcpp
-
-git clone https://github.com/Microsoft/vcpkg.git
-.\vcpkg\bootstrap-vcpkg.bat
-.\vcpkg\vcpkg integrate install
-.\vcpkg\vcpkg install cppunit utfcpp zlib --triplet x64-windows
-
-Run D:\Code\tuniac\Tuniac1\Housekeeping\build_zlib.cmd
+Run D:\Code\tuniac\Tuniac1\Housekeeping\build_vcpkg.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libspng.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_turbojpeglib.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_taglib.cmd
 
-These cmd assume Win10 x64 and Visual Studio 2022 if you have anything else you may need to mod the file.
+These cmd assume Win11 x64 and Visual Studio 2022 if you have anything else you may need to mod the file.
 
 
 5)For the 32bit Sonique Visual Plugin visual (SVP_Plugin)
@@ -101,27 +84,15 @@ If you compile the solution this is skipped.
 
 6a)Build libjpeg-turbo static lib
 
-You can use my files if you cant get it to build right:
-https://tuni.ac/extra/VS2022/libjpeg-turbo_212_vs2022.zip
-extract to D:\Code\libjpeg-turbo
-
 Look here for errors that look like:
 Cannot open include file: 'jpeglib.h'
 
 6b)Build libspng static lib
 
-You can use my files if you cant get it to build right:
-https://tuni.ac/extra/VS2022/libspng_072_vs2022.zip
-extract to D:\Code\libpng
-
 Look here for errors that look like:
 Cannot open include file: 'spng.h'
 
 7)std_Infomanager, build taglib static lib
-
-You can use my project if you cant get it to build right:
-https://tuni.ac/extra/VS2022/zlib_1212_vs2022.zip
-extract to D:\Code\zlib
 
 https://tuni.ac/extra/VS2022/taglib_1120_vs2022.zip
 extract to D:\Code\taglib\taglib
@@ -135,16 +106,11 @@ Cannot open include file: 'tag.h'
 
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
-http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe
 
-http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe
-
-Install everything it offers in the installer.
-
-I find it easiest to then install the standard Inno Setup installer over the top of that
-https://jrsoftware.org/download.php/is.exe
-
-
+8a)http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe
+8b)http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe
+Install everything it offers in the installers.
+I find it easiest to then install the standard Inno Setup installer over the top of qsp
 This adds the right click context "Compile" for *.iss files
 
 Install Inno Download Plugin

@@ -1,4 +1,4 @@
-Jan, 2023
+Dec, 2023
 ---------
 -Fix svp opengl crash on Intel GPU
 -Update Xaudio 2.9 nuget to 1.2.11
