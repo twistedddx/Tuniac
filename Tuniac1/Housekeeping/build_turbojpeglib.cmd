@@ -20,7 +20,7 @@ echo x86
 rmdir /s /q .\build32
 mkdir .\build32
 
-"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build32 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -A=Win32
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build32 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DWITH_TURBOJPEG=false -A=Win32
 
 rem # libjpeg-turbo Release x86:
 echo Release x86
@@ -44,7 +44,7 @@ cd libjpeg-turbo\
 rmdir /s /q .\build64
 mkdir .\build64
 timeout /t 1 /nobreak > NUL
-"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build64 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -A=x64
+"%ProgramFiles%\CMake\bin\cmake" -S . -B .\build64 -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake" -DWITH_TURBOJPEG=false -A=x64
 
 rem # LibSPNG Release x64:
 echo Release x64
