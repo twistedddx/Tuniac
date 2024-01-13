@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="SQLite">
+      <UniqueIdentifier>{2e2e9fde-ddcd-4a52-8efd-66c21a6cb1d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLite++">
+      <UniqueIdentifier>{809aad5e-566d-42a6-946a-124bb76e77af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MediaManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NotificationCenter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tuniac2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TuniacApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TuniacHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TuniacPluginManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TuniacSourceWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TuniacVisualWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\alter.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\attach.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\auth.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\btree.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\build.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\callback.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\date.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\delete.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\expr.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\func.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\hash.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\insert.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\legacy.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\main.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\opcodes.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\os_unix.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\os_win.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\pager.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\parse.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\pragma.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\prepare.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\printf.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\random.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\select.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\table.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\tclsqlite.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\tokenize.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\trigger.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\update.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\utf.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\util.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\vacuum.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\vdbe.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\vdbeapi.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\vdbeaux.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\vdbemem.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\where.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3x_command.cpp">
+      <Filter>SQLite++</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3x_connection.cpp">
+      <Filter>SQLite++</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3x_exception.cpp">
+      <Filter>SQLite++</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3x_reader.cpp">
+      <Filter>SQLite++</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3x_transaction.cpp">
+      <Filter>SQLite++</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NotificationCenter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tuniac2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TuniacApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TuniacHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TuniacPluginManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TuniacSourceWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TuniacVisualWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\btree.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\hash.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\keywordhash.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\opcodes.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\os.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\os_common.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\os_unix.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\os_win.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\pager.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\parse.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqliteInt.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\vdbe.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\vdbeInt.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3x.hpp">
+      <Filter>SQLite++</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Tuniac2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tuniac2.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
