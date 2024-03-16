@@ -369,6 +369,10 @@
     <PostBuildEvent>
       <Command>xcopy ".\images\NoAlbumArt.jpg" "..\x64\Release" /Y</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>
+      </AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutWindow.cpp" />
