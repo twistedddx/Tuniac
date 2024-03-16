@@ -1,3 +1,9 @@
+Mar, 2024
+---------
+-Set DPI mode to system enhanced
+-Update Libspng, Taglib, BASS wv/flac/hls
+-Visual allow 144 FPS
+
 Dec, 2023
 ---------
 -Fix svp opengl crash on Intel GPU
