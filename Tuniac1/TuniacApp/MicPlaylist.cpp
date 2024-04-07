@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 #include "micplaylist.h"
+#include "resource.h"
 
 
 CMicPlaylist::CMicPlaylist(char cMicInput) :
@@ -49,24 +50,39 @@ CMicPlaylist::~CMicPlaylist(void)
 bool CMicPlaylist::IsEnabled(void)
 {
 	return m_IsEnabled;
-
 }
+
 void CMicPlaylist::SetEnabled(bool bEnabled)
 {
-	m_IsEnabled = bEnabled;
-
-	GetMicInfo();
-
-	if (!bEnabled)
+	if (bEnabled)
 	{
+		GetMicInfo();
+	}
+	else
+	{
+
+		if(GetPlaylistID() == tuniacApp.m_SourceSelectorWindow->GetVisiblePlaylist()->GetPlaylistID())
+			tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
+
 		if (GetPlaylistID() == tuniacApp.m_PlaylistManager.GetActivePlaylistID())
 		{
-			tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(0);
 			tuniacApp.m_PlaylistManager.SetActivePlaylistByIndex(0);
 			tuniacApp.m_PlaylistManager.m_LibraryPlaylist.RebuildPlaylist();
 			tuniacApp.m_PlaylistManager.m_LibraryPlaylist.ApplyFilter();
+			SendMessage(tuniacApp.getMainWindow(), WM_COMMAND, MAKELONG(ID_PLAYBACK_NEXT, 0), 0);
 		}
+		while (m_TrackList.GetCount())
+		{
+			CMediaLibraryPlaylistEntry* tt = (CMediaLibraryPlaylistEntry*)m_TrackList[0];
+
+			m_TrackList.RemoveAt(0);
+
+			delete tt;
+		}
+
 	}
+	m_IsEnabled = bEnabled;
+
 	tuniacApp.m_SourceSelectorWindow->UpdateList();
 	PostMessage(tuniacApp.getMainWindow(), WM_APP, NOTIFY_PLAYLISTSCHANGED, 0);
 }

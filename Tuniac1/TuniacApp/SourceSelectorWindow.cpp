@@ -722,17 +722,20 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 							if(iPos == -1)
 								break;
 
-							if(IDNO == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist(s)?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
-								break;
-
 							IndexArray	m_DeleteArray;
 							while(iPos != -1)
 							{
-								//not ML playlist
-								if(iPos != 0)
-									m_DeleteArray.AddTail((unsigned long &)iPos);
+								IPlaylist* t = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(iPos);
+								if (t->GetPlaylistType() != PLAYLIST_TYPE_MEDIALIBRARY && t->GetPlaylistType() != PLAYLIST_TYPE_MIC && t->GetPlaylistType() != PLAYLIST_TYPE_CD)
+										m_DeleteArray.AddTail((unsigned long&)iPos);
 
 								iPos = ListView_GetNextItem(hSourceViewWnd, iPos, LVNI_SELECTED);
+							}
+
+							if (m_DeleteArray.GetCount())
+							{
+								if (IDNO == MessageBox(tuniacApp.getMainWindow(), TEXT("Are you sure you wish to delete the selected playlist(s)?"), TEXT("Confirm"), MB_YESNO | MB_ICONINFORMATION))
+									break;
 							}
 
 							for(unsigned long i = m_DeleteArray.GetCount(); i > 0; i--)
@@ -1345,11 +1348,11 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 				break;
 
 			case PLAYLIST_TYPE_MIC:
-			{
-				m_MicSourceView->SetPlaylistSource(ulIndex);
-				m_pVisibleView = m_MicSourceView;
-			}
-			break;
+				{
+					m_MicSourceView->SetPlaylistSource(ulIndex);
+					m_pVisibleView = m_MicSourceView;
+				}
+				break;
 
 			case PLAYLIST_TYPE_CD:
 				{

@@ -585,6 +585,8 @@ bool	CPlaylistSourceView::ShowSourceView(bool bShow)
 	}
 	else
 	{
+		KillTimer(m_PlaylistSourceWnd, DELAYEDAPPLYFILTER_TIMERID);
+		m_pPlaylist = NULL;
 		ShowWindow(m_PlaylistSourceWnd, SW_HIDE);
 		return false;
 	}
@@ -2009,7 +2011,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 			{
 				if(wParam == DELAYEDAPPLYFILTER_TIMERID)
 				{
-					KillTimer(hDlg, DELAYEDPLAY_TIMERID);
+					KillTimer(hDlg, DELAYEDAPPLYFILTER_TIMERID);
 
 					TCHAR tBuffer[256];
 					GetDlgItemText(hDlg, IDC_PLAYLIST_FILTER, tBuffer, 256);
