@@ -1,3 +1,11 @@
+Apr, 2024
+---------
+-Add BASS microphone infomanager and decoder
+-Add Microphone input source view and playlist
+-Allow muting output of audio engine
+-Correct usage of bitrate vs bitdepth
+-Fix crash when deleting playlists and returning to Mic or CD source view
+
 Mar, 2024
 ---------
 -Set DPI mode to system enhanced
