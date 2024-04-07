@@ -81,7 +81,7 @@ public:
 	bool				Startup(void);
 	bool				Shutdown(void);
 	
-	bool				SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio);
+	bool				SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio, bool bOutputDisabled);
 
 	bool				Reset(void);
 	bool				Play(void);

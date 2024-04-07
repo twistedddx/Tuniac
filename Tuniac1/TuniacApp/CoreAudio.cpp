@@ -85,12 +85,9 @@ bool			CCoreAudio::Startup()
 		if (tuniacApp.m_LogWindow)
 		{
 			if (tuniacApp.m_LogWindow->GetLogOn())
-				tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Failed initializing XAudio 2.7"));
+				tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Failed initializing XAudio 2.9"));
 		}
-		if (IDYES == MessageBox(NULL, TEXT("Failed initializing XAudio 2.7.\nThis is most likely because you have not installed DirectX June 2010 redist which is required.\n Simply reinstall Tuniac to fix or do you want to be directed to the Microsoft download?"), TEXT("Fatal Error"), MB_YESNO | MB_ICONERROR))
-		{
-			ShellExecute(NULL, NULL, TEXT("http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe"), NULL, NULL, SW_SHOW);
-		}
+		MessageBox(NULL, TEXT("Failed initializing XAudio 2.9.\nTry reinstalling Tuniac to fix"), TEXT("Fatal Error"), MB_OK | MB_ICONERROR);
 		m_pXAudio = NULL;
 		return false;
 	}
@@ -221,7 +218,7 @@ bool			CCoreAudio::Shutdown(void)
 	return true;
 }
 
-bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio)
+bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fReplayGainTrack, bool bResetAudio, bool bOutputDisabled)
 {
 	//XAudio Voice not valid, try to give the audio engine a boot
 	if(m_pMasteringVoice == NULL)
@@ -303,6 +300,9 @@ bool			CCoreAudio::SetSource(LPTSTR szSource, float *fReplayGainAlbum, float *fR
 					}
 
 					CAutoLock	t(&m_Lock);
+
+					if(bOutputDisabled)
+						pOutput->SetOutputDisabled();
 
 					bool bShoudStart = false;
 					for(int ttt=0; ttt<m_Streams.GetCount(); ttt++)

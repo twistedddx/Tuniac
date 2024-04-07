@@ -118,6 +118,8 @@ public:
 
 	bool SetFormat(unsigned long SampleRate, unsigned long Channels);
 
+	bool SetOutputDisabled(void);
+
 	// actual controls
 	bool Start(void);
 	bool Stop(void);

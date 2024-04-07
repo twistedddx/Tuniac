@@ -369,6 +369,15 @@ bool CAudioOutput::SetFormat(unsigned long SampleRate, unsigned long Channels)
 	return true;
 }
 
+bool CAudioOutput::SetOutputDisabled(void)
+{
+	if (m_pSourceVoice)
+	{
+		m_pSourceVoice->SetVolume(0.0f);
+		return true;
+	}
+	return false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PLAYBACK CONTROLS
