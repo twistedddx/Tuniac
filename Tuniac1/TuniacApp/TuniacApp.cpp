@@ -331,6 +331,11 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 		if(m_VisualWindow)
 			m_VisualWindow->Show();
 	}
+	if (m_Preferences.GetShowMicInputPlaylist())
+	{
+		m_PlaylistManager.m_MicPlaylist.SetEnabled(true);
+		m_SourceSelectorWindow->UpdateList();
+	}
 
 	m_WindowArray[m_Preferences.GetActiveWindow()]->Show();
 
@@ -2126,6 +2131,7 @@ LRESULT CALLBACK CTuniacApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 						case ID_PLAYBACK_PLAY:
 							{
 								//if only paused we can simply play again
+								
 								if(CCoreAudio::Instance()->Play())
 								{
 									UpdateState();
@@ -3368,8 +3374,10 @@ bool	CTuniacApp::PlayEntry(IPlaylistEntry * pIPE, bool bStart, bool bAuto, bool 
 					pPlaylistEX->SetActiveRealIndex(pPlaylistEX->GetRealIndexforEntry(pIPE));
 			}
 
-
-			if (CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio))
+			bool bOutputDisabled = false;
+			if (pPlaylist->GetPlaylistType() == PLAYLIST_TYPE_MIC)
+				bOutputDisabled = true;
+			if (CCoreAudio::Instance()->SetSource((LPTSTR)pIPE->GetField(FIELD_URL), (float *)pIPE->GetField(FIELD_REPLAYGAIN_ALBUM_GAIN), (float *)pIPE->GetField(FIELD_REPLAYGAIN_TRACK_GAIN), bResetAudio, bOutputDisabled))
 			{
 				if (bStart)
 					CCoreAudio::Instance()->Play();

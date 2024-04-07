@@ -27,6 +27,7 @@
 
 #include "LibraryPlaylist.h"
 #include "StandardPlaylist.h"
+#include "MicPlaylist.h"
 #include "AudioCDPlaylist.h"
 //#include "RadioTunerPlaylist.h"
 
@@ -49,6 +50,7 @@ protected:
 	bool			AddCDWithDriveLetter(char cDriveLetter);
 	bool			DeleteCDWithDriveLetter(char cDriveLetter);
 
+
 public:
 	IPlaylist			*			m_ActivePlaylist;
 	unsigned long					m_ulActivePlaylistIndex;
@@ -56,6 +58,8 @@ public:
 	CLibraryPlaylist				m_LibraryPlaylist;
 	
 //	CRadioTunerPlaylist				m_RadioPlaylist;
+
+	CMicPlaylist					m_MicPlaylist;
 
 	Array<CAudioCDPlaylist *, 3>	m_CDPlaylists;
 

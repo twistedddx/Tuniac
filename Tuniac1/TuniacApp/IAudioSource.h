@@ -32,6 +32,8 @@
 #define LENGTH_STREAM		0xfffffffe
 #define LENGTH_UNKNOWN		0xffffffff
 
+#define UNKNOWN_DEVICE		(-1)
+
 #define STATE_STOPPED	0
 #define STATE_PLAYING	1
 

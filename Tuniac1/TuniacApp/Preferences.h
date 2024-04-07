@@ -272,6 +272,7 @@ protected:
 	int			m_iVisualFPS;
 	int			m_iCurrentVisual;
 	BOOL		m_bShowVisArt;
+	BOOL		m_bShowMicInputPlaylist;
 
 	int			m_iFileAssocType;
 
@@ -413,6 +414,7 @@ public:
 	int			GetCurrentVisual(void);
 	void		SetCurrentVisual(int iVisual);
 	BOOL		GetShowVisArt(void);
+	BOOL		GetShowMicInputPlaylist(void);
 
 	TrayIconMode	GetTrayIconMode(void);
 	void		SetTrayIconMode(TrayIconMode eMode);

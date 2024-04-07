@@ -23,7 +23,7 @@
 	Copyright (C) 2003-2014 Brett Hoyle
 */
 
-//every type of playlist is a base playlist. Playlist 0 is the LibraryPlaylist.cpp, low numbers playlists may be AudioCDPlaylist.cpp
+//every type of playlist is a base playlist. Playlist 0 is the LibraryPlaylist.cpp, low numbers playlists may be AudioCDPlaylist.cpp/MicPlaylist.cpp
 
 #include "stdafx.h"
 #include "baseplaylist.h"

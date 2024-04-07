@@ -26,6 +26,7 @@
 #include "DoubleBuffer.h"
 
 #include "PlaylistSourceView.h"
+#include "MicSourceView.h"
 #include "AudioCDSourceView.h"
 
 #define SEPERATOR_WIDTH		5
@@ -63,6 +64,7 @@ protected:
 
 public:
 	CPlaylistSourceView		*	m_PlaylistSourceView;
+	CMicSourceView			*	m_MicSourceView;
 	CAudioCDSourceView		*	m_AudioCDSourceView;
 	//CRadioSourceView		*	m_RadioSourceView;
 

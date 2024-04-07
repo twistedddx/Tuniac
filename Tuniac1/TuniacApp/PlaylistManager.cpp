@@ -23,7 +23,7 @@
 	Copyright (C) 2003-2014 Brett Hoyle
 */
 
-//the playlist manager handles all tuniac's playlists, whther they be playlist 0 the LibraryPlaylist.cpp or low numbered AudioCDPlaylist.cpp(when valid) or the StandardPlaylist.cpp
+//the playlist manager handles all tuniac's playlists, whther they be playlist 0 the LibraryPlaylist.cpp or low numbered AudioCDPlaylist.cpp/MicPlaylist.cpp(when valid) or the StandardPlaylist.cpp
 
 
 #include "stdafx.h"
@@ -60,7 +60,8 @@ bool DriveInMask(ULONG uMask, char Letter)
 
 CPlaylistManager::CPlaylistManager(void) :
 m_ulActivePlaylistIndex(INVALID_PLAYLIST_INDEX),
-m_ulPlaylistID(10)
+m_ulPlaylistID(10),
+m_MicPlaylist(NULL)
 {
 }
 
@@ -105,6 +106,12 @@ bool CPlaylistManager::Initialize(LPTSTR szLibraryFolder)
 
 	if(m_ActivePlaylist == NULL)
 		SetActivePlaylistByIndex(0);
+
+	while (GetPlaylistByID(m_ulPlaylistID))
+	{
+		m_ulPlaylistID++;
+	}
+	m_MicPlaylist.SetPlaylistID(m_ulPlaylistID);
 
 	return true;
 }
@@ -784,7 +791,7 @@ bool			CPlaylistManager::SavePlaylistLibrary(LPTSTR szLibraryFolder)
 
 unsigned long	CPlaylistManager::GetNumPlaylists(void)
 {
-	return 1 + m_CDPlaylists.GetCount() + m_StandardPlaylists.GetCount();
+	return 1 + m_MicPlaylist.IsEnabled() + m_CDPlaylists.GetCount() + m_StandardPlaylists.GetCount();
 }
 
 IPlaylist *		CPlaylistManager::GetPlaylistByIndex(unsigned long ulIndex)
@@ -798,27 +805,31 @@ IPlaylist *		CPlaylistManager::GetPlaylistByIndex(unsigned long ulIndex)
 	if(ulIndex == 0)
 	{
 		return & m_LibraryPlaylist;
-/*
-	}
-	iIndex -=1;
-
-	if(iIndex == 0)
-	{
-		return & m_RadioPlaylist;
-*/
 	}
 	ulIndex -=1;
 
+	/*
+	if(ulIndex < m_RadioPlaylist)
+	{
+		return & m_RadioPlaylist;
+	}
+	ulIndex -=1;
+	*/
+
+	if (ulIndex < (int)m_MicPlaylist.IsEnabled())
+	{
+		return &m_MicPlaylist;
+	}
+	ulIndex -= m_MicPlaylist.IsEnabled();
+
 	if(ulIndex < m_CDPlaylists.GetCount())
 	{
-		// standard playlist;
 		return m_CDPlaylists[ulIndex];
 	}
 	ulIndex -= m_CDPlaylists.GetCount();
 
 	if(ulIndex < m_StandardPlaylists.GetCount())
 	{
-		// standard playlist;
 		return m_StandardPlaylists[ulIndex];
 	}
 
@@ -836,6 +847,16 @@ unsigned long CPlaylistManager::GetPlaylistIndexByID(unsigned long ulPlaylistID)
 
 	if (ulPlaylistID == 0)
 		return ulIndex;
+
+	if (m_MicPlaylist.IsEnabled())
+	{
+		ulIndex++;
+		if (m_MicPlaylist.GetPlaylistID() == ulPlaylistID)
+		{
+
+			return ulIndex;
+		}
+	}
 
 	for (unsigned long index = 0; index < m_CDPlaylists.GetCount(); index++)
 	{
@@ -929,33 +950,32 @@ bool CPlaylistManager::SetActivePlaylistByIndex(unsigned long ulIndex)
 	{
 		// medialibrary
 		m_ActivePlaylist = &m_LibraryPlaylist;
-		//return true;
 	}
+	ulIndex -= 1;
 /*
-
-	ulIndex -= 1;
-
-	if(iulIndex == 0)
+	if(ulIndex == 0)
 	{
-		// medialibrary
 		m_ActivePlaylist = &m_RadioPlaylist;
-		return true;
-*/
+	}
 	ulIndex -= 1;
+*/
+
+	if (ulIndex < (int)m_MicPlaylist.IsEnabled())
+	{
+		m_ActivePlaylist = &m_MicPlaylist;
+	}
+	ulIndex -= m_MicPlaylist.IsEnabled();
+
 
 	if(ulIndex < m_CDPlaylists.GetCount())
 	{
-		// cd playlist;
 		m_ActivePlaylist = m_CDPlaylists[ulIndex];
-		//return true;
 	}
 	ulIndex -= m_CDPlaylists.GetCount();
 
 	if(ulIndex < m_StandardPlaylists.GetCount())
 	{
-		// standard playlist;
 		m_ActivePlaylist = m_StandardPlaylists[ulIndex];
-		//return true;
 	}
 
 	if(tuniacApp.m_SourceSelectorWindow)
@@ -1014,16 +1034,16 @@ bool CPlaylistManager::MoveStandardPlaylist(unsigned long ulIndex, unsigned long
 	if(ulIndex == ulNewIndex)
 		return false;
 
-	//dont move cd's
-	if(1 + m_CDPlaylists.GetCount() > ulIndex)
+	//dont move mic's or cd's
+	if(1 + m_MicPlaylist.IsEnabled() + m_CDPlaylists.GetCount() > ulIndex)
 		return false;
 
 	//dont move something that doesnt exist??
-	unsigned long ulStdIndex = ulIndex - 1 - m_CDPlaylists.GetCount();
+	unsigned long ulStdIndex = ulIndex - 1 - m_MicPlaylist.IsEnabled() - m_CDPlaylists.GetCount();
 	if(ulStdIndex > m_StandardPlaylists.GetCount())
 		return false;
 
-	unsigned long ulStdNewIndex = ulNewIndex - 1 - m_CDPlaylists.GetCount();
+	unsigned long ulStdNewIndex = ulNewIndex - 1 - m_MicPlaylist.IsEnabled() - m_CDPlaylists.GetCount();
 
 	CStandardPlaylist * pSP = m_StandardPlaylists[ulStdIndex];
 	m_StandardPlaylists.RemoveAt(ulStdIndex);
@@ -1063,6 +1083,13 @@ bool CPlaylistManager::DeletePlaylistByIndex(unsigned long ulIndex)
 		SetActivePlaylistByIndex(0);
 
 	ulIndex-=1;
+
+	if (ulIndex < (int)m_MicPlaylist.IsEnabled())
+	{
+		//Mic Playlist - don't delete, user has a setting to remove
+		return true;
+	}
+	ulIndex -= m_MicPlaylist.IsEnabled();
 
 	if(ulIndex < m_CDPlaylists.GetCount())
 	{	// cd playlist playlist

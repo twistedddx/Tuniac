@@ -26,9 +26,21 @@
 #pragma pack(16)
 #pragma once
 
-#define ITUNIACINFOMANAGER_VERSION		MAKELONG(0, 2)
+#define ITUNIACINFOMANAGER_VERSION		MAKELONG(0, 3)
+
+//24-4-2 0.4 add GetDevice GetDevices
+
+#define UNKNOWN_DEVICE		(-1)
 
 #include "LibraryEntry.h"
+
+typedef struct
+{
+	TCHAR devicename[128];
+	unsigned long samplerate;
+	unsigned long channels;
+	TCHAR type[128];
+} InfoDevice;
 
 class IInfoManager
 {
@@ -49,7 +61,6 @@ public:
 										LPTSTR				szMimeType,
 										unsigned long	*	ulArtType)			= 0;
 	virtual bool			FreeAlbumArt(LPVOID				pImageData)			= 0;
-
 };
 
 typedef IInfoManager * (*CreateInfoManagerPluginFunc)(void);

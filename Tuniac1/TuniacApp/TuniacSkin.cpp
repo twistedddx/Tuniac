@@ -38,67 +38,79 @@ typedef struct
 static ThemeIcon ThemeIconSet[THEMEICON_MAXICON] =
 {
 	{
-		TEXT("window.ico"),
+		TEXT("window.ico"), //0
 		IDI_TUNIAC,
 		32,
 		NULL
 	},
 	{
-		TEXT("window.ico"),
+		TEXT("window.ico"), //1
 		IDI_TUNIAC,
 		16,
 		NULL
 	},
 	{
-		TEXT("item-normal.ico"),
+		TEXT("item-normal.ico"), //2
 		IDI_THEMEICON_ITEM_NORMAL,
 		16,
 		NULL
 	},
 	{
-		TEXT("item-active.ico"),
+		TEXT("item-active.ico"), //3
 		IDI_THEMEICON_ITEM_ACTIVE,
 		16,
 		NULL
 	},
 	{
-		TEXT("item-unavailable.ico"),
+		TEXT("item-unavailable.ico"), //4
 		IDI_THEMEICON_ITEM_UNAVAILABLE,
 		16,
 		NULL
 	},
 	{
-		TEXT("playlist-medialibrary.ico"),
+		TEXT("playlist-medialibrary.ico"), //5
 		IDI_THEMEICON_PLAYLIST_MEDIALIBRARY,
 		32,
 		NULL
 	},
+		{
+		TEXT("playlist-radio.ico"), //6
+		IDI_THEMEICON_PLAYLIST_MIC,
+		32,
+		NULL
+	},
 	{
-		TEXT("playlist-cd.ico"),
+		TEXT("playlist-cd.ico"), //7
 		IDI_THEMEICON_PLAYLIST_CD,
 		32,
 		NULL
 	},
 	{
-		TEXT("playlist-standard.ico"),
+		TEXT("playlist-standard.ico"), //8
 		IDI_THEMEICON_PLAYLIST_STANDARD,
 		32,
 		NULL
 	},
 	{
-		TEXT("playlist-medialibrary-active.ico"),
+		TEXT("playlist-medialibrary-active.ico"), //9
 		IDI_THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE,
 		32,
 		NULL
 	},
 	{
-		TEXT("playlist-cd-active.ico"),
+		TEXT("playlist-radio-active.ico"), //10
+		IDI_THEMEICON_PLAYLIST_MIC_ACTIVE,
+		32,
+		NULL
+	},
+	{
+		TEXT("playlist-cd-active.ico"), //11
 		IDI_THEMEICON_PLAYLIST_CD_ACTIVE,
 		32,
 		NULL
 	},
 	{
-		TEXT("playlist-standard-active.ico"),
+		TEXT("playlist-standard-active.ico"), //12
 		IDI_THEMEICON_PLAYLIST_STANDARD_ACTIVE,
 		32,
 		NULL

@@ -54,6 +54,9 @@ CSourceSelectorWindow::CSourceSelectorWindow(void) :
 	t = m_PlaylistSourceView = new CPlaylistSourceView();
 	m_SourceViewArray.AddTail(t);
 
+	t = m_MicSourceView = new CMicSourceView();
+	m_SourceViewArray.AddTail(t);
+
 	t = m_AudioCDSourceView = new CAudioCDSourceView();
 	m_SourceViewArray.AddTail(t);
 
@@ -198,22 +201,28 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 				// 3: smart playlist
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD)); 
 
-				// 4: CD playlist
+				// 4: MIC playlist
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_MIC));
+
+				// 5: CD playlist
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_CD)); 
 
-				// 5 : unknown playlist active
+				// 6 : unknown playlist active
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
 
-				// 6: Library active
+				// 7: Library active
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_MEDIALIBRARY_ACTIVE));
 
-				// 7: Standard Playlist active
+				// 8: Standard Playlist active
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
 
-				// 8: smart playlist active
+				// 9: smart playlist active
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_STANDARD_ACTIVE)); 
 
-				// 9: CD playlist active
+				// 10: MIC playlist active
+				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_MIC_ACTIVE));
+
+				// 11: CD playlist active
 				ImageList_AddIcon(hList, tuniacApp.m_Skin.GetIcon(THEMEICON_PLAYLIST_CD_ACTIVE)); 
 
 				// 5: Radio!
@@ -1335,6 +1344,12 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 				}
 				break;
 
+			case PLAYLIST_TYPE_MIC:
+			{
+				m_MicSourceView->SetPlaylistSource(ulIndex);
+				m_pVisibleView = m_MicSourceView;
+			}
+			break;
 
 			case PLAYLIST_TYPE_CD:
 				{

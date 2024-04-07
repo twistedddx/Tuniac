@@ -392,6 +392,8 @@
     <ClCompile Include="LogWindow.cpp" />
     <ClCompile Include="MediaLibrary.cpp" />
     <ClCompile Include="MediaLibraryPlaylistEntry.cpp" />
+    <ClCompile Include="MicPlaylist.cpp" />
+    <ClCompile Include="MicSourceView.cpp" />
     <ClCompile Include="PlayControls.cpp" />
     <ClCompile Include="PlaylistManager.cpp" />
     <ClCompile Include="PlaylistSourceView.cpp" />
@@ -448,6 +450,8 @@
     <ClInclude Include="LogWindow.h" />
     <ClInclude Include="MediaLibrary.h" />
     <ClInclude Include="MediaLibraryPlaylistEntry.h" />
+    <ClInclude Include="MicPlaylist.h" />
+    <ClInclude Include="MicSourceView.h" />
     <ClInclude Include="ntddcdrm.h" />
     <ClInclude Include="ntddstor.h" />
     <ClInclude Include="PlayControls.h" />
@@ -503,6 +507,7 @@
     <ResourceCompile Include="Tuniac.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="default-theme\playlist-radio.ico" />
     <Image Include="default-theme\window.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
