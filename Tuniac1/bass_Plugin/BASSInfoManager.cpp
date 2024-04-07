@@ -2,6 +2,7 @@
 #include "bassinfomanager.h"
 // actual class definition here
 
+
 CBASSInfoManager::CBASSInfoManager(void)
 {
 }
@@ -162,8 +163,17 @@ bool			CBASSInfoManager::GetInfo(LibraryEntry * libEnt)
         libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
         libEnt->ulPlaybackTime = LENGTH_STREAM;
 
+        libEnt->dwTrack[0] = m_ActiveDevice;
+
         StringCchCopy(libEnt->szTitle, 128, m_DeviceArray[m_ActiveDevice].devicename);
         StringCchCopy(libEnt->szComment, 128, m_DeviceArray[m_ActiveDevice].type);
+
+        StringCchCopy(libEnt->szArtist, 128, L"Mic Input");
+        _itow(m_ActiveDevice, libEnt->szAlbum, 10);
+
+        std::time_t time = std::time(nullptr);
+        std::tm* const pTInfo = std::localtime(&time);
+        libEnt->ulYear = pTInfo->tm_year + 1900;
 
         return true;
     }

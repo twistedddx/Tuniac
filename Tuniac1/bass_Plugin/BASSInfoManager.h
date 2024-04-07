@@ -2,6 +2,7 @@
 #include "iinfomanager.h"
 #include "bass.h"
 #include "array.h"
+#include <ctime>
 
 class CBASSInfoManager :
 	public IInfoManager
