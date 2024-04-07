@@ -17,6 +17,10 @@ protected:
 	HSTREAM				hStreamID;
 	bool				bIsStream;
 	bool				bModFile;
+	bool				bMicInput;
+
+	unsigned long		m_ActiveDevice;
+
 
 public:
 	CBASSDecoderPlugin(void);

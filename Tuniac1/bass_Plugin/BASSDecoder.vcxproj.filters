@@ -32,6 +32,9 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BASSInfoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BASSDecoder.h">
@@ -48,6 +51,9 @@
     </ClInclude>
     <ClInclude Include="basslib\bass.h">
       <Filter>basslib</Filter>
+    </ClInclude>
+    <ClInclude Include="BASSInfoManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

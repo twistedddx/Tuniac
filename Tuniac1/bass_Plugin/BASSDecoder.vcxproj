@@ -141,7 +141,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>../TuniacApp;./basslib/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DECODER;INFOMANAGER;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -170,7 +170,7 @@ move /Y "..\Win32\Debug\bass\tak_deco_lib.dll" "..\Win32\Debug"</Command>
     </Midl>
     <ClCompile>
       <AdditionalIncludeDirectories>../TuniacApp;./basslib/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DECODER;INFOMANAGER;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -199,7 +199,7 @@ move /Y "..\x64\Debug\bass\OptimFROG.dll" "..\x64\Debug"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../TuniacApp;./basslib/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DECODER;INFOMANAGER;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -237,7 +237,7 @@ move /Y "..\Win32\Release_xp\bass\tak_deco_lib.dll" "..\Win32\Release_xp"</Comma
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../TuniacApp;./basslib/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DECODER;INFOMANAGER;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMPILE32BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -311,7 +311,7 @@ move /Y "..\x64\Release_xp\bass\OptimFROG.dll" "..\x64\Release_xp"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../TuniacApp;./basslib/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DECODER;INFOMANAGER;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <DebugInformationFormat>None</DebugInformationFormat>
       <OmitFramePointers>true</OmitFramePointers>
@@ -337,12 +337,14 @@ move /Y "..\x64\Release\bass\OptimFROG.dll" "..\x64\Release"</Command>
   <ItemGroup>
     <ClCompile Include="BASSDecoder.cpp" />
     <ClCompile Include="BASSDecoderPlugin.cpp" />
+    <ClCompile Include="BASSInfoManager.cpp" />
     <ClCompile Include="bassPlugin.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BASSDecoder.h" />
     <ClInclude Include="BASSDecoderPlugin.h" />
+    <ClInclude Include="BASSInfoManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="basslib\bass.h" />

@@ -144,6 +144,7 @@ void			CBASSDecoderPlugin::Destroy(void)
 {
 	BASS_Free();
 	BASS_PluginFree(0);
+	BASS_RecordFree();
 	delete this;
 }
 
@@ -189,8 +190,9 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 	}
 	*/
 
-	bModFile = false;
+	bModFile, bMicInput = false;
 	bIsStream = PathIsURL(szSource);
+	hStreamID = 0;
 
 	if (!bIsStream)
 	{
@@ -233,6 +235,16 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 			swscanf_s(szSource, TEXT("AUDIOCD:%c:%d"), &cDrive, (int)sizeof(char), &iTrack);
 			StringCchPrintf(szSource, 128, TEXT("%C:\\Track%02i.cda"), cDrive, iTrack);
 			hStreamID = BASS_StreamCreateFile(FALSE, szSource, 0, 0, BASS_STREAM_DECODE | BASS_ASYNCFILE | BASS_UNICODE | BASS_SAMPLE_FLOAT);
+		}
+		else if (StrCmpN(szSource, TEXT("MICINPUT"), 8) == 0)
+		{
+			bMicInput = true;
+			bIsStream = false;
+			m_ActiveDevice = UNKNOWN_DEVICE;
+			swscanf_s(szSource, TEXT("MICINPUT:%d"), &m_ActiveDevice);
+			BASS_RecordInit(m_ActiveDevice);
+			//BASS_RecordSetInput(m_ActiveInput, BASS_INPUT_ON, 0);
+			hStreamID = BASS_RecordStart(48000, 2, BASS_SAMPLE_FLOAT, NULL, 0);
 		}
 		else
 		{
@@ -320,6 +332,8 @@ bool			CBASSDecoderPlugin::CanHandle(LPTSTR szSource)
 			m_pHelper->UpdateMetaData(szSource, L"it", FIELD_FILETYPE);
 		else if (bassChannelInfo.ctype == BASS_CTYPE_MUSIC_MO3)
 			m_pHelper->UpdateMetaData(szSource, L"mo3", FIELD_FILETYPE);
+		else if (bassChannelInfo.ctype == BASS_CTYPE_RECORD)
+			m_pHelper->UpdateMetaData(szSource, L"Record", FIELD_FILETYPE);
 
 		/* disabled
 		// bass media foundation
@@ -358,6 +372,9 @@ bool			CBASSDecoderPlugin::Close(void)
 			BASS_MusicFree(hStreamID);
 		else
 			BASS_StreamFree(hStreamID);
+
+		if (bMicInput)
+			BASS_RecordFree();
 	}
 
 	return true;
