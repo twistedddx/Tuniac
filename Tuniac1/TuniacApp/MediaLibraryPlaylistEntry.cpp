@@ -752,7 +752,10 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_BITRATE:
 			{
-				StringCchPrintf(szString, ulNumChars, TEXT("%ukbps"), m_LibraryEntry.ulBitRate/1000);
+				if (m_LibraryEntry.ulBitRate == BITRATE_UNKNOWN)
+					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
+				else
+					StringCchPrintf(szString, ulNumChars, TEXT("%ukbps"), m_LibraryEntry.ulBitRate/1000);
 			}
 			break;
 
@@ -789,9 +792,7 @@ bool	CMediaLibraryPlaylistEntry::GetTextRepresentation(unsigned long ulFieldID, 
 
 		case FIELD_BITSPERSAMPLE:
 			{
-				if (m_LibraryEntry.ulBitsPerSample == BITRATE_UNKNOWN)
-					StringCchCopy(szString, ulNumChars, TEXT("Unknown"));
-				else if (m_LibraryEntry.ulBitsPerSample == BITRATE_UNDEFINABLE)
+				if (m_LibraryEntry.ulBitsPerSample == BITDEPTH_UNDEFINABLE)
 					StringCchCopy(szString, ulNumChars, TEXT("Undefinable"));
 				else
 					StringCchPrintf(szString, ulNumChars, TEXT("%u bits"), m_LibraryEntry.ulBitsPerSample);

@@ -28,7 +28,8 @@
 #define LENGTH_STREAM		0xfffffffe
 #define LENGTH_UNKNOWN		0xffffffff
 
-#define BITRATE_UNDEFINABLE	0xfffffffe
+#define BITDEPTH_UNDEFINABLE	0xffffffff
+
 #define BITRATE_UNKNOWN		0xffffffff
 
 typedef struct
