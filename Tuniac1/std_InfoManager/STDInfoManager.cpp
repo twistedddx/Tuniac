@@ -220,7 +220,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(mp3File)
 	{
-		libEnt->ulBitsPerSample = BITRATE_UNDEFINABLE;
+		libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
 		StringCchCopy(libEnt->szFileType, 16, L"mp3");
 		if(mp3File->ID3v2Tag())
 			id3v2TagListMap = mp3File->ID3v2Tag()->frameListMap();
@@ -239,7 +239,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(mpcFile)
 	{
-		libEnt->ulBitsPerSample = BITRATE_UNDEFINABLE;
+		libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
 		StringCchCopy(libEnt->szFileType, 16, L"mpc");
 		if(mpcFile->APETag())
 			apeTagListMap = mpcFile->APETag()->itemListMap();
@@ -264,7 +264,7 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(oggFile)
 	{
-		libEnt->ulBitsPerSample = BITRATE_UNDEFINABLE;
+		libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
 		StringCchCopy(libEnt->szFileType, 16, L"ogg");
 		if(oggFile->tag())
 			vorbisTagListMap = oggFile->tag()->fieldListMap();
@@ -280,14 +280,14 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 	}
 	else if(spxFile)
 	{
-		libEnt->ulBitsPerSample = BITRATE_UNDEFINABLE;
+		libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
 		StringCchCopy(libEnt->szFileType, 16, L"spx");
 		if(spxFile->tag())
 			vorbisTagListMap = spxFile->tag()->fieldListMap();
 	}
 	else if(opusFile)
 	{
-		libEnt->ulBitsPerSample = BITRATE_UNDEFINABLE;
+		libEnt->ulBitsPerSample = BITDEPTH_UNDEFINABLE;
 		StringCchCopy(libEnt->szFileType, 16, L"opus");
 		if(opusFile->tag())
 			vorbisTagListMap = opusFile->tag()->fieldListMap();
