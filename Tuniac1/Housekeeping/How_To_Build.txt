@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6-windows-x86_64.msi
 
 Install them
 
@@ -54,7 +54,7 @@ In Clone existing repository add:
 https://github.com/randy408/libspng.git
 Hit OK and wait
 
-3d)You need libjpeg-turbo 3.0.1 GIT (https://libjpeg-turbo.org/)
+3d)You need libjpeg-turbo 3.1.0 GIT (https://libjpeg-turbo.org/)
 Navigate to C:\Code\, right click empty space and select GIT Clone.
 In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
@@ -94,9 +94,6 @@ Cannot open include file: 'spng.h'
 
 7)std_Infomanager, build taglib static lib
 
-https://tuni.ac/extra/VS2022/taglib_1120_vs2022.zip
-extract to D:\Code\taglib\taglib
-
 Look here for errors that look like:
 Cannot open include file: 'tag.h'
 
@@ -107,16 +104,16 @@ Cannot open include file: 'tag.h'
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
 
-8a)http://files.jrsoftware.org/ispack/innosetup-qsp-5.6.1.exe
-8b)http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe
-Install everything it offers in the installers.
-I find it easiest to then install the standard Inno Setup installer over the top of qsp
-This adds the right click context "Compile" for *.iss files
+8a)https://files.jrsoftware.org/is/6/innosetup-6.4.1.exe
+Install everything it offers in the installer.
 
 Install Inno Download Plugin
 https://mitrichsoftware.wordpress.com/inno-setup-tools/inno-download-plugin/
 
 Make sure to check "Add IDP include path to ISPPBuiltins.iss" option during IDP installation.
+This will add:
+; Inno Download Plugin include path
+#pragma include __INCLUDE__ + ";" + ReadReg(HKLM, "Software\Mitrich Software\Inno Download Plugin", "InstallDir")
 
 
 Goto D:\Code\tuniac\Tuniac1\Setup-Scripts

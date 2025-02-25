@@ -3,6 +3,7 @@ Feb, 2025
 -Update BASS alac, ape, cd, midi, opus, tak
 -Update GLEW to 2.2.0
 -Update taglib, libspng, libjpeg-turbo
+-Build setup with inno 6.4.1
 
 Apr, 2024
 ---------
