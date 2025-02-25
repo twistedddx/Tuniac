@@ -1,3 +1,9 @@
+Feb, 2025
+---------
+-Update BASS alac, ape, cd, midi, opus, tak
+-Update GLEW to 2.2.0
+-Update taglib, libspng, libjpeg-turbo
+
 Apr, 2024
 ---------
 -Add BASS microphone infomanager and decoder
