@@ -333,7 +333,7 @@ move /Y "..\x64\Release_xp\bass\OptimFROG.dll" "..\x64\Release_xp"</Command>
       <Command>xcopy ".\basslib\64bit\*.dll" "..\x64\Release\bass" /Y /I
 move /Y "..\x64\Release\bass\bass.dll" "..\x64\Release"
 move /Y "..\x64\Release\bass\OptimFROG.dll" "..\x64\Release"
-move /Y "..\x64\Debug\bass\tak_deco_lib.dll" "..\x64\Debug"</Command>
+move /Y "..\x64\Release\bass\tak_deco_lib.dll" "..\x64\Release"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
