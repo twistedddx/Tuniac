@@ -153,14 +153,14 @@
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release_xp|Win32'">$(DXSDK_DIR)\Utilities\Bin\x86;$(ExecutablePath)</ExecutablePath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ExecutablePath)</ExecutablePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release_xp|Win32'">..\..\..\libjpeg-turbo;..\..\..\libspng\spng;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\build32;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\src;..\..\..\libjpeg-turbo\build32;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release_xp|Win32'">..\..\..\libjpeg-turbo\build32\Release;..\..\..\libspng\build32\Release;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\libjpeg-turbo\build32\Release;..\..\..\libspng\build32\Release;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\build32;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\src;..\..\..\libjpeg-turbo\build32;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\libjpeg-turbo\build32\Release;..\..\..\libspng\build32\Release;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExecutablePath)</ExecutablePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\build64;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\src;..\..\..\libjpeg-turbo\build64;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\libjpeg-turbo\build64\Debug;..\..\..\libspng\build64\Debug;$(LibraryPath)</LibraryPath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release_xp|x64'">$(DXSDK_DIR)\Utilities\Bin\x64;$(ExecutablePath)</ExecutablePath>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExecutablePath)</ExecutablePath>
@@ -171,7 +171,7 @@
     <IncludePath>..\..\..\libjpeg-turbo;..\..\..\libpng;$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\build64;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\libjpeg-turbo;..\..\..\libjpeg-turbo\src;..\..\..\libjpeg-turbo\build64;..\..\..\libspng\spng;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -55,6 +55,8 @@
 
 #include "xmFile.h"
 
+#include "shortenfile.h"
+
 
 class CSTDInfoManager :
 	public IInfoManager
@@ -80,6 +82,7 @@ protected:
 	TagLib::S3M::File *s3mFile;
 	TagLib::XM::File *xmFile;
 	TagLib::DSF::File *dsfFile;
+	TagLib::Shorten::File *shnFile;
 	/* taglib2
 	TagLib::EBML::File *ebmlFile;
 	*/

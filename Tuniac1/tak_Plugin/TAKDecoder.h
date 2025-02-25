@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iaudiosource.h"
-#include "./TAK/tak_deco_lib.h"
+#include "tak_deco_lib.h"
 
 
 class CTAKDecoder :

@@ -32,7 +32,7 @@ begin
   Label1Caption :=
     'Tuniac comes in 32bit and 64bit.' + #13#10 +
     'We have detected your system is 64bit capable.' + #13#10#13#10 +
-    'Note: Under 64bit the TAK and SVP plugins are not available.'
+    'Note: Under 64bit the SHN and SVP plugins are not available.'
   Label2Caption := 'Select below which Tuniac you want, then click Next.';
   CheckCaption := '&Install Tuniac 32bit instead of Tuniac 64bit';
 

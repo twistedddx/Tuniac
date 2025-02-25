@@ -52,6 +52,7 @@ CSTDInfoManager::CSTDInfoManager(void)
 	s3mFile = NULL;
 	xmFile = NULL;
 	dsfFile = NULL;
+	shnFile = NULL;
 	/* taglib2
 	ebmlFile = NULL;
 	*/
@@ -68,12 +69,12 @@ void			CSTDInfoManager::Destroy(void)
 
 unsigned long	CSTDInfoManager::GetNumExtensions(void)
 {
-	return 34;
+	return 36;
 }
 
 LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 {
-	static LPTSTR exts[] = 
+	static LPTSTR exts[] =
 	{
 		TEXT(".flac"),
 		TEXT(".fla"),
@@ -85,6 +86,7 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".mpp"),
 		TEXT(".wv"),
 		TEXT(".spx"),
+
 		TEXT(".opus"),
 		TEXT(".tta"),
 		TEXT(".m4a"),
@@ -95,6 +97,7 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".3g2"),
 		TEXT(".alac"),
 		TEXT(".wma"),
+
 		TEXT(".asf"),
 		TEXT(".aif"),
 		TEXT(".aiff"),
@@ -105,12 +108,13 @@ LPTSTR			CSTDInfoManager::SupportedExtension(unsigned long ulExtentionNum)
 		TEXT(".mod"),
 		TEXT(".module"),
 		TEXT(".nst"),
+
 		TEXT(".wow"),
 		TEXT(".s3m"),
 		TEXT(".it"),
-		TEXT(".xm")
-		TEXT(".dsf")
-
+		TEXT(".xm"),
+		TEXT(".dsf"),
+		TEXT(".shn")
 	};
 
 	return exts[ulExtentionNum];
@@ -121,43 +125,45 @@ bool			CSTDInfoManager::CanHandle(LPTSTR szSource)
 	fileRef = TagLib::FileRef(szSource, true, TagLib::AudioProperties::Fast);
     if( !fileRef.isNull() )
     {
-		if(flacFile = dynamic_cast<TagLib::FLAC::File *>( fileRef.file() ))
+		if (flacFile = dynamic_cast<TagLib::FLAC::File*>(fileRef.file()))
 			return true;
-		else if(mp3File = dynamic_cast<TagLib::MPEG::File *>( fileRef.file() ))
+		else if (mp3File = dynamic_cast<TagLib::MPEG::File*>(fileRef.file()))
 			return true;
-		else if(mp4File = dynamic_cast<TagLib::MP4::File *>( fileRef.file() ))
+		else if (mp4File = dynamic_cast<TagLib::MP4::File*>(fileRef.file()))
 			return true;
-		else if(mpcFile = dynamic_cast<TagLib::MPC::File *>( fileRef.file() ))
+		else if (mpcFile = dynamic_cast<TagLib::MPC::File*>(fileRef.file()))
 			return true;
-		else if(ttaFile = dynamic_cast<TagLib::TrueAudio::File *>( fileRef.file() ))
+		else if (ttaFile = dynamic_cast<TagLib::TrueAudio::File*>(fileRef.file()))
 			return true;
-		else if(wvFile = dynamic_cast<TagLib::WavPack::File *>( fileRef.file() ))
+		else if (wvFile = dynamic_cast<TagLib::WavPack::File*>(fileRef.file()))
 			return true;
-		else if(oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File *>( fileRef.file() ))
+		else if (oggFile = dynamic_cast<TagLib::Ogg::Vorbis::File*>(fileRef.file()))
 			return true;
-		else if(ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File *>( fileRef.file() ))
+		else if (ogaFile = dynamic_cast<TagLib::Ogg::FLAC::File*>(fileRef.file()))
 			return true;
-		else if(spxFile = dynamic_cast<TagLib::Ogg::Speex::File *>( fileRef.file() ))
+		else if (spxFile = dynamic_cast<TagLib::Ogg::Speex::File*>(fileRef.file()))
 			return true;
-		else if(opusFile = dynamic_cast<TagLib::Ogg::Opus::File *>( fileRef.file() ))
+		else if (opusFile = dynamic_cast<TagLib::Ogg::Opus::File*>(fileRef.file()))
 			return true;
-		else if(wmaFile = dynamic_cast<TagLib::ASF::File *>( fileRef.file() ))
+		else if (wmaFile = dynamic_cast<TagLib::ASF::File*>(fileRef.file()))
 			return true;
-		else if(aiffFile = dynamic_cast<TagLib::RIFF::AIFF::File *>( fileRef.file() ))
+		else if (aiffFile = dynamic_cast<TagLib::RIFF::AIFF::File*>(fileRef.file()))
 			return true;
-		else if(wavFile = dynamic_cast<TagLib::RIFF::WAV::File *>( fileRef.file() ))
+		else if (wavFile = dynamic_cast<TagLib::RIFF::WAV::File*>(fileRef.file()))
 			return true;
-		else if(apeFile = dynamic_cast<TagLib::APE::File *>( fileRef.file() ))
+		else if (apeFile = dynamic_cast<TagLib::APE::File*>(fileRef.file()))
 			return true;
-		else if(itFile = dynamic_cast<TagLib::IT::File *>( fileRef.file() ))
+		else if (itFile = dynamic_cast<TagLib::IT::File*>(fileRef.file()))
 			return true;
-		else if(modFile = dynamic_cast<TagLib::Mod::File *>( fileRef.file() ))
+		else if (modFile = dynamic_cast<TagLib::Mod::File*>(fileRef.file()))
 			return true;
-		else if(s3mFile = dynamic_cast<TagLib::S3M::File *>( fileRef.file() ))
+		else if (s3mFile = dynamic_cast<TagLib::S3M::File*>(fileRef.file()))
 			return true;
-		else if(xmFile = dynamic_cast<TagLib::XM::File *>( fileRef.file() ))
+		else if (xmFile = dynamic_cast<TagLib::XM::File*>(fileRef.file()))
 			return true;
-		else if (dsfFile = dynamic_cast<TagLib::DSF::File *>(fileRef.file() ))
+		else if (dsfFile = dynamic_cast<TagLib::DSF::File*>(fileRef.file()))
+			return true;
+		else if (shnFile = dynamic_cast<TagLib::Shorten::File*>(fileRef.file()))
 			return true;
 		/* taglib2
 		else if (ebmlFile = dynamic_cast<TagLib::EBML::File *>(fileRef.file() ))
@@ -344,14 +350,22 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		libEnt->ulBitsPerSample = BITRATE_UNKNOWN;
 		StringCchCopy(libEnt->szFileType, 16, L"xm");
 	}
-	/* taglib2
+
 	else if (dsfFile)
 	{
-		TagLib::DSF::AudioProperties * dsfProps = 0;
-		dsfProps = dynamic_cast<TagLib::DSF::AudioProperties *>(fileRef.audioProperties());
+		TagLib::DSF::Properties * dsfProps = 0;
+		dsfProps = dynamic_cast<TagLib::DSF::Properties *>(fileRef.audioProperties());
 		libEnt->ulBitsPerSample = dsfProps->bitsPerSample();
 		StringCchCopy(libEnt->szFileType, 16, L"dsf");
 	}
+	else if (shnFile)
+	{
+		TagLib::Shorten::Properties* shnProps = 0;
+		shnProps = dynamic_cast<TagLib::Shorten::Properties*>(fileRef.audioProperties());
+		libEnt->ulBitsPerSample = shnProps->bitsPerSample();
+		StringCchCopy(libEnt->szFileType, 16, L"shn");
+	}
+	/* taglib2
 	else if (ebmlFile)
 	{
 		libEnt->ulBitsPerSample = BITRATE_UNKNOWN;
@@ -596,11 +610,13 @@ bool			CSTDInfoManager::GetInfo(LibraryEntry * libEnt)
 		modFile = NULL;
 	if(s3mFile)
 		s3mFile = NULL;
-	if (xmFile)
+	if(xmFile)
 		xmFile = NULL;
-	/* taglib2
-	if (dsfFile)
+	if(dsfFile)
 		dsfFile = NULL;
+	if(shnFile)
+		shnFile = NULL;
+	/* taglib2
 	if (ebmlFile)
 		ebmlFile = NULL;
 	*/

@@ -1,6 +1,6 @@
 #pragma once
 #include "iinfomanager.h"
-#include "./TAK/tak_deco_lib.h"
+#include "tak_deco_lib.h"
 
 class CTAKInfoManager :
 	public IInfoManager
