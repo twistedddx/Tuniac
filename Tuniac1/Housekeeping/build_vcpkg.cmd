@@ -29,7 +29,7 @@ rem ## vcpkg upgrade zlib utf8cpp
 :UPGRADE
 cd vcpkg
 echo remove outdated
-.\vcpkg.exe remove --oudated
+.\vcpkg.exe remove --outdated
 echo update
 .\vcpkg.exe update
 echo upgrade
