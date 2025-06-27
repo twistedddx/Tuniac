@@ -1,0 +1,84 @@
+*.svp.ini are created in %appdata%\Tuniac
+
+rappa
+-checks HKEY_CURRENT_USER\Software\MediaScience\Sonique\General Preferences 0.80 REG_SZ "SoniquePath" for location of visuals to load
+-if this registry setting is invalid rappa will crash
+-Tuniac installer now sets this to Tuniacs install dir eg: C:\Program Files\Tuniac\visuals
+
+confetti
+-no render on some machines(namely mine)
+
+snow
+-no shake support
+-create a snowvis.svp.ini with:
+[snowvis]
+Shaker=0
+
+cosmic wave
+-tries to load sonique current skin colour
+-create a cwave.svp.ini with:
+[Vovoid_Cosmic_Wave_0.1]
+use_skin_colors=0
+
+Smear
+Slow start
+
+Issues with high res:
+G-Force 2.8.1 (crash prone if higher than 800*800)
+Whitecap before 4.7.4 (crash prone on older versions at higher res. 4.7.4 version seems fine)
+Create C:\Program Files (x86)\Sonique2 to allow installer to install Sonique2 version. Move SVP's to Tuniac visuals\vis folder
+Visual files are in C:\Program Files (x86)\SoundSpectrum
+
+Chaos Wave (crashes if higher than 512*512)
+Confetti (bad render beyond 512*512)
+Phthalo's Corona (render issues get worse as res goes up)
+VoVoid Cosmic Wave (left click to disable skin colour, cant see starfield as res goes up)
+edgecrusher(crashes if higher than 240*240)
+Electrons power (vis screen gets smaller as res goes up)
+feedback(crashes if higher 240*240)
+Flowers of Funk :: sket (vis screen gets smaller as res goes up)
+HB's Fractal v1.02 (render issues if none square res)
+Glutamat (doesnt scale image beyond 240*240)
+neoHunter :: Groofed Up 1.8 (vis screen gets smaller as res goes up)
+TVDZ House 1.0 (vis screen gets smaller as res goes up)
+miffo v1.0 :: psikorp'99 (doesn't scale well as res goes up)
+plugiN's SpectraGrid 2.5 (render issues beyond 512*512)
+sfo (does not scale to high res image)
+Honto: SpaceThing v2.3 (2001/01/12) (crash prone and slow render if higher than 1024*1024)
+Spectralizer (doesnt scale image)
+Thads v2.1 (works better at 512*512 or lower)
+WetNad (Crashes if higher than 512*512)
+WhimsicalZoomer v1.1 (bad render beyond 256*256)
+
+slow/crash exit:
+rotovis(aka rotozoom)
+water
+
+Just crashes:
+Serial Expermiments Lain
+
+
+Visuals I like:
+Acidspunk
+Aorta
+Cosmic Belt
+Cosmic Nebulae
+Hyperspec
+Jazz
+Peak Freq
+Phase
+Pixel Ballet
+Pixel Glissade
+Proto Scope
+Punkie
+Rappa
+Smear
+Spectrum
+SpectrumBars
+Stoned
+Surreal Potential Fields
+The Rabbit Hole 1.1
+Tornado
+Wave on A Ball
+G-Force.svp (carefull 800*800 max or crash prone)
+WhiteCap.svp
