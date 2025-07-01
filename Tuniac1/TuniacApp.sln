@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pls_Plugin", "pls_Plugin\pl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textOutput_Plugin", "textOutput_Plugin\textOutput_Plugin.vcxproj", "{73541B64-9540-425D-B97F-6011486D1DB9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TuniacGoomVisualPlugin", "TuniacGoomVisualPlugin\TuniacGoomVisualPlugin.vcxproj", "{9A4074D7-045F-4540-B23B-0A5A8F0B421C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -166,6 +168,14 @@ Global
 		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|Win32.Build.0 = Release|Win32
 		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|x64.ActiveCfg = Release|x64
 		{73541B64-9540-425D-B97F-6011486D1DB9}.Release|x64.Build.0 = Release|x64
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Debug|Win32.Build.0 = Debug|Win32
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Debug|x64.ActiveCfg = Debug|x64
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Debug|x64.Build.0 = Debug|x64
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Release|Win32.ActiveCfg = Release|Win32
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Release|Win32.Build.0 = Release|Win32
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Release|x64.ActiveCfg = Release|x64
+		{9A4074D7-045F-4540-B23B-0A5A8F0B421C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

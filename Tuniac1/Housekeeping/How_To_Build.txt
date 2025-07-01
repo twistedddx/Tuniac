@@ -115,6 +115,7 @@ This will add:
 ; Inno Download Plugin include path
 #pragma include __INCLUDE__ + ";" + ReadReg(HKLM, "Software\Mitrich Software\Inno Download Plugin", "InstallDir")
 
+If it doesn't add the above, add it to the end of C:\Program Files (x86)\Inno Setup 6\ISPPBuiltins.iss
 
 Goto D:\Code\tuniac\Tuniac1\Setup-Scripts
 Right click desired setup iss file

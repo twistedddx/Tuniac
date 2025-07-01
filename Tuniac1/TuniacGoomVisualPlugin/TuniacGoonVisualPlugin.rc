@@ -1,0 +1,133 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifdef IDC_STATIC
+#undef IDC_STATIC
+#endif
+#define IDC_STATIC      (-1)
+
+#include "winresrc.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+// English (United Kingdom) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TUNIACGOOMPREFWINDOW DIALOGEX 0, 0, 200, 187
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Tuniac Goom Renderer Preferences"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,143,166,50,14
+    CONTROL         "Use Pixel Buffer Object",IDC_TUNIACGOOMPREF_USEPBO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,32,138,8
+    CONTROL         "Allow Non Power Of 2 Resolutions",IDC_TUNIACGOOMPREF_ALLOWNONPOWEROF2,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,94,124,10
+    COMBOBOX        IDC_TUNIACGOOMPREF_MAXVISRES,32,119,93,23,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Maximum visual resolution:",IDC_TUNIACGOOMPREF_MAXRESOLUTIONTEXT,16,107,159,10
+    GROUPBOX        "Hardware acceleration",IDC_TUNIACGOOMPREF_ACCELBOX,7,7,186,66
+    GROUPBOX        "Visual rendering",IDC_TUNIACGOOMPREF_VISRENDER,7,79,186,82
+    CONTROL         "Use OpenGL",IDC_TUNIACGOOMPREF_USEOPENGL,"Button",BS_AUTORADIOBUTTON,16,19,154,9
+    CONTROL         "Use GDI",IDC_TUNIACGOOMPREF_USEGDI,"Button",BS_AUTORADIOBUTTON,16,58,119,10
+    CONTROL         "Use mapped Pixel Buffer Object",IDC_TUNIACGOOMPREF_USEMAPPEDPBO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,44,131,8
+    LTEXT           "Warning: High resolutions are very CPU intensive.",IDC_STATIC,11,137,182,18
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_TUNIACGOOMPREFWINDOW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        VERTGUIDE, 16
+        VERTGUIDE, 32
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 180
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_TUNIACGOOMPREFWINDOW AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // English (United Kingdom) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

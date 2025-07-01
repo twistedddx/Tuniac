@@ -440,26 +440,29 @@ LRESULT CALLBACK CVisualWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 				CheckMenuRadioItem(GetSubMenu(GetSubMenu(m_ContextMenu, 0), 0), 0, m_VisualArray.GetCount(), m_iActivePlugin, MF_BYPOSITION);
 
 				CheckMenuItem(GetSubMenu(m_ContextMenu, 0), 1, m_bFullScreen == true ? MF_BYPOSITION | MF_CHECKED : MF_BYPOSITION | MF_UNCHECKED);
+				if (m_VisualArray[m_iActivePlugin].pPlugin)
+				{
+					if (m_VisualArray[m_iActivePlugin].pPlugin->GetFlags() & PLUGINFLAGS_CONFIG)
+					{
+						EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 3, MF_BYPOSITION | MF_ENABLED);
+					}
+					else
+					{
+						EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 3, MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
+					}
 
-				if(m_VisualArray[m_iActivePlugin].pPlugin->GetFlags() & PLUGINFLAGS_CONFIG)
-				{
-					EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 3, MF_BYPOSITION | MF_ENABLED);
-				}
-				else
-				{
-					EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 3, MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
-				}
-
-				if(m_VisualArray[m_iActivePlugin].pPlugin->GetFlags() & PLUGINFLAGS_ABOUT)
-				{
-					EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 4, MF_BYPOSITION | MF_ENABLED);
-				}
-				else
-				{
-					EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 4, MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
+					if (m_VisualArray[m_iActivePlugin].pPlugin->GetFlags() & PLUGINFLAGS_ABOUT)
+					{
+						EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 4, MF_BYPOSITION | MF_ENABLED);
+					}
+					else
+					{
+						EnableMenuItem(GetSubMenu(m_ContextMenu, 0), 4, MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
+					}
 				}
 
 				TrackPopupMenu(GetSubMenu(m_ContextMenu, 0), 0, pt.x, pt.y, 0, hWnd, NULL);
+
 			}
 			break;
 
