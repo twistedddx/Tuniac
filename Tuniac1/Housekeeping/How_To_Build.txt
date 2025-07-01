@@ -60,8 +60,11 @@ In Clone existing repository add:
 https://github.com/libjpeg-turbo/libjpeg-turbo
 Hit OK and wait
 
-
-
+3e)You need xbmc goom:
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+https://github.com/xbmc/visualization.goom/
+Hit OK and wait
 
 4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
 
@@ -78,7 +81,9 @@ These cmd assume Win11 x64 and Visual Studio 2022 if you have anything else you 
 Note that 64 bit build works but there is no 64 bit SVP plugins to load.
 If you compile the solution this is skipped.
 
-
+5a)TuniacGoomVisualPlugin needs glew libs. Put them in TuniacGoomVisualPlugin\lib\Release\Win32 and x64
+Download https://github.com/nigels-com/glew
+https://github.com/nigels-com/glew/releases/tag/glew-2.2.0
 
 6)For TuniacApp
 
