@@ -1,0 +1,79 @@
+Tuniac BSD
+Tony Million
+Brett Hoyle
+Blur
+Mike Vierya
+Daniel
+Brice
+RA
+
+BASS - free for non-commercial use
+https://www.un4seen.com/
+https://www.un4seen.com/bass.html
+
+libjpeg-turbo BSD-style
+https://libjpeg-turbo.org/
+https://github.com/libjpeg-turbo/libjpeg-turbo
+
+libspng BSD 2-clause
+https://libspng.org/
+https://github.com/randy408/libspng/
+
+taglib LGPL MPL
+https://taglib.org/
+https://github.com/taglib/taglib
+
+kissfft BSD 3-clause
+https://github.com/mborgerding/kissfft
+Mark Borgerding
+Mark@Borgerding.net
+
+glew BSD-style
+https://glew.sourceforge.net/
+https://github.com/nigels-com/glew
+The OpenGL Extension Wrangler Library
+Copyright (C) 2002-2007, Milan Ikits <milan ikits[]ieee org>
+Copyright (C) 2002-2007, Marcelo E. Magallon <mmagallo[]debian org>
+Copyright (C) 2002, Lev Povalahev
+All rights reserved.
+
+zlib BSD-style
+https://zlib.net/
+https://github.com/madler/zlib
+(C) 1995-2024 Jean-loup Gailly and Mark Adler
+
+Goom LGPL
+https://sourceforge.net/projects/goom/
+https://github.com/xbmc/visualization.goom/
+Jean-Christophe Hoelt
+
+libshnplay
+Copyright (c) 2005, Holger Stenger
+
+glFont 2.0
+1998-2002 Brad Fish
+
+TAK
+http://thbeck.de/Tak/Tak.html
+
+FLAC
+https://xiph.org/flac/
+
+Monkeys Audio
+https://www.monkeysaudio.com/
+
+WavPack
+https://www.wavpack.com/
+
+OptimFROG
+http://losslessaudio.org/
+
+
+Other:
+Inno Setup
+https://jrsoftware.org/
+https://jrsoftware.org/isdl.php
+
+XAudio
+https://learn.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-versions
+
