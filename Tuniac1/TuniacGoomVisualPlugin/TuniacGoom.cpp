@@ -595,7 +595,7 @@ bool	TuniacGoom::Render(int w, int h)
 
 bool	TuniacGoom::About(HWND hWndParent)
 {
-	MessageBox(hWndParent, TEXT("Tuniac Goom visual.\nCopyright (c)2000-2004, Jean-Christophe Hoelt <jeko@ios-software.com>"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
+	MessageBox(hWndParent, TEXT("Tuniac Goom visual.\n\nUses Goom:\nCopyright (c)2000-2004, Jean-Christophe Hoelt <jeko@ios-software.com>\n\ngoom.lib from kodi/xbmc/visualization.goom"), GetPluginName(), MB_OK | MB_ICONINFORMATION);
 	return true;
 }
 
