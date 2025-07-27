@@ -56,8 +56,8 @@ protected:
 	RECT								m_NextVisRect;
 	RECT								m_PrevVisRect;
 
-	unsigned long						m_LastMove;
-	int									m_iElaspedTime;
+	unsigned long long					m_LastMove;
+	unsigned long long					m_iElaspedTime;
 
     BITMAP								m_ArrowBM;
 	HBITMAP								m_hArrow;
