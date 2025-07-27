@@ -111,7 +111,7 @@ void DoMeta(DWORD handle, void *user)
 				MultiByteToWideChar(CP_UTF8, 0, album, -1, szAlbum, 128);
 
 				TCHAR szText[128];
-				_snwprintf(szText, sizeof(szText), L"%s - %s - %s", szArtist, szTitle, szAlbum);
+				_snwprintf(szText, _countof(szText), L"%s - %s - %s", szArtist, szTitle, szAlbum);
 
 				if (m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szText, FIELD_TITLE);
@@ -122,7 +122,7 @@ void DoMeta(DWORD handle, void *user)
 				MultiByteToWideChar(CP_UTF8, 0, artist, -1, szArtist, 128);
 
 				TCHAR szText[128];
-				_snwprintf(szText, sizeof(szText), L"%s - %s", szArtist, szTitle);
+				_snwprintf(szText, _countof(szText), L"%s - %s", szArtist, szTitle);
 
 				if (m_pHelper)
 					m_pHelper->UpdateMetaData((LPTSTR)user, szText, FIELD_TITLE);
