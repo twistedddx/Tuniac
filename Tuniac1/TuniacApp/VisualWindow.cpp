@@ -706,9 +706,6 @@ unsigned long CVisualWindow::ThreadProc(void)
 			}
 
 			WaitForSingleObject(m_hRenderEvent, INFINITE);
-
-			//not accurate enough 10-16ms accuracy!!
-			//WaitForSingleObject(m_hRenderEvent, m_offsettimer.MSToSleepSinceLastCall(1000 / tuniacApp.m_Preferences.GetVisualFPS()));
 		}
 	}
 

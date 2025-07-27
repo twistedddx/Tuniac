@@ -27,7 +27,6 @@
 #include "iwindow.h"
 
 #include "ITuniacVisPlugin.h"
-//#include "OffsetTimer.h"
 
 typedef struct 
 {
