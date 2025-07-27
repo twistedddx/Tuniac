@@ -4,6 +4,13 @@
 
 CBASSDecoderPlugin::CBASSDecoderPlugin(void)
 {
+	m_pHelper = NULL;
+	m_ActiveDevice = 0;
+	hStreamID = 0;
+	bModFile = false;
+	bMicInput = false;
+	bIsStream = false;
+
 	if (HIWORD(BASS_GetVersion())!=BASSVERSION)
 	{
 		MessageBox(0,L"An incorrect version of BASS.DLL was loaded",0,MB_ICONERROR);

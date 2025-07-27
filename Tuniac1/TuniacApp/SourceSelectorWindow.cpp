@@ -1308,8 +1308,7 @@ IPlaylist * CSourceSelectorWindow::GetPlaylistFromPoint(LPPOINT lpPoint)
 		return NULL;
 
 	IPlaylist * pPlaylist = tuniacApp.m_PlaylistManager.GetPlaylistByIndex(x);
-	if (x == INVALID_PLAYLIST_INDEX)
-		int x = 2;
+
 	return pPlaylist;
 }
 

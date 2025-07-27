@@ -39,13 +39,20 @@ VOID CALLBACK TimerRoutine(PVOID lpParam, BOOL TimerOrWaitFired)
 	SetEvent(m_hRenderEvent);
 }
 
-CVisualWindow::CVisualWindow(void) :
-	m_hWnd (NULL),
-	m_hThread (NULL),
-	m_WindowDC(NULL),
-	m_iActivePlugin(-1),
-	m_bFullScreen(false)
+CVisualWindow::CVisualWindow(void)
 {
+	m_hWnd = NULL;
+	m_hThread = NULL;
+	m_WindowDC = NULL;
+	m_iActivePlugin = -1;
+	m_bFullScreen = false;
+
+	m_OldSize = { 0,0 };
+	m_hParentWnd = NULL;
+	m_dwThreadID = 0;
+	m_ContextMenu = NULL;
+	hTimer = 0;
+	hTimerQueue = NULL;
 }
 
 CVisualWindow::~CVisualWindow(void)

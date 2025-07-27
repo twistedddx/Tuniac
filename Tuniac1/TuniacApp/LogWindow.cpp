@@ -32,6 +32,7 @@ CLogWindow::CLogWindow(void)
 {
 	m_bLogEnabled = false;
 	m_hLogWnd = NULL;
+	m_hLogEditWnd = NULL;
 }
 
 CLogWindow::~CLogWindow(void)
