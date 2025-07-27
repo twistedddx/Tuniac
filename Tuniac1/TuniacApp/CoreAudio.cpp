@@ -687,24 +687,50 @@ void CCoreAudio::SetCrossfadeTime(unsigned long ulMS)
 
 void CCoreAudio::OnCriticalError(HRESULT Error)
 {
-	switch(Error)
+	if (tuniacApp.m_LogWindow && tuniacApp.m_LogWindow->GetLogOn())
+	{
+		TCHAR szErrorMsg[256];
+		StringCchPrintf(szErrorMsg, 256, TEXT("XAudio2 Critical Error: HRESULT = 0x%08X"), Error);
+		tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), szErrorMsg);
+	}
+
+	switch (Error)
 	{
 		case XAUDIO2_E_XMA_DECODER_ERROR:
-			{
-				int x=0;
-			}
-			break;
+		{
+			if(tuniacApp.m_LogWindow && tuniacApp.m_LogWindow->GetLogOn())
+				tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("XMA Decoder Error - codec issue"));
 
-		default:
+			tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
+		}
+		break;
+
 		case XAUDIO2_E_DEVICE_INVALIDATED:
+		{
+			//Soundcard lost(eg unplugged)
+			if(tuniacApp.m_LogWindow && tuniacApp.m_LogWindow->GetLogOn())
+				tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Audio device invalidated - device removed or changed"));
+
+			tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
+		}
+		break;
+
+		case XAUDIO2_E_INVALID_CALL:
 			{
-				//Soundcard lost(eg unplugged)
+				if (tuniacApp.m_LogWindow && tuniacApp.m_LogWindow->GetLogOn())
+					tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Invalid XAudio2 API call"));
 				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
 			}
 			break;
 
-
-	}
+		default:
+			{
+				if (tuniacApp.m_LogWindow && tuniacApp.m_LogWindow->GetLogOn())
+					tuniacApp.m_LogWindow->LogMessage(TEXT("CoreAudio"), TEXT("Unknown XAudio2 critical error"));
+				tuniacApp.CoreAudioMessage(NOTIFY_COREAUDIO_RESET, 0);
+			}
+			break;
+		}
 }
 
 HRESULT CCoreAudio::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
