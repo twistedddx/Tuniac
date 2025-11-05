@@ -22,12 +22,24 @@ extern "C" {
 #define BASS_CTYPE_STREAM_AC3	0x11000
 
 
-HSTREAM BASSAC3DEF(BASS_AC3_StreamCreateFile)(BOOL mem, const void *file, QWORD offset, QWORD length, DWORD flags);
+HSTREAM BASSAC3DEF(BASS_AC3_StreamCreateFile)(DWORD filetype, const void *file, QWORD offset, QWORD length, DWORD flags);
 HSTREAM BASSAC3DEF(BASS_AC3_StreamCreateURL)(const char *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user);
 HSTREAM BASSAC3DEF(BASS_AC3_StreamCreateFileUser)(DWORD system, DWORD flags, const BASS_FILEPROCS *procs, void *user);
 
 #ifdef __cplusplus
 }
+
+#if defined(_WIN32) && !defined(NOBASSOVERLOADS)
+static inline HSTREAM BASS_AC3_StreamCreateFile(DWORD filetype, const WCHAR *file, QWORD offset, QWORD length, DWORD flags)
+{
+	return BASS_AC3_StreamCreateFile(filetype, (const void*)file, offset, length, flags | BASS_UNICODE);
+}
+
+static inline HSTREAM BASS_AC3_StreamCreateURL(const WCHAR *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user)
+{
+	return BASS_AC3_StreamCreateURL((const char*)url, offset, flags | BASS_UNICODE, proc, user);
+}
+#endif
 #endif
 
 #endif
