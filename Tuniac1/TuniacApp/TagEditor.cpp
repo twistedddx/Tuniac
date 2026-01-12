@@ -25,7 +25,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include ".\tageditor.h"
+#include "tageditor.h"
 
 CTagEditor::CTagEditor(void)
 {

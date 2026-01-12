@@ -24,7 +24,7 @@
 */
 
 #include "StdAfx.h"
-#include ".\audiopacketizer.h"
+#include "audiopacketizer.h"
 
 #define NiceCloseHandle(handle)  if(handle) { CloseHandle(handle); handle = NULL; }
 

@@ -27,7 +27,7 @@
 
 
 #include "stdafx.h"
-#include ".\standardplaylist.h"
+#include "standardplaylist.h"
 
 CStandardPlaylist::CStandardPlaylist(void)
 {

@@ -25,7 +25,7 @@
 
 #include "stdafx.h"
 
-#include ".\aboutwindow.h"
+#include "aboutwindow.h"
 #include "resource.h"
 
 

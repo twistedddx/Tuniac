@@ -24,7 +24,7 @@
 */
 
 #include "StdAfx.h"
-#include ".\audiooutput.h"
+#include "audiooutput.h"
 
 #ifdef SSE
 #include "SSE_Utils.h"
