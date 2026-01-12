@@ -66,6 +66,7 @@ Source: "..\TuniacApp\images\NoAlbumArt.jpg"; DestDir: {app}\; Flags: ignorevers
 Source: "..\Housekeeping\Change Log.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\gpl.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\Housekeeping\lgpl.txt"; DestDir: {app}\; Flags: ignoreversion
+Source: "..\Housekeeping\opensource.txt"; DestDir: {app}\; Flags: ignoreversion
 Source: "..\TuniacApp\icons\*.ico"; DestDir: {app}\iconsets\; Flags: ignoreversion recursesubdirs
 
 [Run]
