@@ -1049,6 +1049,7 @@ LRESULT CALLBACK			CPlaylistSourceView::WndProc(HWND hDlg, UINT message, WPARAM 
 
 							tuniacApp.m_PlaylistManager.CreateNewStandardPlaylistWithIDs(TEXT("New Dropped Playlist"), entryArray);
 							tuniacApp.m_SourceSelectorWindow->UpdateList();
+							tuniacApp.m_SourceSelectorWindow->ShowPlaylistAtIndex(tuniacApp.m_PlaylistManager.GetNumPlaylists() - 1);
 						}
 						break;
 
