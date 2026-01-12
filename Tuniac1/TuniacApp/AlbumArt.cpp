@@ -111,7 +111,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 			//jpeglib-turbo error, check if its likely a png file!
 			if(strcmp(szErrorMessage, "Not a JPEG file: starts with 0x89 0x50") == 0)
 				return LoadSource(pCompressedData, ulDataLength, L"image/png");
-			//peglib-turbo error, check if its likely a webp file!
+			//jpeglib-turbo error, check if its likely a webp file!
 			else if (strcmp(szErrorMessage, "Not a JPEG file: starts with 0x52 0x49") == 0)
 				return LoadSource(pCompressedData, ulDataLength, L"image/webp");
 			else
@@ -144,7 +144,7 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 		m_pBitmapData = malloc(m_ulBitmapWidth * m_ulBitmapHeight * cinfo.output_components);
 		if (!m_pBitmapData)
 		{
-			jpeg_destroy_decompress(&cinfo);
+			jpeg_abort_decompress(&cinfo);
 			return false;
 		}
 
