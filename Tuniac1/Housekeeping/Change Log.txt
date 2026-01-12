@@ -1,3 +1,10 @@
+Jan, 2026
+---------
+-Update BASS 2.4.18.3 and addons DSD, HLS, OPUS
+-Rename right click menu items: "To new Playlist" is now "Selected to new playlist" , "Filter by field" is now "Field to new playlist"
+-Update view after right click "Selected to new playlist"
+-Add simplewebp album art decoder
+
 Nov, 2025
 ---------
 -Update to BASS 2.4.18
