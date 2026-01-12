@@ -10,6 +10,8 @@ RA
 BASS - free for non-commercial use
 https://www.un4seen.com/
 https://www.un4seen.com/bass.html
+BASS 2.4
+Copyright (c) 1999-2025 Un4seen Developments Ltd. All rights reserved.
 
 libjpeg-turbo BSD-style
 https://libjpeg-turbo.org/
@@ -18,6 +20,13 @@ https://github.com/libjpeg-turbo/libjpeg-turbo
 libspng BSD 2-clause
 https://libspng.org/
 https://github.com/randy408/libspng/
+Copyright (C)2009-2025 D. R. Commander. All Rights Reserved.
+Copyright (C)2015 Viktor Szathmáry. All Rights Reserved.
+
+Simple WebP
+https://github.com/MikuAuahDark/simplewebp
+Copyright (c) 2010 Google Inc., 2023 Miku AuahDark
+All rights reserved.
 
 taglib LGPL MPL
 https://taglib.org/
@@ -55,12 +64,15 @@ glFont 2.0
 
 TAK
 http://thbeck.de/Tak/Tak.html
+Thomas Becker
 
 FLAC
 https://xiph.org/flac/
+Copyright (c) 2000-2009 Josh Coalson, 2011-2022 Xiph.Org Foundation 
 
 Monkeys Audio
 https://www.monkeysaudio.com/
+Copyright © 2000-2026 by Matthew T. Ashland. All rights reserved.
 
 WavPack
 https://www.wavpack.com/

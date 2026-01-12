@@ -66,6 +66,14 @@ In Clone existing repository add:
 https://github.com/xbmc/visualization.goom/
 Hit OK and wait
 
+3f)You need SimpleWebP:
+Navigate to C:\Code\, right click empty space and select GIT Clone.
+In Clone existing repository add:
+https://github.com/MikuAuahDark/simplewebp.git
+Hit OK and wait
+
+
+
 4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
 
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_vcpkg.cmd

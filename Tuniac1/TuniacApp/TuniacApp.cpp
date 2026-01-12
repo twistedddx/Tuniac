@@ -3306,16 +3306,19 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 	{
 		TCHAR		szJPGPath[MAX_PATH];
 		TCHAR		szPNGPath[MAX_PATH];
+		TCHAR		szWEBPPath[MAX_PATH];
 		StringCchCopy(szJPGPath, MAX_PATH, szSource);
 
 		PathRemoveFileSpec(szJPGPath);
 
 		StringCchCopy(szPNGPath, MAX_PATH, szJPGPath);
+		StringCchCopy(szWEBPPath, MAX_PATH, szJPGPath);
 
 		PathAppend(szJPGPath, TEXT("folder.jpg"));
 		PathAppend(szPNGPath, TEXT("folder.png"));
+		PathAppend(szWEBPPath, TEXT("folder.webp"));
 
-		if((StrCmpI(szJPGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0) || (StrCmpI(szPNGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0))
+		if((StrCmpI(szJPGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0) || (StrCmpI(szPNGPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0) || (StrCmpI(szWEBPPath, m_AlbumArtPanel.GetCurrentArtSource()) == 0))
 			return false;
 
 		if(m_AlbumArtPanel.SetSource(szJPGPath))
@@ -3327,6 +3330,11 @@ bool	CTuniacApp::GetArt(LPTSTR szSource)
 		{
 			bArtSuccess = true;
 			m_AlbumArtPanel.SetCurrentArtSource(szPNGPath);
+		}
+		else if (m_AlbumArtPanel.SetSource(szWEBPPath))
+		{
+			bArtSuccess = true;
+			m_AlbumArtPanel.SetCurrentArtSource(szWEBPPath);
 		}
 	}
 
