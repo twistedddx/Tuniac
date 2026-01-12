@@ -418,7 +418,7 @@ BEGIN
     ICON            IDI_TUNIAC,IDC_STATIC,23,12,20,20,SS_CENTERIMAGE
     LTEXT           "Tuniac 1.0",IDC_ABOUTBOXTUNIAC_TEXT,61,14,107,30
     LTEXT           "Developed by \nTony Million, Brett Hoyle, Blur, Mike Vierya, Daniel, Brice and RA",IDC_ABOUTBOXDEV_TEXT,7,46,245,16
-    LTEXT           "Tuniac uses code from:\nBASSlib, libjpeg-turbo, libspng, taglib,\n kissfft, glew, zlib and others.\nMuch thanks to their developers.\nSee the various about screens for more information.\n",IDC_ABOUTBOXTHANKS_TEXT,7,73,245,42
+    LTEXT           "Tuniac uses code from:\nBASSlib, libjpeg-turbo, libspng, simplewebp, taglib,\n kissfft, glew, goom, zlib and others.\nMuch thanks to their developers.\nSee about screens and opensource.txt for more information.\n",IDC_ABOUTBOXTHANKS_TEXT,7,73,245,42
     LTEXT           "Build:",IDC_ABOUT_BUILD_TEXT,171,14,69,30
 END
 
