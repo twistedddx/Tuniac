@@ -292,8 +292,8 @@
 #define ID_PLAY                         40023
 #define ID_REMOVE                       40024
 #define ID_UPDATE                       40025
-#define ID_TONEWPLAYLIST                40026
-#define ID_FILTERBYFIELD                40027
+#define ID_SELECTEDTONEWPLAYLIST        40026
+#define ID_FIELDTONEWPLAYLIST           40027
 #define ID_PLAYPLAYLIST                 40028
 #define ID_PAUSEHERE                    40029
 

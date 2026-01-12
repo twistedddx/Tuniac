@@ -844,8 +844,8 @@ BEGIN
         MENUITEM "&Queue",                      ID_QUEUE
         MENUITEM "Pause &here",                 ID_PAUSEHERE
         MENUITEM SEPARATOR
-        MENUITEM "To &new playlist",            ID_TONEWPLAYLIST
-        MENUITEM "&Filter by field",            ID_FILTERBYFIELD
+        MENUITEM "&Selected to new playlist",   ID_SELECTEDTONEWPLAYLIST
+        MENUITEM "&Field to new playlist",      ID_FIELDTONEWPLAYLIST
         MENUITEM "Q&ueue by field",             ID_QUEUEBYFIELD
         MENUITEM SEPARATOR
         MENUITEM "&Remove",                     ID_REMOVE
