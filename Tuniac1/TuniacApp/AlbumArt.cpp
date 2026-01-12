@@ -220,18 +220,10 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 							if (r == 0)
 							{
-								int offset = 0;
-
 								//swap rgba to bgra
-								for (int y = 0; y < m_ulBitmapWidth; y++) {
-									for (int x = 0; x < m_ulBitmapHeight; x++) {
-										auto temp = pOutData[offset];
-										pOutData[offset] = pOutData[offset + 2];
-										//pOutData[offset + 1] = pOutData[offset + 1];
-										pOutData[offset + 2] = temp;
-										//pOutData[offset + 3] = pOutData[offset + 3];
-										offset += 4;
-									}
+								for (int i = 0; i < m_ulBitmapWidth * m_ulBitmapHeight * 4; i += 4)
+								{
+									std::swap(pOutData[i], pOutData[i + 2]);
 								}
 
 								bOk = true;
@@ -341,18 +333,10 @@ bool CAlbumArt::LoadSource(LPVOID pCompressedData, unsigned long ulDataLength, L
 
 		if (r == 0)
 		{
-			int offset = 0;
-
 			//swap rgba to bgra
-			for (int y = 0; y < m_ulBitmapWidth; y++) {
-				for (int x = 0; x < m_ulBitmapHeight; x++) {
-					auto temp = pOutData[offset];
-					pOutData[offset] = pOutData[offset + 2];
-					//pOutData[offset + 1] = pOutData[offset + 1];
-					pOutData[offset + 2] = temp;
-					//pOutData[offset + 3] = pOutData[offset + 3];
-					offset += 4;
-				}
+			for (int i = 0; i < m_ulBitmapWidth * m_ulBitmapHeight * 4; i += 4)
+			{
+				std::swap(pOutData[i], pOutData[i + 2]);
 			}
 
 			bOk = true;
