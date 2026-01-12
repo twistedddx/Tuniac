@@ -20,6 +20,8 @@ extern "C" {
 
 #ifndef BASSHLSDEF
 #define BASSHLSDEF(f) WINAPI f
+#else
+#define NOBASSHLSOVERLOADS
 #endif
 
 // Additional BASS_SetConfig options
@@ -34,11 +36,13 @@ extern "C" {
 #define BASS_SYNC_HLS_EMSG		0x10302
 
 // Additional tag types
-#define BASS_TAG_HLS_EXTINF		0x14000 // segment's EXTINF tag : UTF-8 string
-#define BASS_TAG_HLS_STREAMINF	0x14001 // EXT-X-STREAM-INF tag : UTF-8 string
-#define BASS_TAG_HLS_DATE		0x14002 // EXT-X-PROGRAM-DATE-TIME tag : UTF-8 string
-#define BASS_TAG_HLS_SDT		0x14003 // DVB SDT : variable length block
-#define BASS_TAG_HLS_EMSG		0x14004 // fMP4 emsg : variable length block
+#define BASS_TAG_HLS_EXTINF			0x14000 // segment's EXTINF tag : UTF-8 string
+#define BASS_TAG_HLS_STREAMINF		0x14001 // EXT-X-STREAM-INF tag : UTF-8 string
+#define BASS_TAG_HLS_DATE			0x14002 // EXT-X-PROGRAM-DATE-TIME tag : UTF-8 string
+#define BASS_TAG_HLS_SDT			0x14003 // DVB SDT : variable length block
+#define BASS_TAG_HLS_EMSG			0x14004 // fMP4 emsg : variable length block
+#define BASS_TAG_HLS_SDT_BINARY		0x14005 // DVB SDT : TAB_BINARY
+#define BASS_TAG_HLS_EMSG_BINARY	0x14006 // fMP4 emsg : TAB_BINARY
 
 // Additional BASS_StreamGetFilePosition mode
 #define BASS_FILEPOS_HLS_SEGMENT	0x10000	// segment sequence number
@@ -49,7 +53,7 @@ HSTREAM BASSHLSDEF(BASS_HLS_StreamCreateURL)(const char *url, DWORD flags, DOWNL
 #ifdef __cplusplus
 }
 
-#if defined(_WIN32) && !defined(NOBASSOVERLOADS)
+#if defined(_WIN32) && !defined(NOBASSHLSOVERLOADS)
 static inline HSTREAM BASS_HLS_StreamCreateFile(DWORD filetype, const WCHAR *file, QWORD offset, QWORD length, DWORD flags)
 {
 	return BASS_HLS_StreamCreateFile(filetype, (const void*)file, offset, length, flags | BASS_UNICODE);
