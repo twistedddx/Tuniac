@@ -175,7 +175,6 @@ LRESULT CALLBACK			CSourceSelectorWindow::WndProc(HWND hDlg, UINT message, WPARA
 					m_SourceViewArray[x]->CreateSourceView(hDlg);
 					m_SourceViewArray[x]->ShowSourceView(false);
 				}
-
 				ListView_SetExtendedListViewStyle(GetDlgItem(hDlg, IDC_SOURCESELECTOR), LVS_EX_FULLROWSELECT);
 
 				LV_COLUMN lvC;
@@ -1384,6 +1383,10 @@ bool CSourceSelectorWindow::ShowPlaylistAtIndex(unsigned long ulIndex)
 
 		if(m_pVisibleView)
 			m_pVisibleView->Update();
+
+		//LVS_SINGLESEL enabled so no need to clear previous selection
+		//ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), -1, 0, LVIS_SELECTED);
+
 		ListView_SetItemState(GetDlgItem(m_hSourceWnd, IDC_SOURCESELECTOR), m_ulVisiblePlaylistIndex, LVIS_SELECTED, LVIS_SELECTED);
 		return true;
 	}

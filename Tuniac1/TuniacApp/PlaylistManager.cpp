@@ -367,8 +367,8 @@ bool			CPlaylistManager::LoadPlaylistLibrary(LPTSTR szLibraryFolder)
 
 
 
-		unsigned long ulPauseAtPlaylistID;
-		unsigned long ulPauseAtEntryID;
+		unsigned long ulPauseAtPlaylistID = 0;
+		unsigned long ulPauseAtEntryID = 0;
 		if (PLDH.Version == TUNIAC_PLAYLISTLIBRARY_VERSION08)
 		{
 			PLDiskCommonSubHeader CommonHeader;
