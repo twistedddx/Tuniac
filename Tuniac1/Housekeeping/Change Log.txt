@@ -1,5 +1,6 @@
 Jan, 2026
 ---------
+-Enable single selection for source selector
 -Update BASS 2.4.18.3 and addons DSD, HLS, OPUS
 -Rename right click menu items: "To new Playlist" is now "Selected to new playlist" , "Filter by field" is now "Field to new playlist"
 -Update view after right click "Selected to new playlist"

@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v4.1.2/cmake-4.1.2-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v4.2.1/cmake-4.2.1-windows-x86_64.msi
 
 Install them
 
@@ -117,7 +117,7 @@ Cannot open include file: 'tag.h'
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
 
-8a)https://files.jrsoftware.org/is/6/innosetup-6.5.4.exe
+8a)https://files.jrsoftware.org/is/6/innosetup-6.7.0.exe
 Install everything it offers in the installer.
 
 Install Inno Download Plugin
