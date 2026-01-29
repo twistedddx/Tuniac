@@ -1,7 +1,7 @@
 How to build Tuniac:
 
 
-This is written with Visual Studio Community 2022 in mind in January 2024.
+This is written with Visual Studio Community 2026 in mind in January 2026.
 Things may have changed since, use this only as a guide.
 
 For me:
@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v4.2.1/cmake-4.2.1-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-windows-x86_64.msi
 
 Install them
 
@@ -75,6 +75,9 @@ Hit OK and wait
 
 
 4)Build dependencies (turbojpeglib, libspng, taglib/zlib)
+
+You should have NASM
+https://www.nasm.us/
 
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_vcpkg.cmd
 Run D:\Code\tuniac\Tuniac1\Housekeeping\build_libspng.cmd
