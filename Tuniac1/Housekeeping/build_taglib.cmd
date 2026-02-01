@@ -1,4 +1,4 @@
-call "%Programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+call "%Programfiles%\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
 echo Working dir: %cd%
 
@@ -32,7 +32,7 @@ echo Debug x86
 
 rem ######## Taglib x64
 echo x64
-call "%Programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+call "%Programfiles%\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 
 rem #set VCPKG_ROOT for cppunit/zlib/utf8cpp
 cd ..

@@ -15,6 +15,7 @@
 
 /* taglib2
 #include "ebmlfile.h"
+#include "matroskafile.h"
 */
 
 #include "flacFile.h"
@@ -85,6 +86,7 @@ protected:
 	TagLib::Shorten::File *shnFile;
 	/* taglib2
 	TagLib::EBML::File *ebmlFile;
+	TagLib::Matroska::File *matroskaFile;
 	*/
 
 public:
