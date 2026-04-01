@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v4.3.0/cmake-4.3.0-windows-x86_64.msi
 
 Install them
 
@@ -120,7 +120,7 @@ Cannot open include file: 'tag.h'
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
 
-8a)https://files.jrsoftware.org/is/6/innosetup-6.7.0.exe
+8a)https://github.com/jrsoftware/issrc/releases/download/is-6_7_1/innosetup-6.7.1.exe
 Install everything it offers in the installer.
 
 Install Inno Download Plugin
@@ -131,7 +131,7 @@ This will add:
 ; Inno Download Plugin include path
 #pragma include __INCLUDE__ + ";" + ReadReg(HKLM, "Software\Mitrich Software\Inno Download Plugin", "InstallDir")
 
-If it doesn't add the above, add it to the end of C:\Program Files (x86)\Inno Setup 6\ISPPBuiltins.iss
+If it doesn't add the above, add it to the end of %localappdata%\Programs\Inno Setup 6\ISPPBuiltins.iss
 
 Goto D:\Code\tuniac\Tuniac1\Setup-Scripts
 Right click desired setup iss file
