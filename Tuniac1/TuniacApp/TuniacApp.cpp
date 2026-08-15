@@ -243,19 +243,31 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 
 	RECT workArea = mi.rcWork;
 
+	// min window 650x445
+	if (r.right < 650)
+		r.right = 650;
+	if (r.bottom < 445)
+		r.bottom = 445;
+
+	// top too low to fit bottom, move up
 	if ((r.top + r.bottom) > workArea.bottom)
 		r.top = workArea.bottom - (r.bottom + 50);
+	// top too high, move down
 	if (r.top < workArea.top)
 		r.top = workArea.top + 50;
 
+	// bottom still too low. Shrink bottom to suit.
 	if ((r.top + r.bottom) > workArea.bottom)
 		r.bottom = workArea.bottom - 50;
 
+	// left too right to fit right, move left
 	if ((r.left + r.right) > workArea.right)
 		r.left = workArea.right - (r.right + 50);
+	// left too left, move right
 	if (r.left < workArea.left)
 		r.left = workArea.left + 50;
 
+	// right still too right to fit right. Shrink right to suit.
 	if ((r.left + r.right) > workArea.right)
 		r.right = workArea.right - 50;
 
