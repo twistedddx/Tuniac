@@ -2514,6 +2514,7 @@ bool CPreferences::LoadPreferences(void)
 		(LPBYTE)m_UserSearchField,
 		&Size);
 
+	/* on screen move done in tuniacApp.cpp
 	if(m_MainWindowRect.left < 0)
 		m_MainWindowRect.left = CW_USEDEFAULT;
 
@@ -2525,6 +2526,7 @@ bool CPreferences::LoadPreferences(void)
 
 	if(m_MainWindowRect.bottom < 500)
 		m_MainWindowRect.bottom = CW_USEDEFAULT;
+		*/
 
 	RegCloseKey(hTuniacPrefKey);
 

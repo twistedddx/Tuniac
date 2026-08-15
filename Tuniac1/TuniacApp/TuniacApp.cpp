@@ -233,14 +233,31 @@ bool CTuniacApp::Initialize(HINSTANCE hInstance, LPTSTR szCommandLine)
 	RECT r;
 	CopyRect(&r, m_Preferences.GetMainWindowRect());
 
-	if(r.top < 0)
-		r.top	= 0;
-	if(r.left < 0)
-		r.left	= 0;
-	if(r.right < 530)
-		r.right = 530;
-	if(r.bottom < 400)
-		r.bottom = 400;
+	// Get the monitor that has the largest area of intersection with the window rect
+	HMONITOR hMonitor = MonitorFromRect(&r, MONITOR_DEFAULTTONEAREST);
+
+	MONITORINFO mi = { sizeof(MONITORINFO) };
+	if (!GetMonitorInfo(hMonitor, &mi)) {
+		return false;
+	}
+
+	RECT workArea = mi.rcWork;
+
+	if ((r.top + r.bottom) > workArea.bottom)
+		r.top = workArea.bottom - (r.bottom + 50);
+	if (r.top < workArea.top)
+		r.top = workArea.top + 50;
+
+	if ((r.top + r.bottom) > workArea.bottom)
+		r.bottom = workArea.bottom - 50;
+
+	if ((r.left + r.right) > workArea.right)
+		r.left = workArea.right - (r.right + 50);
+	if (r.left < workArea.left)
+		r.left = workArea.left + 50;
+
+	if ((r.left + r.right) > workArea.right)
+		r.right = workArea.right - 50;
 
 	//create our main window
 	m_hWnd = CreateWindowEx(WS_EX_ACCEPTFILES | WS_EX_APPWINDOW,
