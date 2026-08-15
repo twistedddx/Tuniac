@@ -28,7 +28,7 @@ https://code.google.com/p/tortoisegit/
 https://code.google.com/p/tortoisegit/wiki/Download
 
 https://cmake.org/
-https://github.com/Kitware/CMake/releases/download/v4.3.0/cmake-4.3.0-windows-x86_64.msi
+https://github.com/Kitware/CMake/releases/download/v4.4.2/cmake-4.4.2-windows-x86_64.msi
 
 Install them
 
@@ -92,9 +92,9 @@ These cmd assume Win11 x64 and Visual Studio 2022 if you have anything else you 
 Note that 64 bit build works but there is no 64 bit SVP plugins to load.
 If you compile the solution this is skipped.
 
-5a)TuniacGoomVisualPlugin needs glew libs. Put them in TuniacGoomVisualPlugin\lib\Release\Win32 and x64
+5a)TuniacGoomVisualPlugin needs glew include and lib. Put them in TuniacGoomVisualPlugin\
 Download https://github.com/nigels-com/glew
-https://github.com/nigels-com/glew/releases/tag/glew-2.2.0
+https://github.com/nigels-com/glew/releases/download/glew-2.3.1/glew-2.3.1-win32.zip
 
 6)For TuniacApp
 
@@ -120,7 +120,7 @@ Cannot open include file: 'tag.h'
 You need Inno QuickStart Pack
 https://jrsoftware.org/isinfo.php
 
-8a)https://github.com/jrsoftware/issrc/releases/download/is-6_7_1/innosetup-6.7.1.exe
+8a)https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe
 Install everything it offers in the installer.
 
 Install Inno Download Plugin
